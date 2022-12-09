@@ -1,4 +1,5 @@
 import { Button } from 'antd';
+import Link from 'next/link';
 import Head from 'next/head';
 import Image from 'next/image';
 import styles from '../styles/Home.module.css';
@@ -14,6 +15,7 @@ export default function Home() {
 
       <main className={styles.main}>
         <Button>hello world</Button>
+        <Link href="/about">goto about</Link>
         <h1 className={styles.title}>
           Welcome to <a href="https://nextjs.org">Next.js!</a>
         </h1>
