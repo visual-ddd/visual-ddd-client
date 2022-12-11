@@ -1,5 +1,6 @@
 import type { AppProps } from 'next/app';
 import { ConfigProvider } from 'antd';
+import { configure } from 'mobx';
 import { useRouter } from 'next/router';
 // 由于 antd 组件的默认文案是英文，所以需要修改为中文
 import dayjs from 'dayjs';
@@ -11,6 +12,10 @@ import { useSyncEffect } from '@/lib/hooks';
 import { createPageScope } from '@/lib/framework';
 
 import '../styles/globals.css';
+
+configure({
+  enforceActions: 'always',
+});
 
 dayjs.locale('zh-cn');
 
