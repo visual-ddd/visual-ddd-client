@@ -19,9 +19,11 @@ const defaultFactory: CellFactory = (props: any, graph: Graph) => {
   };
 };
 
-export function useNode<Props extends NodeBindingProps>(props: Props, factor?: CellFactory) {
+export function useNode<Props extends NodeBindingProps>({ props, factory }: { props: Props; factory?: CellFactory }) {
   const { size, position, angle } = props;
-  const instanceRef = useCell(props, factor ?? defaultFactory) as MutableRefObject<Node>;
+  const ctx = useCell({ props, factor: factory ?? defaultFactory, canBeChild: true, canBeParent: true });
+  const instanceRef = ctx.instanceRef as MutableRefObject<Node>;
+  const contextValue = ctx.contextValue;
 
   useDeepEffect(() => {
     if (size != null) {
@@ -41,5 +43,5 @@ export function useNode<Props extends NodeBindingProps>(props: Props, factor?: C
     }
   }, [angle]);
 
-  return instanceRef;
+  return { instanceRef, contextValue };
 }

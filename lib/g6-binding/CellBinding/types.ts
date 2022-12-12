@@ -31,6 +31,10 @@ export interface CellBindingProps {
    */
   data?: Cell.Metadata['data'];
 
+  children?: React.ReactNode;
+
+  onCellReady?: (cell: Cell) => void;
+
   onClick?: (evt: CellView.EventArgs['cell:click']) => void;
   onDblclick?: (evt: CellView.EventArgs['cell:dblclick']) => void;
   onContextmenu?: (evt: CellView.EventArgs['cell:contextmenu']) => void;
@@ -44,4 +48,12 @@ export interface CellBindingProps {
   onMousewheel?: (evt: CellView.EventArgs['cell:mousewheel']) => void;
   onHighlight?: (evt: CellView.EventArgs['cell:highlight']) => void;
   onUnhighlight?: (evt: CellView.EventArgs['cell:unhighlight']) => void;
+}
+
+export interface CellContextValue {
+  /**
+   * 添加子节点
+   * @param cell
+   */
+  addChild(cell: Cell): () => void;
 }

@@ -1,12 +1,13 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { Disposer } from '@wakeapp/utils';
 import { useDeepEffect, useRefValue } from '@wakeapp/hooks';
 import { Cell, Graph } from '@antv/x6';
 
 import { useGraphBinding } from '../GraphBinding';
 
-import { CellBindingProps } from './types';
+import { CellBindingProps, CellContextValue } from './types';
 import { useEventStore, wrapPreventListenerOptions } from '../hooks';
+import { useCellContext } from './context';
 
 export type CellFactory = (
   props: any,
@@ -43,7 +44,80 @@ const delegateToGraphEvents = [
   'unhighlight',
 ];
 
-export function useCell<Props extends CellBindingProps>(props: Props, factor?: CellFactory) {
+const PREVENT_LISTENER_NOOP_OBJECT = wrapPreventListenerOptions({});
+
+export function useCellContextValue() {
+  const value = useMemo(() => {
+    let children: Cell[] = [];
+    let parent: Cell;
+
+    return {
+      addChild(child) {
+        if (parent) {
+          parent.addChild(child, PREVENT_LISTENER_NOOP_OBJECT);
+
+          return () => {
+            parent.removeChild(child, PREVENT_LISTENER_NOOP_OBJECT);
+          };
+        }
+
+        // 未就绪
+        children.push(child);
+
+        return () => {
+          if (parent) {
+            parent.removeChild(child, PREVENT_LISTENER_NOOP_OBJECT);
+          } else {
+            const idx = children.indexOf(child);
+            if (idx !== -1) {
+              children.splice(idx, 1);
+            }
+          }
+        };
+      },
+      // @ts-expect-error
+      get __hasChildren() {
+        return !!children.length;
+      },
+      // 父节点就绪
+      __emitParentReady(cell: Cell) {
+        parent = cell;
+        const clone = children;
+        children = [];
+        for (const item of clone) {
+          parent.addChild(item, PREVENT_LISTENER_NOOP_OBJECT);
+        }
+      },
+    } satisfies CellContextValue;
+  }, []);
+
+  return value;
+}
+
+export function useCell<Props extends CellBindingProps>({
+  props,
+  factor,
+  canBeChild,
+  canBeParent,
+  onCellReady,
+}: {
+  props: Props;
+  factor?: CellFactory;
+
+  onCellReady?: (cell: Cell) => void;
+
+  /**
+   * 是否支持作为分组容器, 默认 false
+   */
+  canBeParent?: boolean;
+
+  /**
+   * 是否支持作为分组子节点，默认 false
+   */
+  canBeChild?: boolean;
+}) {
+  const parent = useCellContext();
+  const contextValue = useCellContextValue();
   const eventStore = useEventStore(props);
   const propsRef = useRefValue(props);
   const instanceRef = useRef<Cell>();
@@ -56,26 +130,44 @@ export function useCell<Props extends CellBindingProps>(props: Props, factor?: C
       graphContext.onGraphReady((graph, helper) => {
         const f = factor ?? defaultFactory;
         const { instance, disposer } = f(propsRef.current, graph);
+        disposers.push(disposer);
+
         const cell = (instanceRef.current = instance as Cell);
 
-        // 订阅事件
-        const attachEvent = (name: string, handler: Function) => {
-          if (delegateToGraphEvents.includes(name)) {
-            // 代理到 graph
-            disposers.push(helper.delegateEvent(`cell:${name}`, handler, cell.id));
-          } else {
-            cell.on(name, handler as any);
-          }
-        };
+        if (parent && canBeChild) {
+          // 注册子节点
+          disposers.push(parent.addChild(cell));
+        }
 
-        eventStore.listenDelegationChange(attachEvent);
+        // 添加子节点
+        if (canBeParent) {
+          contextValue.__emitParentReady(cell);
+        } else if (contextValue.__hasChildren) {
+          throw new Error(`当前节点不能作为分组`);
+        }
 
-        const delegations = eventStore.getDelegations();
-        Object.keys(delegations).forEach(event => {
-          attachEvent(event, delegations[event]);
-        });
+        {
+          // 订阅事件
+          const attachEvent = (name: string, handler: Function) => {
+            if (delegateToGraphEvents.includes(name)) {
+              // 代理到 graph
+              disposers.push(helper.delegateEvent(`cell:${name}`, handler, cell.id));
+            } else {
+              cell.on(name, handler as any);
+            }
+          };
 
-        disposers.push(disposer);
+          eventStore.listenDelegationChange(attachEvent);
+
+          const delegations = eventStore.getDelegations();
+          Object.keys(delegations).forEach(event => {
+            attachEvent(event, delegations[event]);
+          });
+        }
+
+        // ready
+        onCellReady?.(cell);
+        propsRef.current?.onCellReady?.(cell);
       })
     );
 
@@ -107,5 +199,5 @@ export function useCell<Props extends CellBindingProps>(props: Props, factor?: C
     }
   }, [data]);
 
-  return instanceRef;
+  return { instanceRef, contextValue };
 }

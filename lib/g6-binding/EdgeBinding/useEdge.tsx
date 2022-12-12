@@ -36,7 +36,8 @@ function toTerminalData(source: Edge.Metadata['source']): Edge.TerminalData | un
 
 export function useEdge<Props extends EdgeBindingProps>(props: Props, factor?: CellFactory) {
   const { source, target, label } = props;
-  const instanceRef = useCell(props, factor ?? defaultFactory) as MutableRefObject<Edge>;
+  const instanceRef = useCell({ props, factor: factor ?? defaultFactory, canBeChild: false, canBeParent: false })
+    .instanceRef as MutableRefObject<Edge>;
 
   useDeepEffect(() => {
     if (source != null) {

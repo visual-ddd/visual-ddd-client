@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { CellContextProvider } from '../CellBinding/context';
 
 import { CellFactory } from '../CellBinding/useCell';
 import { wrapPreventListenerOptions } from '../hooks';
@@ -23,19 +24,19 @@ export function createShape<Props extends NodeBindingProps>(
   };
 
   function Comp(props: Props) {
-    const instance = useNode(props, factory);
+    const { instanceRef, contextValue } = useNode({ props, factory });
 
     for (const [prop, propUpdator] of properties) {
       const value = (props as any)[prop];
       // eslint-disable-next-line react-hooks/rules-of-hooks
       useEffect(() => {
         if (value != null) {
-          (instance.current as any)?.[propUpdator](value, wrapPreventListenerOptions({}));
+          (instanceRef.current as any)?.[propUpdator](value, wrapPreventListenerOptions({}));
         }
       }, [value]);
     }
 
-    return null;
+    return <CellContextProvider value={contextValue}>{props.children}</CellContextProvider>;
   }
 
   Comp.displayName = name;

@@ -36,25 +36,28 @@ export default function Designer() {
         }}
         style={{ width: 500, height: 500 }}
       >
-        <RectBinding
-          id="one"
-          position={position}
-          size={{ width: 100, height: 100 }}
-          label={'Hello ' + count}
-          // @ts-expect-error
-          onChange$position={evt => {
-            console.log('fuck', evt);
-            setPosition(evt.current);
-          }}
-          // @ts-expect-error
-          onChange$attrs={evt => {
-            console.log('change attrs', evt);
-          }}
-          onClick={evt => {
-            console.log('click rect', evt);
-            setCount(c => c + 1);
-          }}
-        ></RectBinding>
+        <RectBinding size={{ width: 300, height: 300 }} position={{ x: 300, y: 300 }} zIndex={1}>
+          <RectBinding
+            id="one"
+            position={position}
+            size={{ width: 100, height: 100 }}
+            label={'Hello ' + count}
+            // @ts-expect-error
+            onChange$position={evt => {
+              console.log('fuck', evt);
+              setPosition(evt.current);
+            }}
+            // @ts-expect-error
+            onChange$attrs={evt => {
+              console.log('change attrs', evt);
+            }}
+            onClick={evt => {
+              console.log('click rect', evt);
+              setCount(c => c + 1);
+            }}
+            zIndex={10}
+          ></RectBinding>
+        </RectBinding>
         <ReactComponentBinding id="two" position={{ x: 10, y: 10 }} component="hello"></ReactComponentBinding>
         <EdgeBinding target="one" source="two" label={`ok ${count}`} />
       </GraphBinding>

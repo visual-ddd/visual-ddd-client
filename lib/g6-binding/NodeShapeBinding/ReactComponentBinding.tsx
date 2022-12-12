@@ -5,6 +5,7 @@ import { Graph, Node } from '@antv/x6';
 import { CellFactory } from '../CellBinding/useCell';
 import { NodeBindingProps } from '../NodeBinding';
 import { useNode } from '../NodeBinding/useNode';
+import { CellContextProvider } from '../CellBinding/context';
 
 export interface ReactComponentBindingProps extends NodeBindingProps {
   /**
@@ -40,9 +41,9 @@ const factory: CellFactory = (props, graph) => {
 };
 
 export const ReactComponentBinding = memo((props: ReactComponentBindingProps) => {
-  useNode(props, factory);
+  const { contextValue } = useNode({ props, factory });
 
-  return null;
+  return <CellContextProvider value={contextValue}>{props.children}</CellContextProvider>;
 });
 
 ReactComponentBinding.displayName = 'ReactComponentBinding';
