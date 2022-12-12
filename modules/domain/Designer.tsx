@@ -1,3 +1,4 @@
+import { Graph } from '@antv/x6';
 import {
   GraphBinding,
   RectBinding,
@@ -6,6 +7,7 @@ import {
   registerX6ReactComponent,
 } from '@/lib/g6-binding';
 import { useState } from 'react';
+import { ComponentContainer, ComponentItem } from '@/lib/editor';
 
 function MyComponent() {
   const [count, setCount] = useState(0);
@@ -18,6 +20,15 @@ function MyComponent() {
 
 registerX6ReactComponent('hello', MyComponent);
 
+const options: Graph.Options = {
+  background: { color: '#fffbe6' },
+  grid: { size: 20, visible: true },
+  embedding: {
+    enabled: true,
+    findParent: 'bbox',
+  },
+};
+
 export default function Designer() {
   const [count, setCount] = useState(0);
   const [position, setPosition] = useState({ x: 100, y: 100 });
@@ -25,18 +36,36 @@ export default function Designer() {
   return (
     <div>
       <button onClick={() => setPosition({ x: 100, y: 100 })}>reset position</button>
-      <GraphBinding
-        options={{
-          background: { color: '#fffbe6' },
-          grid: { size: 20, visible: true },
+      <ComponentContainer>
+        <ComponentItem name="demo" data={{ type: 'ok' }}></ComponentItem>
+      </ComponentContainer>
+      <div
+        style={{ width: 100, height: 100, border: '1px solid red' }}
+        onDragOver={evt => {
+          evt.preventDefault();
+          console.log('drag over', evt);
+          evt.dataTransfer.dropEffect = 'copy';
         }}
+        onDrop={evt => {
+          console.log('drop x', evt);
+        }}
+      ></div>
+      <GraphBinding
+        options={options}
         // @ts-expect-error
         onCell$Click={evt => {
           console.log('click', evt);
         }}
         style={{ width: 500, height: 500 }}
+        onDrop={e => console.log('drop', e)}
       >
-        <RectBinding size={{ width: 300, height: 300 }} position={{ x: 300, y: 300 }} zIndex={1}>
+        <RectBinding
+          size={{ width: 300, height: 300 }}
+          position={{ x: 300, y: 300 }}
+          zIndex={1}
+          // @ts-expect-error
+          onChange$Children={e => console.log('change children', e)}
+        >
           <RectBinding
             id="one"
             position={position}

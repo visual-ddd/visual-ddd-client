@@ -1,4 +1,4 @@
-import React, { useEffect, useId, useMemo, useRef } from 'react';
+import React, { memo, useEffect, useId, useMemo, useRef } from 'react';
 import cls from 'classnames';
 import { Graph, Cell } from '@antv/x6';
 import type { Options } from '@antv/x6/lib/graph/options';
@@ -28,15 +28,19 @@ export interface GraphBindingProps {
    * @returns
    */
   onGraphReady?: (graph: Graph) => void;
+
+  onDrop?: (evt: { componentData: Record<string, any>; nativeEvent: React.DragEvent }) => void;
 }
 
 export { useGraphBinding } from './GraphBindingContext';
 
+export const ALLOWED_DROP_SOURCE = '__from-component__';
+
 /**
  * 画布
  */
-export const GraphBinding = (props: GraphBindingProps) => {
-  const { className, style, children, options, onGraphReady } = props;
+export const GraphBinding = memo((props: GraphBindingProps) => {
+  const { className, style, children, options, onGraphReady, onDrop } = props;
   const id = useId();
   const eventStore = useEventStore(props);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -104,6 +108,22 @@ export const GraphBinding = (props: GraphBindingProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, NoopArray);
 
+  const handleDragOver = (evt: React.DragEvent) => {
+    evt.preventDefault();
+    if (
+      evt.dataTransfer.dropEffect !== 'copy' &&
+      evt.dataTransfer.getData('text/plain').startsWith(ALLOWED_DROP_SOURCE)
+    ) {
+      evt.dataTransfer.dropEffect = 'copy';
+    }
+  };
+
+  const handleDrop = (evt: React.DragEvent) => {
+    const data = JSON.parse(evt.dataTransfer.getData('text/plain').slice(ALLOWED_DROP_SOURCE.length));
+    evt.persist();
+    onDrop?.({ componentData: data, nativeEvent: evt });
+  };
+
   useEffect(() => {
     const container = containerRef.current!;
 
@@ -137,8 +157,17 @@ export const GraphBinding = (props: GraphBindingProps) => {
   }, []);
 
   return (
-    <div className={cls('vd-graph-binding', className)} style={style} data-id={id} ref={containerRef}>
+    <div
+      className={cls('vd-graph-binding', className)}
+      style={style}
+      data-id={id}
+      ref={containerRef}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+    >
       <GraphBindingProvider value={contextValue}>{children}</GraphBindingProvider>
     </div>
   );
-};
+});
+
+GraphBinding.displayName = 'GraphBinding';
