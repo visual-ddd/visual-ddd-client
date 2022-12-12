@@ -1,9 +1,21 @@
-import { GraphBinding, RectBinding } from '@/lib/g6-binding';
+import { GraphBinding, RectBinding, ReactComponentBinding, registerX6ReactComponent } from '@/lib/g6-binding';
 import { useState } from 'react';
+
+function MyComponent() {
+  const [count, setCount] = useState(0);
+  return (
+    <div onClick={() => setCount(i => i + 1)} style={{ background: 'red', width: 200 }}>
+      hello world {count}
+    </div>
+  );
+}
+
+registerX6ReactComponent('hello', MyComponent);
 
 export default function Designer() {
   const [count, setCount] = useState(0);
   const [position, setPosition] = useState({ x: 100, y: 100 });
+
   return (
     <div>
       <button onClick={() => setPosition({ x: 100, y: 100 })}>reset position</button>
@@ -36,6 +48,7 @@ export default function Designer() {
             setCount(c => c + 1);
           }}
         ></RectBinding>
+        <ReactComponentBinding position={{ x: 10, y: 10 }} component="hello"></ReactComponentBinding>
       </GraphBinding>
     </div>
   );

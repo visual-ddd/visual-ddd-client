@@ -2,6 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@antv/x6': ^2.0.8
+  '@antv/x6-react-shape': ^2.0.7
   '@testing-library/jest-dom': ^5.16.5
   '@testing-library/react': ^13.4.0
   '@types/jest': ^29.2.4
@@ -35,6 +36,7 @@ specifiers:
 
 dependencies:
   '@antv/x6': 2.0.8
+  '@antv/x6-react-shape': 2.0.7_rsz64eyo6juon5x43jm7vppcke
   '@wakeapp/framework-core': 1.0.2_lodash@4.17.21
   '@wakeapp/hooks': 1.0.2_zrp62gez7omnrwllyfdlincg3a
   '@wakeapp/utils': 1.0.2_lodash@4.17.21
@@ -155,6 +157,19 @@ packages:
   /@antv/x6-geometry/2.0.4:
     resolution:
       { integrity: sha512-dlsLNRRTiCw8TsJ/03j3y5IbbbK4Npf6zBH6kAx8nnW+edNT/TAOChvPRzizwD+vA7wY9Rp2AiRnp/vCdIYC5w== }
+    dev: false
+
+  /@antv/x6-react-shape/2.0.7_rsz64eyo6juon5x43jm7vppcke:
+    resolution:
+      { integrity: sha512-pYD3pujQCcwu6B43njoY6IC6J5ranQ8nkg8N8WQvFHku6CJ25LZDSdlJKZTVlvyrg/0/8FFvO9IOSDreQ0kmTg== }
+    peerDependencies:
+      '@antv/x6': ^2.x
+      react: '>=16.8.6 || >=17.0.0 || >=18.0.0'
+      react-dom: '>=16.8.6 || >=17.0.0 || >= 18.0.0'
+    dependencies:
+      '@antv/x6': 2.0.8
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
     dev: false
 
   /@antv/x6/2.0.8:
