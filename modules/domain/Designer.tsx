@@ -1,4 +1,10 @@
-import { GraphBinding, RectBinding, ReactComponentBinding, registerX6ReactComponent } from '@/lib/g6-binding';
+import {
+  GraphBinding,
+  RectBinding,
+  ReactComponentBinding,
+  EdgeBinding,
+  registerX6ReactComponent,
+} from '@/lib/g6-binding';
 import { useState } from 'react';
 
 function MyComponent() {
@@ -31,6 +37,7 @@ export default function Designer() {
         style={{ width: 500, height: 500 }}
       >
         <RectBinding
+          id="one"
           position={position}
           size={{ width: 100, height: 100 }}
           label={'Hello ' + count}
@@ -48,7 +55,8 @@ export default function Designer() {
             setCount(c => c + 1);
           }}
         ></RectBinding>
-        <ReactComponentBinding position={{ x: 10, y: 10 }} component="hello"></ReactComponentBinding>
+        <ReactComponentBinding id="two" position={{ x: 10, y: 10 }} component="hello"></ReactComponentBinding>
+        <EdgeBinding target="one" source="two" label={`ok ${count}`} />
       </GraphBinding>
     </div>
   );
