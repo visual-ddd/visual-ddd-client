@@ -10,7 +10,7 @@ import { message } from 'antd';
 
 import { GraphBindingProps, GraphBinding } from '@/lib/g6-binding';
 
-import { BaseNode, useEditorStore } from '../Model';
+import { useEditorStore } from '../Model';
 
 import s from './Canvas.module.scss';
 import { Cells } from './Cells';
@@ -32,6 +32,9 @@ export const Canvas = memo((props: CanvasProps) => {
       {
         background: { color: '#fffbe6' },
         grid: { size: 15, visible: true },
+
+        // 分组嵌入
+        // FIXME: X6 目前不支持批量
         embedding: {
           enabled: true,
           findParent: 'bbox',
@@ -44,6 +47,10 @@ export const Canvas = memo((props: CanvasProps) => {
             });
           },
         },
+
+        // 连线控制
+        connecting: {},
+
         // 自动根据容器调整大小
         autoResize: true,
       } satisfies Graph.Options,

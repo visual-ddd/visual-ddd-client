@@ -18,6 +18,26 @@ export interface NodeBindingProps extends CellBindingProps {
   angle?: number;
 
   /**
+   * 连接桩
+   *
+   * @note 这个属性是静态的，只有初始挂载时有效
+   */
+  ports?: Node.Metadata['ports'];
+
+  /**
+   * 链接桩的 DOM 结构。当 ports.groups 和 ports.items 都没有为对应的链接桩指定 markup 时，则使用这个默认选项来渲染链接桩
+   *
+   * @note 这个属性是静态的，只有初始挂载时有效
+   */
+  portMarkup?: Node.Metadata['portMarkup'];
+
+  /**
+   * 链接桩标签的 DOM 结构。当 ports.groups 和 ports.items 都没有为对应的链接桩标签指定 markup 时，则使用这个默认选项来渲染链接桩标签
+   * @note 这个属性是静态的，只有初始挂载时有效
+   */
+  portLabelMarkup?: Node.Metadata['portLabelMarkup'];
+
+  /**
    * 开启嵌入，在开始拖动节点时触发
    * @param evt
    * @returns

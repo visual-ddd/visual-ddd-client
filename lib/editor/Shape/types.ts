@@ -6,6 +6,16 @@ export interface ShapeCoreInfo {
   type: string;
 }
 
+export interface ShapeComponentCellProps {
+  position?: PointLike;
+  size?: Size;
+  zIndex?: number;
+  id: string;
+  data: Properties;
+  children?: React.ReactNode;
+  canBeParent?: boolean;
+}
+
 export interface ShapeConfiguration {
   /**
    * 是否为群组，默认为 false
@@ -31,9 +41,17 @@ export interface ShapeConfiguration {
 
   /**
    * 拖入时数据初始化, 默认只会创建包含 position 的基础数据
+   * @note 注意，放在 Properties 的表示会进行持久化, 对于不需要持久化的静态数据，比如 attrs 等，
+   *   在 component 渲染时、或 initialProps 中指定
    * @returns
    */
   dropFactory?: (context: { nativeEvent: React.DragEvent; graph: Graph }) => Properties;
+
+  /**
+   * 静态的、初始参数
+   * @returns
+   */
+  initialProps?: () => Record<string, any>;
 
   /**
    * 是否支持选中, 默认 true
@@ -49,16 +67,7 @@ export interface ShapeConfiguration {
    * 组件渲染定义
    */
   component: (props: {
-    cellProps: {
-      position?: PointLike;
-      size?: Size;
-      attrs?: Record<string, any>;
-      zIndex?: number;
-      id: string;
-      data: Properties;
-      children?: React.ReactNode;
-      canBeParent?: boolean;
-    };
+    cellProps: ShapeComponentCellProps;
     store: BaseEditorStore;
     model: BaseNode;
   }) => React.ReactElement;

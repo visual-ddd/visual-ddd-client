@@ -8,6 +8,7 @@ import {
   Canvas,
   BaseNode,
   defineShape,
+  useHoverShowPorts,
 } from '@/lib/editor';
 import { observer } from 'mobx-react';
 
@@ -44,16 +45,40 @@ defineShape('child', {
   dropFactory() {
     return {
       size: { width: 50, height: 50 },
-      zIndex: 2,
-      attrs: {
-        body: {
-          fill: 'red',
-        },
-      },
     };
   },
+  initialProps: () => ({
+    zIndex: 2,
+    attrs: {
+      body: {
+        fill: 'red',
+      },
+    },
+    ports: {
+      groups: {
+        left: {
+          position: 'left',
+          attrs: { text: { text: 'ok' }, circle: { magnet: true, r: 5 } },
+        },
+        right: {
+          position: 'right',
+          label: {
+            position: 'right',
+          },
+          attrs: { text: { text: 'ok' }, circle: { magnet: true, r: 5 } },
+        },
+      },
+      items: [
+        { id: 'left', group: 'left' },
+        { id: 'right', group: 'right' },
+      ],
+    },
+  }),
   component(props) {
-    return <RectBinding {...props.cellProps} />;
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const hoverHandlers = useHoverShowPorts();
+
+    return <RectBinding {...props.cellProps} {...hoverHandlers} />;
   },
 });
 

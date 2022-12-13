@@ -3,3 +3,4 @@ export * from './ShapeRegistry';
 export * from './defineShape';
 export * from './ShapeRenderer';
 export * from './utils';
+export * from './hooks';
