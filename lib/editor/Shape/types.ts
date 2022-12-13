@@ -41,6 +41,11 @@ export interface ShapeConfiguration {
   selectable?: boolean;
 
   /**
+   * 是否支持删除, 默认 true
+   */
+  removable?: boolean | ((context: { model: BaseNode; graph: Graph }) => boolean);
+
+  /**
    * 组件渲染定义
    */
   component: (props: {

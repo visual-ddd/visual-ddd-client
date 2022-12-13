@@ -24,7 +24,6 @@ registerX6ReactComponent('hello', MyComponent);
 
 defineShape('rect', {
   group: true,
-  selectable: false,
   droppable: ctx => {
     return ctx.sourceType !== 'rect';
   },
@@ -41,6 +40,7 @@ defineShape('rect', {
 
 defineShape('child', {
   group: false,
+  removable: false,
   dropFactory() {
     return {
       size: { width: 50, height: 50 },
@@ -60,7 +60,23 @@ defineShape('child', {
 const store = new BaseEditorStore();
 
 const Operations = observer(() => {
-  return <div>selected: {store.selectedNodes.map(n => n.id).join(', ')}</div>;
+  return (
+    <div>
+      <div>selected: {store.selectedNodes.map(n => n.id).join(', ')}</div>
+      <div>focusing: {store.focusingNode?.id}</div>
+
+      <button onClick={store.removeSelected}>移除选中</button>
+      <button
+        onClick={() => {
+          if (store.focusingNode) {
+            store.removeNode({ node: store.focusingNode });
+          }
+        }}
+      >
+        移除focusing
+      </button>
+    </div>
+  );
 });
 
 const Designer = observer(() => {

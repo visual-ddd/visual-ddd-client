@@ -1,9 +1,10 @@
 import { makeObservable, observable } from 'mobx';
 import { v4 } from 'uuid';
+import { booleanPredicate, EventEmitter } from '@wakeapp/utils';
 
 import { BaseNode } from './BaseNode';
 import { derive, mutation } from '@/lib/store';
-import type { Properties } from './types';
+import type { Disposer, Properties } from './types';
 import { ShapeRegistry } from '../Shape';
 
 /**
@@ -32,6 +33,8 @@ export class BaseEditorStore {
   @observable
   private nodeIndexById: Map<string, BaseNode> = new Map();
 
+  private eventBus: EventEmitter = new EventEmitter();
+
   /**
    * 当前聚焦的节点(单一节点)
    */
@@ -52,14 +55,7 @@ export class BaseEditorStore {
     // TODO: 触发 actions
 
     // reset references
-    if (child.parent) {
-      child.parent.removeChild(child);
-    } else {
-      const idx = this.nodes.indexOf(child);
-      if (idx !== -1) {
-        this.nodes.splice(idx, 1);
-      }
-    }
+    this.removeChild(child);
 
     // append
     if (parent) {
@@ -91,6 +87,60 @@ export class BaseEditorStore {
     this.selectedNodes = params.selected;
   };
 
+  @mutation('REMOVE_NODE')
+  removeNode = (params: { node: BaseNode }, checkValidate = true) => {
+    const { node } = params;
+
+    if (checkValidate && this.hasUnremovableNode(node)) {
+      this.emit('UNREMOVABLE');
+      return false;
+    }
+
+    // 深度优先删除
+    if (node.children.length) {
+      const clone = node.children.slice(0);
+      for (const child of clone) {
+        this.removeNode({ node: child }, false);
+      }
+    }
+
+    // 移除引用关系
+    this.removeChild(node);
+
+    // 移除索引
+    this.nodeIndexById.delete(node.id);
+
+    this.emit('NODE_REMOVED', { node });
+
+    return true;
+  };
+
+  @mutation('REMOVE_SELECTED')
+  removeSelected = () => {
+    const selected = this.selectedNodes;
+    if (!selected.length) {
+      return false;
+    }
+
+    if (selected.some(this.hasUnremovableNode)) {
+      this.emit('UNREMOVABLE');
+      return false;
+    }
+
+    // 需要进行合并，比如包含了公共节点，需要进行删除
+    const flattened = this.flatNodes(selected);
+
+    // 删除
+    for (const item of flattened) {
+      this.removeNode({ node: item });
+    }
+
+    // 清空选择
+    this.emit('UNSELECT_ALL');
+
+    return true;
+  };
+
   /**
    * 通过 id 获取节点
    * @param id
@@ -101,10 +151,86 @@ export class BaseEditorStore {
   }
 
   /**
+   * 事件订阅
+   * @param name
+   * @param listener
+   */
+  on(name: 'UNSELECT_ALL', listener: () => void): Disposer;
+  on(name: 'UNREMOVABLE', listener: () => void): Disposer;
+  on(name: 'NODE_REMOVED', listener: (args: { node: BaseNode }) => void): Disposer;
+  on(name: string, listener: (args: any) => void): Disposer {
+    this.eventBus.on(name, listener);
+
+    return () => {
+      this.eventBus.off(name, listener);
+    };
+  }
+
+  /**
    * 节点工厂
    */
   protected nodeFactory(type: string, id?: string): BaseNode {
     const node = new BaseNode(type, id ?? v4());
     return node;
+  }
+
+  /**
+   * 事件触发
+   * @param name
+   */
+  private emit(name: 'UNSELECT_ALL'): void;
+  private emit(name: 'UNREMOVABLE'): void;
+  private emit(name: 'NODE_REMOVED', args: { node: BaseNode }): void;
+  private emit(name: string, args?: any): void {
+    this.eventBus.emit(name, args);
+  }
+
+  private removeChild(child: BaseNode): void {
+    if (child.parent) {
+      child.parent.removeChild(child);
+    } else {
+      const idx = this.nodes.indexOf(child);
+      if (idx !== -1) {
+        this.nodes.splice(idx, 1);
+      }
+    }
+  }
+
+  private hasUnremovableNode = (node: BaseNode): boolean => {
+    if (!this.shapeRegistry.isRemovable({ model: node })) {
+      return true;
+    }
+
+    if (node.children.length) {
+      if (node.children.some(this.hasUnremovableNode)) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
+  /**
+   * 节点扁平化
+   * @param nodes
+   * @returns
+   */
+  private flatNodes(nodes: BaseNode[]): BaseNode[] {
+    // 按照节点深度排序
+    const clone: Array<BaseNode | null> = nodes.slice(0).sort((a, b) => a.depth - b.depth);
+
+    for (let i = 0; i < clone.length; i++) {
+      const current = clone[i];
+
+      // eslint-disable-next-line no-unmodified-loop-condition
+      for (let j = i + 1; current && j < clone.length; j++) {
+        const next = clone[j];
+        if (next && current.contains(next)) {
+          clone[j] = null;
+        }
+      }
+    }
+
+    return clone.filter(booleanPredicate);
   }
 }

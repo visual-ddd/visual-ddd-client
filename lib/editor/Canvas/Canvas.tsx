@@ -1,9 +1,12 @@
 import { Graph, Node } from '@antv/x6';
 import { Selection } from '@antv/x6-plugin-selection';
+import { Keyboard } from '@antv/x6-plugin-keyboard';
 import { memo, useMemo } from 'react';
 import merge from 'lodash/merge';
 import { booleanPredicate, NoopObject } from '@wakeapp/utils';
+import { useDisposer } from '@wakeapp/hooks';
 import classNames from 'classnames';
+import { message } from 'antd';
 
 import { GraphBindingProps, GraphBinding } from '@/lib/g6-binding';
 
@@ -11,7 +14,7 @@ import { BaseNode, useEditorStore } from '../Model';
 
 import s from './Canvas.module.scss';
 import { Cells } from './Cells';
-import { assertShapeInfo, ShapeCoreInfo } from '../Shape';
+import { assertShapeInfo } from '../Shape';
 
 export interface CanvasProps extends GraphBindingProps {}
 
@@ -20,6 +23,7 @@ export interface CanvasProps extends GraphBindingProps {}
  */
 export const Canvas = memo((props: CanvasProps) => {
   const store = useEditorStore()!;
+  const disposer = useDisposer();
   const { options } = props;
 
   const finalOptions: Graph.Options = useMemo(() => {
@@ -47,35 +51,14 @@ export const Canvas = memo((props: CanvasProps) => {
     );
   }, [options]);
 
-  const handleGraphReady = (graph: Graph) => {
-    store.shapeRegistry.bindGraph(graph);
-
-    // 插件扩展
-
-    // 选中控制
-    graph.use(
-      new Selection({
-        enabled: true,
-        multiple: true,
-
-        // 框选
-        rubberband: true,
-        // 严格框选
-        strict: true,
-        showNodeSelectionBox: true,
-        filter(cell) {
-          return store.shapeRegistry.isSelectable({ cell, graph: this });
-        },
-      })
-    );
-  };
-
   /**
    * 选择变动
    */
   const handleSelectionChanged: GraphBindingProps['onSelection$Changed'] = evt => {
-    const selected = evt.selected.map(i => store.shapeRegistry.getModelByNode(i)).filter(booleanPredicate);
-    store.setSelected({ selected });
+    if (evt.added.length || evt.removed.length) {
+      const selected = evt.selected.map(i => store.shapeRegistry.getModelByNode(i)).filter(booleanPredicate);
+      store.setSelected({ selected });
+    }
   };
 
   /**
@@ -118,7 +101,7 @@ export const Canvas = memo((props: CanvasProps) => {
     if (maybeParents.length) {
       // 获取第一个支持拖入的容器
       for (const candidate of maybeParents) {
-        if (store.shapeRegistry.isDroppable({ parent: candidate, sourceType: type, graph })) {
+        if (candidate.isVisible() && store.shapeRegistry.isDroppable({ parent: candidate, sourceType: type, graph })) {
           return insert(candidate);
         }
       }
@@ -146,6 +129,58 @@ export const Canvas = memo((props: CanvasProps) => {
       console.log('change parent', evt);
       store.moveNode({ child: model, parent: current ? store.getNodeById(current) : undefined });
     }
+  };
+
+  const handleGraphReady = (graph: Graph) => {
+    store.shapeRegistry.bindGraph(graph);
+
+    // 插件扩展
+
+    // 选中控制
+    graph.use(
+      new Selection({
+        enabled: true,
+        multiple: true,
+
+        // 框选
+        rubberband: true,
+        // 严格框选
+        strict: true,
+        showNodeSelectionBox: true,
+        filter(cell) {
+          return store.shapeRegistry.isSelectable({ cell, graph: this });
+        },
+      })
+    );
+
+    // 快捷键
+    graph.use(
+      new Keyboard({
+        // 单个页面可能存在多个画布实例
+        global: false,
+        enabled: true,
+      })
+    );
+
+    // 删除
+    graph.bindKey('backspace', () => {
+      store.removeSelected();
+    });
+
+    // 监听 store 事件
+    disposer.push(
+      store.on('UNSELECT_ALL', () => {
+        graph.cleanSelection();
+      }),
+      store.on('NODE_REMOVED', params => {
+        console.log('node removed', params.node);
+        graph.unselect(params.node.id);
+      }),
+      store.on('UNREMOVABLE', () => {
+        // TODO: 详细
+        message.warning('不能删除');
+      })
+    );
   };
 
   return (

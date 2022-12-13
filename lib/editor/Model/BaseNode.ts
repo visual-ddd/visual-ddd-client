@@ -1,3 +1,4 @@
+import { derive } from '@/lib/store';
 import { makeObservable, observable } from 'mobx';
 import type { Properties } from './types';
 
@@ -41,6 +42,14 @@ export class BaseNode {
   @observable
   properties: Properties = {};
 
+  /**
+   * 节点深度
+   */
+  @derive
+  get depth(): number {
+    return this.parent == null ? 0 : this.parent.depth + 1;
+  }
+
   constructor(type: string, id: string) {
     this.type = type;
     this.id = id;
@@ -62,6 +71,23 @@ export class BaseNode {
     if (idx !== -1) {
       this.children.splice(idx, 1);
     }
+  }
+
+  /**
+   * 是否包含给定的子节点
+   */
+  contains(node: this): boolean {
+    let current: this | undefined = node;
+
+    while (current) {
+      if (BaseNode.isEqual(this, current)) {
+        return true;
+      }
+
+      current = current.parent;
+    }
+
+    return false;
   }
 
   private getNodeIdx(node: this) {

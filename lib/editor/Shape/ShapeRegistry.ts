@@ -32,6 +32,21 @@ export class ShapeRegistry {
   }
 
   /**
+   * 是否支持移除
+   * @param context
+   * @returns
+   */
+  isRemovable = (context: { model: BaseNode }) => {
+    const conf = this.getConfigurationByModel(context.model);
+
+    if (typeof conf?.removable === 'function') {
+      return conf.removable({ graph: this.graph, model: context.model });
+    }
+
+    return conf?.removable ?? true;
+  };
+
+  /**
    * 是否支持选中
    * @param context
    * @returns
@@ -39,6 +54,11 @@ export class ShapeRegistry {
   isSelectable(context: { cell: Cell; graph: Graph }): boolean {
     const { cell, graph } = context;
     this.bindGraphIfNeed(graph);
+
+    // 隐藏节点不能选择
+    if (!cell.isVisible()) {
+      return false;
+    }
 
     const model = this.getModelByNode(cell);
 
