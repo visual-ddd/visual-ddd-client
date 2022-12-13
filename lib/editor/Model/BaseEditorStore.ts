@@ -8,6 +8,8 @@ import { ShapeRegistry } from '../Shape';
 
 /**
  * 编辑器 Store 基类
+ *
+ * 注意： 这里不会耦合视图相关内容
  */
 export class BaseEditorStore {
   /**
@@ -21,8 +23,22 @@ export class BaseEditorStore {
   @observable
   nodes: BaseNode[] = [];
 
+  /**
+   * 已选中的节点
+   */
+  @observable
+  selectedNodes: BaseNode[] = [];
+
   @observable
   private nodeIndexById: Map<string, BaseNode> = new Map();
+
+  /**
+   * 当前聚焦的节点(单一节点)
+   */
+  @derive
+  get focusingNode() {
+    return this.selectedNodes.length === 1 ? this.selectedNodes[0] : null;
+  }
 
   constructor() {
     this.shapeRegistry = new ShapeRegistry(this);
@@ -68,6 +84,11 @@ export class BaseEditorStore {
   @mutation('MOVE_NODE')
   moveNode = (params: { child: BaseNode; parent?: BaseNode }) => {
     this.appendChild(params);
+  };
+
+  @mutation('SET_SELECTED')
+  setSelected = (params: { selected: BaseNode[] }) => {
+    this.selectedNodes = params.selected;
   };
 
   /**

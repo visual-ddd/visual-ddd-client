@@ -1,4 +1,4 @@
-import { Graph, Node } from '@antv/x6';
+import { Cell, Graph, Node } from '@antv/x6';
 import type { BaseEditorStore, BaseNode } from '../Model';
 
 import { shapes } from './store';
@@ -29,6 +29,27 @@ export class ShapeRegistry {
    */
   isShapeDefined(type: string) {
     return shapes.has(type);
+  }
+
+  /**
+   * 是否支持选中
+   * @param context
+   * @returns
+   */
+  isSelectable(context: { cell: Cell; graph: Graph }): boolean {
+    const { cell, graph } = context;
+    this.bindGraphIfNeed(graph);
+
+    const model = this.getModelByNode(cell);
+
+    // 未定义类型
+    if (model == null) {
+      return true;
+    }
+
+    const conf = this.getConfigurationByModel(model);
+
+    return conf?.selectable ?? true;
   }
 
   /**
@@ -87,7 +108,7 @@ export class ShapeRegistry {
     };
   }
 
-  getModelByNode(node: Node) {
+  getModelByNode(node: { id: string }) {
     return this.editorStore.getNodeById(node.id);
   }
 

@@ -2,6 +2,7 @@ import React, { memo, useEffect, useId, useMemo, useRef } from 'react';
 import cls from 'classnames';
 import { Graph, Cell, CellView, Model } from '@antv/x6';
 import type { Options } from '@antv/x6/lib/graph/options';
+import { Selection } from '@antv/x6-plugin-selection';
 import { Noop, NoopArray } from '@wakeapp/utils';
 
 import {
@@ -62,6 +63,11 @@ export interface GraphBindingProps {
    * @returns
    */
   onCell$Change$Parent?: (evt: Model.EventArgs['cell:change:parent']) => void;
+
+  /**
+   * 选择变动
+   */
+  onSelection$Changed?: (evt: Selection.EventArgs['selection:changed']) => void;
 }
 
 export { useGraphBinding } from './GraphBindingContext';

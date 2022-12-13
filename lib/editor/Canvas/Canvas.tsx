@@ -1,7 +1,8 @@
 import { Graph, Node } from '@antv/x6';
+import { Selection } from '@antv/x6-plugin-selection';
 import { memo, useMemo } from 'react';
 import merge from 'lodash/merge';
-import { NoopObject } from '@wakeapp/utils';
+import { booleanPredicate, NoopObject } from '@wakeapp/utils';
 import classNames from 'classnames';
 
 import { GraphBindingProps, GraphBinding } from '@/lib/g6-binding';
@@ -41,14 +42,41 @@ export const Canvas = memo((props: CanvasProps) => {
         },
         // 自动根据容器调整大小
         autoResize: true,
-
-        // 对齐线
-        // @ts-expect-error
-        snapline: true,
       } satisfies Graph.Options,
       options ?? NoopObject
     );
   }, [options]);
+
+  const handleGraphReady = (graph: Graph) => {
+    store.shapeRegistry.bindGraph(graph);
+
+    // 插件扩展
+
+    // 选中控制
+    graph.use(
+      new Selection({
+        enabled: true,
+        multiple: true,
+
+        // 框选
+        rubberband: true,
+        // 严格框选
+        strict: true,
+        showNodeSelectionBox: true,
+        filter(cell) {
+          return store.shapeRegistry.isSelectable({ cell, graph: this });
+        },
+      })
+    );
+  };
+
+  /**
+   * 选择变动
+   */
+  const handleSelectionChanged: GraphBindingProps['onSelection$Changed'] = evt => {
+    const selected = evt.selected.map(i => store.shapeRegistry.getModelByNode(i)).filter(booleanPredicate);
+    store.setSelected({ selected });
+  };
 
   /**
    * 处理组件库拖入
@@ -125,8 +153,9 @@ export const Canvas = memo((props: CanvasProps) => {
       options={finalOptions}
       className={classNames('vd-editor-canvas', s.root)}
       onDrop={handleDrop}
-      onGraphReady={store.shapeRegistry.bindGraph}
+      onGraphReady={handleGraphReady}
       onCell$Change$Parent={handleParentChange}
+      onSelection$Changed={handleSelectionChanged}
     >
       <Cells />
     </GraphBinding>

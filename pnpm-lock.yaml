@@ -2,6 +2,9 @@ lockfileVersion: 5.4
 
 specifiers:
   '@antv/x6': ^2.0.8
+  '@antv/x6-plugin-keyboard': ^2.1.4
+  '@antv/x6-plugin-selection': ^2.1.5
+  '@antv/x6-plugin-snapline': ^2.1.6
   '@antv/x6-react-shape': ^2.1.0
   '@testing-library/jest-dom': ^5.16.5
   '@testing-library/react': ^13.4.0
@@ -38,6 +41,9 @@ specifiers:
 
 dependencies:
   '@antv/x6': 2.0.8
+  '@antv/x6-plugin-keyboard': 2.1.4_@antv+x6@2.0.8
+  '@antv/x6-plugin-selection': 2.1.5_@antv+x6@2.0.8
+  '@antv/x6-plugin-snapline': 2.1.6_@antv+x6@2.0.8
   '@antv/x6-react-shape': 2.1.0_rsz64eyo6juon5x43jm7vppcke
   '@wakeapp/framework-core': 1.0.2_lodash@4.17.21
   '@wakeapp/hooks': 1.0.2_zrp62gez7omnrwllyfdlincg3a
@@ -161,6 +167,34 @@ packages:
   /@antv/x6-geometry/2.0.4:
     resolution:
       { integrity: sha512-dlsLNRRTiCw8TsJ/03j3y5IbbbK4Npf6zBH6kAx8nnW+edNT/TAOChvPRzizwD+vA7wY9Rp2AiRnp/vCdIYC5w== }
+    dev: false
+
+  /@antv/x6-plugin-keyboard/2.1.4_@antv+x6@2.0.8:
+    resolution:
+      { integrity: sha512-7EbkLOPAn8+aOdohRqFQquepx8Nw7i1dmQcgNwWNk8jV0lbnsXbd32cXqoVjVmA5cTEnWYkYj9ftpV0YM9g5fQ== }
+    peerDependencies:
+      '@antv/x6': ^2.x
+    dependencies:
+      '@antv/x6': 2.0.8
+      mousetrap: 1.6.5
+    dev: false
+
+  /@antv/x6-plugin-selection/2.1.5_@antv+x6@2.0.8:
+    resolution:
+      { integrity: sha512-Stxjw1WENURpgV4RAGnXW14q58X/ojxpAa3BIL1s2pVPn/xJWXgYzxg5YhiP+z+oJiqtWFTm4vk6S18aRCNOfg== }
+    peerDependencies:
+      '@antv/x6': ^2.x
+    dependencies:
+      '@antv/x6': 2.0.8
+    dev: false
+
+  /@antv/x6-plugin-snapline/2.1.6_@antv+x6@2.0.8:
+    resolution:
+      { integrity: sha512-DqZsoy8t5kYLrrh/GdkYHqzxifWR2Vbg/NPoKFU9ZiRHb3WkXNyMhr0iQTtIqZMRRI5BVdf72Yu2E9QMDI7N7g== }
+    peerDependencies:
+      '@antv/x6': ^2.x
+    dependencies:
+      '@antv/x6': 2.0.8
     dev: false
 
   /@antv/x6-react-shape/2.1.0_rsz64eyo6juon5x43jm7vppcke:
@@ -4598,6 +4632,11 @@ packages:
   /mobx/6.7.0:
     resolution:
       { integrity: sha512-1kBLBdSNG2bA522HQdbsTvwAwYf9hq9FWxmlhX7wTsJUAI54907J+ozfGW+LoYUo06vjit748g6QH1AAGLNebw== }
+    dev: false
+
+  /mousetrap/1.6.5:
+    resolution:
+      { integrity: sha512-QNo4kEepaIBwiT8CDhP98umTetp+JNfQYBWvC1pc6/OAibuXtRcxZ58Qz8skvEHYvURne/7R8T5VoOI7rDsEUA== }
     dev: false
 
   /ms/2.0.0:

@@ -36,6 +36,11 @@ export interface ShapeConfiguration {
   dropFactory?: (context: { nativeEvent: React.DragEvent; graph: Graph }) => Properties;
 
   /**
+   * 是否支持选中, 默认 true
+   */
+  selectable?: boolean;
+
+  /**
    * 组件渲染定义
    */
   component: (props: {

@@ -137,13 +137,16 @@ export function useCell<Props extends CellBindingProps>({
     disposers.push(
       graphContext.onGraphReady((graph, helper) => {
         const f = factor ?? defaultFactory;
-        const id = propsRef.current.id;
+        const { id, visible = true } = propsRef.current;
 
         console.log('creating');
 
         // 尽量复用旧的实例，避免增删
         const factoryInstance = (id ? helper.reuse(id) : undefined) || f(propsRef.current, graph);
         const instance = factoryInstance.instance as Cell;
+        instanceRef.current = instance as Cell;
+
+        instance.setVisible(visible, wrapPreventListenerOptions({}));
 
         disposers.push(() => {
           console.log('disposing');
@@ -151,18 +154,19 @@ export function useCell<Props extends CellBindingProps>({
           helper.recycle(instance.id, factoryInstance);
         });
 
-        instanceRef.current = instance as Cell;
+        // 分组关系
+        {
+          if (parent && canBeChild) {
+            // 注册子节点
+            disposers.push(parent.addChild(instance));
+          }
 
-        if (parent && canBeChild) {
-          // 注册子节点
-          disposers.push(parent.addChild(instance));
-        }
-
-        // 添加子节点
-        if (canBeParent) {
-          contextValue.__emitParentReady(instance);
-        } else if (contextValue.__hasChildren) {
-          throw new Error(`当前节点不能作为分组`);
+          // 添加子节点
+          if (canBeParent) {
+            contextValue.__emitParentReady(instance);
+          } else if (contextValue.__hasChildren) {
+            throw new Error(`当前节点不能作为分组`);
+          }
         }
 
         {
@@ -186,8 +190,10 @@ export function useCell<Props extends CellBindingProps>({
         }
 
         // ready
-        onCellReady?.(instance);
-        propsRef.current?.onCellReady?.(instance);
+        {
+          onCellReady?.(instance);
+          propsRef.current?.onCellReady?.(instance);
+        }
       })
     );
 

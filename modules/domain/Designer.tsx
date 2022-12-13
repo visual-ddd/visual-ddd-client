@@ -24,6 +24,7 @@ registerX6ReactComponent('hello', MyComponent);
 
 defineShape('rect', {
   group: true,
+  selectable: false,
   droppable: ctx => {
     return ctx.sourceType !== 'rect';
   },
@@ -58,24 +59,8 @@ defineShape('child', {
 
 const store = new BaseEditorStore();
 
-const List: FC<{ list: BaseNode[] }> = observer(props => {
-  return (
-    <>
-      {props.list.map(i => (
-        <RectBinding
-          key={i.id}
-          position={i.properties.position}
-          size={{ width: 100, height: 100 }}
-          onEmbedded={e => {
-            console.log('embedded', e);
-          }}
-          data={{}}
-        >
-          {!!i.children.length && <List list={i.children} />}
-        </RectBinding>
-      ))}
-    </>
-  );
+const Operations = observer(() => {
+  return <div>selected: {store.selectedNodes.map(n => n.id).join(', ')}</div>;
 });
 
 const Designer = observer(() => {
@@ -90,6 +75,8 @@ const Designer = observer(() => {
         <div style={{ width: 500, height: 500 }}>
           <Canvas></Canvas>
         </div>
+
+        <Operations />
       </EditorStoreProvider>
     </div>
   );
