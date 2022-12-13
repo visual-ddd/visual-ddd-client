@@ -49,7 +49,14 @@ export const Canvas = memo((props: CanvasProps) => {
         },
 
         // 连线控制
-        connecting: {},
+        connecting: {
+          // 吸附
+          snap: true,
+          // 是否支持循环连线
+          allowLoop: arg => {
+            return store.shapeRegistry.isAllowLoopConnect(arg);
+          },
+        },
 
         // 自动根据容器调整大小
         autoResize: true,

@@ -1,4 +1,5 @@
 import { Cell, Graph, Node } from '@antv/x6';
+import { Options } from '@antv/x6/lib/graph/options';
 import type { BaseEditorStore, BaseNode } from '../Model';
 
 import { shapes } from './store';
@@ -32,7 +33,27 @@ export class ShapeRegistry {
   }
 
   /**
-   * 是否支持移除
+   * 是否支持循环连线, 默认 true
+   */
+  isAllowLoopConnect = (context: Options.ValidateConnectionArgs) => {
+    const cell = context.sourceCell!;
+    const model = this.getModelByNode(cell)!;
+    const config = this.getConfigurationByModel(model);
+    const allow = config?.allowLoopConnect ?? true;
+
+    if (allow) {
+      return true;
+    }
+
+    // 禁止情况，如果是环就返回 false
+    // X6 不会自己判断是否为循环，allowLoop 会被频繁调用
+    const isLoop = context.sourceCell === context.targetCell;
+
+    return !isLoop;
+  };
+
+  /**
+   * 是否支持移除, 默认 true
    * @param context
    * @returns
    */

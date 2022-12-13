@@ -47,6 +47,7 @@ defineShape('child', {
       size: { width: 50, height: 50 },
     };
   },
+  allowLoopConnect: false,
   initialProps: () => ({
     zIndex: 2,
     attrs: {

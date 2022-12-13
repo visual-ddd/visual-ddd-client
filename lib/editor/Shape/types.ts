@@ -64,6 +64,11 @@ export interface ShapeConfiguration {
   removable?: boolean | ((context: { model: BaseNode; graph: Graph }) => boolean);
 
   /**
+   * 是否允许循环连线, 默认为 true
+   */
+  allowLoopConnect?: boolean;
+
+  /**
    * 组件渲染定义
    */
   component: (props: {
