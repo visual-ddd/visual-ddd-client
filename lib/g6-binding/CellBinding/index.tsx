@@ -9,7 +9,12 @@ export * from './types';
  * Cell 是 Node 和 Edge 的父类, 通常你不会直接使用它
  */
 export const CellBinding = (props: CellBindingProps) => {
-  const { contextValue } = useCell({ props, canBeChild: true, canBeParent: true });
+  const { canBeParent = true } = props;
+  const { contextValue } = useCell({ props, canBeChild: true, canBeParent: canBeParent });
 
-  return <CellContextProvider value={contextValue}>{props.children}</CellContextProvider>;
+  if (canBeParent) {
+    return <CellContextProvider value={contextValue}>{props.children}</CellContextProvider>;
+  } else {
+    return null;
+  }
 };

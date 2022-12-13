@@ -5,7 +5,12 @@ import { useNode } from './useNode';
 export * from './types';
 
 export const NodeBinding = (props: NodeBindingProps) => {
-  const { contextValue } = useNode({ props });
+  const { canBeParent = true } = props;
+  const { contextValue } = useNode({ props, canBeParent });
 
-  return <CellContextProvider value={contextValue}>{props.children}</CellContextProvider>;
+  if (canBeParent) {
+    return <CellContextProvider value={contextValue}>{props.children}</CellContextProvider>;
+  } else {
+    return null;
+  }
 };

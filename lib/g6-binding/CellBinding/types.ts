@@ -31,6 +31,11 @@ export interface CellBindingProps {
    */
   data?: Cell.Metadata['data'];
 
+  /**
+   * 是否支持作为分组, 默认 true
+   */
+  canBeParent?: boolean;
+
   children?: React.ReactNode;
 
   onCellReady?: (cell: Cell) => void;

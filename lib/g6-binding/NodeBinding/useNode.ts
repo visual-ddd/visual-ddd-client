@@ -8,20 +8,28 @@ import { wrapPreventListenerOptions } from '../hooks';
 import { NodeBindingProps } from './types';
 
 const defaultFactory: CellFactory = (props: any, graph: Graph) => {
-  const node = new Node(props) as any;
+  const node = new Node(props);
   graph.addNode(node);
 
   return {
     instance: node,
     disposer: () => {
-      graph.removeNode(node);
+      graph.removeNode(node, wrapPreventListenerOptions({}));
     },
   };
 };
 
-export function useNode<Props extends NodeBindingProps>({ props, factory }: { props: Props; factory?: CellFactory }) {
+export function useNode<Props extends NodeBindingProps>({
+  props,
+  factory,
+  canBeParent = true,
+}: {
+  props: Props;
+  factory?: CellFactory;
+  canBeParent?: boolean;
+}) {
   const { size, position, angle } = props;
-  const ctx = useCell({ props, factor: factory ?? defaultFactory, canBeChild: true, canBeParent: true });
+  const ctx = useCell({ props, factor: factory ?? defaultFactory, canBeChild: true, canBeParent });
   const instanceRef = ctx.instanceRef as MutableRefObject<Node>;
   const contextValue = ctx.contextValue;
 

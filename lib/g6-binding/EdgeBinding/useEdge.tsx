@@ -14,7 +14,7 @@ const defaultFactory: CellFactory = (props: any, graph: Graph) => {
   return {
     instance: instance,
     disposer: () => {
-      graph.removeEdge(instance);
+      graph.removeEdge(instance, wrapPreventListenerOptions({}));
     },
   };
 };

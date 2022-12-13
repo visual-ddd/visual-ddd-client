@@ -2,6 +2,9 @@ import { useEffect, useMemo, useRef } from 'react';
 import { Disposer } from '@wakeapp/utils';
 import { useDeepEffect, useRefValue } from '@wakeapp/hooks';
 import { Cell, Graph } from '@antv/x6';
+import memoize from 'lodash/memoize';
+
+import { makeSet } from '@/lib/utils';
 
 import { useGraphBinding } from '../GraphBinding';
 
@@ -24,25 +27,30 @@ const defaultFactory: CellFactory = (props, graph) => {
 
   return {
     instance,
-    disposer: () => graph.removeCell(instance),
+    disposer: () => graph.removeCell(instance, wrapPreventListenerOptions({})),
   };
 };
 
-const delegateToGraphEvents = [
-  'click',
-  'dblclick',
-  'contextmenu',
-  'mousedown',
-  'mousemove',
-  'mouseup',
-  'mouseover',
-  'mouseout',
-  'mouseenter',
-  'mouseleave',
-  'mousewheel',
-  'highlight',
-  'unhighlight',
+type Prefix = string;
+const delegateToGraphEvents: [Set<string>, Prefix][] = [
+  [
+    makeSet(
+      'click,dblclick,contextmenu,mousedown,mousemove,mouseup,mouseover,mouseout,mouseenter,mouseleave,mousewheel,highlight,unhighlight'
+    ),
+    'cell',
+  ],
+  [makeSet('embed,embedding,embedded'), 'node'],
 ];
+
+const getDelegateEventName = memoize((name: string) => {
+  for (const [set, prefix] of delegateToGraphEvents) {
+    if (set.has(name)) {
+      return `${prefix}:${name}`;
+    }
+  }
+
+  return null;
+});
 
 const PREVENT_LISTENER_NOOP_OBJECT = wrapPreventListenerOptions({});
 
@@ -129,19 +137,30 @@ export function useCell<Props extends CellBindingProps>({
     disposers.push(
       graphContext.onGraphReady((graph, helper) => {
         const f = factor ?? defaultFactory;
-        const { instance, disposer } = f(propsRef.current, graph);
-        disposers.push(disposer);
+        const id = propsRef.current.id;
 
-        const cell = (instanceRef.current = instance as Cell);
+        console.log('creating');
+
+        // 尽量复用旧的实例，避免增删
+        const factoryInstance = (id ? helper.reuse(id) : undefined) || f(propsRef.current, graph);
+        const instance = factoryInstance.instance as Cell;
+
+        disposers.push(() => {
+          console.log('disposing');
+          // 回收
+          helper.recycle(instance.id, factoryInstance);
+        });
+
+        instanceRef.current = instance as Cell;
 
         if (parent && canBeChild) {
           // 注册子节点
-          disposers.push(parent.addChild(cell));
+          disposers.push(parent.addChild(instance));
         }
 
         // 添加子节点
         if (canBeParent) {
-          contextValue.__emitParentReady(cell);
+          contextValue.__emitParentReady(instance);
         } else if (contextValue.__hasChildren) {
           throw new Error(`当前节点不能作为分组`);
         }
@@ -149,11 +168,12 @@ export function useCell<Props extends CellBindingProps>({
         {
           // 订阅事件
           const attachEvent = (name: string, handler: Function) => {
-            if (delegateToGraphEvents.includes(name)) {
+            const delegateEventName = getDelegateEventName(name);
+            if (delegateEventName) {
               // 代理到 graph
-              disposers.push(helper.delegateEvent(`cell:${name}`, handler, cell.id));
+              disposers.push(helper.delegateEvent(delegateEventName, handler, instance.id));
             } else {
-              cell.on(name, handler as any);
+              instance.on(name, handler as any);
             }
           };
 
@@ -166,8 +186,8 @@ export function useCell<Props extends CellBindingProps>({
         }
 
         // ready
-        onCellReady?.(cell);
-        propsRef.current?.onCellReady?.(cell);
+        onCellReady?.(instance);
+        propsRef.current?.onCellReady?.(instance);
       })
     );
 
@@ -195,7 +215,7 @@ export function useCell<Props extends CellBindingProps>({
 
   useDeepEffect(() => {
     if (data != null) {
-      instanceRef.current?.updateData(data, wrapPreventListenerOptions({}));
+      instanceRef.current?.setData(data, { silent: true, deep: false, overwrite: true });
     }
   }, [data]);
 

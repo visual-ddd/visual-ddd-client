@@ -6,6 +6,7 @@ import { CellFactory } from '../CellBinding/useCell';
 import { NodeBindingProps } from '../NodeBinding';
 import { useNode } from '../NodeBinding/useNode';
 import { CellContextProvider } from '../CellBinding/context';
+import { wrapPreventListenerOptions } from '../hooks';
 
 export interface ReactComponentBindingProps extends NodeBindingProps {
   /**
@@ -35,15 +36,20 @@ const factory: CellFactory = (props, graph) => {
   return {
     instance,
     disposer: () => {
-      graph.removeNode(instance);
+      graph.removeNode(instance, wrapPreventListenerOptions({}));
     },
   };
 };
 
 export const ReactComponentBinding = memo((props: ReactComponentBindingProps) => {
-  const { contextValue } = useNode({ props, factory });
+  const { canBeParent = true } = props;
+  const { contextValue } = useNode({ props, factory, canBeParent });
 
-  return <CellContextProvider value={contextValue}>{props.children}</CellContextProvider>;
+  if (canBeParent) {
+    return <CellContextProvider value={contextValue}>{props.children}</CellContextProvider>;
+  } else {
+    return null;
+  }
 });
 
 ReactComponentBinding.displayName = 'ReactComponentBinding';

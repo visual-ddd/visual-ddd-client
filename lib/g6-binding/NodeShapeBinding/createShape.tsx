@@ -18,13 +18,15 @@ export function createShape<Props extends NodeBindingProps>(
     return {
       instance,
       disposer: () => {
-        graph.removeNode(instance);
+        console.log('real dispose');
+        graph.removeNode(instance, wrapPreventListenerOptions({}));
       },
     };
   };
 
   function Comp(props: Props) {
-    const { instanceRef, contextValue } = useNode({ props, factory });
+    const { canBeParent = true } = props;
+    const { instanceRef, contextValue } = useNode({ props, factory, canBeParent });
 
     for (const [prop, propUpdator] of properties) {
       const value = (props as any)[prop];
@@ -36,7 +38,11 @@ export function createShape<Props extends NodeBindingProps>(
       }, [value]);
     }
 
-    return <CellContextProvider value={contextValue}>{props.children}</CellContextProvider>;
+    if (canBeParent) {
+      return <CellContextProvider value={contextValue}>{props.children}</CellContextProvider>;
+    } else {
+      return null;
+    }
   }
 
   Comp.displayName = name;
