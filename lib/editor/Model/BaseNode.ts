@@ -1,6 +1,6 @@
 import { derive } from '@/lib/store';
 import { makeObservable, observable } from 'mobx';
-import type { Properties } from './types';
+import type { BaseNodeProperties, Properties, ShapeType } from './types';
 
 /**
  * 节点基类
@@ -15,14 +15,17 @@ export class BaseNode {
   }
 
   /**
-   * 节点类型
+   * 图形组件名称
    */
-  type: string;
+  readonly name: string;
+
+  /** */
+  readonly type: ShapeType;
 
   /**
    * 唯一标识符
    */
-  id: string;
+  readonly id: string;
 
   /**
    * 父节点
@@ -34,13 +37,13 @@ export class BaseNode {
    * 子节点
    */
   @observable
-  children: this[] = [];
+  readonly children: this[] = [];
 
   /**
    * 属性配置
    */
   @observable
-  properties: Properties = {};
+  readonly properties: BaseNodeProperties;
 
   /**
    * 节点深度
@@ -50,9 +53,16 @@ export class BaseNode {
     return this.parent == null ? 0 : this.parent.depth + 1;
   }
 
-  constructor(type: string, id: string) {
-    this.type = type;
+  constructor(name: string, id: string, type: ShapeType = 'node') {
+    this.name = name;
     this.id = id;
+    this.type = type;
+
+    this.properties = {
+      // 冗余字段，方便从 x6 cell 中恢复
+      __node_name__: name,
+      __node_type__: type,
+    };
 
     makeObservable(this);
   }

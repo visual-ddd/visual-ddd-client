@@ -67,6 +67,16 @@ export class ShapeRegistry {
   }
 
   /**
+   * 获取图形组件的类型
+   * @param type
+   * @returns
+   */
+  getShapeType(type: string) {
+    const conf = this.getConfigurationByName(type);
+    return conf?.shapeType;
+  }
+
+  /**
    * 判断是否支持节点连接，这个需要挂载到 allowLoop 验证器上，因为 allowNode 并不可靠
    * @param context
    * @returns
@@ -95,7 +105,7 @@ export class ShapeRegistry {
       const validate = configuration.allowConnectNodes;
 
       if (Array.isArray(validate)) {
-        return validate.includes(targetModel.type);
+        return validate.includes(targetModel.name);
       } else if (typeof validate === 'function') {
         return validate({
           sourceCell: sourceCell!,
@@ -205,7 +215,8 @@ export class ShapeRegistry {
     const conf = this.getConfigurationByName(type);
 
     return {
-      position,
+      // 这里的数据尽量保存纯对象
+      position: { x: position.x, y: position.y },
       ...conf?.dropFactory?.({ graph: this.graph, nativeEvent }),
     };
   }
@@ -214,11 +225,11 @@ export class ShapeRegistry {
     return this.editorStore.getNodeById(node.id);
   }
 
-  private getConfigurationByModel(model: BaseNode) {
-    return shapes.get(model.type);
+  getConfigurationByModel(model: BaseNode) {
+    return shapes.get(model.name);
   }
 
-  private getConfigurationByName(name: string) {
+  getConfigurationByName(name: string) {
     return shapes.get(name);
   }
 

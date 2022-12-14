@@ -5,6 +5,7 @@ import { defineShape } from '../defineShape';
  * 默认边
  */
 defineShape('edge', {
+  shapeType: 'edge',
   initialProps: () => {
     return { attrs: { line: { stroke: 'red' } } };
   },

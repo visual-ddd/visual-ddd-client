@@ -2,6 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@antv/x6': ^2.0.8
+  '@antv/x6-plugin-clipboard': ^2.1.3
   '@antv/x6-plugin-keyboard': ^2.1.4
   '@antv/x6-plugin-selection': ^2.1.5
   '@antv/x6-plugin-snapline': ^2.1.6
@@ -41,6 +42,7 @@ specifiers:
 
 dependencies:
   '@antv/x6': 2.0.8
+  '@antv/x6-plugin-clipboard': 2.1.3_@antv+x6@2.0.8
   '@antv/x6-plugin-keyboard': 2.1.4_@antv+x6@2.0.8
   '@antv/x6-plugin-selection': 2.1.5_@antv+x6@2.0.8
   '@antv/x6-plugin-snapline': 2.1.6_@antv+x6@2.0.8
@@ -167,6 +169,15 @@ packages:
   /@antv/x6-geometry/2.0.4:
     resolution:
       { integrity: sha512-dlsLNRRTiCw8TsJ/03j3y5IbbbK4Npf6zBH6kAx8nnW+edNT/TAOChvPRzizwD+vA7wY9Rp2AiRnp/vCdIYC5w== }
+    dev: false
+
+  /@antv/x6-plugin-clipboard/2.1.3_@antv+x6@2.0.8:
+    resolution:
+      { integrity: sha512-GZkz9qivuPdng4iNYlRSS5ua76zHW9J3VFWVYr8U6BPRcCM2tGEQAKWwrAZ+cCd54TBdPVGKcnh33tWeqQTO/Q== }
+    peerDependencies:
+      '@antv/x6': ^2.x
+    dependencies:
+      '@antv/x6': 2.0.8
     dev: false
 
   /@antv/x6-plugin-keyboard/2.1.4_@antv+x6@2.0.8:

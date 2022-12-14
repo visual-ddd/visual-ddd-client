@@ -4,7 +4,7 @@ import { booleanPredicate, EventEmitter, debounce, set } from '@wakeapp/utils';
 
 import { BaseNode } from './BaseNode';
 import { derive, mutation } from '@/lib/store';
-import type { Disposer, Properties } from './types';
+import type { Disposer, Properties, ShapeType } from './types';
 import { ShapeRegistry } from '../Shape';
 
 /**
@@ -67,9 +67,10 @@ export class BaseEditorStore {
   };
 
   @mutation('CREATE_NODE')
-  createNode = (params: { type: string; id?: string; properties: Properties; parent?: BaseNode }) => {
-    const node = this.nodeFactory(params.type, params.id);
-    node.properties = params.properties;
+  createNode = (params: { name: string; type: ShapeType; id?: string; properties: Properties; parent?: BaseNode }) => {
+    const node = this.nodeFactory(params.name, params.id, params.type);
+
+    Object.assign(node.properties, params.properties);
 
     // 索引
     this.nodeIndexById.set(node.id, node);
@@ -186,9 +187,10 @@ export class BaseEditorStore {
 
   /**
    * 节点工厂
+   * 可以在子类中覆盖
    */
-  protected nodeFactory(type: string, id?: string): BaseNode {
-    const node = new BaseNode(type, id ?? v4());
+  protected nodeFactory(name: string, id?: string, type?: ShapeType): BaseNode {
+    const node = new BaseNode(name, id ?? v4(), type);
     return node;
   }
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Node, Graph, Size, PointLike, Cell } from '@antv/x6';
-import { BaseEditorStore, BaseNode, Properties } from '../Model';
+import { BaseEditorStore, BaseNode, Properties, ShapeType } from '../Model';
 
 export interface ShapeCoreInfo {
   type: string;
@@ -17,6 +17,11 @@ export interface ShapeComponentCellProps {
 }
 
 export interface ShapeConfiguration {
+  /**
+   * 组件的类型
+   */
+  shapeType: ShapeType;
+
   /**
    * 是否为群组，默认为 false
    */

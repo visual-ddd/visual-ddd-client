@@ -28,7 +28,7 @@ const ShapeList = observer(function ShapeList(props: { list: BaseNode[] }) {
  */
 export const ShapeRenderer = observer(function Shape(props: ShapeRendererProps) {
   const { model } = props;
-  const config = shapes.get(model.type)!;
+  const config = shapes.get(model.name)!;
   const store = useEditorStore()!;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const initialProps = useMemo<Record<string, any>>(config.initialProps ?? NoopProps, NoopArray);

@@ -1,6 +1,7 @@
 import { Graph, Node } from '@antv/x6';
 import { Selection } from '@antv/x6-plugin-selection';
 import { Keyboard } from '@antv/x6-plugin-keyboard';
+import { Clipboard } from '@antv/x6-plugin-clipboard';
 import { memo, useMemo, useRef } from 'react';
 import merge from 'lodash/merge';
 import { booleanPredicate, NoopObject } from '@wakeapp/utils';
@@ -117,6 +118,8 @@ export const Canvas = memo((props: CanvasProps) => {
       return;
     }
 
+    const shapeType = store.shapeRegistry.getShapeType(type)!;
+
     // 构造节点
     const properties = store.shapeRegistry.dropFactory({ type, nativeEvent, graph });
 
@@ -128,7 +131,8 @@ export const Canvas = memo((props: CanvasProps) => {
     const insert = (parentNode?: Node) => {
       const parent = parentNode && store.getNodeById(parentNode.id);
       store.createNode({
-        type,
+        name: type,
+        type: shapeType,
         properties,
         parent,
       });
@@ -162,7 +166,8 @@ export const Canvas = memo((props: CanvasProps) => {
 
       // 转换为 model 上的节点
       store.createNode({
-        type: shapeType,
+        name: shapeType,
+        type: 'edge',
         properties: {
           source: edge.getSource(),
           target: edge.getTarget(),
@@ -230,8 +235,10 @@ export const Canvas = memo((props: CanvasProps) => {
         rubberband: true,
         // 严格框选
         strict: true,
+
+        // 选择框
         showNodeSelectionBox: true,
-        // showEdgeSelectionBox: true,
+        showEdgeSelectionBox: true,
         filter(cell) {
           return store.shapeRegistry.isSelectable({ cell, graph: this });
         },
@@ -247,9 +254,33 @@ export const Canvas = memo((props: CanvasProps) => {
       })
     );
 
+    graph.use(
+      new Clipboard({
+        enabled: true,
+        useLocalStorage: false,
+      })
+    );
+
     // 删除
     graph.bindKey('backspace', () => {
       store.removeSelected();
+    });
+
+    graph.bindKey(['command+c', 'ctrl+c'], () => {
+      const selected = graph.getSelectedCells();
+      // 过滤可以拷贝的cell
+      const filteredSelected = selected.map(i => store.shapeRegistry.getModelByNode(i)).filter(booleanPredicate);
+      if (filteredSelected.length) {
+        // X6 在这里已经处理了一些逻辑，必须选中父节点，递归包含子节点、包含子节点之间的连线、修改 id 等等
+        graph.copy(selected, { deep: true });
+
+        // 数据转换
+      }
+    });
+
+    graph.bindKey(['command+v', 'ctrl+v'], () => {
+      console.log(graph.getCellsInClipboard());
+      // graph.paste();
     });
 
     // 监听 store 事件

@@ -24,12 +24,13 @@ function MyComponent() {
 registerX6ReactComponent('hello', MyComponent);
 
 defineShape('rect', {
+  shapeType: 'node',
   group: true,
   droppable: ctx => {
     return ctx.sourceType !== 'rect';
   },
   embeddable: ctx => {
-    return ctx.childModel?.type !== 'rect';
+    return ctx.childModel?.name !== 'rect';
   },
   dropFactory() {
     return { size: { width: 300, height: 300 }, zIndex: 1 };
@@ -41,6 +42,7 @@ defineShape('rect', {
 
 defineShape('child', {
   group: false,
+  shapeType: 'node',
   // removable: false,
   dropFactory() {
     return {
@@ -88,6 +90,7 @@ defineShape('child', {
 
 defineShape('child-2', {
   group: false,
+  shapeType: 'node',
   dropFactory() {
     return {
       size: { width: 50, height: 50 },
