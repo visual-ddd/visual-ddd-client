@@ -14,7 +14,7 @@ const defaultFactory: CellFactory = (props: any, graph: Graph) => {
   return {
     instance: node,
     disposer: () => {
-      graph.removeNode(node, wrapPreventListenerOptions({}));
+      graph.removeNode(node);
     },
   };
 };

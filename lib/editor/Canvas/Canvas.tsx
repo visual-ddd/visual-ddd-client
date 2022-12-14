@@ -1,7 +1,7 @@
 import { Graph, Node } from '@antv/x6';
 import { Selection } from '@antv/x6-plugin-selection';
 import { Keyboard } from '@antv/x6-plugin-keyboard';
-import { memo, useMemo } from 'react';
+import { memo, useMemo, useRef } from 'react';
 import merge from 'lodash/merge';
 import { booleanPredicate, NoopObject } from '@wakeapp/utils';
 import { useDisposer } from '@wakeapp/hooks';
@@ -15,6 +15,7 @@ import { useEditorStore } from '../Model';
 import s from './Canvas.module.scss';
 import { Cells } from './Cells';
 import { assertShapeInfo } from '../Shape';
+import { wrapPreventListenerOptions } from '@/lib/g6-binding/hooks';
 
 export interface CanvasProps extends GraphBindingProps {}
 
@@ -23,8 +24,9 @@ export interface CanvasProps extends GraphBindingProps {}
  */
 export const Canvas = memo((props: CanvasProps) => {
   const store = useEditorStore()!;
+  const graphRef = useRef<Graph>();
   const disposer = useDisposer();
-  const { options } = props;
+  const { options, children } = props;
 
   const finalOptions: Graph.Options = useMemo(() => {
     return merge(
@@ -60,6 +62,22 @@ export const Canvas = memo((props: CanvasProps) => {
           },
           // allowNode 不太靠谱，统一使用 allowLoop 验证
           // allowNode
+          createEdge(arg) {
+            return store.shapeRegistry.createEdge({
+              graph: this,
+              cell: arg.sourceCell,
+              magnet: arg.sourceMagnet,
+            });
+          },
+        },
+
+        // 交互行为
+        interacting: {
+          nodeMovable: true,
+          edgeMovable: true,
+          edgeLabelMovable: true,
+          arrowheadMovable: true,
+          magnetConnectable: true,
         },
 
         // 自动根据容器调整大小
@@ -130,6 +148,53 @@ export const Canvas = memo((props: CanvasProps) => {
   };
 
   /**
+   * 处理连线，这个只有在用户手动拖拽的时候才会触发
+   * @param evt
+   */
+  const handleEdgeConnected: GraphBindingProps['onEdge$Connected'] = evt => {
+    const { isNew, edge, type } = evt;
+
+    if (isNew) {
+      console.log('new connect', evt);
+
+      // 插入新的边节点
+      const shapeType = edge.getData()?.__type__ ?? 'edge';
+
+      // 转换为 model 上的节点
+      store.createNode({
+        type: shapeType,
+        properties: {
+          source: edge.getSource(),
+          target: edge.getTarget(),
+        },
+      });
+
+      // 移除画布上的旧节点
+      graphRef.current?.removeCell(edge.id, wrapPreventListenerOptions({}));
+    } else {
+      // 可能来源或目标都修改了
+      console.log('connect changed', evt);
+      const model = store.shapeRegistry.getModelByNode(edge);
+      if (model) {
+        if (type === 'source') {
+          store.updateNodeProperty({ node: model, path: 'source', value: edge.getSource() });
+        } else {
+          store.updateNodeProperty({ node: model, path: 'target', value: edge.getTarget() });
+        }
+      }
+    }
+  };
+
+  const handleEdgeRemoved: GraphBindingProps['onEdge$Removed'] = evt => {
+    console.log('edge remove', evt);
+    const { edge } = evt;
+    const model = store.shapeRegistry.getModelByNode(edge);
+    if (model) {
+      store.removeNode({ node: model }, false);
+    }
+  };
+
+  /**
    * 处理组件分组嵌入
    * @param evt
    */
@@ -150,6 +215,7 @@ export const Canvas = memo((props: CanvasProps) => {
   };
 
   const handleGraphReady = (graph: Graph) => {
+    graphRef.current = graph;
     store.shapeRegistry.bindGraph(graph);
 
     // 插件扩展
@@ -165,6 +231,7 @@ export const Canvas = memo((props: CanvasProps) => {
         // 严格框选
         strict: true,
         showNodeSelectionBox: true,
+        // showEdgeSelectionBox: true,
         filter(cell) {
           return store.shapeRegistry.isSelectable({ cell, graph: this });
         },
@@ -209,8 +276,16 @@ export const Canvas = memo((props: CanvasProps) => {
       onGraphReady={handleGraphReady}
       onCell$Change$Parent={handleParentChange}
       onSelection$Changed={handleSelectionChanged}
+      onEdge$Connected={handleEdgeConnected}
+      onEdge$Added={() => {
+        console.log('edge added');
+      }}
+      onEdge$Removed={handleEdgeRemoved}
     >
+      {/* 绑定到 Store 的节点和边 */}
       <Cells />
+      {/* 外部自定义渲染 */}
+      {children}
     </GraphBinding>
   );
 });

@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import lowerFirst from 'lodash/lowerFirst';
+import { useDisposer } from '@wakeapp/hooks';
 
 const EVENT_REGEX = /^on[A-Z]/;
 
@@ -22,10 +23,16 @@ function shouldPrevent(evt: any) {
 }
 
 export function useEventStore<Props extends Record<string, any>>(props: Props) {
+  const disposer = useDisposer();
   const store = useMemo(() => {
     const listeners: Record<string, Function> = {};
     const delegations: Record<string, Function> = {};
+    let disposed = false;
     let delegationSubscriber: (name: string, handler: Function) => void;
+
+    disposer.push(() => {
+      disposed = true;
+    });
 
     return {
       attach(name: string, listener: Function) {
@@ -40,6 +47,11 @@ export function useEventStore<Props extends Record<string, any>>(props: Props) {
         // 通知有新的监听者
         if (!(normalizedName in delegations)) {
           const handler = (delegations[normalizedName] = (...args: any[]) => {
+            if (disposed) {
+              // 已销毁，避免销毁后触发事件
+              return;
+            }
+
             const evt = args[0];
 
             // 阻止事件，避免循环

@@ -48,6 +48,13 @@ export interface ShapeConfiguration {
   dropFactory?: (context: { nativeEvent: React.DragEvent; graph: Graph }) => Properties;
 
   /**
+   * 边创建工厂
+   *
+   * 当边从当前节点创建时，会触发该事件, 用户可以直接由哪个类型来创建边, 默认为 edge
+   */
+  edgeFactory?: string | ((context: { graph: Graph; cell: Cell; model: BaseNode; magnet: Element }) => string);
+
+  /**
    * 静态的、初始参数
    * @returns
    */

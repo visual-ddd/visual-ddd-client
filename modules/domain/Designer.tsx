@@ -1,5 +1,5 @@
-import { RectBinding, registerX6ReactComponent } from '@/lib/g6-binding';
-import { useState, FC } from 'react';
+import { RectBinding, EdgeBinding, registerX6ReactComponent } from '@/lib/g6-binding';
+import { useState } from 'react';
 import {
   ComponentContainer,
   ComponentItem,
@@ -41,7 +41,7 @@ defineShape('rect', {
 
 defineShape('child', {
   group: false,
-  removable: false,
+  // removable: false,
   dropFactory() {
     return {
       size: { width: 50, height: 50 },
@@ -49,8 +49,10 @@ defineShape('child', {
   },
   allowLoopConnect: false,
   allowConnectNodes: ['child'],
+  edgeFactory: 'edge',
   initialProps: () => ({
     zIndex: 2,
+    tools: ['boundary'],
     attrs: {
       body: {
         fill: 'red',
@@ -133,6 +135,9 @@ const Operations = observer(() => {
 });
 
 const Designer = observer(() => {
+  const [showEdge, setShowEdge] = useState(false);
+  const [showCanvas, setShowCanvas] = useState(true);
+
   return (
     <div>
       <EditorStoreProvider value={store}>
@@ -142,8 +147,40 @@ const Designer = observer(() => {
           <ComponentItem name="child-2" data={{ type: 'child-2' }}></ComponentItem>
         </ComponentContainer>
 
+        <button
+          onClick={() => {
+            setShowEdge(true);
+          }}
+        >
+          showEdge
+        </button>
+
+        <button
+          onClick={() => {
+            setShowCanvas(v => !v);
+          }}
+        >
+          toggleShowCanvas
+        </button>
+
         <div style={{ width: 500, height: 500 }}>
-          <Canvas></Canvas>
+          {showCanvas && (
+            <Canvas>
+              {/* <RectBinding
+              id="custom1"
+              tools={['boundary']}
+              size={{ width: 100, height: 100 }}
+              position={{ x: 300, y: 300 }}
+            />
+            <RectBinding
+              id="custom2"
+              tools={['boundary']}
+              size={{ width: 100, height: 100 }}
+              position={{ x: 100, y: 300 }}
+            />
+            {showEdge && <EdgeBinding source="custom1" target="custom2" tools={['boundary']} />} */}
+            </Canvas>
+          )}
         </div>
 
         <Operations />

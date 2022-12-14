@@ -32,12 +32,25 @@ export interface CellBindingProps {
   data?: Cell.Metadata['data'];
 
   /**
+   * 工具箱
+   */
+  tools?: Cell.Metadata['tools'];
+
+  /**
    * 是否支持作为分组, 默认 true
    */
   canBeParent?: boolean;
 
+  /**
+   * 子节点
+   */
   children?: React.ReactNode;
 
+  /**
+   * 节点实例就绪
+   * @param cell
+   * @returns
+   */
   onCellReady?: (cell: Cell) => void;
 
   onClick?: (evt: CellView.EventArgs['cell:click']) => void;

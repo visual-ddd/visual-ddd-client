@@ -14,13 +14,13 @@ const defaultFactory: CellFactory = (props: any, graph: Graph) => {
   return {
     instance: instance,
     disposer: () => {
-      graph.removeEdge(instance, wrapPreventListenerOptions({}));
+      graph.removeEdge(instance);
     },
   };
 };
 
 function isCell(node: any): node is Cell<Cell.Properties> {
-  return node != null && typeof node === 'object' && node.isCell();
+  return node != null && typeof node === 'object' && 'isCell' in node && node.isCell();
 }
 
 function toTerminalData(source: Edge.Metadata['source']): Edge.TerminalData | undefined {

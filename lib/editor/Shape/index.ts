@@ -1,3 +1,5 @@
+import './builtin';
+
 export * from './types';
 export * from './ShapeRegistry';
 export * from './defineShape';

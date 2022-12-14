@@ -19,7 +19,7 @@ export function createShape<Props extends NodeBindingProps>(
       instance,
       disposer: () => {
         console.log('real dispose');
-        graph.removeNode(instance, wrapPreventListenerOptions({}));
+        graph.removeNode(instance);
       },
     };
   };

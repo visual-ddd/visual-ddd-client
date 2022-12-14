@@ -1,4 +1,4 @@
-import React, { memo, createContext, useContext, FC } from 'react';
+import React, { memo, FC } from 'react';
 import { register } from '@antv/x6-react-shape';
 import { Graph, Node } from '@antv/x6';
 
@@ -6,7 +6,6 @@ import { CellFactory } from '../CellBinding/useCell';
 import { NodeBindingProps } from '../NodeBinding';
 import { useNode } from '../NodeBinding/useNode';
 import { CellContextProvider } from '../CellBinding/context';
-import { wrapPreventListenerOptions } from '../hooks';
 
 export interface ReactComponentBindingProps extends NodeBindingProps {
   /**
@@ -36,7 +35,7 @@ const factory: CellFactory = (props, graph) => {
   return {
     instance,
     disposer: () => {
-      graph.removeNode(instance, wrapPreventListenerOptions({}));
+      graph.removeNode(instance);
     },
   };
 };

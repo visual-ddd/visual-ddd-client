@@ -3,6 +3,7 @@ import { Disposer } from '@wakeapp/utils';
 import { useDeepEffect, useRefValue } from '@wakeapp/hooks';
 import { Cell, Graph } from '@antv/x6';
 import memoize from 'lodash/memoize';
+import omitBy from 'lodash/omitBy';
 
 import { makeSet } from '@/lib/utils';
 
@@ -27,7 +28,7 @@ const defaultFactory: CellFactory = (props, graph) => {
 
   return {
     instance,
-    disposer: () => graph.removeCell(instance, wrapPreventListenerOptions({})),
+    disposer: () => graph.removeCell(instance),
   };
 };
 
@@ -41,6 +42,8 @@ const delegateToGraphEvents: [Set<string>, Prefix][] = [
   ],
   [makeSet('embed,embedding,embedded'), 'node'],
 ];
+
+const OMIT_PROPS = makeSet('children,model');
 
 const getDelegateEventName = memoize((name: string) => {
   for (const [set, prefix] of delegateToGraphEvents) {
@@ -130,23 +133,34 @@ export function useCell<Props extends CellBindingProps>({
   const propsRef = useRefValue(props);
   const instanceRef = useRef<Cell>();
   const graphContext = useGraphBinding();
-  const { attrs, zIndex, visible, data } = props;
+  const { attrs, zIndex, visible, data, tools } = props;
 
   useEffect(() => {
     const disposers = new Disposer();
     disposers.push(
       graphContext.onGraphReady((graph, helper) => {
         const f = factor ?? defaultFactory;
-        const { id, visible = true } = propsRef.current;
+        const { id } = propsRef.current;
 
         console.log('creating');
 
         // 尽量复用旧的实例，避免增删
-        const factoryInstance = (id ? helper.reuse(id) : undefined) || f(propsRef.current, graph);
+        const recoveredInstance = id ? helper.reuse(id) : undefined;
+
+        const factoryInstance =
+          recoveredInstance ||
+          f(
+            omitBy(propsRef.current, (v, k) => {
+              if (OMIT_PROPS.has(k)) {
+                return true;
+              }
+
+              return false;
+            }),
+            graph
+          );
         const instance = factoryInstance.instance as Cell;
         instanceRef.current = instance as Cell;
-
-        instance.setVisible(visible, wrapPreventListenerOptions({}));
 
         disposers.push(() => {
           console.log('disposing');
@@ -224,6 +238,10 @@ export function useCell<Props extends CellBindingProps>({
       instanceRef.current?.setData(data, { silent: true, deep: false, overwrite: true });
     }
   }, [data]);
+
+  useDeepEffect(() => {
+    instanceRef.current?.setTools(tools, wrapPreventListenerOptions({}));
+  }, [tools]);
 
   return { instanceRef, contextValue };
 }

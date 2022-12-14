@@ -1,4 +1,4 @@
-import { Cell, Graph, Node } from '@antv/x6';
+import { Cell, Graph, Node, Shape } from '@antv/x6';
 import { Options } from '@antv/x6/lib/graph/options';
 import type { BaseEditorStore, BaseNode } from '../Model';
 
@@ -23,6 +23,40 @@ export class ShapeRegistry {
     this.bindGraphIfNeed(graph);
   };
 
+  createEdge = (context: { graph: Graph; cell: Cell; magnet: Element }) => {
+    const { graph, cell, magnet } = context;
+    this.bindGraphIfNeed(graph);
+
+    const model = this.getModelByNode(cell);
+    if (model) {
+      const configuration = this.getConfigurationByModel(model);
+      if (configuration?.edgeFactory) {
+        const type =
+          typeof configuration.edgeFactory === 'function'
+            ? configuration.edgeFactory({ cell, graph, model, magnet })
+            : configuration.edgeFactory;
+
+        const edgeConfiguration = this.getConfigurationByName(type);
+
+        if (edgeConfiguration == null) {
+          throw new Error(`未找到类型为 ${type} 的图形组件`);
+        }
+
+        const initialProperties = edgeConfiguration.initialProps?.();
+        return graph.createEdge({
+          ...initialProperties,
+          data: {
+            // 注入类型信息
+            __type__: type,
+            ...initialProperties?.data,
+          },
+        });
+      }
+    }
+
+    return new Shape.Edge();
+  };
+
   /**
    * 图形组件是否已经注册
    * @param type
@@ -38,8 +72,13 @@ export class ShapeRegistry {
    * @returns
    */
   isAllowNodeConnect = (context: Options.ValidateConnectionArgs) => {
-    console.log('is allow node', context);
     const { sourceCell, sourcePort, targetCell, targetPort } = context;
+
+    // 源头修改
+    if (sourceCell?.isEdge()) {
+      return true;
+    }
+
     const sourceModel = this.getModelByNode(sourceCell!)!;
     const targetModel = this.getModelByNode(targetCell!)!;
 
@@ -184,7 +223,7 @@ export class ShapeRegistry {
   }
 
   private bindGraphIfNeed(graph: Graph) {
-    if (this._graph == null) {
+    if (this._graph == null || this._graph !== graph) {
       this._graph = graph;
     }
   }

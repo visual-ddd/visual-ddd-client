@@ -1,6 +1,6 @@
 import { makeObservable, observable } from 'mobx';
 import { v4 } from 'uuid';
-import { booleanPredicate, EventEmitter } from '@wakeapp/utils';
+import { booleanPredicate, EventEmitter, debounce, set } from '@wakeapp/utils';
 
 import { BaseNode } from './BaseNode';
 import { derive, mutation } from '@/lib/store';
@@ -140,6 +140,24 @@ export class BaseEditorStore {
 
     return true;
   };
+
+  /**
+   * 更新 Node Properties
+   * @param params
+   */
+  @mutation('UPDATE_NODE_PROPERTY')
+  updateNodeProperty = (params: { node: BaseNode; path: string; value: any }) => {
+    const { node, path, value } = params;
+    set(node.properties, path, value);
+  };
+
+  /**
+   * 更新 Node Properties 防抖模式，适用于频繁更新的节点
+   */
+  @mutation('UPDATE_NODE_PROPERTY_DEBOUNCED')
+  updateNodePropertyDebounced: typeof this.updateNodeProperty = debounce(params => {
+    this.updateNodeProperty(params);
+  }, 500);
 
   /**
    * 通过 id 获取节点
