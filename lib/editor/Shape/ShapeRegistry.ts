@@ -33,23 +33,45 @@ export class ShapeRegistry {
   }
 
   /**
-   * 是否支持循环连线, 默认 true
+   * 判断是否支持节点连接，这个需要挂载到 allowLoop 验证器上，因为 allowNode 并不可靠
+   * @param context
+   * @returns
    */
-  isAllowLoopConnect = (context: Options.ValidateConnectionArgs) => {
-    const cell = context.sourceCell!;
-    const model = this.getModelByNode(cell)!;
-    const config = this.getConfigurationByModel(model);
-    const allow = config?.allowLoopConnect ?? true;
+  isAllowNodeConnect = (context: Options.ValidateConnectionArgs) => {
+    console.log('is allow node', context);
+    const { sourceCell, sourcePort, targetCell, targetPort } = context;
+    const sourceModel = this.getModelByNode(sourceCell!)!;
+    const targetModel = this.getModelByNode(targetCell!)!;
 
-    if (allow) {
-      return true;
+    const configuration = this.getConfigurationByModel(sourceModel)!;
+
+    // 循环判断
+    const isLoop = sourceCell === targetCell;
+    if (isLoop) {
+      return configuration.allowLoopConnect ?? true;
     }
 
-    // 禁止情况，如果是环就返回 false
-    // X6 不会自己判断是否为循环，allowLoop 会被频繁调用
-    const isLoop = context.sourceCell === context.targetCell;
+    // 节点判断
+    if (targetCell?.isNode()) {
+      const validate = configuration.allowConnectNodes;
 
-    return !isLoop;
+      if (Array.isArray(validate)) {
+        return validate.includes(targetModel.type);
+      } else if (typeof validate === 'function') {
+        return validate({
+          sourceCell: sourceCell!,
+          sourcePort: sourcePort!,
+          sourceModel,
+          targetCell: targetCell!,
+          targetModel,
+          targetPort: targetPort!,
+          graph: this.graph,
+        });
+      }
+      return validate ?? true;
+    }
+
+    return true;
   };
 
   /**

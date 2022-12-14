@@ -1,5 +1,5 @@
 import React from 'react';
-import { Node, Graph, Size, PointLike } from '@antv/x6';
+import { Node, Graph, Size, PointLike, Cell } from '@antv/x6';
 import { BaseEditorStore, BaseNode, Properties } from '../Model';
 
 export interface ShapeCoreInfo {
@@ -67,6 +67,22 @@ export interface ShapeConfiguration {
    * 是否允许循环连线, 默认为 true
    */
   allowLoopConnect?: boolean;
+
+  /**
+   * 允许连接到的 shape 类型，默认为 true, 即所有节点
+   */
+  allowConnectNodes?:
+    | boolean
+    | string[]
+    | ((context: {
+        sourceModel: BaseNode;
+        sourceCell: Cell;
+        sourcePort?: string;
+        targetModel: BaseNode;
+        targetCell: Cell;
+        targetPort?: string;
+        graph: Graph;
+      }) => boolean);
 
   /**
    * 组件渲染定义

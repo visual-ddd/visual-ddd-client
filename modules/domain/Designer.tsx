@@ -48,6 +48,7 @@ defineShape('child', {
     };
   },
   allowLoopConnect: false,
+  allowConnectNodes: ['child'],
   initialProps: () => ({
     zIndex: 2,
     attrs: {
@@ -73,6 +74,32 @@ defineShape('child', {
         { id: 'left', group: 'left' },
         { id: 'right', group: 'right' },
       ],
+    },
+  }),
+  component(props) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const hoverHandlers = useHoverShowPorts();
+
+    return <RectBinding {...props.cellProps} {...hoverHandlers} />;
+  },
+});
+
+defineShape('child-2', {
+  group: false,
+  dropFactory() {
+    return {
+      size: { width: 50, height: 50 },
+    };
+  },
+  allowLoopConnect: true,
+  allowConnectNodes: ['child'],
+  initialProps: () => ({
+    zIndex: 2,
+    attrs: {
+      body: {
+        fill: 'blue',
+        magnet: true,
+      },
     },
   }),
   component(props) {
@@ -112,6 +139,7 @@ const Designer = observer(() => {
         <ComponentContainer>
           <ComponentItem name="rect" data={{ type: 'rect' }}></ComponentItem>
           <ComponentItem name="child" data={{ type: 'child' }}></ComponentItem>
+          <ComponentItem name="child-2" data={{ type: 'child-2' }}></ComponentItem>
         </ComponentContainer>
 
         <div style={{ width: 500, height: 500 }}>
