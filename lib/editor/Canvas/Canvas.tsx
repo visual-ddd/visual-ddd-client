@@ -1,4 +1,4 @@
-import { Graph, Node } from '@antv/x6';
+import { Graph, Node, PointLike } from '@antv/x6';
 
 import { memo, useMemo, useRef } from 'react';
 import merge from 'lodash/merge';
@@ -22,9 +22,13 @@ export interface CanvasProps extends GraphBindingProps {}
  * 画布
  */
 export const Canvas = memo((props: CanvasProps) => {
+  const { options, children } = props;
   const { store, commandHandler, listen } = useEditorStore()!;
   const graphRef = useRef<Graph>();
-  const { options, children } = props;
+  // 鼠标在画布之内
+  const graphHovering = useRef<boolean>(false);
+  // 鼠标在画布之类，记录鼠标的位置
+  const currentMousePagePosition = useRef<PointLike>();
 
   const finalOptions: GraphBindingOptions = useMemo(() => {
     return merge(
@@ -116,6 +120,18 @@ export const Canvas = memo((props: CanvasProps) => {
     );
   }, [options]);
 
+  const handleMouseMove = (evt: React.MouseEvent) => {
+    currentMousePagePosition.current = { x: evt.pageX, y: evt.pageY };
+  };
+
+  const handleMouseEnter = () => {
+    graphHovering.current = true;
+  };
+
+  const handleMouseLeave = () => {
+    graphHovering.current = true;
+  };
+
   /**
    * 选择变动
    */
@@ -141,15 +157,8 @@ export const Canvas = memo((props: CanvasProps) => {
 
     const { type } = componentData;
 
-    if (!commandHandler.shapeRegistry.isShapeDefined(type)) {
-      console.error(`拖入的图形（${type}）未定义`);
-      return;
-    }
-
-    const shapeType = commandHandler.shapeRegistry.getShapeType(type)!;
-
     // 构造节点
-    const properties = commandHandler.shapeRegistry.dropFactory({ type, nativeEvent, graph });
+    const { properties, shapeType } = commandHandler.shapeRegistry.dropFactory({ type, nativeEvent, graph });
 
     // 定位被拖入的父节点
     const localPoint = graph.pageToLocal(nativeEvent.pageX, nativeEvent.pageY);
@@ -290,17 +299,46 @@ export const Canvas = memo((props: CanvasProps) => {
       copy(graph.getCellsInClipboard());
     }
   });
+
   listen('PASTE', () => {
-    paste({ visitor() {} });
+    const graph = graphRef.current;
+    if (graph == null) {
+      return;
+    }
+
+    const position =
+      graphHovering.current && currentMousePagePosition.current
+        ? graph.pageToLocal(currentMousePagePosition.current.x, currentMousePagePosition.current.y)
+        : undefined;
+
+    paste({
+      // TODO: 白名单
+      position,
+      visitor(payload) {
+        const { type, shapeType, properties } = commandHandler.shapeRegistry.copyFactory({ payload });
+
+        const parent = payload.parent ? store.getNodeById(payload.parent) : undefined;
+        commandHandler.createNode({
+          id: payload.id,
+          name: type,
+          type: shapeType,
+          properties,
+          parent,
+        });
+      },
+    });
   });
+
   listen('UNREMOVABLE', () => {
-    // TODO: 详细
+    // TODO: 详细原因
     message.warning('不能删除');
   });
+
   listen('NODE_REMOVED', params => {
     console.log('node removed', params.node);
     graphRef.current?.unselect(params.node.id);
   });
+
   listen('UNSELECT_ALL', () => {
     graphRef.current?.cleanSelection();
   });
@@ -310,6 +348,9 @@ export const Canvas = memo((props: CanvasProps) => {
       options={finalOptions}
       className={classNames('vd-editor-canvas', s.root)}
       onDrop={handleDrop}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       onGraphReady={handleGraphReady}
       onCell$Change$Parent={handleParentChange}
       onSelection$Changed={handleSelectionChanged}

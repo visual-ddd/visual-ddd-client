@@ -9,7 +9,7 @@ export const runInMutation = (name: string, args: any, runner: () => any) => {
     UNDER_MUTATION++;
 
     if (process.env.NODE_ENV !== 'production') {
-      console.debug(`Running Mutation: ${name}`, args);
+      console.debug(`Running Mutation: ${name}`, args?.[0]);
     }
 
     return runner();

@@ -1,6 +1,8 @@
 import { Cell, Graph, Node, Shape } from '@antv/x6';
 import { Options } from '@antv/x6/lib/graph/options';
-import type { BaseEditorStore, BaseNode } from '../Model';
+import { NoopObject } from '@wakeapp/utils';
+import { CopyPayload } from '../Canvas/ClipboardUtils';
+import type { BaseEditorStore, BaseNode, BaseNodeProperties } from '../Model';
 
 import { shapes } from './store';
 
@@ -211,13 +213,42 @@ export class ShapeRegistry {
   dropFactory(context: { type: string; nativeEvent: React.DragEvent; graph: Graph }) {
     const { graph, type, nativeEvent } = context;
     this.bindGraphIfNeed(graph);
-    const position = this.graph.pageToLocal(nativeEvent.pageX, nativeEvent.pageY);
     const conf = this.getConfigurationByName(type);
 
+    if (conf == null) {
+      throw new Error(`未找到 ${type} 类型的组件`);
+    }
+
+    const position = this.graph.pageToLocal(nativeEvent.pageX, nativeEvent.pageY);
     return {
-      // 这里的数据尽量保存纯对象
-      position: { x: position.x, y: position.y },
-      ...conf?.dropFactory?.({ graph: this.graph, nativeEvent }),
+      type,
+      shapeType: conf.shapeType,
+      properties: {
+        // TODO: 需要根据节点的类型，比如只有 node 才有 position，edge 则是 source 和 target
+        // 这里的数据尽量保存纯对象
+        position: { x: position.x, y: position.y },
+        ...conf?.dropFactory?.({ graph: this.graph, nativeEvent }),
+      },
+    };
+  }
+
+  copyFactory(context: { payload: CopyPayload }) {
+    const { payload } = context;
+    const type = this.getTypeFromBaseNodeProperties(payload.properties);
+    const configuration = this.getConfigurationByName(type);
+
+    if (configuration == null) {
+      throw new Error(`未找到 ${type} 类型的组件`);
+    }
+
+    return {
+      type,
+      shapeType: configuration.shapeType,
+      properties: Object.assign(
+        {},
+        payload.properties,
+        configuration?.copyFactory?.({ properties: payload.properties, payload }) ?? NoopObject
+      ),
     };
   }
 
@@ -237,5 +268,9 @@ export class ShapeRegistry {
     if (this._graph == null || this._graph !== graph) {
       this._graph = graph;
     }
+  }
+
+  private getTypeFromBaseNodeProperties(properties: BaseNodeProperties) {
+    return properties.__node_name__;
   }
 }

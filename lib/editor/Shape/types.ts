@@ -1,19 +1,26 @@
 import React from 'react';
-import { Node, Graph, Size, PointLike, Cell } from '@antv/x6';
+import { Node, Graph, Size, PointLike, Cell, Edge } from '@antv/x6';
 import { BaseEditorStore, BaseNode, Properties, ShapeType } from '../Model';
+import { CopyPayload } from '../Canvas/ClipboardUtils';
 
 export interface ShapeCoreInfo {
   type: string;
 }
 
 export interface ShapeComponentCellProps {
-  position?: PointLike;
-  size?: Size;
   zIndex?: number;
   id: string;
   data: Properties;
   children?: React.ReactNode;
   canBeParent?: boolean;
+
+  // Node 节点包含以下 属性
+  position?: PointLike;
+  size?: Size;
+
+  // Edge 节点包含以下属性
+  source?: Edge.TerminalData;
+  target?: Edge.TerminalData;
 }
 
 export interface ShapeConfiguration {
@@ -45,12 +52,20 @@ export interface ShapeConfiguration {
   droppable?: boolean | ((context: { graph: Graph; model: BaseNode; node: Node; sourceType: string }) => boolean);
 
   /**
+   * TODO: 支持 edge 类型拖入
    * 拖入时数据初始化, 默认只会创建包含 position 的基础数据
    * @note 注意，放在 Properties 的表示会进行持久化, 对于不需要持久化的静态数据，比如 attrs 等，
    *   在 component 渲染时、或 initialProps 中指定
    * @returns
    */
   dropFactory?: (context: { nativeEvent: React.DragEvent; graph: Graph }) => Properties;
+
+  /**
+   * 粘贴时数据初始化
+   * @param context
+   * @returns
+   */
+  copyFactory?: (context: { properties: Properties; payload: CopyPayload }) => Properties;
 
   /**
    * 边创建工厂

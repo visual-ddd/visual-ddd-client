@@ -44,4 +44,5 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 - 编辑器面板
 - label edit
 - node edit
-- edge/node selected 状态
+- edge/node selected 状态高亮
+- 只读模式

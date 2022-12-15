@@ -7,7 +7,7 @@ export const runInCommand = (name: string, args: any, runner: () => any) => {
     UNDER_COMMAND++;
 
     if (process.env.NODE_ENV !== 'production') {
-      console.debug(`Running Command: ${name}`, args);
+      console.debug(`Running Command: ${name}`, args?.[0]);
     }
 
     return runner();

@@ -11,7 +11,16 @@ export interface ShapeRendererProps {
 }
 
 const NoopProps = () => NoopObject;
-const MaybeNullProps: (keyof ShapeComponentCellProps)[] = ['position', 'size', 'zIndex'];
+const MaybeNullProps: (keyof ShapeComponentCellProps)[] = [
+  // node
+  'position',
+  'size',
+  // edge
+  'target',
+  'source',
+  // common
+  'zIndex',
+];
 
 const ShapeList = observer(function ShapeList(props: { list: BaseNode[] }) {
   return (

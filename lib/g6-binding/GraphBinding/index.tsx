@@ -48,6 +48,15 @@ export interface GraphBindingProps {
   onDrop?: (evt: { componentData: Record<string, any>; nativeEvent: React.DragEvent; graph: Graph }) => void;
 
   /**
+   * 鼠标移动事件
+   * @param evt
+   * @returns
+   */
+  onMouseMove?: (evt: React.MouseEvent) => void;
+  onMouseEnter?: (evt: React.MouseEvent) => void;
+  onMouseLeave?: (evt: React.MouseEvent) => void;
+
+  /**
    * 开启嵌入，在开始拖动节点时触发
    * @param evt
    * @returns
@@ -87,6 +96,9 @@ export interface GraphBindingProps {
    */
   onEdge$Added?: (evt: EventArgs['edge:added']) => void;
 
+  /**
+   * 节点移除
+   */
   onCell$Removed?: (evt: EventArgs['cell:removed']) => void;
 
   /**
@@ -112,7 +124,18 @@ const N = Noop;
  * 画布
  */
 export const GraphBinding = memo((props: GraphBindingProps) => {
-  const { className, style, children, options, onGraphReady, onDrop, ...other } = props;
+  const {
+    className,
+    style,
+    children,
+    options,
+    onMouseMove,
+    onMouseEnter,
+    onMouseLeave,
+    onGraphReady,
+    onDrop,
+    ...other
+  } = props;
   const id = useId();
   const disposer = useDisposer();
   const eventStore = useEventStore(other);
@@ -334,6 +357,9 @@ export const GraphBinding = memo((props: GraphBindingProps) => {
       ref={containerRef}
       onDragOver={handleDragOver}
       onDrop={handleDrop}
+      onMouseMove={onMouseMove}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
     >
       <GraphBindingProvider value={contextValue}>{children}</GraphBindingProvider>
     </div>

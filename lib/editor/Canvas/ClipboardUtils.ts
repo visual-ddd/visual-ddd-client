@@ -1,5 +1,7 @@
-import { Cell, Edge } from '@antv/x6';
+import { Cell, Edge, PointLike, Size } from '@antv/x6';
 import { NoopArray } from '@wakeapp/utils';
+import { v4 } from 'uuid';
+
 import { BaseNodeProperties } from '../Model';
 
 /**
@@ -17,6 +19,9 @@ interface CommonCopyPayload {
    */
   children?: string[];
 
+  /**
+   * 唯一 id
+   */
   id: string;
 
   /**
@@ -27,7 +32,7 @@ interface CommonCopyPayload {
 
 export type CopyPayload =
   | ({ type: 'edge'; source: Edge.TerminalData; target: Edge.TerminalData } & CommonCopyPayload)
-  | ({ type: 'node' } & CommonCopyPayload);
+  | ({ type: 'node'; position: PointLike; size: Size } & CommonCopyPayload);
 
 /**
  * 序列化为复制载荷
@@ -60,6 +65,8 @@ function serializeToCopyPayload(cells: Cell[]): CopyPayload[] {
     } else {
       payload.push({
         type: 'node',
+        position: json.position,
+        size: json.size,
         ...item,
       });
     }
@@ -86,7 +93,7 @@ export function copy(cells: Cell[]) {
   window.navigator.clipboard.writeText(encoded);
 }
 
-function tryParsePayload(text: string) {
+function tryParsePayload(text: string): CopyPayload[] | null {
   try {
     const source = window.atob(text);
 
@@ -97,6 +104,89 @@ function tryParsePayload(text: string) {
     return JSON.parse(source.slice(PAYLOAD_PREFIX.length));
   } catch (err) {
     return null;
+  }
+}
+
+function resetId(payload: CopyPayload[]) {
+  const idMap: Record<string, string> = {};
+
+  const resetTerminalData = (ter: Edge.TerminalData) => {
+    if (ter == null) {
+      return ter;
+    }
+
+    if ('cell' in ter) {
+      const td = ter as Edge.TerminalCellData; // 序列化之后的一定是 TerminalCellData
+      td.cell = idMap[td.cell];
+    }
+  };
+
+  // 先处理所有节点
+  for (const item of payload) {
+    const newId = 'copy-' + v4();
+    item.id = idMap[item.id] = newId;
+  }
+
+  // 处理边, parent, children
+  for (const item of payload) {
+    item.parent = item.parent && idMap[item.parent];
+    item.children = item.children && item.children.map(i => idMap[i]);
+
+    if (item.type === 'node') {
+      continue;
+    }
+
+    resetTerminalData(item.source);
+    resetTerminalData(item.target);
+  }
+}
+
+function getVertex(payload: CopyPayload[]) {
+  let x = Infinity;
+  let y = Infinity;
+
+  for (const item of payload) {
+    if (item.type === 'node') {
+      x = Math.min(item.position.x, x);
+      y = Math.min(item.position.y, y);
+    }
+  }
+
+  return { x, y };
+}
+
+function translate(payload: CopyPayload[], offsetX: number, offsetY: number) {
+  const translateTerminalData = (ter: Edge.TerminalData) => {
+    if (ter == null) {
+      return ter;
+    }
+
+    if ('x' in ter) {
+      ter.x += offsetX;
+      ter.y += offsetY;
+    }
+  };
+
+  for (const item of payload) {
+    if (item.type === 'node') {
+      item.position.x += offsetX;
+      item.position.y += offsetY;
+    } else {
+      translateTerminalData(item.source);
+      translateTerminalData(item.target);
+    }
+  }
+}
+
+function normalized(payload: CopyPayload[]) {
+  for (const item of payload) {
+    if (item.type === 'node') {
+      item.properties.position = item.position;
+      item.properties.size = item.size;
+    } else {
+      item.properties.source = item.source;
+      item.properties.target = item.target;
+    }
   }
 }
 
@@ -111,10 +201,17 @@ export async function paste(options: {
    * 在跨画布编辑时最好指定
    */
   whitelist?: string[];
+
+  /**
+   * 插入的位置(通常是鼠标当前的位置)，可选
+   */
+  position?: PointLike;
+
   /**
    * 粘贴后的偏移值, 默认 20, 默认会根据鼠标位置?
    */
   offset?: number;
+
   /**
    * 遍历器，paste 会按照树的顺序遍历节点, 你可以在这个方法中进行创建
    * @param item
@@ -129,5 +226,82 @@ export async function paste(options: {
 
   const payload = tryParsePayload(text);
 
-  console.log(payload);
+  if (!payload?.length) {
+    return;
+  }
+
+  // 对拷贝内容进行预处理
+  // id 重新生成
+  // position 偏移
+  // 数据规范化
+  const { offset, position, whitelist, visitor } = options;
+
+  if (
+    whitelist?.length &&
+    payload.some(i => {
+      return !whitelist.includes(i.properties.__node_type__);
+    })
+  ) {
+  }
+
+  resetId(payload);
+
+  let offsetX = offset ?? 20;
+  let offsetY = offset ?? 20;
+
+  if (position) {
+    // 偏移
+    const { x, y } = getVertex(payload);
+    if (Number.isFinite(x) && Number.isFinite(y)) {
+      offsetX = position.x - x;
+      offsetY = position.y - y;
+    }
+  }
+
+  translate(payload, offsetX, offsetY);
+
+  normalized(payload);
+
+  // 按照树的顺序遍历, 边最后阶段再添加
+  const nodeRoots: CopyPayload[] = [];
+  const edges: CopyPayload[] = [];
+  const mapById: Map<string, CopyPayload> = new Map();
+
+  for (const item of payload) {
+    mapById.set(item.id, item);
+    if (item.parent == null && item.type === 'node') {
+      nodeRoots.push(item);
+    }
+
+    if (item.type === 'edge') {
+      edges.push(item);
+    }
+  }
+
+  const visitNode = (item: CopyPayload) => {
+    // 深度递归
+    if (item.type !== 'node') {
+      return;
+    }
+
+    visitor(item);
+    mapById.delete(item.id);
+
+    if (item.children?.length) {
+      for (const child of item.children) {
+        const item = mapById.get(child);
+        if (item) {
+          visitNode(item);
+        }
+      }
+    }
+  };
+
+  for (const root of nodeRoots) {
+    visitNode(root);
+  }
+
+  for (const edge of edges) {
+    visitor(edge);
+  }
 }
