@@ -78,7 +78,7 @@ export interface ShapeConfiguration {
    * 静态的、初始参数
    * @returns
    */
-  initialProps?: () => Record<string, any>;
+  staticProps?: () => Record<string, any>;
 
   /**
    * 是否支持选中, 默认 true

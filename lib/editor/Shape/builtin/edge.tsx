@@ -6,7 +6,7 @@ import { defineShape } from '../defineShape';
  */
 defineShape('edge', {
   shapeType: 'edge',
-  initialProps: () => {
+  staticProps: () => {
     return { attrs: { line: { stroke: 'red' } } };
   },
   component(props) {

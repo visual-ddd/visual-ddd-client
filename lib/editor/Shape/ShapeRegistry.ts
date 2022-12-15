@@ -44,13 +44,19 @@ export class ShapeRegistry {
           throw new Error(`未找到类型为 ${type} 的图形组件`);
         }
 
-        const initialProperties = edgeConfiguration.initialProps?.();
+        const initialProperties = edgeConfiguration.staticProps?.();
+
+        // 注入类型信息，方便恢复
+        const typeInfo: BaseNodeProperties = {
+          __node_type__: edgeConfiguration.shapeType,
+          __node_name__: type,
+        };
+
         return graph.createEdge({
           ...initialProperties,
           data: {
-            // 注入类型信息
-            __type__: type,
             ...initialProperties?.data,
+            ...typeInfo,
           },
         });
       }

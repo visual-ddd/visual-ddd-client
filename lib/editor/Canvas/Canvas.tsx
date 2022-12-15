@@ -8,7 +8,7 @@ import { message } from 'antd';
 
 import { GraphBindingProps, GraphBinding, GraphBindingOptions } from '@/lib/g6-binding';
 
-import { useEditorStore } from '../Model';
+import { BaseNodeProperties, useEditorStore } from '../Model';
 
 import s from './Canvas.module.scss';
 import { Cells } from './Cells';
@@ -202,11 +202,11 @@ export const Canvas = memo((props: CanvasProps) => {
       console.log('new connect', evt);
 
       // 插入新的边节点
-      const shapeType = edge.getData()?.__type__ ?? 'edge';
+      const shapeName = (edge.getData() as BaseNodeProperties)?.__node_name__ ?? 'edge';
 
       // 转换为 model 上的节点
       commandHandler.createNode({
-        name: shapeType,
+        name: shapeName,
         type: 'edge',
         properties: {
           source: edge.getSource(),

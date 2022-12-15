@@ -51,7 +51,7 @@ defineShape('child', {
   allowLoopConnect: false,
   allowConnectNodes: ['child'],
   edgeFactory: 'edge',
-  initialProps: () => ({
+  staticProps: () => ({
     zIndex: 2,
     tools: ['boundary'],
     attrs: {
@@ -97,7 +97,7 @@ defineShape('child-2', {
   },
   allowLoopConnect: true,
   allowConnectNodes: ['child'],
-  initialProps: () => ({
+  staticProps: () => ({
     zIndex: 2,
     attrs: {
       body: {
