@@ -81,6 +81,17 @@ export interface ShapeConfiguration {
   staticProps?: () => Record<string, any>;
 
   /**
+   * 初始状态，这里指定的状态会放置到 Model 进行持久化
+   * 而 staticProps 是静态的，只在组件渲染时有用
+   * 这些参数可以在 component 中通过 model.properties 获取
+   *
+   * 另外在 copyFactory、dropFactory 中也可以定义参数，这些工厂定义的参数优先级高于 initialProps
+   *
+   * @returns
+   */
+  initialProps?: () => Properties;
+
+  /**
    * 是否支持选中, 默认 true
    */
   selectable?: boolean;

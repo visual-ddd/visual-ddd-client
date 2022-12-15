@@ -25,6 +25,9 @@ registerX6ReactComponent('hello', MyComponent);
 defineShape('rect', {
   shapeType: 'node',
   group: true,
+  initialProps: () => {
+    return { label: 'Hello' };
+  },
   droppable: ctx => {
     return ctx.sourceType !== 'rect';
   },
@@ -34,8 +37,11 @@ defineShape('rect', {
   dropFactory() {
     return { size: { width: 300, height: 300 }, zIndex: 1 };
   },
+  copyFactory({ properties }) {
+    return { label: properties.label + '+' };
+  },
   component(props) {
-    return <RectBinding {...props.cellProps} />;
+    return <RectBinding {...props.cellProps} label={props.model.properties.label} />;
   },
 });
 

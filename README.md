@@ -35,14 +35,13 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 ## TODO
 
-- 拷贝
 - position change 处理
 - resize change 处理
-- react 组件 resize
-- editorStore root 处理
 - redo/undo
 - 编辑器面板
+- react 组件 resize
 - label edit
 - node edit
 - edge/node selected 状态高亮
+- 创建后选中
 - 只读模式

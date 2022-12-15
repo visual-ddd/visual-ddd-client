@@ -44,7 +44,7 @@ export class ShapeRegistry {
           throw new Error(`未找到类型为 ${type} 的图形组件`);
         }
 
-        const initialProperties = edgeConfiguration.staticProps?.();
+        const initialStaticProperties = edgeConfiguration.staticProps?.();
 
         // 注入类型信息，方便恢复
         const typeInfo: BaseNodeProperties = {
@@ -53,9 +53,9 @@ export class ShapeRegistry {
         };
 
         return graph.createEdge({
-          ...initialProperties,
+          ...initialStaticProperties,
           data: {
-            ...initialProperties?.data,
+            ...initialStaticProperties?.data,
             ...typeInfo,
           },
         });
@@ -233,6 +233,7 @@ export class ShapeRegistry {
         // TODO: 需要根据节点的类型，比如只有 node 才有 position，edge 则是 source 和 target
         // 这里的数据尽量保存纯对象
         position: { x: position.x, y: position.y },
+        ...conf?.initialProps?.(),
         ...conf?.dropFactory?.({ graph: this.graph, nativeEvent }),
       },
     };
@@ -250,11 +251,11 @@ export class ShapeRegistry {
     return {
       type,
       shapeType: configuration.shapeType,
-      properties: Object.assign(
-        {},
-        payload.properties,
-        configuration?.copyFactory?.({ properties: payload.properties, payload }) ?? NoopObject
-      ),
+      properties: {
+        ...configuration.initialProps?.(),
+        ...payload.properties,
+        ...(configuration?.copyFactory?.({ properties: payload.properties, payload }) ?? NoopObject),
+      },
     };
   }
 
