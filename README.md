@@ -37,6 +37,8 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 - position change 处理
 - resize change 处理
+- rotate 处理
+- 边拖入
 - redo/undo
 - 编辑器面板
 - react 组件 resize

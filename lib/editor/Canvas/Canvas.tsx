@@ -132,6 +132,14 @@ export const Canvas = memo((props: CanvasProps) => {
     graphHovering.current = true;
   };
 
+  const handleNodeMoved: GraphBindingProps['onNode$Moved'] = evt => {
+    const { node } = evt;
+    const model = store.getNodeById(node.id);
+    if (model) {
+      commandHandler.updateNodeProperty({ node: model, path: 'position', value: node.getPosition() });
+    }
+  };
+
   /**
    * 选择变动
    */
@@ -353,12 +361,11 @@ export const Canvas = memo((props: CanvasProps) => {
       onMouseLeave={handleMouseLeave}
       onGraphReady={handleGraphReady}
       onCell$Change$Parent={handleParentChange}
-      onSelection$Changed={handleSelectionChanged}
+      onNode$Moved={handleNodeMoved}
       onEdge$Connected={handleEdgeConnected}
-      onEdge$Added={() => {
-        console.log('edge added');
-      }}
+      onEdge$Added={() => console.log('edge added')}
       onEdge$Removed={handleEdgeRemoved}
+      onSelection$Changed={handleSelectionChanged}
     >
       {/* 绑定到 Store 的节点和边 */}
       <Cells />

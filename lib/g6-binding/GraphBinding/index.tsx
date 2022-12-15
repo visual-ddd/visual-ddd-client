@@ -76,6 +76,13 @@ export interface GraphBindingProps {
   onNode$Embedded?: (evt: EventArgs['node:embedded']) => void;
 
   /**
+   * 节点移动后触发
+   * @param evt
+   * @returns
+   */
+  onNode$Moved?: (evt: EventArgs['node:moved']) => void;
+
+  /**
    * 边连接变更
    * @param evt
    * @returns
