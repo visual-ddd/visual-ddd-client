@@ -6,7 +6,7 @@ import { ShapeRenderer } from '../Shape';
  * 节点渲染
  */
 export const Cells = observer(function Cells() {
-  const store = useEditorStore();
+  const { store } = useEditorStore();
 
   return (
     <>

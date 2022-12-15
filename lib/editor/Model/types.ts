@@ -9,3 +9,5 @@ export interface BaseNodeProperties {
 export type ShapeType = 'node' | 'edge';
 
 export type Disposer = () => void;
+
+export type PickParams<T extends (...args: any[]) => any, P = Parameters<T>> = P extends [infer U] ? U : never;

@@ -1,6 +1,6 @@
 import { derive } from '@/lib/store';
 import { makeObservable, observable } from 'mobx';
-import type { BaseNodeProperties, Properties, ShapeType } from './types';
+import type { BaseNodeProperties, ShapeType } from './types';
 
 /**
  * 节点基类

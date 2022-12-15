@@ -1,4 +1,4 @@
-import { RectBinding, EdgeBinding, registerX6ReactComponent } from '@/lib/g6-binding';
+import { RectBinding, registerX6ReactComponent } from '@/lib/g6-binding';
 import { useState } from 'react';
 import {
   ComponentContainer,
@@ -6,7 +6,6 @@ import {
   EditorStoreProvider,
   BaseEditorStore,
   Canvas,
-  BaseNode,
   defineShape,
   useHoverShowPorts,
 } from '@/lib/editor';
@@ -123,7 +122,7 @@ const Operations = observer(() => {
       <div>selected: {store.selectedNodes.map(n => n.id).join(', ')}</div>
       <div>focusing: {store.focusingNode?.id}</div>
 
-      <button onClick={store.removeSelected}>移除选中</button>
+      <button onClick={store.commandHandler.removeSelected}>移除选中</button>
       <button
         onClick={() => {
           if (store.focusingNode) {
@@ -138,7 +137,7 @@ const Operations = observer(() => {
 });
 
 const Designer = observer(() => {
-  const [showEdge, setShowEdge] = useState(false);
+  const [_, setShowEdge] = useState(false);
   const [showCanvas, setShowCanvas] = useState(true);
 
   return (

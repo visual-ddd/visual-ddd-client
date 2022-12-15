@@ -32,3 +32,16 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+## TODO
+
+- 拷贝
+- position change 处理
+- resize change 处理
+- react 组件 resize
+- editorStore root 处理
+- redo/undo
+- 编辑器面板
+- label edit
+- node edit
+- edge/node selected 状态

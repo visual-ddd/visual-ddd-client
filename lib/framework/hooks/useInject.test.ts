@@ -35,7 +35,7 @@ describe('useInject', () => {
     registerConstant(MOCK_IDENTIFIER, 'MOCK_DATA2', { container });
 
     expect(() => {
-      const { result } = renderHook(() => useInject(MOCK_IDENTIFIER, undefined, container));
+      renderHook(() => useInject(MOCK_IDENTIFIER, undefined, container));
     }).toThrowError('Ambiguous match found');
   });
 

@@ -1,15 +1,12 @@
 import { Graph, Node } from '@antv/x6';
-import { Selection } from '@antv/x6-plugin-selection';
-import { Keyboard } from '@antv/x6-plugin-keyboard';
-import { Clipboard } from '@antv/x6-plugin-clipboard';
+
 import { memo, useMemo, useRef } from 'react';
 import merge from 'lodash/merge';
 import { booleanPredicate, NoopObject } from '@wakeapp/utils';
-import { useDisposer } from '@wakeapp/hooks';
 import classNames from 'classnames';
 import { message } from 'antd';
 
-import { GraphBindingProps, GraphBinding } from '@/lib/g6-binding';
+import { GraphBindingProps, GraphBinding, GraphBindingOptions } from '@/lib/g6-binding';
 
 import { useEditorStore } from '../Model';
 
@@ -17,6 +14,7 @@ import s from './Canvas.module.scss';
 import { Cells } from './Cells';
 import { assertShapeInfo } from '../Shape';
 import { wrapPreventListenerOptions } from '@/lib/g6-binding/hooks';
+import { copy, paste } from './ClipboardUtils';
 
 export interface CanvasProps extends GraphBindingProps {}
 
@@ -24,12 +22,11 @@ export interface CanvasProps extends GraphBindingProps {}
  * 画布
  */
 export const Canvas = memo((props: CanvasProps) => {
-  const store = useEditorStore()!;
+  const { store, commandHandler, listen } = useEditorStore()!;
   const graphRef = useRef<Graph>();
-  const disposer = useDisposer();
   const { options, children } = props;
 
-  const finalOptions: Graph.Options = useMemo(() => {
+  const finalOptions: GraphBindingOptions = useMemo(() => {
     return merge(
       // 默认配置
       {
@@ -43,7 +40,7 @@ export const Canvas = memo((props: CanvasProps) => {
           findParent: 'bbox',
           // 验证是否支持拖入
           validate(context) {
-            return store.shapeRegistry.isEmbeddable({
+            return commandHandler.shapeRegistry.isEmbeddable({
               parent: context.parent,
               child: context.child,
               graph: this,
@@ -59,12 +56,12 @@ export const Canvas = memo((props: CanvasProps) => {
           highlight: true,
           // 是否支持循环连线
           allowLoop: arg => {
-            return store.shapeRegistry.isAllowNodeConnect(arg);
+            return commandHandler.shapeRegistry.isAllowNodeConnect(arg);
           },
           // allowNode 不太靠谱，统一使用 allowLoop 验证
           // allowNode
           createEdge(arg) {
-            return store.shapeRegistry.createEdge({
+            return commandHandler.shapeRegistry.createEdge({
               graph: this,
               cell: arg.sourceCell,
               magnet: arg.sourceMagnet,
@@ -83,7 +80,38 @@ export const Canvas = memo((props: CanvasProps) => {
 
         // 自动根据容器调整大小
         autoResize: true,
-      } satisfies Graph.Options,
+
+        // 选中处理
+        selection: {
+          enabled: true,
+          multiple: true,
+
+          // 框选
+          rubberband: true,
+          // 严格框选
+          strict: true,
+
+          // 选择框
+          showNodeSelectionBox: true,
+          showEdgeSelectionBox: true,
+          filter(cell) {
+            return commandHandler.shapeRegistry.isSelectable({ cell, graph: this });
+          },
+        },
+
+        // 快捷键处理
+        keyboard: {
+          // 单个页面可能存在多个画布实例
+          global: false,
+          enabled: true,
+        },
+
+        // 剪切板
+        clipboard: {
+          enabled: true,
+          useLocalStorage: false,
+        },
+      } satisfies GraphBindingOptions,
       options ?? NoopObject
     );
   }, [options]);
@@ -93,8 +121,8 @@ export const Canvas = memo((props: CanvasProps) => {
    */
   const handleSelectionChanged: GraphBindingProps['onSelection$Changed'] = evt => {
     if (evt.added.length || evt.removed.length) {
-      const selected = evt.selected.map(i => store.shapeRegistry.getModelByNode(i)).filter(booleanPredicate);
-      store.setSelected({ selected });
+      const selected = evt.selected.map(i => commandHandler.shapeRegistry.getModelByNode(i)).filter(booleanPredicate);
+      commandHandler.setSelected({ selected });
     }
   };
 
@@ -113,15 +141,15 @@ export const Canvas = memo((props: CanvasProps) => {
 
     const { type } = componentData;
 
-    if (!store.shapeRegistry.isShapeDefined(type)) {
+    if (!commandHandler.shapeRegistry.isShapeDefined(type)) {
       console.error(`拖入的图形（${type}）未定义`);
       return;
     }
 
-    const shapeType = store.shapeRegistry.getShapeType(type)!;
+    const shapeType = commandHandler.shapeRegistry.getShapeType(type)!;
 
     // 构造节点
-    const properties = store.shapeRegistry.dropFactory({ type, nativeEvent, graph });
+    const properties = commandHandler.shapeRegistry.dropFactory({ type, nativeEvent, graph });
 
     // 定位被拖入的父节点
     const localPoint = graph.pageToLocal(nativeEvent.pageX, nativeEvent.pageY);
@@ -130,7 +158,7 @@ export const Canvas = memo((props: CanvasProps) => {
     // 插入操作
     const insert = (parentNode?: Node) => {
       const parent = parentNode && store.getNodeById(parentNode.id);
-      store.createNode({
+      commandHandler.createNode({
         name: type,
         type: shapeType,
         properties,
@@ -141,7 +169,10 @@ export const Canvas = memo((props: CanvasProps) => {
     if (maybeParents.length) {
       // 获取第一个支持拖入的容器
       for (const candidate of maybeParents) {
-        if (candidate.isVisible() && store.shapeRegistry.isDroppable({ parent: candidate, sourceType: type, graph })) {
+        if (
+          candidate.isVisible() &&
+          commandHandler.shapeRegistry.isDroppable({ parent: candidate, sourceType: type, graph })
+        ) {
           return insert(candidate);
         }
       }
@@ -165,7 +196,7 @@ export const Canvas = memo((props: CanvasProps) => {
       const shapeType = edge.getData()?.__type__ ?? 'edge';
 
       // 转换为 model 上的节点
-      store.createNode({
+      commandHandler.createNode({
         name: shapeType,
         type: 'edge',
         properties: {
@@ -179,12 +210,12 @@ export const Canvas = memo((props: CanvasProps) => {
     } else {
       // 可能来源或目标都修改了
       console.log('connect changed', evt);
-      const model = store.shapeRegistry.getModelByNode(edge);
+      const model = commandHandler.shapeRegistry.getModelByNode(edge);
       if (model) {
         if (type === 'source') {
-          store.updateNodeProperty({ node: model, path: 'source', value: edge.getSource() });
+          commandHandler.updateNodeProperty({ node: model, path: 'source', value: edge.getSource() });
         } else {
-          store.updateNodeProperty({ node: model, path: 'target', value: edge.getTarget() });
+          commandHandler.updateNodeProperty({ node: model, path: 'target', value: edge.getTarget() });
         }
       }
     }
@@ -193,9 +224,9 @@ export const Canvas = memo((props: CanvasProps) => {
   const handleEdgeRemoved: GraphBindingProps['onEdge$Removed'] = evt => {
     console.log('edge remove', evt);
     const { edge } = evt;
-    const model = store.shapeRegistry.getModelByNode(edge);
+    const model = commandHandler.shapeRegistry.getModelByNode(edge);
     if (model) {
-      store.removeNode({ node: model }, false);
+      commandHandler.removeNode({ node: model, checkValidate: false });
     }
   };
 
@@ -215,89 +246,64 @@ export const Canvas = memo((props: CanvasProps) => {
 
     if (model) {
       console.log('change parent', evt);
-      store.moveNode({ child: model, parent: current ? store.getNodeById(current) : undefined });
+      commandHandler.moveNode({ child: model, parent: current ? store.getNodeById(current) : undefined });
     }
   };
 
   const handleGraphReady = (graph: Graph) => {
     graphRef.current = graph;
-    store.shapeRegistry.bindGraph(graph);
+    commandHandler.shapeRegistry.bindGraph(graph);
 
-    // 插件扩展
-
-    // 选中控制
-    graph.use(
-      new Selection({
-        enabled: true,
-        multiple: true,
-
-        // 框选
-        rubberband: true,
-        // 严格框选
-        strict: true,
-
-        // 选择框
-        showNodeSelectionBox: true,
-        showEdgeSelectionBox: true,
-        filter(cell) {
-          return store.shapeRegistry.isSelectable({ cell, graph: this });
-        },
-      })
-    );
-
-    // 快捷键
-    graph.use(
-      new Keyboard({
-        // 单个页面可能存在多个画布实例
-        global: false,
-        enabled: true,
-      })
-    );
-
-    graph.use(
-      new Clipboard({
-        enabled: true,
-        useLocalStorage: false,
-      })
-    );
-
+    // 快捷键绑定
     // 删除
     graph.bindKey('backspace', () => {
-      store.removeSelected();
+      commandHandler.removeSelected();
     });
 
-    graph.bindKey(['command+c', 'ctrl+c'], () => {
-      const selected = graph.getSelectedCells();
-      // 过滤可以拷贝的cell
-      const filteredSelected = selected.map(i => store.shapeRegistry.getModelByNode(i)).filter(booleanPredicate);
-      if (filteredSelected.length) {
-        // X6 在这里已经处理了一些逻辑，必须选中父节点，递归包含子节点、包含子节点之间的连线、修改 id 等等
-        graph.copy(selected, { deep: true });
-
-        // 数据转换
-      }
+    // 拷贝
+    graph.bindKey(['command+c', 'ctrl+c'], e => {
+      e.preventDefault();
+      commandHandler.copy();
     });
 
-    graph.bindKey(['command+v', 'ctrl+v'], () => {
-      console.log(graph.getCellsInClipboard());
-      // graph.paste();
+    // 粘贴
+    graph.bindKey(['command+v', 'ctrl+v'], e => {
+      e.preventDefault();
+      commandHandler.paste();
     });
-
-    // 监听 store 事件
-    disposer.push(
-      store.on('UNSELECT_ALL', () => {
-        graph.cleanSelection();
-      }),
-      store.on('NODE_REMOVED', params => {
-        console.log('node removed', params.node);
-        graph.unselect(params.node.id);
-      }),
-      store.on('UNREMOVABLE', () => {
-        // TODO: 详细
-        message.warning('不能删除');
-      })
-    );
   };
+
+  listen('COPY', () => {
+    const graph = graphRef.current;
+    if (graph == null) {
+      return;
+    }
+
+    const selected = graph.getSelectedCells();
+    // 过滤可以拷贝的cell
+    const filteredSelected = selected.map(i => commandHandler.shapeRegistry.getModelByNode(i)).filter(booleanPredicate);
+    if (filteredSelected.length) {
+      // X6 在这里已经处理了一些逻辑，必须选中父节点，递归包含子节点、包含子节点之间的连线、修改 id 等等
+      graph.copy(selected, { deep: true });
+
+      // 放入剪切板
+      copy(graph.getCellsInClipboard());
+    }
+  });
+  listen('PASTE', () => {
+    paste({ visitor() {} });
+  });
+  listen('UNREMOVABLE', () => {
+    // TODO: 详细
+    message.warning('不能删除');
+  });
+  listen('NODE_REMOVED', params => {
+    console.log('node removed', params.node);
+    graphRef.current?.unselect(params.node.id);
+  });
+  listen('UNSELECT_ALL', () => {
+    graphRef.current?.cleanSelection();
+  });
 
   return (
     <GraphBinding

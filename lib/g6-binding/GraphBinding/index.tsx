@@ -1,6 +1,9 @@
 import React, { memo, useEffect, useId, useMemo, useRef } from 'react';
 import cls from 'classnames';
 import { Graph, Cell, EventArgs } from '@antv/x6';
+import { Selection } from '@antv/x6-plugin-selection';
+import { Keyboard } from '@antv/x6-plugin-keyboard';
+import { Clipboard } from '@antv/x6-plugin-clipboard';
 import type { Options } from '@antv/x6/lib/graph/options';
 import { Noop, NoopArray } from '@wakeapp/utils';
 import { useDisposer } from '@wakeapp/hooks';
@@ -14,6 +17,12 @@ import {
 } from './GraphBindingContext';
 import { useEventStore } from '../hooks';
 
+export type GraphBindingOptions = Partial<Options.Manual> & {
+  selection?: Selection.Options;
+  keyboard?: Keyboard['options'];
+  clipboard?: Clipboard.Options;
+};
+
 export interface GraphBindingProps {
   className?: string;
   style?: React.CSSProperties;
@@ -22,7 +31,7 @@ export interface GraphBindingProps {
   /**
    * 画布初始化选项
    */
-  options?: Partial<Options.Manual>;
+  options?: GraphBindingOptions;
 
   /**
    * 画布实例就绪
@@ -272,23 +281,44 @@ export const GraphBinding = memo((props: GraphBindingProps) => {
       ...options,
     });
 
-    onGraphReady?.(graph);
-    graphRef.current = graph;
+    // 插件加载
+    {
+      if (options?.selection) {
+        graph.use(new Selection(options.selection));
+      }
 
-    requestAnimationFrame(() => {
-      contextValue.__emitGraph(graph);
-    });
+      if (options?.keyboard) {
+        graph.use(new Keyboard(options.keyboard));
+      }
 
-    const attachEvent = (name: string, handler: Function) => {
-      graph.on(name, handler as any);
-    };
+      if (options?.clipboard) {
+        graph.use(new Clipboard(options.clipboard));
+      }
+    }
 
-    eventStore.listenDelegationChange(attachEvent);
+    // 通知就绪
+    {
+      onGraphReady?.(graph);
+      graphRef.current = graph;
 
-    const delegations = eventStore.getDelegations();
-    Object.keys(delegations).forEach(event => {
-      attachEvent(event, delegations[event]);
-    });
+      requestAnimationFrame(() => {
+        contextValue.__emitGraph(graph);
+      });
+    }
+
+    // 事件处理
+    {
+      const attachEvent = (name: string, handler: Function) => {
+        graph.on(name, handler as any);
+      };
+
+      eventStore.listenDelegationChange(attachEvent);
+
+      const delegations = eventStore.getDelegations();
+      Object.keys(delegations).forEach(event => {
+        attachEvent(event, delegations[event]);
+      });
+    }
 
     return () => {
       graph.dispose();
