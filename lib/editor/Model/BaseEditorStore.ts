@@ -5,24 +5,19 @@ import { autoBindThis, derive, mutation } from '@/lib/store';
 
 import { BaseNode } from './BaseNode';
 import type { Properties, ShapeType } from './types';
-import { BaseEditorCommandHandler } from './BaseEditorCommandHandler';
-import { BaseEditorIndex } from './BaseEditorIndex';
 import { ROOT_ID } from './constants';
+import { BaseEditorEvent } from './BaseEditorEvent';
 
 /**
  * 编辑器 Store 基类
  *
  * 注意： 这里不会耦合视图相关内容
- * - mutation 由 BaseEditorCommandHandler 来统一调用，BaseEditorCommandHandler 在调用之前会进行一些校验
+ * - mutation 由 BaseEditorCommandHandler 或 BaseEditorDatasource 来统一调用，BaseEditorCommandHandler 在调用之前会进行一些校验
+ * - mutation 应该覆盖单一职责，保持原子化，一次只操作一个对象
  */
 export class BaseEditorStore {
   /**
-   * 命令处理器
-   */
-  readonly commandHandler: BaseEditorCommandHandler;
-
-  /**
-   * 根节点
+   * 根节点, 核心树
    */
   @observable
   readonly root: BaseNode;
@@ -49,61 +44,48 @@ export class BaseEditorStore {
     return this.selectedNodes.length === 1 ? this.selectedNodes[0] : null;
   }
 
-  /**
-   * 索引信息
-   */
-  private index: BaseEditorIndex;
+  private event: BaseEditorEvent;
 
-  constructor() {
+  constructor(inject: { event: BaseEditorEvent }) {
     // 后续支持子类继承
-    this.commandHandler = new BaseEditorCommandHandler(this);
-    this.index = new BaseEditorIndex(this.commandHandler);
     this.root = this.nodeFactory(ROOT_ID, ROOT_ID);
+    this.event = inject.event;
 
     makeObservable(this);
     autoBindThis(this);
   }
 
-  // TODO: 触发 actions
   @mutation('APPEND_CHILD')
   appendChild(params: { child: BaseNode; parent?: BaseNode }) {
     const { child, parent } = params;
 
-    // reset references
-    this.removeChild(child);
-
-    // append
     const realParent = parent ?? this.root;
     realParent.appendChild(child);
+    this.event.emit('NODE_APPEND_CHILD', { parent: realParent, child });
+  }
+
+  @mutation('REMOVE_CHILD')
+  removeChild(params: { parent: BaseNode; child: BaseNode }): void {
+    const { parent, child } = params;
+    parent.removeChild(child);
+    this.event.emit('NODE_REMOVE_CHILD', { parent, child });
   }
 
   @mutation('CREATE_NODE')
-  createNode(params: { name: string; type: ShapeType; id?: string; properties: Properties; parent?: BaseNode }) {
+  createNode(params: { name: string; type: ShapeType; id?: string; properties: Properties }) {
     const node = this.nodeFactory(params.name, params.id, params.type);
 
     Object.assign(node.properties, params.properties);
-
-    this.appendChild({ child: node, parent: params.parent });
+    this.event.emit('NODE_CREATED', { node });
 
     return node;
-  }
-
-  @mutation('MOVE_NODE')
-  moveNode(params: { child: BaseNode; parent?: BaseNode }) {
-    this.appendChild(params);
-  }
-
-  @mutation('SET_SELECTED')
-  setSelected(params: { selected: BaseNode[] }) {
-    this.selectedNodes = params.selected;
   }
 
   @mutation('REMOVE_NODE')
   removeNode(params: { node: BaseNode }) {
     const { node } = params;
 
-    // 移除引用关系
-    this.removeChild(node);
+    this.event.emit('NODE_REMOVED', { node });
   }
 
   /**
@@ -114,15 +96,12 @@ export class BaseEditorStore {
   updateNodeProperty(params: { node: BaseNode; path: string; value: any }) {
     const { node, path, value } = params;
     set(node.properties, path, value);
+    this.event.emit('NODE_UPDATE_PROPERTY', { node, path, value });
   }
 
-  /**
-   * 通过 id 获取节点
-   * @param id
-   * @returns
-   */
-  getNodeById(id: string) {
-    return this.index.getNodeById(id);
+  @mutation('SET_SELECTED')
+  setSelected(params: { selected: BaseNode[] }) {
+    this.selectedNodes = params.selected;
   }
 
   /**
@@ -132,9 +111,5 @@ export class BaseEditorStore {
   protected nodeFactory(name: string, id?: string, type?: ShapeType): BaseNode {
     const node = new BaseNode(name, id ?? v4(), type);
     return node;
-  }
-
-  private removeChild(child: BaseNode): void {
-    child.parent?.removeChild(child);
   }
 }

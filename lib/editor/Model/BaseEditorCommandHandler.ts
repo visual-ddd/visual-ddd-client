@@ -1,66 +1,25 @@
 import { autoBindThis, command } from '@/lib/store';
-import { debounce, booleanPredicate, EventEmitter } from '@wakeapp/utils';
+import { debounce, booleanPredicate } from '@wakeapp/utils';
 
 import { BaseEditorStore } from './BaseEditorStore';
-import { ShapeRegistry } from '../Shape';
-import type { Disposer, PickParams } from './types';
+import type { PickParams, ShapeType, Properties } from './types';
 import { BaseNode } from './BaseNode';
-
-/**
- * 编辑器事件
- */
-export interface BaseEditorEvents {
-  UNSELECT_ALL: void;
-  UNREMOVABLE: void;
-  COPY: void;
-  PASTE: void;
-  NODE_REMOVED: { node: BaseNode };
-  NODE_CREATED: { node: BaseNode };
-}
-
-export type BaseEditorEventsWithoutArg = keyof {
-  [P in keyof BaseEditorEvents as BaseEditorEvents[P] extends void ? P : never]: void;
-};
-
-export type BaseEditorEventsWithArg = Exclude<keyof BaseEditorEvents, BaseEditorEventsWithoutArg>;
+import { BaseEditorEvent } from './BaseEditorEvent';
 
 /**
  * 用于统一处理 View 层的命令
  */
 export class BaseEditorCommandHandler {
-  /**
-   * 图形注册器、管理器
-   */
-  readonly shapeRegistry: ShapeRegistry;
+  private store: BaseEditorStore;
+  // @ts-ignore
+  private event: BaseEditorEvent;
 
-  readonly store: BaseEditorStore;
-
-  /**
-   * 暴露给 View 层的事件
-   */
-  private eventBus: EventEmitter = new EventEmitter();
-
-  constructor(store: BaseEditorStore) {
+  constructor(inject: { event: BaseEditorEvent; store: BaseEditorStore }) {
+    const { store, event } = inject;
     this.store = store;
-
-    this.shapeRegistry = new ShapeRegistry(store);
+    this.event = event;
 
     autoBindThis(this);
-  }
-
-  /**
-   * 事件订阅
-   * @param name
-   * @param listener
-   */
-  on<T extends BaseEditorEventsWithoutArg>(name: T, listener: () => void): Disposer;
-  on<T extends BaseEditorEventsWithArg>(name: T, listener: (arg: BaseEditorEvents[T]) => void): Disposer;
-  on(name: string, listener: (args: any) => void): Disposer {
-    this.eventBus.on(name, listener);
-
-    return () => {
-      this.eventBus.off(name, listener);
-    };
   }
 
   @command('SET_SELECTED')
@@ -69,62 +28,68 @@ export class BaseEditorCommandHandler {
   }
 
   @command('CREATE_NODE')
-  createNode(params: PickParams<BaseEditorStore['createNode']>) {
+  createNode(params: { name: string; type: ShapeType; id?: string; properties: Properties; parent?: BaseNode }) {
     const node = this.store.createNode(params);
-    this.emit('NODE_CREATED', { node });
+
+    // 更新引用关系
+    this.store.appendChild({ child: node, parent: params.parent });
+
+    return node;
   }
 
   @command('MOVE_NODE')
-  moveNode(params: PickParams<BaseEditorStore['moveNode']>) {
-    this.store.moveNode(params);
+  moveNode(params: { child: BaseNode; parent?: BaseNode }) {
+    const { child, parent } = params;
+
+    const from = child.parent;
+    // reset old references
+    if (from) {
+      this.store.removeChild({ parent: from, child });
+    }
+
+    // move to new parent
+    this.store.appendChild({ parent, child });
+
+    this.event.emit('NODE_MOVE', { from, node: child, to: parent });
   }
 
   @command('REMOVE_NODE')
-  removeNode(params: { node: BaseNode; checkValidate?: boolean }) {
-    const { node, checkValidate = true } = params;
-
-    if (checkValidate && this.hasUnremovableNode(node)) {
-      this.emit('UNREMOVABLE');
-      return false;
-    }
+  removeNode(params: { node: BaseNode }) {
+    const { node } = params;
 
     // 深度优先递归删除
     if (node.children.length) {
       const clone = node.children.slice(0);
       for (const child of clone) {
-        this.removeNode({ node: child, checkValidate: false });
+        this.removeNode({ node: child });
       }
     }
 
-    this.store.removeNode({ node });
+    // 先移除引用关系
+    if (node.parent) {
+      this.store.removeChild({ parent: node.parent, child: node });
+    }
 
-    this.emit('NODE_REMOVED', { node });
+    // 移除节点
+    this.store.removeNode({ node });
 
     return true;
   }
 
-  @command('REMOVE_SELECTED')
-  removeSelected() {
-    const selected = this.store.selectedNodes;
-    if (!selected.length) {
-      return false;
-    }
-
-    if (selected.some(this.hasUnremovableNode)) {
-      this.emit('UNREMOVABLE');
-      return false;
-    }
-
+  /**
+   * 批量删除
+   * @param context
+   * @returns
+   */
+  @command('REMOVE_BATCHED')
+  removeBatched(context: { nodes: BaseNode[] }) {
     // 需要进行合并，比如包含了公共节点，需要进行删除
-    const flattened = this.flatNodes(selected);
+    const flattened = this.flatNodes(context.nodes);
 
     // 删除
     for (const item of flattened) {
-      this.removeNode({ node: item, checkValidate: false });
+      this.removeNode({ node: item });
     }
-
-    // 清空选择
-    this.emit('UNSELECT_ALL');
 
     return true;
   }
@@ -137,40 +102,6 @@ export class BaseEditorCommandHandler {
   updateNodePropertyDebounced = debounce((params: { node: BaseNode; path: string; value: any }) => {
     this.updateNodeProperty(params);
   });
-
-  @command('COPY')
-  copy() {
-    this.emit('COPY');
-  }
-
-  @command('PASTE')
-  paste() {
-    this.emit('PASTE');
-  }
-
-  /**
-   * 事件触发
-   * @param name
-   */
-  private emit<T extends BaseEditorEventsWithoutArg>(name: T): void;
-  private emit<T extends BaseEditorEventsWithArg>(name: T, arg: BaseEditorEvents[T]): void;
-  private emit(name: string, args?: any): void {
-    this.eventBus.emit(name, args);
-  }
-
-  protected hasUnremovableNode = (node: BaseNode): boolean => {
-    if (!this.shapeRegistry.isRemovable({ model: node })) {
-      return true;
-    }
-
-    if (node.children.length) {
-      if (node.children.some(this.hasUnremovableNode)) {
-        return true;
-      }
-    }
-
-    return false;
-  };
 
   /**
    * 节点扁平化

@@ -2,7 +2,7 @@ import { NoopArray, NoopObject } from '@wakeapp/utils';
 import { observer } from 'mobx-react';
 import { useMemo } from 'react';
 
-import { BaseNode, useEditorStore } from '../Model';
+import { BaseNode, useEditorModel } from '../Model';
 import { shapes } from './store';
 import { ShapeComponentCellProps } from './types';
 
@@ -38,7 +38,7 @@ const ShapeList = observer(function ShapeList(props: { list: BaseNode[] }) {
 export const ShapeRenderer = observer(function Shape(props: ShapeRendererProps) {
   const { model } = props;
   const config = shapes.get(model.name)!;
-  const { store } = useEditorStore();
+  const { store } = useEditorModel();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const initialProps = useMemo<Record<string, any>>(config.staticProps ?? NoopProps, NoopArray);
 

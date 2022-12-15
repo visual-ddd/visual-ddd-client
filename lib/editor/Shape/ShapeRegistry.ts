@@ -2,12 +2,12 @@ import { Cell, Graph, Node, Shape } from '@antv/x6';
 import { Options } from '@antv/x6/lib/graph/options';
 import { NoopObject } from '@wakeapp/utils';
 import { CopyPayload } from '../Canvas/ClipboardUtils';
-import type { BaseEditorStore, BaseNode, BaseNodeProperties } from '../Model';
+import type { BaseEditorModel, BaseNode, BaseNodeProperties } from '../Model';
 
 import { shapes } from './store';
 
 export class ShapeRegistry {
-  private editorStore: BaseEditorStore;
+  private editorModel: BaseEditorModel;
 
   private _graph?: Graph;
   private get graph() {
@@ -17,8 +17,8 @@ export class ShapeRegistry {
     return this._graph;
   }
 
-  constructor(store: BaseEditorStore) {
-    this.editorStore = store;
+  constructor(inject: { editorModel: BaseEditorModel }) {
+    this.editorModel = inject.editorModel;
   }
 
   bindGraph = (graph: Graph) => {
@@ -260,7 +260,7 @@ export class ShapeRegistry {
   }
 
   getModelByNode(node: { id: string }) {
-    return this.editorStore.getNodeById(node.id);
+    return this.editorModel.index.getNodeById(node.id);
   }
 
   getConfigurationByModel(model: BaseNode) {

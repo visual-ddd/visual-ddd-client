@@ -35,11 +35,11 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 ## TODO
 
-- position change 处理
+- redo/undo
+- group 移动，child 移动事件没有触发？
 - resize change 处理
 - rotate 处理
 - 边拖入
-- redo/undo
 - 编辑器面板
 - react 组件 resize
 - label edit

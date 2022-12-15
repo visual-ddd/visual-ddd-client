@@ -1,4 +1,4 @@
-import { BaseEditorCommandHandler } from './BaseEditorCommandHandler';
+import { BaseEditorEvent } from './BaseEditorEvent';
 import { BaseNode } from './BaseNode';
 
 /**
@@ -7,13 +7,13 @@ import { BaseNode } from './BaseNode';
 export class BaseEditorIndex {
   private nodeIndexById: Map<string, BaseNode> = new Map();
 
-  private commandHandler: BaseEditorCommandHandler;
+  private event: BaseEditorEvent;
 
-  constructor(commandHandler: BaseEditorCommandHandler) {
-    this.commandHandler = commandHandler;
+  constructor(inject: { event: BaseEditorEvent }) {
+    this.event = inject.event;
 
-    this.commandHandler.on('NODE_CREATED', this.addNode);
-    this.commandHandler.on('NODE_REMOVED', this.removeNode);
+    this.event.on('NODE_CREATED', this.addNode);
+    this.event.on('NODE_REMOVED', this.removeNode);
   }
 
   /**

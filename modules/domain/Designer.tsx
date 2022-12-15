@@ -1,15 +1,19 @@
-import { RectBinding, registerX6ReactComponent } from '@/lib/g6-binding';
+import { Doc as YDoc } from 'yjs';
+import { WebrtcProvider } from 'y-webrtc';
+import { observer } from 'mobx-react';
 import { useState } from 'react';
+import { RectBinding, registerX6ReactComponent } from '@/lib/g6-binding';
 import {
   ComponentContainer,
   ComponentItem,
-  EditorStoreProvider,
-  BaseEditorStore,
+  EditorModelProvider,
   Canvas,
+  CanvasModelProvider,
   defineShape,
   useHoverShowPorts,
+  BaseEditorModel,
+  useCanvasModel,
 } from '@/lib/editor';
-import { observer } from 'mobx-react';
 
 function MyComponent() {
   const [count, setCount] = useState(0);
@@ -120,19 +124,25 @@ defineShape('child-2', {
   },
 });
 
-const store = new BaseEditorStore();
+const ydoc = new YDoc();
+const domainDatabase = ydoc.getMap('domain');
+
+new WebrtcProvider('just-do-it', ydoc);
+
+const model = new BaseEditorModel({ datasource: domainDatabase, doc: ydoc });
 
 const Operations = observer(() => {
+  const canvasModel = useCanvasModel();
   return (
     <div>
-      <div>selected: {store.selectedNodes.map(n => n.id).join(', ')}</div>
-      <div>focusing: {store.focusingNode?.id}</div>
+      <div>selected: {model.store.selectedNodes.map(n => n.id).join(', ')}</div>
+      <div>focusing: {model.store.focusingNode?.id}</div>
 
-      <button onClick={store.commandHandler.removeSelected}>移除选中</button>
+      <button onClick={canvasModel.model.handleRemoveSelected}>移除选中</button>
       <button
         onClick={() => {
-          if (store.focusingNode) {
-            store.removeNode({ node: store.focusingNode });
+          if (model.store.focusingNode) {
+            canvasModel.model.handleRemove({ node: model.store.focusingNode });
           }
         }}
       >
@@ -148,33 +158,34 @@ const Designer = observer(() => {
 
   return (
     <div>
-      <EditorStoreProvider value={store}>
-        <ComponentContainer>
-          <ComponentItem name="rect" data={{ type: 'rect' }}></ComponentItem>
-          <ComponentItem name="child" data={{ type: 'child' }}></ComponentItem>
-          <ComponentItem name="child-2" data={{ type: 'child-2' }}></ComponentItem>
-        </ComponentContainer>
+      <EditorModelProvider value={model}>
+        <CanvasModelProvider>
+          <ComponentContainer>
+            <ComponentItem name="rect" data={{ type: 'rect' }}></ComponentItem>
+            <ComponentItem name="child" data={{ type: 'child' }}></ComponentItem>
+            <ComponentItem name="child-2" data={{ type: 'child-2' }}></ComponentItem>
+          </ComponentContainer>
 
-        <button
-          onClick={() => {
-            setShowEdge(true);
-          }}
-        >
-          showEdge
-        </button>
+          <button
+            onClick={() => {
+              setShowEdge(true);
+            }}
+          >
+            showEdge
+          </button>
 
-        <button
-          onClick={() => {
-            setShowCanvas(v => !v);
-          }}
-        >
-          toggleShowCanvas
-        </button>
+          <button
+            onClick={() => {
+              setShowCanvas(v => !v);
+            }}
+          >
+            toggleShowCanvas
+          </button>
 
-        <div style={{ width: 500, height: 500 }}>
-          {showCanvas && (
-            <Canvas>
-              {/* <RectBinding
+          <div style={{ width: 500, height: 500 }}>
+            {showCanvas && (
+              <Canvas>
+                {/* <RectBinding
               id="custom1"
               tools={['boundary']}
               size={{ width: 100, height: 100 }}
@@ -187,12 +198,13 @@ const Designer = observer(() => {
               position={{ x: 100, y: 300 }}
             />
             {showEdge && <EdgeBinding source="custom1" target="custom2" tools={['boundary']} />} */}
-            </Canvas>
-          )}
-        </div>
+              </Canvas>
+            )}
+          </div>
 
-        <Operations />
-      </EditorStoreProvider>
+          <Operations />
+        </CanvasModelProvider>
+      </EditorModelProvider>
     </div>
   );
 });
