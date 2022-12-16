@@ -1,6 +1,7 @@
 import { action } from 'mobx';
 import { storeAutoBindingKey } from './auto-bind-this';
 import { isInCommand } from './command';
+import { isInPull } from './pull';
 
 let UNDER_MUTATION = 0;
 
@@ -33,8 +34,8 @@ export const mutation = (name: string): MethodDecorator => {
 
     // @ts-expect-error
     descriptor.value = function () {
-      if (!isInCommand() && !isInMutation()) {
-        throw new Error(`@mutation(${name}) 不能直接调用，只能在 @command 方法下调用`);
+      if (!isInCommand() && !isInMutation() && !isInPull()) {
+        throw new Error(`@mutation(${name}) 不能直接调用，只能在 @command 或 @pull 方法下调用`);
       }
 
       const self = this;

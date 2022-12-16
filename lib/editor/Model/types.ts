@@ -1,12 +1,12 @@
+export type ShapeType = 'node' | 'edge';
+
 export type Properties = Record<string, any>;
 
 export interface BaseNodeProperties {
   __node_name__: string;
-  __node_type__: string;
+  __node_type__: ShapeType;
   [key: string]: any;
 }
-
-export type ShapeType = 'node' | 'edge';
 
 export type Disposer = () => void;
 
@@ -31,5 +31,5 @@ export interface NodePO {
   /**
    * 属性
    */
-  properties: Record<string, any>;
+  properties: BaseNodeProperties;
 }

@@ -25,11 +25,6 @@ export class BaseEditorModel {
   readonly store: BaseEditorStore;
 
   /**
-   * 模型状态数据源
-   */
-  readonly datasource: BaseEditorDatasource;
-
-  /**
    * 模型层事件
    */
   readonly event: BaseEditorEvent;
@@ -39,13 +34,24 @@ export class BaseEditorModel {
    */
   readonly index: BaseEditorIndex;
 
+  /**
+   * 模型状态数据源
+   */
+  protected datasource: BaseEditorDatasource;
+
   constructor(options: BaseEditorModelOptions) {
     const { datasource, doc } = options;
 
     this.event = new BaseEditorEvent();
     this.index = new BaseEditorIndex({ event: this.event });
     this.store = new BaseEditorStore({ event: this.event });
-    this.datasource = new BaseEditorDatasource({ event: this.event, store: this.store, datasource, doc });
+    this.datasource = new BaseEditorDatasource({
+      event: this.event,
+      store: this.store,
+      index: this.index,
+      datasource,
+      doc,
+    });
     this.commandHandler = new BaseEditorCommandHandler({ event: this.event, store: this.store });
   }
 }

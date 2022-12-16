@@ -1,7 +1,7 @@
 import { makeObservable, observable } from 'mobx';
 import { v4 } from 'uuid';
 import { set } from '@wakeapp/utils';
-import { autoBindThis, derive, mutation } from '@/lib/store';
+import { autoBindThis, derive, mutation, runInCommand } from '@/lib/store';
 
 import { BaseNode } from './BaseNode';
 import type { Properties, ShapeType } from './types';
@@ -20,7 +20,7 @@ export class BaseEditorStore {
    * 根节点, 核心树
    */
   @observable
-  readonly root: BaseNode;
+  readonly root!: BaseNode;
 
   /**
    * 根节点
@@ -47,9 +47,12 @@ export class BaseEditorStore {
   private event: BaseEditorEvent;
 
   constructor(inject: { event: BaseEditorEvent }) {
-    // 后续支持子类继承
-    this.root = this.nodeFactory(ROOT_ID, ROOT_ID);
     this.event = inject.event;
+
+    runInCommand('INITIAL_STORE', [], () => {
+      // @ts-expect-error
+      this.root = this.createNode({ name: ROOT_ID, type: 'node', id: ROOT_ID, properties: {} });
+    });
 
     makeObservable(this);
     autoBindThis(this);
