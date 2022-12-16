@@ -90,6 +90,11 @@ export interface GraphBindingProps {
   onNode$Removed?: (evt: EventArgs['node:removed']) => void;
 
   /**
+   * 节点位置变更
+   */
+  onNode$Change$Position?: (evt: EventArgs['node:change:position']) => void;
+
+  /**
    * 边连接变更
    * @param evt
    * @returns

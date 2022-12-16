@@ -180,10 +180,26 @@ export class CanvasModel {
 
   handleNodeMoved: GraphBindingProps['onNode$Moved'] = evt => {
     const { node } = evt;
-    const model = this.editorIndex.getNodeById(node.id);
-    if (model) {
-      this.editorCommandHandler.updateNodeProperty({ node: model, path: 'position', value: node.getPosition() });
-    }
+
+    const updatePosition = (node: Node) => {
+      const model = this.editorIndex.getNodeById(node.id);
+      if (model) {
+        this.editorCommandHandler.updateNodeProperty({ node: model, path: 'position', value: node.getPosition() });
+      }
+
+      // X6 分组移动时，子节点不会更新
+      const children = node.getChildren();
+      if (children?.length) {
+        for (const child of children) {
+          if (child.isNode()) {
+            updatePosition(child);
+          }
+          // TODO: edge 如果是 pointer 类型也需要更新
+        }
+      }
+    };
+
+    updatePosition(node);
   };
 
   /**
