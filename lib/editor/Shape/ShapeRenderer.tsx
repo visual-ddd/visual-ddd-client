@@ -7,7 +7,7 @@ import { shapes } from './store';
 import { ShapeComponentCellProps } from './types';
 
 export interface ShapeRendererProps {
-  model: BaseNode;
+  node: BaseNode;
 }
 
 const NoopProps = () => NoopObject;
@@ -26,7 +26,7 @@ const ShapeList = observer(function ShapeList(props: { list: BaseNode[] }) {
   return (
     <>
       {props.list.map(child => {
-        return <ShapeRenderer key={child.id} model={child} />;
+        return <ShapeRenderer key={child.id} node={child} />;
       })}
     </>
   );
@@ -36,30 +36,30 @@ const ShapeList = observer(function ShapeList(props: { list: BaseNode[] }) {
  * 图形渲染器
  */
 export const ShapeRenderer = observer(function Shape(props: ShapeRendererProps) {
-  const { model } = props;
-  const config = shapes.get(model.name)!;
-  const { store } = useEditorModel();
+  const { node } = props;
+  const config = shapes.get(node.name)!;
+  const { model: editorModel } = useEditorModel();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const initialProps = useMemo<Record<string, any>>(config.staticProps ?? NoopProps, NoopArray);
 
   const cellProps: ShapeComponentCellProps = {
     ...initialProps,
-    id: model.id,
-    data: model.properties,
+    id: node.id,
+    data: node.properties,
     canBeParent: !!config.group,
-    children: !!model.children.length && <ShapeList list={model.children} />,
+    children: !!node.children.length && <ShapeList list={node.children} />,
   };
 
   for (const p of MaybeNullProps) {
-    if (p in model.properties) {
+    if (p in node.properties) {
       // @ts-expect-error
-      cellProps[p] = model.properties[p];
+      cellProps[p] = node.properties[p];
     }
   }
 
   return config.component({
     cellProps,
-    store,
-    model,
+    model: editorModel,
+    node: node,
   });
 });

@@ -33,6 +33,7 @@
     "react-dom": "18.2.0",
     "reflect-metadata": "^0.1.13",
     "uuid": "^9.0.0",
+    "y-indexeddb": "^9.0.9",
     "y-webrtc": "^10.2.3",
     "yjs": "^13.5.43"
   },

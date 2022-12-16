@@ -52,6 +52,10 @@ export class BaseEditorModel {
       datasource,
       doc,
     });
-    this.commandHandler = new BaseEditorCommandHandler({ event: this.event, store: this.store });
+    this.commandHandler = new BaseEditorCommandHandler({
+      event: this.event,
+      store: this.store,
+      datasource: this.datasource,
+    });
   }
 }

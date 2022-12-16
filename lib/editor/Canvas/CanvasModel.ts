@@ -414,6 +414,14 @@ export class CanvasModel {
     });
   };
 
+  handleUndo = () => {
+    this.editorCommandHandler.undo();
+  };
+
+  handleRedo = () => {
+    this.editorCommandHandler.redo();
+  };
+
   protected hasUnremovableNode = (node: BaseNode): boolean => {
     if (!this.shapeRegistry.isRemovable({ model: node })) {
       return true;

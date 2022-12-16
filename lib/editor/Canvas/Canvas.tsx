@@ -34,7 +34,8 @@ export const Canvas = memo((props: CanvasProps) => {
       onCell$Change$Parent={canvasModel.handleParentChange}
       onNode$Moved={canvasModel.handleNodeMoved}
       onEdge$Connected={canvasModel.handleEdgeConnected}
-      onEdge$Added={() => console.log('edge added')}
+      onEdge$Added={evt => console.log('edge added', evt)}
+      onNode$Removed={evt => console.log('node remove', evt)}
       onEdge$Removed={canvasModel.handleEdgeRemoved}
       onSelection$Changed={canvasModel.handleSelectionChanged}
     >

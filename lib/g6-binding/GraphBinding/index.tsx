@@ -83,6 +83,13 @@ export interface GraphBindingProps {
   onNode$Moved?: (evt: EventArgs['node:moved']) => void;
 
   /**
+   * 节点删除后触发
+   * @param evt
+   * @returns
+   */
+  onNode$Removed?: (evt: EventArgs['node:removed']) => void;
+
+  /**
    * 边连接变更
    * @param evt
    * @returns

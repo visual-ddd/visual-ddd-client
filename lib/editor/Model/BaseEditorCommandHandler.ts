@@ -5,21 +5,33 @@ import { BaseEditorStore } from './BaseEditorStore';
 import type { PickParams, ShapeType, Properties } from './types';
 import { BaseNode } from './BaseNode';
 import { BaseEditorEvent } from './BaseEditorEvent';
+import { BaseEditorDatasource } from './BaseEditorDatasource';
 
 /**
  * 用于统一处理 View 层的命令
  */
 export class BaseEditorCommandHandler {
   private store: BaseEditorStore;
-  // @ts-ignore
   private event: BaseEditorEvent;
+  private datasource: BaseEditorDatasource;
 
-  constructor(inject: { event: BaseEditorEvent; store: BaseEditorStore }) {
-    const { store, event } = inject;
+  constructor(inject: { event: BaseEditorEvent; store: BaseEditorStore; datasource: BaseEditorDatasource }) {
+    const { store, event, datasource } = inject;
     this.store = store;
     this.event = event;
+    this.datasource = datasource;
 
     autoBindThis(this);
+  }
+
+  @command('UNDO')
+  undo() {
+    this.datasource.undo();
+  }
+
+  @command('REDO')
+  redo() {
+    this.datasource.redo();
   }
 
   @command('SET_SELECTED')

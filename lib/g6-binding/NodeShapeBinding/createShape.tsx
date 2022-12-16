@@ -1,14 +1,13 @@
-import { useEffect } from 'react';
 import { CellContextProvider } from '../CellBinding/context';
 
 import { CellFactory } from '../CellBinding/useCell';
 import { wrapPreventListenerOptions } from '../hooks';
 import { NodeBindingProps } from '../NodeBinding';
-import { useNode } from '../NodeBinding/useNode';
+import { NodeUpdater, useNode } from '../NodeBinding/useNode';
 
 export function createShape<Props extends NodeBindingProps>(
   Shape: any,
-  properties: Array<[string, string]>,
+  properties: Array<[string, string, string]>,
   name: string
 ) {
   const factory: CellFactory = (props, graph) => {
@@ -24,19 +23,34 @@ export function createShape<Props extends NodeBindingProps>(
     };
   };
 
+  class CustomShapeUpdater extends NodeUpdater {
+    accept(props: Record<string, any>): void {
+      super.accept(props);
+      for (const [key] of properties) {
+        this.doUpdate(key, props[key]);
+      }
+    }
+  }
+
+  for (const [prop, getter, setter] of properties) {
+    Object.defineProperty(CustomShapeUpdater.prototype, prop, {
+      get: function () {
+        return this.instance.current?.[getter]();
+      },
+      set: function (value: any) {
+        (this.instance.current as any)?.[setter](value, wrapPreventListenerOptions({}));
+      },
+    });
+  }
+
   function Comp(props: Props) {
     const { canBeParent = true } = props;
-    const { instanceRef, contextValue } = useNode({ props, factory, canBeParent });
-
-    for (const [prop, propUpdator] of properties) {
-      const value = (props as any)[prop];
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      useEffect(() => {
-        if (value != null) {
-          (instanceRef.current as any)?.[propUpdator](value, wrapPreventListenerOptions({}));
-        }
-      }, [value]);
-    }
+    const { contextValue } = useNode({
+      props,
+      factory,
+      canBeParent,
+      PropertyUpdater: CustomShapeUpdater as typeof NodeUpdater,
+    });
 
     if (canBeParent) {
       return <CellContextProvider value={contextValue}>{props.children}</CellContextProvider>;

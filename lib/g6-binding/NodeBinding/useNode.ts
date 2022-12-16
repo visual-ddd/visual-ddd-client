@@ -1,6 +1,6 @@
 import { Graph, Node } from '@antv/x6';
-import { useDeepEffect } from '@wakeapp/hooks';
-import { MutableRefObject, useEffect } from 'react';
+import { MutableRefObject } from 'react';
+import { CellUpdater } from '../CellBinding/CellUpdater';
 
 import { CellFactory, useCell } from '../CellBinding/useCell';
 import { wrapPreventListenerOptions } from '../hooks';
@@ -19,37 +19,69 @@ const defaultFactory: CellFactory = (props: any, graph: Graph) => {
   };
 };
 
+export class NodeUpdater<T extends Node = Node> extends CellUpdater<T> {
+  private nodeKeys = ['angle'];
+  private nodeKeysDeepCompare = ['size', 'position', 'angle'];
+
+  get size() {
+    return this.instance.current!.getSize();
+  }
+
+  set size(value: any) {
+    this.instance.current?.size(value, wrapPreventListenerOptions({}));
+  }
+
+  get position() {
+    return this.instance.current!.getPosition();
+  }
+
+  set position(value: any) {
+    if (value != null) {
+      this.instance.current?.position(value.x, value.y, wrapPreventListenerOptions({}));
+    }
+  }
+
+  get angle() {
+    return this.instance.current!.getAngle();
+  }
+
+  set angle(angle: number) {
+    this.instance.current?.rotate(angle, wrapPreventListenerOptions({ absolute: true }));
+  }
+
+  accept(props: Record<string, any>): void {
+    super.accept(props);
+
+    for (const key of this.nodeKeys) {
+      this.doUpdate(key, props[key]);
+    }
+
+    for (const key of this.nodeKeysDeepCompare) {
+      this.doUpdate(key, props[key], true);
+    }
+  }
+}
+
 export function useNode<Props extends NodeBindingProps>({
   props,
   factory,
   canBeParent = true,
+  PropertyUpdater,
 }: {
   props: Props;
   factory?: CellFactory;
+  PropertyUpdater?: typeof NodeUpdater;
   canBeParent?: boolean;
 }) {
-  const { size, position, angle } = props;
-  const ctx = useCell({ props, factor: factory ?? defaultFactory, canBeChild: true, canBeParent });
+  const ctx = useCell({
+    props,
+    factor: factory ?? defaultFactory,
+    canBeChild: true,
+    canBeParent,
+    PropertyUpdater: (PropertyUpdater ?? NodeUpdater) as typeof CellUpdater,
+  });
   const instanceRef = ctx.instanceRef as MutableRefObject<Node>;
   const contextValue = ctx.contextValue;
-
-  useDeepEffect(() => {
-    if (size != null) {
-      instanceRef.current?.size(size, wrapPreventListenerOptions({}));
-    }
-  }, [size]);
-
-  useDeepEffect(() => {
-    if (position != null) {
-      instanceRef.current?.position(position.x, position.y, wrapPreventListenerOptions({}));
-    }
-  }, [position]);
-
-  useEffect(() => {
-    if (angle != null) {
-      instanceRef.current?.rotate(angle, wrapPreventListenerOptions({ absolute: true }));
-    }
-  }, [angle]);
 
   return { instanceRef, contextValue };
 }

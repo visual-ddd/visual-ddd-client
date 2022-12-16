@@ -1,12 +1,11 @@
 import { Cell, Edge, Graph } from '@antv/x6';
-import { useDeepEffect } from '@wakeapp/hooks';
-import { MutableRefObject, useEffect } from 'react';
-import upperFirst from 'lodash/upperFirst';
+import { MutableRefObject } from 'react';
 
 import { CellFactory, useCell } from '../CellBinding/useCell';
 import { wrapPreventListenerOptions } from '../hooks';
 
 import { EdgeBindingProps } from './types';
+import { CellUpdater } from '../CellBinding/CellUpdater';
 
 const defaultFactory: CellFactory = (props: any, graph: Graph) => {
   const instance = graph.addEdge(props);
@@ -34,38 +33,90 @@ function toTerminalData(source: Edge.Metadata['source']): Edge.TerminalData | un
     : source;
 }
 
-export function useEdge<Props extends EdgeBindingProps>(props: Props, factor?: CellFactory) {
-  const { source, target, label } = props;
-  const instanceRef = useCell({ props, factor: factor ?? defaultFactory, canBeChild: false, canBeParent: false })
-    .instanceRef as MutableRefObject<Edge>;
+class EdgeUpdater<T extends Edge = Edge> extends CellUpdater<T> {
+  get source() {
+    return this.instance.current?.getSource();
+  }
 
-  useDeepEffect(() => {
-    if (source != null) {
-      instanceRef.current?.setSource(toTerminalData(source)!, wrapPreventListenerOptions({}));
+  set source(source) {
+    this.instance.current?.setSource(toTerminalData(source)!, wrapPreventListenerOptions({}));
+  }
+
+  get target() {
+    return this.instance.current?.getTarget();
+  }
+
+  set target(target) {
+    this.instance.current?.setTarget(toTerminalData(target)!, wrapPreventListenerOptions({}));
+  }
+
+  get label() {
+    return this.instance.current?.getAttrByPath('text/text');
+  }
+
+  set label(value: any) {
+    this.instance.current?.setAttrByPath('text/text', value, wrapPreventListenerOptions({}));
+  }
+
+  get router() {
+    return this.instance.current?.getRouter();
+  }
+
+  set router(value: any) {
+    this.instance.current?.setRouter(value, wrapPreventListenerOptions({}));
+  }
+
+  get vertices() {
+    return this.instance.current?.getVertices();
+  }
+
+  set vertices(value: any) {
+    this.instance.current?.setVertices(value, wrapPreventListenerOptions({}));
+  }
+
+  get connector() {
+    return this.instance.current?.getConnector();
+  }
+
+  set connector(value: any) {
+    this.instance.current?.setConnector(value, wrapPreventListenerOptions({}));
+  }
+
+  get labels() {
+    return this.instance.current?.getLabels();
+  }
+
+  set labels(value: any) {
+    this.instance.current?.setLabels(value, wrapPreventListenerOptions({}));
+  }
+
+  private edgeKeys = ['source', 'target', 'label', 'router', 'vertices', 'connector', 'labels'];
+
+  accept(props: Record<string, any>): void {
+    super.accept(props);
+
+    for (const key of this.edgeKeys) {
+      this.doUpdate(key, props[key]);
     }
-  }, [source]);
+  }
+}
 
-  useDeepEffect(() => {
-    if (target != null) {
-      instanceRef.current?.setTarget(toTerminalData(target)!, wrapPreventListenerOptions({}));
-    }
-  }, [target]);
-
-  useEffect(() => {
-    if (label != null) {
-      instanceRef.current?.setAttrByPath('text/text', label, wrapPreventListenerOptions({}));
-    }
-  }, [label]);
-
-  ['router', 'vertices', 'connector', 'labels'].forEach(key => {
-    const value = (props as any)[key];
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useDeepEffect(() => {
-      if (value != null) {
-        (instanceRef.current as any)?.[`set${upperFirst(key)}`](value, wrapPreventListenerOptions({}));
-      }
-    }, [value]);
-  });
+export function useEdge<Props extends EdgeBindingProps>({
+  props,
+  factor,
+  PropertyUpdater,
+}: {
+  props: Props;
+  factor?: CellFactory;
+  PropertyUpdater?: typeof EdgeUpdater;
+}) {
+  const instanceRef = useCell({
+    props,
+    factor: factor ?? defaultFactory,
+    canBeChild: false,
+    canBeParent: false,
+    PropertyUpdater: (PropertyUpdater ?? EdgeUpdater) as typeof CellUpdater,
+  }).instanceRef as MutableRefObject<Edge>;
 
   return instanceRef;
 }

@@ -8,7 +8,7 @@ function normalizedEventName(name: string) {
   return name.slice(2).split('$').map(lowerFirst).join(':');
 }
 
-export function wrapPreventListenerOptions<T extends Record<string, any>>(options: T): T {
+export function wrapPreventListenerOptions<T extends {}>(options: T): T {
   // @ts-expect-error
   options.triggerBy = 'COMPONENT';
   return options;

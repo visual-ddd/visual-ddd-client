@@ -32,6 +32,13 @@ export class BaseEditorIndex {
 
   private removeNode = (params: { node: BaseNode }) => {
     const { node } = params;
-    this.nodeIndexById.delete(node.id);
+    // 删除可以延迟一些
+    requestAnimationFrame(() => {
+      // 有可能重新创建了新的 node
+      const currentNode = this.nodeIndexById.get(node.id);
+      if (currentNode === node) {
+        this.nodeIndexById.delete(node.id);
+      }
+    });
   };
 }

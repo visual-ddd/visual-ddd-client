@@ -1,5 +1,6 @@
 import { autoBindThis, push, pull } from '@/lib/store';
-import { Map as YMap, Doc as YDoc, AbstractType } from 'yjs';
+import { Map as YMap, Doc as YDoc, AbstractType, UndoManager } from 'yjs';
+import { observable, action } from 'mobx';
 import toPairs from 'lodash/toPairs';
 import fromPairs from 'lodash/fromPairs';
 import toPath from 'lodash/toPath';
@@ -8,7 +9,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import { BaseEditorStore } from './BaseEditorStore';
 import { BaseNode } from './BaseNode';
 
-import { ROOT_ID, TRANSACT_ORIGIN } from './constants';
+import { ROOT_ID } from './constants';
 import { toNodePO } from './mapper';
 import { BaseNodeProperties, NodePO } from './types';
 import { BaseEditorEvent } from './BaseEditorEvent';
@@ -102,12 +103,19 @@ class NodeYMap {
  * TODO: 离线编辑
  */
 export class BaseEditorDatasource {
+  @observable
+  canRedo: boolean = false;
+
+  @observable
+  canUndo: boolean = false;
+
   private doc: YDoc;
   private datasource: YMap<YMap<any>>;
   private store: BaseEditorStore;
   private event: BaseEditorEvent;
   private index: BaseEditorIndex;
 
+  private undoManager: UndoManager;
   private updateQueue: Function[] = [];
   private updatePending: boolean = false;
 
@@ -124,23 +132,33 @@ export class BaseEditorDatasource {
     this.datasource = datasource;
     this.store = store;
     this.index = index;
+    this.undoManager = new UndoManager(datasource, {
+      captureTimeout: 0,
+    });
 
     autoBindThis(this);
 
     this.initialDataSource();
     this.watchStore();
     this.watchDatasource();
+    this.watchUndoManager();
+
+    this.undoManager.clear();
   }
 
   /**
    * 重做
    */
-  redo() {}
+  redo() {
+    this.undoManager.redo();
+  }
 
   /**
    * 撤销
    */
-  undo() {}
+  undo() {
+    this.undoManager.undo();
+  }
 
   /**
    * 添加节点
@@ -214,9 +232,9 @@ export class BaseEditorDatasource {
   }
 
   @pull('DELETE_NODE')
-  protected handleRemoveNode(params: { node: NodePO }) {
-    const { node } = params;
-    const model = this.index.getNodeById(node.id);
+  protected handleRemoveNode(params: { nodeId: string }) {
+    const { nodeId } = params;
+    const model = this.index.getNodeById(nodeId);
     if (model) {
       this.store.removeNode({ node: model });
     }
@@ -273,6 +291,16 @@ export class BaseEditorDatasource {
     this.event.on('NODE_UPDATE_PROPERTY', this.updateNodeProperty);
   }
 
+  private watchUndoManager() {
+    const stackChange = action('UPDATE_UNDO_STATE', () => {
+      this.canRedo = this.undoManager.canRedo();
+      this.canUndo = this.undoManager.canUndo();
+    });
+
+    this.undoManager.on('stack-item-added', stackChange);
+    this.undoManager.on('stack-item-popped', stackChange);
+  }
+
   /**
    * 监听yjs 数据源的事件
    */
@@ -280,8 +308,8 @@ export class BaseEditorDatasource {
     console.log('isLoaded', this.doc.isLoaded);
     this.datasource.observeDeep((evts, transact) => {
       console.log('datasource change', evts);
-      // 本地触发, 跳过
-      if (transact.local && transact.origin === TRANSACT_ORIGIN) {
+      // 本地触发, 并且不是 UndoManager 触发的, 跳过
+      if (transact.local && transact.origin !== this.undoManager) {
         return;
       }
 
@@ -304,7 +332,7 @@ export class BaseEditorDatasource {
                 break;
               }
               case 'delete':
-                this.handleRemoveNode({ node: NodeYMap.fromYMap(target.get(key))!.toNodePO() });
+                this.handleRemoveNode({ nodeId: key });
                 break;
             }
           }
@@ -368,7 +396,7 @@ export class BaseEditorDatasource {
         for (const item of queue) {
           item();
         }
-      }, TRANSACT_ORIGIN);
+      });
     });
   }
 

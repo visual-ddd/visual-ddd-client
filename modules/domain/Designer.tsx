@@ -1,5 +1,6 @@
 import { Doc as YDoc } from 'yjs';
 import { WebrtcProvider } from 'y-webrtc';
+// import { IndexeddbPersistence } from 'y-indexeddb';
 import { observer } from 'mobx-react';
 import { useState } from 'react';
 import { RectBinding, registerX6ReactComponent } from '@/lib/g6-binding';
@@ -45,7 +46,19 @@ defineShape('rect', {
     return { label: properties.label + '+' };
   },
   component(props) {
-    return <RectBinding {...props.cellProps} label={props.model.properties.label} />;
+    return (
+      <RectBinding
+        {...props.cellProps}
+        onClick={() => {
+          props.model.commandHandler.updateNodeProperty({
+            node: props.node,
+            path: 'label',
+            value: String(Math.random()),
+          });
+        }}
+        label={props.node.properties.label}
+      />
+    );
   },
 });
 
@@ -120,13 +133,22 @@ defineShape('child-2', {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const hoverHandlers = useHoverShowPorts();
 
-    return <RectBinding {...props.cellProps} {...hoverHandlers} />;
+    return (
+      <RectBinding
+        onClick={() => {
+          props.model;
+        }}
+        {...props.cellProps}
+        {...hoverHandlers}
+      />
+    );
   },
 });
 
 const ydoc = new YDoc();
 const domainDatabase = ydoc.getMap('domain');
 
+// new IndexeddbPersistence('just-do-it', ydoc);
 new WebrtcProvider('just-do-it', ydoc);
 
 const model = new BaseEditorModel({ datasource: domainDatabase, doc: ydoc });
@@ -137,6 +159,8 @@ const Operations = observer(() => {
     <div>
       <div>selected: {model.store.selectedNodes.map(n => n.id).join(', ')}</div>
       <div>focusing: {model.store.focusingNode?.id}</div>
+      <div onClick={canvasModel.model.handleRedo}>redo</div>
+      <div onClick={canvasModel.model.handleUndo}>undo</div>
 
       <button onClick={canvasModel.model.handleRemoveSelected}>移除选中</button>
       <button

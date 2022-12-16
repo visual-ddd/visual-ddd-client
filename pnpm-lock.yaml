@@ -39,6 +39,7 @@ specifiers:
   typescript: 4.9.4
   uuid: ^9.0.0
   wkstd: ^0.2.4
+  y-indexeddb: ^9.0.9
   y-webrtc: ^10.2.3
   yjs: ^13.5.43
 
@@ -63,6 +64,7 @@ dependencies:
   react-dom: 18.2.0_react@18.2.0
   reflect-metadata: 0.1.13
   uuid: 9.0.0
+  y-indexeddb: 9.0.9_yjs@13.5.43
   y-webrtc: 10.2.3
   yjs: 13.5.43
 
@@ -6784,6 +6786,16 @@ packages:
     resolution:
       { integrity: sha512-JZnDKK8B0RCDw84FNdDAIpZK+JuJw+s7Lz8nksI7SIuU3UXJJslUthsi+uWBUYOwPFwW7W7PRLRfUKpxjtjFCw== }
     dev: true
+
+  /y-indexeddb/9.0.9_yjs@13.5.43:
+    resolution:
+      { integrity: sha512-GcJbiJa2eD5hankj46Hea9z4hbDnDjvh1fT62E5SpZRsv8GcEemw34l1hwI2eknGcv5Ih9JfusT37JLx9q3LFg== }
+    peerDependencies:
+      yjs: ^13.0.0
+    dependencies:
+      lib0: 0.2.58
+      yjs: 13.5.43
+    dev: false
 
   /y-protocols/1.0.5:
     resolution:

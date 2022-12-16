@@ -1,6 +1,6 @@
 import React from 'react';
 import { Node, Graph, Size, PointLike, Cell, Edge } from '@antv/x6';
-import { BaseEditorStore, BaseNode, Properties, ShapeType } from '../Model';
+import { BaseEditorModel, BaseNode, Properties, ShapeType } from '../Model';
 import { CopyPayload } from '../Canvas/ClipboardUtils';
 
 export interface ShapeCoreInfo {
@@ -127,7 +127,7 @@ export interface ShapeConfiguration {
    */
   component: (props: {
     cellProps: ShapeComponentCellProps;
-    store: BaseEditorStore;
-    model: BaseNode;
+    model: BaseEditorModel;
+    node: BaseNode;
   }) => React.ReactElement;
 }

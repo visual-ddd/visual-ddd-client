@@ -36,6 +36,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 ## TODO
 
 - redo/undo
+- 嵌套分组
 - group 移动，child 移动事件没有触发？
 - resize change 处理
 - rotate 处理

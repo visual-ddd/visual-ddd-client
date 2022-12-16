@@ -5,7 +5,7 @@ import { useEdge } from './useEdge';
 export * from './types';
 
 export const EdgeBinding = memo((props: EdgeBindingProps) => {
-  useEdge(props);
+  useEdge({ props });
 
   return null;
 });

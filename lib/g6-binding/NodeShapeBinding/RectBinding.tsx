@@ -6,6 +6,6 @@ import { createShape } from './createShape';
 
 export const RectBinding = createShape<NodeBindingProps & { label?: string }>(
   Shape.Rect,
-  [['label', 'setLabel']],
+  [['label', 'getLabel', 'setLabel']],
   'RectBinding'
 );

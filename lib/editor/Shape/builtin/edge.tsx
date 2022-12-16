@@ -13,7 +13,7 @@ defineShape('edge', {
     return (
       <EdgeBinding
         {...props.cellProps}
-        label={props.model.properties.label}
+        label={props.node.properties.label}
         tools={['target-arrowhead', 'source-arrowhead']}
       />
     );

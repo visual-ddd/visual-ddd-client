@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { Disposer } from '@wakeapp/utils';
-import { useDeepEffect, useRefValue } from '@wakeapp/hooks';
+import { useRefValue } from '@wakeapp/hooks';
 import { Cell, Graph } from '@antv/x6';
 import memoize from 'lodash/memoize';
 import omitBy from 'lodash/omitBy';
@@ -12,6 +12,7 @@ import { useGraphBinding } from '../GraphBinding';
 import { CellBindingProps, CellContextValue } from './types';
 import { useEventStore, wrapPreventListenerOptions } from '../hooks';
 import { useCellContext } from './context';
+import { CellUpdater } from './CellUpdater';
 
 export type CellFactory = (
   props: any,
@@ -65,10 +66,12 @@ export function useCellContextValue() {
     return {
       addChild(child) {
         if (parent) {
-          parent.addChild(child, PREVENT_LISTENER_NOOP_OBJECT);
+          parent.embed(child, PREVENT_LISTENER_NOOP_OBJECT);
+          console.log('add child', parent, child);
 
           return () => {
-            parent.removeChild(child, PREVENT_LISTENER_NOOP_OBJECT);
+            console.log('remove child', parent, child);
+            parent.unembed(child, PREVENT_LISTENER_NOOP_OBJECT);
           };
         }
 
@@ -77,7 +80,8 @@ export function useCellContextValue() {
 
         return () => {
           if (parent) {
-            parent.removeChild(child, PREVENT_LISTENER_NOOP_OBJECT);
+            console.log('remove child', parent, child);
+            parent.unembed(child, PREVENT_LISTENER_NOOP_OBJECT);
           } else {
             const idx = children.indexOf(child);
             if (idx !== -1) {
@@ -96,7 +100,8 @@ export function useCellContextValue() {
         const clone = children;
         children = [];
         for (const item of clone) {
-          parent.addChild(item, PREVENT_LISTENER_NOOP_OBJECT);
+          console.log('add child', parent, item);
+          parent.embed(item, PREVENT_LISTENER_NOOP_OBJECT);
         }
       },
     } satisfies CellContextValue;
@@ -111,11 +116,26 @@ export function useCell<Props extends CellBindingProps>({
   canBeChild,
   canBeParent,
   onCellReady,
+  PropertyUpdater,
 }: {
   props: Props;
+
+  /**
+   * 实例创建工厂
+   */
   factor?: CellFactory;
 
+  /**
+   * 节点就绪
+   * @param cell
+   * @returns
+   */
   onCellReady?: (cell: Cell) => void;
+
+  /**
+   * 属性更新器
+   */
+  PropertyUpdater?: typeof CellUpdater;
 
   /**
    * 是否支持作为分组容器, 默认 false
@@ -133,7 +153,10 @@ export function useCell<Props extends CellBindingProps>({
   const propsRef = useRefValue(props);
   const instanceRef = useRef<Cell>();
   const graphContext = useGraphBinding();
-  const { attrs, zIndex, visible, data, tools } = props;
+  const updater = useMemo(() => {
+    const ctor = PropertyUpdater ?? CellUpdater;
+    return new ctor(instanceRef);
+  }, []);
 
   useEffect(() => {
     const disposers = new Disposer();
@@ -142,10 +165,10 @@ export function useCell<Props extends CellBindingProps>({
         const f = factor ?? defaultFactory;
         const { id } = propsRef.current;
 
-        console.log('creating');
-
         // 尽量复用旧的实例，避免增删
         const recoveredInstance = id ? helper.reuse(id) : undefined;
+
+        console.log('creating', recoveredInstance);
 
         const factoryInstance =
           recoveredInstance ||
@@ -161,6 +184,11 @@ export function useCell<Props extends CellBindingProps>({
           );
         const instance = factoryInstance.instance as Cell;
         instanceRef.current = instance as Cell;
+
+        // 恢复的实例，需要重新更新
+        if (recoveredInstance) {
+          updater.accept(propsRef.current);
+        }
 
         disposers.push(() => {
           console.log('disposing');
@@ -215,33 +243,8 @@ export function useCell<Props extends CellBindingProps>({
   }, []);
 
   // 监听属性变动
-  useDeepEffect(() => {
-    if (attrs != null) {
-      instanceRef.current?.setAttrs(attrs, wrapPreventListenerOptions({ deep: true }));
-    }
-  }, [attrs]);
 
-  useEffect(() => {
-    if (zIndex != null) {
-      instanceRef.current?.setZIndex(zIndex, wrapPreventListenerOptions({}));
-    }
-  }, [zIndex]);
-
-  useEffect(() => {
-    if (visible != null) {
-      instanceRef.current?.setVisible(visible, wrapPreventListenerOptions({}));
-    }
-  }, [visible]);
-
-  useDeepEffect(() => {
-    if (data != null) {
-      instanceRef.current?.setData(data, { silent: true, deep: false, overwrite: true });
-    }
-  }, [data]);
-
-  useDeepEffect(() => {
-    instanceRef.current?.setTools(tools, wrapPreventListenerOptions({}));
-  }, [tools]);
+  updater.accept(props);
 
   return { instanceRef, contextValue };
 }

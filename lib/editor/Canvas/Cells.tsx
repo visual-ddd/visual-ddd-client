@@ -11,7 +11,7 @@ export const Cells = observer(function Cells() {
   return (
     <>
       {store?.nodes.map(node => {
-        return <ShapeRenderer key={node.id} model={node} />;
+        return <ShapeRenderer key={node.id} node={node} />;
       })}
     </>
   );
