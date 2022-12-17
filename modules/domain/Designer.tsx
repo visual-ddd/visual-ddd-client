@@ -82,6 +82,7 @@ defineShape('rect-child', {
 defineShape('child', {
   group: false,
   shapeType: 'node',
+  rotating: 20,
   resizing: { minHeight: 50, maxHeight: 100 },
   // removable: false,
   dropFactory() {

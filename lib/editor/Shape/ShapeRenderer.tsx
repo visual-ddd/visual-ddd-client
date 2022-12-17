@@ -15,6 +15,8 @@ const MaybeNullProps: (keyof ShapeComponentCellProps)[] = [
   // node
   'position',
   'size',
+  'angle',
+
   // edge
   'target',
   'source',

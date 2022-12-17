@@ -24,6 +24,7 @@ export interface ShapeComponentCellProps {
   // Node 节点包含以下 属性
   position?: PointLike;
   size?: Size;
+  angle?: number;
 
   // Edge 节点包含以下属性
   source?: Edge.TerminalData;
@@ -40,8 +41,15 @@ export interface ShapeConfiguration {
 
   /**
    * 是否支持尺寸调整, 默认 false
+   * 仅 node 类型支持
    */
   resizing?: boolean | ShapeResizingOptions | ((context: { node: Node; graph: Graph }) => ShapeResizingOptions);
+
+  /**
+   * 是否支持交互式修改节点旋转角度，默认 false
+   * 如果传入 number，则是设置 grid
+   */
+  rotating?: boolean | number;
 
   /**
    * 是否为群组，默认为 false

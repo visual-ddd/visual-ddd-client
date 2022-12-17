@@ -134,20 +134,36 @@ export class ShapeRegistry {
   };
 
   /**
-   * 是否支持尺寸调整
-   * TODO: 缓存计算结果
+   * 是否支持旋转
    */
-  isResizable = (context: { graph: Graph; node: Node }): Transform.Options['resizing'] => {
+  isRotatable = (context: { graph: Graph; node: Node }): Transform.RotatingRaw | boolean => {
     const { graph, node } = context;
     this.bindGraphIfNeed(graph);
 
-    const model = this.getModelByCell(node);
+    const conf = this.getConfigurationByCell(node);
 
-    if (model == null) {
+    if (conf == null) {
       return false;
     }
 
-    const conf = this.getConfigurationByModel(model);
+    const rotating = conf.rotating;
+
+    if (typeof rotating === 'number') {
+      return { enabled: true, grid: rotating };
+    }
+
+    return rotating ?? false;
+  };
+
+  /**
+   * 是否支持尺寸调整
+   * TODO: 缓存计算结果
+   */
+  isResizable = (context: { graph: Graph; node: Node }): Transform.ResizingRaw | boolean => {
+    const { graph, node } = context;
+    this.bindGraphIfNeed(graph);
+
+    const conf = this.getConfigurationByCell(node);
 
     if (conf == null) {
       return false;
@@ -301,6 +317,14 @@ export class ShapeRegistry {
 
   getModelByCell(node: { id: string }) {
     return this.editorModel.index.getNodeById(node.id);
+  }
+
+  getConfigurationByCell(cell: Cell) {
+    const model = this.getModelByCell(cell);
+
+    if (model) {
+      return this.getConfigurationByModel(model);
+    }
   }
 
   getConfigurationByModel(model: BaseNode) {

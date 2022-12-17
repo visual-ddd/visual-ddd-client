@@ -202,8 +202,6 @@ export function useCell<Props extends CellBindingProps>({
         // 尽量复用旧的实例，避免增删
         const recoveredInstance = id ? helper.reuse(id) : undefined;
 
-        console.log('creating', recoveredInstance);
-
         const factoryInstance =
           recoveredInstance ||
           f(
@@ -218,6 +216,8 @@ export function useCell<Props extends CellBindingProps>({
           );
         const instance = factoryInstance.instance as Cell;
         instanceRef.current = instance as Cell;
+
+        console.log('creating', recoveredInstance ? 'reuse' : '', instance);
 
         // 恢复的实例，需要重新更新
         if (recoveredInstance) {

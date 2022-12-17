@@ -187,6 +187,19 @@ export class CanvasModel {
       },
 
       resizing,
+      rotating: {
+        enabled(node) {
+          return !!shapeRegistry.isRotatable({ node, graph: this });
+        },
+        grid(node) {
+          const s = shapeRegistry.isRotatable({ node, graph: this });
+          if (typeof s === 'object') {
+            return s.grid ?? 15;
+          }
+
+          return 15;
+        },
+      },
     };
 
     // 监听 EditorModel 事件
@@ -248,6 +261,14 @@ export class CanvasModel {
     };
 
     updatePosition(node);
+  };
+
+  handleNodeRotated: GraphBindingProps['onNode$Rotated'] = evt => {
+    const { node } = evt;
+    const model = this.shapeRegistry.getModelByCell(node);
+    if (model) {
+      this.editorCommandHandler.updateNodeProperty({ node: model, path: 'angle', value: node.getAngle() });
+    }
   };
 
   handleNodeResized: GraphBindingProps['onNode$Resized'] = evt => {

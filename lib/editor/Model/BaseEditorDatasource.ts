@@ -351,10 +351,8 @@ export class BaseEditorDatasource {
           // 属性变动
           const nodePO = NodeYMap.fromYMap(target.parent as YMap<any>)!.toNodePO();
 
-          for (const [key, action] of evt.keys) {
-            if (action.action === 'update') {
-              this.handleUpdateNodeProperty({ node: nodePO, path: key });
-            }
+          for (const [key] of evt.keys) {
+            this.handleUpdateNodeProperty({ node: nodePO, path: key });
           }
         } else if (this.isYMap(target)) {
           // children 变动

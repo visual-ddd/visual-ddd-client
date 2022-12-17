@@ -1,5 +1,6 @@
 import { Cell, Edge, Graph } from '@antv/x6';
 import { MutableRefObject } from 'react';
+import { NoopArray } from '@wakeapp/utils';
 
 import { CellFactory, useCell } from '../CellBinding/useCell';
 import { wrapPreventListenerOptions } from '../hooks';
@@ -63,7 +64,11 @@ class EdgeUpdater<T extends Edge = Edge> extends CellUpdater<T> {
   }
 
   set router(value: any) {
-    this.instance.current?.setRouter(value, wrapPreventListenerOptions({}));
+    if (value === undefined) {
+      this.instance.current?.removeRouter(wrapPreventListenerOptions({}));
+    } else {
+      this.instance.current?.setRouter(value, wrapPreventListenerOptions({}));
+    }
   }
 
   get vertices() {
@@ -71,7 +76,7 @@ class EdgeUpdater<T extends Edge = Edge> extends CellUpdater<T> {
   }
 
   set vertices(value: any) {
-    this.instance.current?.setVertices(value, wrapPreventListenerOptions({}));
+    this.instance.current?.setVertices(value ?? NoopArray, wrapPreventListenerOptions({}));
   }
 
   get connector() {
@@ -79,7 +84,11 @@ class EdgeUpdater<T extends Edge = Edge> extends CellUpdater<T> {
   }
 
   set connector(value: any) {
-    this.instance.current?.setConnector(value, wrapPreventListenerOptions({}));
+    if (value === undefined) {
+      this.instance.current?.removeConnector(wrapPreventListenerOptions({}));
+    } else {
+      this.instance.current?.setConnector(value, wrapPreventListenerOptions({}));
+    }
   }
 
   get labels() {
@@ -87,7 +96,7 @@ class EdgeUpdater<T extends Edge = Edge> extends CellUpdater<T> {
   }
 
   set labels(value: any) {
-    this.instance.current?.setLabels(value, wrapPreventListenerOptions({}));
+    this.instance.current?.setLabels(value ?? NoopArray, wrapPreventListenerOptions({}));
   }
 
   private edgeKeys = ['source', 'target', 'label', 'router', 'vertices', 'connector', 'labels'];
@@ -96,7 +105,7 @@ class EdgeUpdater<T extends Edge = Edge> extends CellUpdater<T> {
     super.accept(props);
 
     for (const key of this.edgeKeys) {
-      this.doUpdate(key, props[key]);
+      this.doUpdate(key, props[key], { object: props });
     }
   }
 }

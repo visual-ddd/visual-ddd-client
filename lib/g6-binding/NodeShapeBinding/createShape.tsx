@@ -7,7 +7,7 @@ import { NodeUpdater, useNode } from '../NodeBinding/useNode';
 
 export function createShape<Props extends NodeBindingProps>(
   Shape: any,
-  properties: Array<[string, string, string]>,
+  properties: Array<{ name: string; getter: string; setter: string; remover?: string }>,
   name: string
 ) {
   const factory: CellFactory = (props, graph) => {
@@ -26,18 +26,24 @@ export function createShape<Props extends NodeBindingProps>(
   class CustomShapeUpdater extends NodeUpdater {
     accept(props: Record<string, any>): void {
       super.accept(props);
-      for (const [key] of properties) {
-        this.doUpdate(key, props[key]);
+      for (const { name } of properties) {
+        this.doUpdate(name, props[name], { object: props });
       }
     }
   }
 
-  for (const [prop, getter, setter] of properties) {
-    Object.defineProperty(CustomShapeUpdater.prototype, prop, {
+  for (const { name, getter, setter, remover } of properties) {
+    Object.defineProperty(CustomShapeUpdater.prototype, name, {
       get: function () {
         return this.instance.current?.[getter]();
       },
       set: function (value: any) {
+        if (remover && value === undefined) {
+          // 清理函数
+          (this.instance.current as any)?.[remover](wrapPreventListenerOptions({}));
+          return;
+        }
+
         (this.instance.current as any)?.[setter](value, wrapPreventListenerOptions({}));
       },
     });

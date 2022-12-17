@@ -103,6 +103,11 @@ export interface GraphBindingProps {
   onNode$Resized?: (evt: EventArgs['node:resized']) => void;
 
   /**
+   * 节点旋转
+   */
+  onNode$Rotated?: (evt: EventArgs['node:rotated']) => void;
+
+  /**
    * 边连接变更
    * @param evt
    * @returns

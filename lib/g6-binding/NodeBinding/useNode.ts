@@ -28,6 +28,7 @@ export class NodeUpdater<T extends Node = Node> extends CellUpdater<T> {
   }
 
   set size(value: any) {
+    // size 总是存在
     this.instance.current?.size(value, wrapPreventListenerOptions({}));
   }
 
@@ -36,9 +37,8 @@ export class NodeUpdater<T extends Node = Node> extends CellUpdater<T> {
   }
 
   set position(value: any) {
-    if (value != null) {
-      this.instance.current?.position(value.x, value.y, wrapPreventListenerOptions({}));
-    }
+    // position 总是存在
+    this.instance.current?.position(value.x, value.y, wrapPreventListenerOptions({}));
   }
 
   get angle() {
@@ -46,18 +46,18 @@ export class NodeUpdater<T extends Node = Node> extends CellUpdater<T> {
   }
 
   set angle(angle: number) {
-    this.instance.current?.rotate(angle, wrapPreventListenerOptions({ absolute: true }));
+    this.instance.current?.rotate(angle ?? 0, wrapPreventListenerOptions({ absolute: true }));
   }
 
   accept(props: Record<string, any>): void {
     super.accept(props);
 
     for (const key of this.nodeKeys) {
-      this.doUpdate(key, props[key]);
+      this.doUpdate(key, props[key], { object: props });
     }
 
     for (const key of this.nodeKeysDeepCompare) {
-      this.doUpdate(key, props[key], true);
+      this.doUpdate(key, props[key], { deep: true, object: props });
     }
   }
 }

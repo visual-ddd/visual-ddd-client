@@ -4,6 +4,10 @@ import React from 'react';
 
 import { wrapPreventListenerOptions } from '../hooks';
 
+/**
+ * 属性更新器
+ * 每个字段都要考虑传入 undefined 的创建
+ */
 export class CellUpdater<T extends Cell = Cell> {
   constructor(protected instance: React.MutableRefObject<T | undefined>) {}
 
@@ -24,9 +28,8 @@ export class CellUpdater<T extends Cell = Cell> {
   }
 
   set zIndex(value: number | undefined) {
-    if (value !== undefined) {
-      this.instance.current!.setZIndex(value, wrapPreventListenerOptions({}));
-    }
+    // 这里 默认值为 1, 并不可靠，x6 默认行为是按照添加顺序递增
+    this.instance.current!.setZIndex(value ?? 1, wrapPreventListenerOptions({}));
   }
 
   get visible() {
@@ -34,7 +37,7 @@ export class CellUpdater<T extends Cell = Cell> {
   }
 
   set visible(visible: boolean) {
-    this.instance.current!.setVisible(visible, wrapPreventListenerOptions({}));
+    this.instance.current!.setVisible(visible ?? true, wrapPreventListenerOptions({}));
   }
 
   get data() {
@@ -50,18 +53,28 @@ export class CellUpdater<T extends Cell = Cell> {
   }
 
   set tools(value: any) {
-    this.instance.current?.setTools(value, wrapPreventListenerOptions({}));
+    if (value === undefined) {
+      this.instance.current!.removeTools(wrapPreventListenerOptions({}));
+    } else {
+      this.instance.current?.setTools(value, wrapPreventListenerOptions({}));
+    }
   }
 
   accept(props: Record<string, any>) {
     for (const key of this.cellKeys) {
-      this.doUpdate(key, props[key]);
+      this.doUpdate(key, props[key], { object: props });
     }
   }
 
-  protected doUpdate(key: string, value: any, deep: boolean = false): void {
+  protected doUpdate(key: string, value: any, options: { deep?: boolean; object: Record<string, any> }): void {
+    const { deep = false, object } = options;
     // 未就绪
     if (this.instance.current == null) {
+      return;
+    }
+
+    // 未定义
+    if (!(key in object)) {
       return;
     }
 
@@ -70,11 +83,6 @@ export class CellUpdater<T extends Cell = Cell> {
 
     // 值未变动
     if (previous === value) {
-      return;
-    }
-
-    // 值未定义
-    if (value === undefined) {
       return;
     }
 
