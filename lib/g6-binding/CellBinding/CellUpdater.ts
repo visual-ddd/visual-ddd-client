@@ -15,7 +15,8 @@ export class CellUpdater<T extends Cell = Cell> {
   }
 
   set attrs(value: any) {
-    this.instance.current!.setAttrs(value, wrapPreventListenerOptions({ overwrite: true }));
+    // 注意 attrs 里面可能有一些 x6 计算出来的属性，不能直接替换
+    this.instance.current!.setAttrs(value, wrapPreventListenerOptions({}));
   }
 
   get zIndex(): number | undefined {
@@ -81,11 +82,17 @@ export class CellUpdater<T extends Cell = Cell> {
     const currentValue = store[key];
 
     if (deep) {
-      if (!isEqual(currentValue, value)) {
-        store[key] = value;
+      if (isEqual(previous, value)) {
+        return;
       }
-    } else if (currentValue !== value) {
-      store[key] = value;
+
+      if (isEqual(currentValue, value)) {
+        return;
+      }
+    } else if (currentValue === value) {
+      return;
     }
+
+    store[key] = value;
   }
 }

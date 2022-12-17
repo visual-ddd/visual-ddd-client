@@ -31,6 +31,7 @@ export const Canvas = memo((props: CanvasProps) => {
       onMouseEnter={canvasModel.handleMouseEnter}
       onMouseLeave={canvasModel.handleMouseLeave}
       onGraphReady={canvasModel.handleGraphReady}
+      onCell$Change$ZIndex={canvasModel.handleZIndexChange}
       onCell$Change$Parent={canvasModel.handleParentChange}
       onNode$Moved={canvasModel.handleNodeMoved}
       onEdge$Connected={canvasModel.handleEdgeConnected}

@@ -37,14 +37,17 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 - redo/undo
 - 嵌套分组
+- ZIndex 自动调整
 - group 移动，child 移动事件没有触发？
 - resize change 处理
 - rotate 处理
-- 边拖入
+- decorator
 - 编辑器面板
 - react 组件 resize
 - label edit
 - node edit
 - edge/node selected 状态高亮
+- 边拖入
 - 创建后选中
 - 只读模式
+- 被其他成员选中的不能修改

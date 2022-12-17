@@ -29,7 +29,7 @@ export class ShapeRegistry {
     const { graph, cell, magnet } = context;
     this.bindGraphIfNeed(graph);
 
-    const model = this.getModelByNode(cell);
+    const model = this.getModelByCell(cell);
     if (model) {
       const configuration = this.getConfigurationByModel(model);
       if (configuration?.edgeFactory) {
@@ -97,8 +97,8 @@ export class ShapeRegistry {
       return true;
     }
 
-    const sourceModel = this.getModelByNode(sourceCell!)!;
-    const targetModel = this.getModelByNode(targetCell!)!;
+    const sourceModel = this.getModelByCell(sourceCell!)!;
+    const targetModel = this.getModelByCell(targetCell!)!;
 
     const configuration = this.getConfigurationByModel(sourceModel)!;
 
@@ -160,7 +160,7 @@ export class ShapeRegistry {
       return false;
     }
 
-    const model = this.getModelByNode(cell);
+    const model = this.getModelByCell(cell);
 
     // 未定义类型
     if (model == null) {
@@ -179,8 +179,8 @@ export class ShapeRegistry {
    */
   isEmbeddable(context: { parent: Node; child: Node; graph: Graph }): boolean {
     this.bindGraphIfNeed(context.graph);
-    const model = this.getModelByNode(context.parent)!;
-    const childModel = this.getModelByNode(context.child)!;
+    const model = this.getModelByCell(context.parent)!;
+    const childModel = this.getModelByCell(context.child)!;
 
     const conf = this.getConfigurationByModel(model)!;
 
@@ -202,7 +202,7 @@ export class ShapeRegistry {
   isDroppable(context: { parent: Node; sourceType: string; graph: Graph }): boolean {
     const { graph, parent, sourceType } = context;
     this.bindGraphIfNeed(graph);
-    const model = this.getModelByNode(parent)!;
+    const model = this.getModelByCell(parent)!;
     const conf = this.getConfigurationByModel(model)!;
 
     if (!conf.group) {
@@ -259,7 +259,7 @@ export class ShapeRegistry {
     };
   }
 
-  getModelByNode(node: { id: string }) {
+  getModelByCell(node: { id: string }) {
     return this.editorModel.index.getNodeById(node.id);
   }
 

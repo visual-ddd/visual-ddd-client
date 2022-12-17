@@ -178,6 +178,15 @@ export class CanvasModel {
     this.graphHovering = true;
   };
 
+  handleZIndexChange: GraphBindingProps['onCell$Change$ZIndex'] = evt => {
+    const { cell, current } = evt;
+    const node = this.shapeRegistry.getModelByCell(cell);
+
+    if (node) {
+      this.editorCommandHandler.updateNodeProperty({ node, path: 'zIndex', value: current });
+    }
+  };
+
   handleNodeMoved: GraphBindingProps['onNode$Moved'] = evt => {
     const { node } = evt;
 
@@ -207,7 +216,7 @@ export class CanvasModel {
    */
   handleSelectionChanged: GraphBindingProps['onSelection$Changed'] = evt => {
     if (evt.added.length || evt.removed.length) {
-      const selected = evt.selected.map(i => this.shapeRegistry.getModelByNode(i)).filter(booleanPredicate);
+      const selected = evt.selected.map(i => this.shapeRegistry.getModelByCell(i)).filter(booleanPredicate);
       this.editorCommandHandler.setSelected({ selected });
     }
   };
@@ -232,7 +241,9 @@ export class CanvasModel {
 
     // 定位被拖入的父节点
     const localPoint = graph.pageToLocal(nativeEvent.pageX, nativeEvent.pageY);
-    const maybeParents = graph.getNodesFromPoint(localPoint);
+    const maybeParents = graph.getNodesFromPoint(localPoint).sort((a, b) => {
+      return b.getZIndex()! - a.getZIndex()!;
+    });
 
     // 插入操作
     const insert = (parentNode?: Node) => {
@@ -286,7 +297,7 @@ export class CanvasModel {
     } else {
       // 可能来源或目标都修改了
       console.log('connect changed', evt);
-      const model = this.shapeRegistry.getModelByNode(edge);
+      const model = this.shapeRegistry.getModelByCell(edge);
       if (model) {
         if (type === 'source') {
           this.editorCommandHandler.updateNodeProperty({ node: model, path: 'source', value: edge.getSource() });
@@ -300,7 +311,7 @@ export class CanvasModel {
   handleEdgeRemoved: GraphBindingProps['onEdge$Removed'] = evt => {
     console.log('edge remove', evt);
     const { edge } = evt;
-    const model = this.shapeRegistry.getModelByNode(edge);
+    const model = this.shapeRegistry.getModelByCell(edge);
     if (model) {
       this.editorCommandHandler.removeNode({ node: model });
     }
@@ -318,7 +329,7 @@ export class CanvasModel {
       return;
     }
 
-    const model = this.editorIndex.getNodeById(cell.id);
+    const model = this.shapeRegistry.getModelByCell(cell);
 
     if (model) {
       console.log('change parent', evt);
@@ -337,7 +348,7 @@ export class CanvasModel {
 
     const selected = graph.getSelectedCells();
     // 过滤可以拷贝的cell
-    const filteredSelected = selected.map(i => this.shapeRegistry.getModelByNode(i)).filter(booleanPredicate);
+    const filteredSelected = selected.map(i => this.shapeRegistry.getModelByCell(i)).filter(booleanPredicate);
     if (filteredSelected.length) {
       // X6 在这里已经处理了一些逻辑，必须选中父节点，递归包含子节点、包含子节点之间的连线、修改 id 等等
       graph.copy(selected, { deep: true });

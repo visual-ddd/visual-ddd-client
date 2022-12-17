@@ -8,11 +8,16 @@ export interface ShapeCoreInfo {
 }
 
 export interface ShapeComponentCellProps {
-  zIndex?: number;
   id: string;
   data: Properties;
   children?: React.ReactNode;
   canBeParent?: boolean;
+
+  // 以下属性如果在 Properties 定义了，会自动展开到这里
+
+  // Cell 节点包含一下属性
+  zIndex?: number;
+  visible?: boolean;
 
   // Node 节点包含以下 属性
   position?: PointLike;

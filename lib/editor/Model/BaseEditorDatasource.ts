@@ -133,7 +133,7 @@ export class BaseEditorDatasource {
     this.store = store;
     this.index = index;
     this.undoManager = new UndoManager(datasource, {
-      captureTimeout: 0,
+      // captureTimeout: 0, 默认 500ms
     });
 
     autoBindThis(this);
@@ -234,16 +234,19 @@ export class BaseEditorDatasource {
   @pull('DELETE_NODE')
   protected handleRemoveNode(params: { nodeId: string }) {
     const { nodeId } = params;
+
     const model = this.index.getNodeById(nodeId);
     if (model) {
       this.store.removeNode({ node: model });
     }
+
+    return model;
   }
 
   @pull('ADD_CHILD')
-  protected handleAddChild(param: { parent: NodePO; childId: string }) {
-    const { parent, childId } = param;
-    const parentModel = this.index.getNodeById(parent.id);
+  protected handleAddChild(param: { parentId: string; childId: string }) {
+    const { parentId, childId } = param;
+    const parentModel = this.index.getNodeById(parentId);
     const childModel = this.index.getNodeById(childId);
 
     if (parentModel == null || childModel == null) {
@@ -254,9 +257,9 @@ export class BaseEditorDatasource {
   }
 
   @pull('REMOVE_CHILD')
-  protected handleRemoveChild(param: { parent: NodePO; childId: string }) {
-    const { parent, childId } = param;
-    const parentModel = this.index.getNodeById(parent.id);
+  protected handleRemoveChild(param: { parentId: string; childId: string }) {
+    const { parentId, childId } = param;
+    const parentModel = this.index.getNodeById(parentId);
     const childModel = this.index.getNodeById(childId);
 
     if (parentModel == null || childModel == null) {
@@ -326,21 +329,28 @@ export class BaseEditorDatasource {
 
                 // 已经包含了 parent, 因为是原子操作，parent 变更可能不会触发额外的事件
                 if (node.parent) {
-                  const parent = NodeYMap.fromYMap(target.get(node.parent))?.toNodePO()!;
-                  this.handleAddChild({ parent: parent, childId: node.id });
+                  this.handleAddChild({ parentId: node.parent, childId: node.id });
                 }
                 break;
               }
-              case 'delete':
-                this.handleRemoveNode({ nodeId: key });
+              case 'delete': {
+                const node = this.handleRemoveNode({ nodeId: key });
+
+                // removeChild 有一定几率会收不到，这里进行删除，只要确保 removeChild 幂等就行
+                if (node?.parent) {
+                  this.handleRemoveChild({ parentId: node.parent.id, childId: key });
+                }
+
                 break;
+              }
             }
           }
         } else if (this.isNodeMap(target)) {
           // 节点内容变动，这里只可能是 parent 变动，这里不做处理，在children 那里处理
         } else if (this.isPropertiesMap(target)) {
-          const nodePO = NodeYMap.fromYMap(target.parent as YMap<any>)!.toNodePO();
           // 属性变动
+          const nodePO = NodeYMap.fromYMap(target.parent as YMap<any>)!.toNodePO();
+
           for (const [key, action] of evt.keys) {
             if (action.action === 'update') {
               this.handleUpdateNodeProperty({ node: nodePO, path: key });
@@ -354,13 +364,13 @@ export class BaseEditorDatasource {
             switch (action.action) {
               case 'add':
                 this.handleAddChild({
-                  parent: parentPO,
+                  parentId: parentPO.id,
                   childId: key,
                 });
                 break;
               case 'delete':
                 this.handleRemoveChild({
-                  parent: parentPO,
+                  parentId: parentPO.id,
                   childId: key,
                 });
                 break;

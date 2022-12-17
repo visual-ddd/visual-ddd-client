@@ -63,15 +63,22 @@ export class BaseEditorStore {
     const { child, parent } = params;
 
     const realParent = parent ?? this.root;
-    realParent.appendChild(child);
-    this.event.emit('NODE_APPEND_CHILD', { parent: realParent, child });
+    const appended = realParent.appendChild(child);
+
+    if (appended) {
+      this.event.emit('NODE_APPEND_CHILD', { parent: realParent, child });
+    }
   }
 
   @mutation('REMOVE_CHILD')
   removeChild(params: { parent: BaseNode; child: BaseNode }): void {
     const { parent, child } = params;
-    parent.removeChild(child);
-    this.event.emit('NODE_REMOVE_CHILD', { parent, child });
+
+    const removed = parent.removeChild(child);
+
+    if (removed) {
+      this.event.emit('NODE_REMOVE_CHILD', { parent, child });
+    }
   }
 
   @mutation('CREATE_NODE')

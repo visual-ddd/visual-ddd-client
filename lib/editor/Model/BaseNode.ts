@@ -67,20 +67,37 @@ export class BaseNode {
     makeObservable(this);
   }
 
+  /**
+   * 添加子节点
+   * @param node
+   * @returns 如果添加成功则返回 true
+   */
   appendChild(node: this) {
     const idx = this.getNodeIdx(node);
 
     if (idx === -1) {
       this.children.push(node);
       node.parent = this;
+
+      return true;
     }
+
+    return false;
   }
 
+  /**
+   * 删除子节点
+   * @param node
+   * @returns 删除成功则返回 true
+   */
   removeChild(node: this) {
     const idx = this.getNodeIdx(node);
     if (idx !== -1) {
       this.children.splice(idx, 1);
+      return true;
     }
+
+    return false;
   }
 
   /**

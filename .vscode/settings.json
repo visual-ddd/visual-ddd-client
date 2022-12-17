@@ -1,4 +1,4 @@
 {
-  "cSpell.words": ["embeddable", "Unhighlight"],
+  "cSpell.words": ["embeddable", "unembed", "Unhighlight"],
   "typescript.tsserver.experimental.enableProjectDiagnostics": true
 }

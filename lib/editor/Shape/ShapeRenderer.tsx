@@ -20,6 +20,7 @@ const MaybeNullProps: (keyof ShapeComponentCellProps)[] = [
   'source',
   // common
   'zIndex',
+  'visible',
 ];
 
 const ShapeList = observer(function ShapeList(props: { list: BaseNode[] }) {

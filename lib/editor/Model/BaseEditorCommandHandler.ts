@@ -69,14 +69,6 @@ export class BaseEditorCommandHandler {
   removeNode(params: { node: BaseNode }) {
     const { node } = params;
 
-    // 深度优先递归删除
-    if (node.children.length) {
-      const clone = node.children.slice(0);
-      for (const child of clone) {
-        this.removeNode({ node: child });
-      }
-    }
-
     // 先移除引用关系
     if (node.parent) {
       this.store.removeChild({ parent: node.parent, child: node });
@@ -84,6 +76,16 @@ export class BaseEditorCommandHandler {
 
     // 移除节点
     this.store.removeNode({ node });
+
+    // 这里的的顺序很重要
+    // 先删除父节点，后删除子节点，当执行撤销时顺序也是一样的，先创建父节点，后创建子节点
+    // 深度优先递归删除
+    if (node.children.length) {
+      const clone = node.children.slice(0);
+      for (const child of clone) {
+        this.removeNode({ node: child });
+      }
+    }
 
     return true;
   }

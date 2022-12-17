@@ -58,20 +58,56 @@ const getDelegateEventName = memoize((name: string) => {
 
 const PREVENT_LISTENER_NOOP_OBJECT = wrapPreventListenerOptions({});
 
+/**
+ * @param cell
+ * @param parentZIndex
+ */
+const incrementCellZIndex = (cell: Cell, parentZIndex: number) => {
+  let zIndex = cell.getZIndex()!;
+
+  if (zIndex > parentZIndex) {
+    // 无需处理
+    return;
+  }
+
+  zIndex++;
+
+  // 递归更新
+  const children = cell.getChildren();
+  if (children?.length) {
+    for (const child of children) {
+      incrementCellZIndex(child, zIndex);
+    }
+  }
+
+  cell.setZIndex(zIndex);
+};
+
 export function useCellContextValue() {
   const value = useMemo(() => {
     let children: Cell[] = [];
     let parent: Cell;
 
+    const embed = (child: Cell) => {
+      // 矫正 zIndex
+      const parentZIndex = parent.getZIndex()!;
+      incrementCellZIndex(child, parentZIndex);
+
+      parent.embed(child, PREVENT_LISTENER_NOOP_OBJECT);
+      console.log('add child', parent, child);
+    };
+    const unembed = (child: Cell) => {
+      console.log('remove child', parent, child);
+      parent.unembed(child, PREVENT_LISTENER_NOOP_OBJECT);
+    };
+
     return {
       addChild(child) {
         if (parent) {
-          parent.embed(child, PREVENT_LISTENER_NOOP_OBJECT);
-          console.log('add child', parent, child);
+          embed(child);
 
           return () => {
-            console.log('remove child', parent, child);
-            parent.unembed(child, PREVENT_LISTENER_NOOP_OBJECT);
+            unembed(child);
           };
         }
 
@@ -80,8 +116,7 @@ export function useCellContextValue() {
 
         return () => {
           if (parent) {
-            console.log('remove child', parent, child);
-            parent.unembed(child, PREVENT_LISTENER_NOOP_OBJECT);
+            unembed(child);
           } else {
             const idx = children.indexOf(child);
             if (idx !== -1) {
@@ -100,8 +135,7 @@ export function useCellContextValue() {
         const clone = children;
         children = [];
         for (const item of clone) {
-          console.log('add child', parent, item);
-          parent.embed(item, PREVENT_LISTENER_NOOP_OBJECT);
+          embed(item);
         }
       },
     } satisfies CellContextValue;
@@ -191,7 +225,7 @@ export function useCell<Props extends CellBindingProps>({
         }
 
         disposers.push(() => {
-          console.log('disposing');
+          console.log('disposing', instance);
           // 回收
           helper.recycle(instance.id, factoryInstance);
         });

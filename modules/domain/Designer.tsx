@@ -62,6 +62,23 @@ defineShape('rect', {
   },
 });
 
+defineShape('rect-child', {
+  shapeType: 'node',
+  group: true,
+  droppable: ctx => {
+    return ctx.sourceType !== 'rect';
+  },
+  embeddable: ctx => {
+    return ctx.childModel?.name !== 'rect';
+  },
+  staticProps() {
+    return { size: { width: 200, height: 200 }, zIndex: 1 };
+  },
+  component(props) {
+    return <RectBinding {...props.cellProps} />;
+  },
+});
+
 defineShape('child', {
   group: false,
   shapeType: 'node',
@@ -186,6 +203,7 @@ const Designer = observer(() => {
         <CanvasModelProvider>
           <ComponentContainer>
             <ComponentItem name="rect" data={{ type: 'rect' }}></ComponentItem>
+            <ComponentItem name="rect-child" data={{ type: 'rect-child' }}></ComponentItem>
             <ComponentItem name="child" data={{ type: 'child' }}></ComponentItem>
             <ComponentItem name="child-2" data={{ type: 'child-2' }}></ComponentItem>
           </ComponentContainer>

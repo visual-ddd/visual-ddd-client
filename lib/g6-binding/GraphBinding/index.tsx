@@ -116,6 +116,13 @@ export interface GraphBindingProps {
   onEdge$Added?: (evt: EventArgs['edge:added']) => void;
 
   /**
+   * z-index 变动
+   * @param evt
+   * @returns
+   */
+  onCell$Change$ZIndex?: (evt: EventArgs['cell:change:zIndex']) => void;
+
+  /**
    * 节点移除
    */
   onCell$Removed?: (evt: EventArgs['cell:removed']) => void;
