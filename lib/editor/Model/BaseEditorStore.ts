@@ -1,6 +1,5 @@
 import { makeObservable, observable } from 'mobx';
 import { v4 } from 'uuid';
-import { set } from '@wakeapp/utils';
 import { makeAutoBindThis, derive, mutation, runInCommand } from '@/lib/store';
 
 import { BaseNode } from './BaseNode';
@@ -91,8 +90,10 @@ export class BaseEditorStore {
   @mutation('UPDATE_NODE_PROPERTY')
   updateNodeProperty(params: { node: BaseNode; path: string; value: any }) {
     const { node, path, value } = params;
-    set(node.properties, path, value);
-    this.event.emit('NODE_UPDATE_PROPERTY', { node, path, value });
+    const changed = node.setProperty(path, value);
+    if (changed) {
+      this.event.emit('NODE_UPDATE_PROPERTY', { node, path, value });
+    }
   }
 
   /**
