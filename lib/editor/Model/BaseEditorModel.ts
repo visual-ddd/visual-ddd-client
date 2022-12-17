@@ -4,6 +4,7 @@ import { BaseEditorCommandHandler } from './BaseEditorCommandHandler';
 import { BaseEditorDatasource } from './BaseEditorDatasource';
 import { BaseEditorEvent } from './BaseEditorEvent';
 import { BaseEditorIndex } from './BaseEditorIndex';
+import { BaseEditorViewStore } from './BaseEditorViewStore';
 
 export interface BaseEditorModelOptions {
   datasource: YMap<any>;
@@ -23,6 +24,11 @@ export class BaseEditorModel {
    * 模型状态存储
    */
   readonly store: BaseEditorStore;
+
+  /**
+   * 视图模型状态存储
+   */
+  readonly viewStore: BaseEditorViewStore;
 
   /**
    * 模型层事件
@@ -52,9 +58,11 @@ export class BaseEditorModel {
       datasource,
       doc,
     });
+    this.viewStore = new BaseEditorViewStore({ datasource: this.datasource });
     this.commandHandler = new BaseEditorCommandHandler({
       event: this.event,
       store: this.store,
+      viewStore: this.viewStore,
       datasource: this.datasource,
     });
   }

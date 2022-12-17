@@ -1,7 +1,7 @@
 import { makeObservable, observable } from 'mobx';
 import { v4 } from 'uuid';
 import { set } from '@wakeapp/utils';
-import { autoBindThis, derive, mutation, runInCommand } from '@/lib/store';
+import { makeAutoBindThis, derive, mutation, runInCommand } from '@/lib/store';
 
 import { BaseNode } from './BaseNode';
 import type { Properties, ShapeType } from './types';
@@ -30,20 +30,6 @@ export class BaseEditorStore {
     return this.root.children;
   }
 
-  /**
-   * 已选中的节点
-   */
-  @observable
-  selectedNodes: BaseNode[] = [];
-
-  /**
-   * 当前聚焦的节点(单一节点)
-   */
-  @derive
-  get focusingNode() {
-    return this.selectedNodes.length === 1 ? this.selectedNodes[0] : null;
-  }
-
   private event: BaseEditorEvent;
 
   constructor(inject: { event: BaseEditorEvent }) {
@@ -55,7 +41,7 @@ export class BaseEditorStore {
     });
 
     makeObservable(this);
-    autoBindThis(this);
+    makeAutoBindThis(this);
   }
 
   @mutation('APPEND_CHILD')
@@ -107,11 +93,6 @@ export class BaseEditorStore {
     const { node, path, value } = params;
     set(node.properties, path, value);
     this.event.emit('NODE_UPDATE_PROPERTY', { node, path, value });
-  }
-
-  @mutation('SET_SELECTED')
-  setSelected(params: { selected: BaseNode[] }) {
-    this.selectedNodes = params.selected;
   }
 
   /**

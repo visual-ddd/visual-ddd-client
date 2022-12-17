@@ -24,7 +24,7 @@ export function storeAutoBindingKey(target: any, key: string | symbol) {
   desc?.value.add(key);
 }
 
-export function autoBindThis(target: any) {
+export function makeAutoBindThis(target: any) {
   const values = target[AUTO_BINDING_KEY];
 
   if (values instanceof Set) {

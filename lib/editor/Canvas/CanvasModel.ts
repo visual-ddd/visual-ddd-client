@@ -43,6 +43,10 @@ export class CanvasModel {
     return this.editorModel.store;
   }
 
+  get editorViewStore() {
+    return this.editorModel.viewStore;
+  }
+
   /**
    * X6 画布对象
    */
@@ -388,7 +392,7 @@ export class CanvasModel {
   };
 
   handleRemoveSelected = () => {
-    const selected = this.editorStore.selectedNodes;
+    const selected = this.editorViewStore.selectedNodes;
     if (!selected.length) {
       return false;
     }

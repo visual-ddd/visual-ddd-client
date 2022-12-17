@@ -1,4 +1,4 @@
-import { autoBindThis, push, pull } from '@/lib/store';
+import { makeAutoBindThis, push, pull } from '@/lib/store';
 import { Map as YMap, Doc as YDoc, AbstractType, UndoManager } from 'yjs';
 import { observable, action } from 'mobx';
 import toPairs from 'lodash/toPairs';
@@ -136,7 +136,7 @@ export class BaseEditorDatasource {
       // captureTimeout: 0, 默认 500ms
     });
 
-    autoBindThis(this);
+    makeAutoBindThis(this);
 
     this.initialDataSource();
     this.watchStore();

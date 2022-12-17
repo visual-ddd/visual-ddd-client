@@ -50,6 +50,8 @@ export function useEditorModel<Model extends BaseEditorModel = BaseEditorModel>(
   return {
     model,
     store: model.store,
+    viewStore: model.viewStore,
+    event: model.event,
     commandHandler: model.commandHandler,
     index: model.index,
     listen,

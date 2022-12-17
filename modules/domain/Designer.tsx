@@ -174,16 +174,16 @@ const Operations = observer(() => {
   const canvasModel = useCanvasModel();
   return (
     <div>
-      <div>selected: {model.store.selectedNodes.map(n => n.id).join(', ')}</div>
-      <div>focusing: {model.store.focusingNode?.id}</div>
+      <div>selected: {model.viewStore.selectedNodes.map(n => n.id).join(', ')}</div>
+      <div>focusing: {model.viewStore.focusingNode?.id}</div>
       <div onClick={canvasModel.model.handleRedo}>redo</div>
       <div onClick={canvasModel.model.handleUndo}>undo</div>
 
       <button onClick={canvasModel.model.handleRemoveSelected}>移除选中</button>
       <button
         onClick={() => {
-          if (model.store.focusingNode) {
-            canvasModel.model.handleRemove({ node: model.store.focusingNode });
+          if (model.viewStore.focusingNode) {
+            canvasModel.model.handleRemove({ node: model.viewStore.focusingNode });
           }
         }}
       >

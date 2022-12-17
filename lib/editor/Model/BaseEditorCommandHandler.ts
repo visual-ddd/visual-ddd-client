@@ -1,4 +1,4 @@
-import { autoBindThis, command } from '@/lib/store';
+import { makeAutoBindThis, command } from '@/lib/store';
 import { debounce, booleanPredicate } from '@wakeapp/utils';
 
 import { BaseEditorStore } from './BaseEditorStore';
@@ -6,22 +6,30 @@ import type { PickParams, ShapeType, Properties } from './types';
 import { BaseNode } from './BaseNode';
 import { BaseEditorEvent } from './BaseEditorEvent';
 import { BaseEditorDatasource } from './BaseEditorDatasource';
+import { BaseEditorViewStore } from './BaseEditorViewStore';
 
 /**
  * 用于统一处理 View 层的命令
  */
 export class BaseEditorCommandHandler {
   private store: BaseEditorStore;
+  private viewStore: BaseEditorViewStore;
   private event: BaseEditorEvent;
   private datasource: BaseEditorDatasource;
 
-  constructor(inject: { event: BaseEditorEvent; store: BaseEditorStore; datasource: BaseEditorDatasource }) {
-    const { store, event, datasource } = inject;
+  constructor(inject: {
+    event: BaseEditorEvent;
+    store: BaseEditorStore;
+    viewStore: BaseEditorViewStore;
+    datasource: BaseEditorDatasource;
+  }) {
+    const { store, event, datasource, viewStore } = inject;
     this.store = store;
+    this.viewStore = viewStore;
     this.event = event;
     this.datasource = datasource;
 
-    autoBindThis(this);
+    makeAutoBindThis(this);
   }
 
   @command('UNDO')
@@ -35,8 +43,8 @@ export class BaseEditorCommandHandler {
   }
 
   @command('SET_SELECTED')
-  setSelected(params: PickParams<BaseEditorStore['setSelected']>) {
-    this.store.setSelected(params);
+  setSelected(params: PickParams<BaseEditorViewStore['setSelected']>) {
+    this.viewStore.setSelected(params);
   }
 
   @command('CREATE_NODE')

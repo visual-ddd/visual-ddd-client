@@ -1,6 +1,6 @@
-import { storeAutoBindingKey, autoBindThis } from './auto-bind-this';
+import { storeAutoBindingKey, makeAutoBindThis } from './auto-bind-this';
 
-describe('autoBindThis', () => {
+describe('makeAutoBindThis', () => {
   class Test {
     ok = 1;
 
@@ -10,7 +10,7 @@ describe('autoBindThis', () => {
     }
 
     constructor() {
-      autoBindThis(this);
+      makeAutoBindThis(this);
     }
   }
   test('单类', () => {
