@@ -6,6 +6,7 @@ specifiers:
   '@antv/x6-plugin-keyboard': ^2.1.4
   '@antv/x6-plugin-selection': ^2.1.5
   '@antv/x6-plugin-snapline': ^2.1.6
+  '@antv/x6-plugin-transform': ^2.1.4
   '@antv/x6-react-shape': ^2.1.0
   '@testing-library/jest-dom': ^5.16.5
   '@testing-library/react': ^13.4.0
@@ -49,6 +50,7 @@ dependencies:
   '@antv/x6-plugin-keyboard': 2.1.4_@antv+x6@2.0.8
   '@antv/x6-plugin-selection': 2.1.5_@antv+x6@2.0.8
   '@antv/x6-plugin-snapline': 2.1.6_@antv+x6@2.0.8
+  '@antv/x6-plugin-transform': 2.1.4_@antv+x6@2.0.8
   '@antv/x6-react-shape': 2.1.0_rsz64eyo6juon5x43jm7vppcke
   '@wakeapp/framework-core': 1.0.2_lodash@4.17.21
   '@wakeapp/hooks': 1.0.2_zrp62gez7omnrwllyfdlincg3a
@@ -208,6 +210,15 @@ packages:
   /@antv/x6-plugin-snapline/2.1.6_@antv+x6@2.0.8:
     resolution:
       { integrity: sha512-DqZsoy8t5kYLrrh/GdkYHqzxifWR2Vbg/NPoKFU9ZiRHb3WkXNyMhr0iQTtIqZMRRI5BVdf72Yu2E9QMDI7N7g== }
+    peerDependencies:
+      '@antv/x6': ^2.x
+    dependencies:
+      '@antv/x6': 2.0.8
+    dev: false
+
+  /@antv/x6-plugin-transform/2.1.4_@antv+x6@2.0.8:
+    resolution:
+      { integrity: sha512-AI0MaXbcglQB1nd2WCoXKmT3ds/Hw4fS953hDz5Y0dbJLMNWaB3SbHQBHp5gKQF/01SQqx9GtPKVHdmyHOVQFA== }
     peerDependencies:
       '@antv/x6': ^2.x
     dependencies:

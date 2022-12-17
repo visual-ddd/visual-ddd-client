@@ -1,4 +1,5 @@
 import { Graph, PointLike, Node } from '@antv/x6';
+import { Transform } from '@antv/x6-plugin-transform';
 import { booleanPredicate, Disposer } from '@wakeapp/utils';
 import { message } from 'antd';
 
@@ -10,6 +11,18 @@ import { BaseEditorModel, BaseNodeProperties, BaseNode } from '../Model';
 import { ShapeRegistry } from '../Shape';
 import { assertShapeInfo } from '../Shape';
 import { copy, paste } from './ClipboardUtils';
+
+const ResizingOptionsWithDefault: [keyof Transform.ResizingRaw, any][] = [
+  ['minWidth', 0],
+  ['minHeight', 0],
+  ['maxWidth', Infinity],
+  ['maxHeight', Infinity],
+  ['orthogonal', true],
+  ['restrict', false],
+  ['autoScroll', true],
+  ['preserveAspectRatio', false],
+  ['allowReverse', true],
+];
 
 /**
  * 这个模型是无状态的，核心状态保存在 EditorModel
@@ -68,91 +81,113 @@ export class CanvasModel {
   constructor(inject: { editorModel: BaseEditorModel }) {
     this.editorModel = inject.editorModel;
     const shapeRegistry = (this.shapeRegistry = new ShapeRegistry({ editorModel: inject.editorModel }));
-    this.graphOptions =
-      // 默认配置
-      {
-        background: { color: '#fffbe6' },
-        grid: { size: 15, visible: true },
 
-        // 分组嵌入
-        // FIXME: X6 目前不支持批量
-        embedding: {
-          enabled: true,
-          findParent: 'bbox',
-          // 验证是否支持拖入
-          validate(context) {
-            return shapeRegistry.isEmbeddable({
-              parent: context.parent,
-              child: context.child,
-              graph: this,
-            });
-          },
-        },
+    // 尺寸变换配置
+    type Resizing = GraphBindingOptions['resizing'];
+    const resizing: Resizing = {
+      enabled(node) {
+        return !!shapeRegistry.isResizable({ graph: this, node });
+      },
+    };
 
-        // 连线控制
-        connecting: {
-          // 吸附
-          snap: true,
-          // 高亮所有可以链接的节点和连接桩
-          highlight: true,
-          // 是否支持循环连线
-          allowLoop: arg => {
-            return shapeRegistry.isAllowNodeConnect(arg);
-          },
-          // allowNode 不太靠谱，统一使用 allowLoop 验证
-          // allowNode
-          createEdge(arg) {
-            return shapeRegistry.createEdge({
-              graph: this,
-              cell: arg.sourceCell,
-              magnet: arg.sourceMagnet,
-            });
-          },
-        },
+    for (const [key, defaultValue] of ResizingOptionsWithDefault) {
+      resizing[key] = function (node) {
+        const result = shapeRegistry.isResizable({ graph: this, node });
 
-        // 交互行为
-        interacting: {
-          nodeMovable: true,
-          edgeMovable: true,
-          edgeLabelMovable: true,
-          arrowheadMovable: true,
-          magnetConnectable: true,
-        },
+        if (typeof result === 'object') {
+          return result[key] ?? defaultValue;
+        }
 
-        // 自动根据容器调整大小
-        autoResize: true,
-
-        // 选中处理
-        selection: {
-          enabled: true,
-          multiple: true,
-
-          // 框选
-          rubberband: true,
-          // 严格框选
-          strict: true,
-
-          // 选择框
-          showNodeSelectionBox: true,
-          showEdgeSelectionBox: true,
-          filter(cell) {
-            return shapeRegistry.isSelectable({ cell, graph: this });
-          },
-        },
-
-        // 快捷键处理
-        keyboard: {
-          // 单个页面可能存在多个画布实例
-          global: false,
-          enabled: true,
-        },
-
-        // 剪切板
-        clipboard: {
-          enabled: true,
-          useLocalStorage: false,
-        },
+        return defaultValue;
       };
+    }
+
+    // 默认配置
+    this.graphOptions = {
+      background: { color: '#fffbe6' },
+      grid: { size: 15, visible: true },
+
+      // 分组嵌入
+      // FIXME: X6 目前不支持批量
+      embedding: {
+        enabled: true,
+        findParent: 'bbox',
+        // 验证是否支持拖入
+        validate(context) {
+          return shapeRegistry.isEmbeddable({
+            parent: context.parent,
+            child: context.child,
+            graph: this,
+          });
+        },
+      },
+
+      // 连线控制
+      connecting: {
+        // 吸附
+        snap: true,
+        // 高亮所有可以链接的节点和连接桩
+        highlight: true,
+        // 是否支持循环连线
+        allowLoop: arg => {
+          return shapeRegistry.isAllowNodeConnect(arg);
+        },
+        // allowNode 不太靠谱，统一使用 allowLoop 验证
+        // allowNode
+        createEdge(arg) {
+          return shapeRegistry.createEdge({
+            graph: this,
+            cell: arg.sourceCell,
+            magnet: arg.sourceMagnet,
+          });
+        },
+      },
+
+      // 交互行为
+      interacting: {
+        nodeMovable: true,
+        edgeMovable: true,
+        edgeLabelMovable: true,
+        arrowheadMovable: true,
+        magnetConnectable: true,
+      },
+
+      // 自动根据容器调整大小
+      autoResize: true,
+
+      // 选中处理
+      selection: {
+        enabled: true,
+        multiple: true,
+
+        // 框选
+        rubberband: true,
+        // 严格框选
+        strict: true,
+
+        // 选择框
+        showNodeSelectionBox: true,
+        showEdgeSelectionBox: true,
+        filter(cell) {
+          return shapeRegistry.isSelectable({ cell, graph: this });
+        },
+      },
+
+      // 快捷键处理
+      keyboard: {
+        // 单个页面可能存在多个画布实例
+        global: false,
+        enabled: true,
+      },
+
+      // 剪切板
+      clipboard: {
+        enabled: true,
+        useLocalStorage: false,
+      },
+
+      resizing,
+    };
 
     // 监听 EditorModel 事件
     this.disposer.push(
@@ -213,6 +248,14 @@ export class CanvasModel {
     };
 
     updatePosition(node);
+  };
+
+  handleNodeResized: GraphBindingProps['onNode$Resized'] = evt => {
+    const { node } = evt;
+    const model = this.shapeRegistry.getModelByCell(node);
+    if (model) {
+      this.editorCommandHandler.updateNodeProperty({ node: model, path: 'size', value: node.getSize() });
+    }
   };
 
   /**

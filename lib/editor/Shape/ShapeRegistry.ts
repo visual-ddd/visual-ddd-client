@@ -1,6 +1,8 @@
 import { Cell, Graph, Node, Shape } from '@antv/x6';
 import { Options } from '@antv/x6/lib/graph/options';
+import { Transform } from '@antv/x6-plugin-transform';
 import { NoopObject } from '@wakeapp/utils';
+
 import { CopyPayload } from '../Canvas/ClipboardUtils';
 import type { BaseEditorModel, BaseNode, BaseNodeProperties } from '../Model';
 
@@ -129,6 +131,44 @@ export class ShapeRegistry {
     }
 
     return true;
+  };
+
+  /**
+   * 是否支持尺寸调整
+   * TODO: 缓存计算结果
+   */
+  isResizable = (context: { graph: Graph; node: Node }): Transform.Options['resizing'] => {
+    const { graph, node } = context;
+    this.bindGraphIfNeed(graph);
+
+    const model = this.getModelByCell(node);
+
+    if (model == null) {
+      return false;
+    }
+
+    const conf = this.getConfigurationByModel(model);
+
+    if (conf == null) {
+      return false;
+    }
+
+    const resizing = conf.resizing;
+
+    if (!resizing) {
+      return false;
+    }
+
+    if (typeof resizing === 'object') {
+      return { enabled: true, ...resizing };
+    }
+
+    if (typeof resizing === 'function') {
+      const result = resizing({ node, graph });
+      return { enabled: true, ...result };
+    }
+
+    return resizing ?? false;
   };
 
   /**

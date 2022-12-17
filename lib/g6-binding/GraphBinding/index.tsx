@@ -4,6 +4,7 @@ import { Graph, Cell, EventArgs } from '@antv/x6';
 import { Selection } from '@antv/x6-plugin-selection';
 import { Keyboard } from '@antv/x6-plugin-keyboard';
 import { Clipboard } from '@antv/x6-plugin-clipboard';
+import { Transform } from '@antv/x6-plugin-transform';
 import type { Options } from '@antv/x6/lib/graph/options';
 import { Noop, NoopArray } from '@wakeapp/utils';
 import { useDisposer } from '@wakeapp/hooks';
@@ -21,6 +22,8 @@ export type GraphBindingOptions = Partial<Options.Manual> & {
   selection?: Selection.Options;
   keyboard?: Keyboard['options'];
   clipboard?: Clipboard.Options;
+  resizing?: Transform.Options['resizing'];
+  rotating?: Transform.Options['rotating'];
 };
 
 export interface GraphBindingProps {
@@ -93,6 +96,11 @@ export interface GraphBindingProps {
    * 节点位置变更
    */
   onNode$Change$Position?: (evt: EventArgs['node:change:position']) => void;
+
+  /**
+   * 节点尺寸变更
+   */
+  onNode$Resized?: (evt: EventArgs['node:resized']) => void;
 
   /**
    * 边连接变更
@@ -342,6 +350,15 @@ export const GraphBinding = memo((props: GraphBindingProps) => {
 
       if (options?.clipboard) {
         graph.use(new Clipboard(options.clipboard));
+      }
+
+      if (options?.resizing != null || options?.rotating != null) {
+        graph.use(
+          new Transform({
+            resizing: options.resizing,
+            rotating: options.rotating,
+          })
+        );
       }
     }
 

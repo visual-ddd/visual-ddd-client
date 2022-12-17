@@ -1,5 +1,7 @@
 import React from 'react';
 import { Node, Graph, Size, PointLike, Cell, Edge } from '@antv/x6';
+import { Transform } from '@antv/x6-plugin-transform';
+
 import { BaseEditorModel, BaseNode, Properties, ShapeType } from '../Model';
 import { CopyPayload } from '../Canvas/ClipboardUtils';
 
@@ -28,11 +30,18 @@ export interface ShapeComponentCellProps {
   target?: Edge.TerminalData;
 }
 
+export type ShapeResizingOptions = Omit<Transform.ResizingRaw, 'enabled'>;
+
 export interface ShapeConfiguration {
   /**
    * 组件的类型
    */
   shapeType: ShapeType;
+
+  /**
+   * 是否支持尺寸调整, 默认 false
+   */
+  resizing?: boolean | ShapeResizingOptions | ((context: { node: Node; graph: Graph }) => ShapeResizingOptions);
 
   /**
    * 是否为群组，默认为 false
