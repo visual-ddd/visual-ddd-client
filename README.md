@@ -35,15 +35,14 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 ## TODO
 
-- editorViewStore
-- resize change 处理
-- rotate 处理
-- 分组大小自动扩展
-- decorator
-- 编辑器面板
 - react 组件 resize
-- label edit
+- decorator, 全部使用 React 组件？高阶组件？
+- react portable, context 测试
+- 分组大小自动扩展
 - node edit
+- label edit
+- 无连接桩连接交互
+- 编辑器面板
 - edge/node selected 状态高亮
 - 边拖入
 - 创建后选中

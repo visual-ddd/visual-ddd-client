@@ -34,6 +34,8 @@ export const Canvas = memo((props: CanvasProps) => {
       onCell$Change$ZIndex={canvasModel.handleZIndexChange}
       onCell$Change$Parent={canvasModel.handleParentChange}
       onNode$Moved={canvasModel.handleNodeMoved}
+      onNode$Resize={canvasModel.handleNodeResizeStart}
+      onNode$Change$Size={canvasModel.handleNodeSizeChange}
       onNode$Resized={canvasModel.handleNodeResized}
       onNode$Rotated={canvasModel.handleNodeRotated}
       onNode$Removed={evt => console.log('node remove', evt)}

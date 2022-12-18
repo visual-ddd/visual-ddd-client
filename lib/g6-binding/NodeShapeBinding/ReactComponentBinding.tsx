@@ -14,15 +14,52 @@ export interface ReactComponentBindingProps extends NodeBindingProps {
   component: string;
 }
 
-export interface X6ReactComponentProps {
+export interface ReactComponentProps {
   node: Node;
   graph: Graph;
 }
 
-export function registerX6ReactComponent(name: string, component: FC<X6ReactComponentProps>) {
+export type ReactDecorator = (child: FC<ReactComponentProps>) => FC<ReactComponentProps>;
+
+const decorators: Map<string, ReactDecorator> = new Map();
+
+/**
+ * 注册装饰器
+ * @param name
+ */
+export function registerReactDecorator(name: string, component: ReactDecorator) {
+  if (decorators.has(name)) {
+    throw new Error(`ReactDecorator(${name}) already registered`);
+  }
+
+  decorators.set(name, component);
+}
+
+/**
+ * 装饰器应用
+ */
+function applyDecorator(component: FC<ReactComponentProps>) {
+  let output = component;
+
+  const reversed = Array.from(decorators.entries()).reverse();
+  for (const [name, dec] of reversed) {
+    const originName = output.displayName;
+    output = dec(output);
+    output.displayName = `${name}${originName ? `(${originName})` : ''}`;
+  }
+
+  return output;
+}
+
+/**
+ * 注册 React 组件
+ * @param name
+ * @param component
+ */
+export function registerReactComponent(name: string, component: FC<ReactComponentProps>) {
   register({
     shape: name,
-    component: component,
+    component: applyDecorator(component),
   });
 }
 

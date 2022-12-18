@@ -2,8 +2,8 @@ import { Doc as YDoc } from 'yjs';
 import { WebrtcProvider } from 'y-webrtc';
 // import { IndexeddbPersistence } from 'y-indexeddb';
 import { observer } from 'mobx-react';
-import { useState } from 'react';
-import { RectBinding, registerX6ReactComponent } from '@/lib/g6-binding';
+import { useState, FC } from 'react';
+import { ReactComponentBinding, ReactComponentProps, RectBinding, registerReactComponent } from '@/lib/g6-binding';
 import {
   ComponentContainer,
   ComponentItem,
@@ -16,16 +16,31 @@ import {
   useCanvasModel,
 } from '@/lib/editor';
 
-function MyComponent() {
-  const [count, setCount] = useState(0);
+const MyComponent: FC<ReactComponentProps> = props => {
+  const [count, setCount] = useState('0');
   return (
-    <div onClick={() => setCount(i => i + 1)} style={{ background: 'red', width: 200 }}>
-      hello world {count}
+    <div
+      onClick={() => setCount(i => i + '0')}
+      style={{ background: 'green', width: '100%', height: '100%', whiteSpace: 'nowrap' }}
+    >
+      hello {count}
     </div>
   );
-}
+};
 
-registerX6ReactComponent('hello', MyComponent);
+registerReactComponent('hello', MyComponent);
+
+defineShape('react', {
+  shapeType: 'node',
+  initialProps() {
+    return {
+      size: { width: 100, height: 100 },
+    };
+  },
+  component(props) {
+    return <ReactComponentBinding {...props.cellProps} component="hello" />;
+  },
+});
 
 defineShape('rect', {
   shapeType: 'node',
@@ -208,6 +223,7 @@ const Designer = observer(() => {
             <ComponentItem name="rect-child" data={{ type: 'rect-child' }}></ComponentItem>
             <ComponentItem name="child" data={{ type: 'child' }}></ComponentItem>
             <ComponentItem name="child-2" data={{ type: 'child-2' }}></ComponentItem>
+            <ComponentItem name="react" data={{ type: 'react' }}></ComponentItem>
           </ComponentContainer>
 
           <button

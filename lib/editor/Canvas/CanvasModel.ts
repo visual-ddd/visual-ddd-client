@@ -78,6 +78,8 @@ export class CanvasModel {
 
   private disposer = new Disposer();
 
+  private resizing = false;
+
   constructor(inject: { editorModel: BaseEditorModel }) {
     this.editorModel = inject.editorModel;
     const shapeRegistry = (this.shapeRegistry = new ShapeRegistry({ editorModel: inject.editorModel }));
@@ -165,9 +167,10 @@ export class CanvasModel {
         // 严格框选
         strict: true,
 
-        // 选择框
+        // 选择框, 选择框可能会阻挡事件?
         showNodeSelectionBox: true,
-        showEdgeSelectionBox: true,
+        showEdgeSelectionBox: true, // edge 选择框是方形
+        pointerEvents: 'none', // SelectionBox 会阻挡事件
         filter(cell) {
           return shapeRegistry.isSelectable({ cell, graph: this });
         },
@@ -271,12 +274,32 @@ export class CanvasModel {
     }
   };
 
-  handleNodeResized: GraphBindingProps['onNode$Resized'] = evt => {
-    const { node } = evt;
-    const model = this.shapeRegistry.getModelByCell(node);
-    if (model) {
-      this.editorCommandHandler.updateNodeProperty({ node: model, path: 'size', value: node.getSize() });
+  /**
+   * 开始拖拽
+   * @param evt
+   */
+  handleNodeResizeStart: GraphBindingProps['onNode$Resize'] = evt => {
+    this.resizing = true;
+  };
+
+  /**
+   * 节点变更
+   * @param evt
+   */
+  handleNodeSizeChange: GraphBindingProps['onNode$Change$Size'] = evt => {
+    if (this.resizing) {
+      // 正在拖拽，resize 会频繁触发，这里跳过
+      return;
     }
+
+    const { node } = evt;
+    this.setNodeSize(node);
+  };
+
+  handleNodeResized: GraphBindingProps['onNode$Resized'] = evt => {
+    this.resizing = false;
+    const { node } = evt;
+    this.setNodeSize(node);
   };
 
   /**
@@ -530,4 +553,11 @@ export class CanvasModel {
 
     return false;
   };
+
+  private setNodeSize(node: Node) {
+    const model = this.shapeRegistry.getModelByCell(node);
+    if (model) {
+      this.editorCommandHandler.updateNodeProperty({ node: model, path: 'size', value: node.getSize() });
+    }
+  }
 }

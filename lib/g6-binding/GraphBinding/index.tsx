@@ -98,7 +98,22 @@ export interface GraphBindingProps {
   onNode$Change$Position?: (evt: EventArgs['node:change:position']) => void;
 
   /**
-   * 节点尺寸变更
+   * 节点大小变更
+   * @param evt
+   * @returns
+   */
+  onNode$Change$Size?: (evt: EventArgs['node:change:size']) => void;
+
+  /**
+   * 节点开始交互resize
+   *
+   * @note 这个只有交互式调整大小时才会触发，手动设置不会触发
+   */
+  onNode$Resize?: (evt: EventArgs['node:resize']) => void;
+
+  /**
+   * 节点尺寸变更,
+   * @note 这个只有交互式调整大小时才会触发，手动设置不会触发
    */
   onNode$Resized?: (evt: EventArgs['node:resized']) => void;
 

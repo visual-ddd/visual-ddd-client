@@ -1,3 +1,4 @@
+import './react-component-decorators';
 import './builtin';
 
 export * from './types';
