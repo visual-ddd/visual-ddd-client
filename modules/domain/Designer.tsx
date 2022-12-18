@@ -3,7 +3,13 @@ import { WebrtcProvider } from 'y-webrtc';
 // import { IndexeddbPersistence } from 'y-indexeddb';
 import { observer } from 'mobx-react';
 import { useState, FC } from 'react';
-import { ReactComponentBinding, ReactComponentProps, RectBinding, registerReactComponent } from '@/lib/g6-binding';
+import {
+  NodeBBox,
+  ReactComponentBinding,
+  ReactComponentProps,
+  RectBinding,
+  registerReactComponent,
+} from '@/lib/g6-binding';
 import {
   ComponentContainer,
   ComponentItem,
@@ -242,7 +248,7 @@ const Designer = observer(() => {
             toggleShowCanvas
           </button>
 
-          <div style={{ width: 500, height: 500 }}>
+          <div style={{ width: 500, height: 500, position: 'relative' }}>
             {showCanvas && (
               <Canvas>
                 {/* <RectBinding
@@ -258,6 +264,7 @@ const Designer = observer(() => {
               position={{ x: 100, y: 300 }}
             />
             {showEdge && <EdgeBinding source="custom1" target="custom2" tools={['boundary']} />} */}
+                {model.viewStore.focusingNode && <NodeBBox node={model.viewStore.focusingNode.id}>ok</NodeBBox>}
               </Canvas>
             )}
           </div>

@@ -14,6 +14,7 @@ import {
   GraphBindingContextHelper,
   GraphBindingContextValue,
   GraphBindingProvider,
+  OnCellReadyListener,
   OnGraphReadyListener,
 } from './GraphBindingContext';
 import { useEventStore } from '../hooks';
@@ -196,7 +197,11 @@ export const GraphBinding = memo((props: GraphBindingProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const graphRef = useRef<Graph>();
   const contextValue = useMemo(() => {
-    let list: OnGraphReadyListener[] = [];
+    let graphReadyListeners: OnGraphReadyListener[] = [];
+    const cellReadyListeners: [OnCellReadyListener, string | undefined][] = [];
+    const cellDestroyedListeners: [OnCellReadyListener, string | undefined][] = [];
+    const cells: Map<string, Cell> = new Map();
+
     let graph: Graph;
     let recycleBind: Map<string, { instance: CellInstance; createDate: number }> = new Map();
     let disposed = false;
@@ -207,7 +212,7 @@ export const GraphBinding = memo((props: GraphBindingProps) => {
 
     // 销毁节点回收
     disposer.push(() => {
-      console.log('clear');
+      console.log('graph clear');
       disposed = true;
       recycleBind.clear();
     });
@@ -255,6 +260,26 @@ export const GraphBinding = memo((props: GraphBindingProps) => {
     };
 
     const helper: GraphBindingContextHelper = {
+      created(cell) {
+        cells.set(cell.id, cell);
+        for (const [listener, watchId] of cellReadyListeners) {
+          if (watchId != null && watchId !== cell.id) {
+            continue;
+          }
+
+          listener(cell);
+        }
+      },
+      destroyed(cell) {
+        cells.delete(cell.id);
+        for (const [listener, watchId] of cellDestroyedListeners) {
+          if (watchId != null && watchId !== cell.id) {
+            continue;
+          }
+
+          listener(cell);
+        }
+      },
       delegateEvent(eventName, handler, cellId) {
         if (!eventListeners.has(eventName)) {
           const list = new Map();
@@ -312,20 +337,45 @@ export const GraphBinding = memo((props: GraphBindingProps) => {
           return N;
         }
 
-        list.push(listener);
+        graphReadyListeners.push(listener);
 
         return () => {
-          const idx = list.indexOf(listener);
+          const idx = graphReadyListeners.indexOf(listener);
           if (idx !== -1) {
-            list.splice(idx, 1);
+            graphReadyListeners.splice(idx, 1);
+          }
+        };
+      },
+      onCellReady(listener, watchId) {
+        if (watchId != null && cells.has(watchId)) {
+          // 已存在，立即调用
+          listener(cells.get(watchId)!);
+        }
+
+        cellReadyListeners.push([listener, watchId]);
+
+        return () => {
+          const idx = cellReadyListeners.findIndex(([l]) => l === listener);
+          if (idx !== -1) {
+            cellReadyListeners.splice(idx, 1);
+          }
+        };
+      },
+      onCellDestroyed(listener, watchId) {
+        cellDestroyedListeners.push([listener, watchId]);
+
+        return () => {
+          const idx = cellDestroyedListeners.findIndex(([l]) => l === listener);
+          if (idx !== -1) {
+            cellDestroyedListeners.splice(idx, 1);
           }
         };
       },
       // @ts-expect-error
       __emitGraph(g: Graph) {
         graph = g;
-        const l = list;
-        list = NoopArray;
+        const l = graphReadyListeners;
+        graphReadyListeners = NoopArray;
         for (const i of l) {
           i(g, helper);
         }

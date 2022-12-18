@@ -216,6 +216,7 @@ export function useCell<Props extends CellBindingProps>({
           );
         const instance = factoryInstance.instance as Cell;
         instanceRef.current = instance as Cell;
+        helper.created(instance);
 
         console.log('creating', recoveredInstance ? 'reuse' : '', instance);
 
@@ -226,6 +227,7 @@ export function useCell<Props extends CellBindingProps>({
 
         disposers.push(() => {
           console.log('disposing', instance);
+          helper.destroyed(instance);
           // 回收
           helper.recycle(instance.id, factoryInstance);
         });

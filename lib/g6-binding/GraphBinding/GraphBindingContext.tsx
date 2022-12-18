@@ -27,12 +27,46 @@ export interface GraphBindingContextHelper {
    * 图形实例复用
    */
   reuse: <T extends Cell = Cell>(id: string) => CellInstance<T> | null;
+
+  /**
+   * 实例已创建
+   * @param cell
+   * @returns
+   */
+  created: (cell: Cell) => void;
+
+  /**
+   * 实例销毁
+   */
+  destroyed: (cell: Cell) => void;
 }
 
 export type OnGraphReadyListener = (graph: Graph, helper: GraphBindingContextHelper) => void;
+export type OnCellReadyListener = (cell: Cell) => void;
 
 export interface GraphBindingContextValue {
+  /**
+   * 监听 graph 就绪
+   * @param listener
+   * @returns
+   */
   onGraphReady: (listener: OnGraphReadyListener) => Disposer;
+
+  /**
+   * 监听 Cell 就绪
+   * @param listener
+   * @param id 可以指定具体 Cell 的 id, 未指定将监听所有
+   * @returns
+   */
+  onCellReady: (listener: OnCellReadyListener, id?: string) => Disposer;
+
+  /**
+   * 监听 Cell 销毁
+   * @param listener
+   * @param id
+   * @returns
+   */
+  onCellDestroyed: (listener: OnCellReadyListener, id?: string) => Disposer;
 }
 
 /**

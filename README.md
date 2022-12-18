@@ -35,9 +35,10 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 ## TODO
 
-- react 组件 resize
-- decorator, 全部使用 React 组件？高阶组件？
+- x6 decorator 的实现预研
+- defineShape 支持 decorator，用类组件实现
 - react portable, context 测试
+
 - 分组大小自动扩展
 - node edit
 - label edit
