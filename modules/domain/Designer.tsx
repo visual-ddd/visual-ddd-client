@@ -54,6 +54,7 @@ defineShape('react', {
 defineShape('rect', {
   shapeType: 'node',
   group: true,
+  autoResizeGroup: 20,
   initialProps: () => {
     return { label: 'Hello' };
   },
@@ -89,6 +90,7 @@ defineShape('rect', {
 defineShape('rect-child', {
   shapeType: 'node',
   group: true,
+  autoResizeGroup: 20,
   droppable: ctx => {
     return ctx.sourceType !== 'rect';
   },

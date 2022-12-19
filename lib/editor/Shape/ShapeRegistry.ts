@@ -4,7 +4,7 @@ import { Transform } from '@antv/x6-plugin-transform';
 import { NoopObject } from '@wakeapp/utils';
 
 import { CopyPayload } from '../Canvas/ClipboardUtils';
-import type { BaseEditorModel, BaseNode, BaseNodeProperties } from '../Model';
+import type { BaseEditorModel, BaseNode, BaseNodeProperties, Properties } from '../Model';
 
 import { shapes } from './store';
 
@@ -85,6 +85,31 @@ export class ShapeRegistry {
     const conf = this.getConfigurationByName(type);
     return conf?.shapeType;
   }
+
+  /**
+   * 是否为自动分组
+   * @param context
+   * @returns
+   */
+  isAutoResizeGroup = (context: { graph: Graph; node: Node }): boolean => {
+    const conf = this.getAutoResizeGroupConfig(context);
+
+    if (typeof conf === 'number') {
+      return true;
+    }
+
+    return !!conf;
+  };
+
+  getAutoResizeGroupPadding = (context: { graph: Graph; node: Node }): number => {
+    const conf = this.getAutoResizeGroupConfig(context);
+
+    if (typeof conf === 'number') {
+      return conf;
+    }
+
+    return 20;
+  };
 
   /**
    * 判断是否支持节点连接，这个需要挂载到 allowLoop 验证器上，因为 allowNode 并不可靠
@@ -282,16 +307,26 @@ export class ShapeRegistry {
     }
 
     const position = this.graph.pageToLocal(nativeEvent.pageX, nativeEvent.pageY);
+    const properties: Properties = {
+      // TODO: 需要根据节点的类型，比如只有 node 才有 position，edge 则是 source 和 target
+      // 这里的数据尽量保存纯对象
+      position: { x: position.x, y: position.y },
+      ...conf?.initialProps?.(),
+      ...conf?.dropFactory?.({ graph: this.graph, nativeEvent }),
+    };
+
+    // TODO: 抽象生命周期
+    if ((conf.group && conf.autoResizeGroup) || typeof conf.autoResizeGroup === 'number') {
+      const staticProps = conf.staticProps?.();
+      // 添加 originSize, size 是必填的，否则组件无法正常渲染
+      const size = properties.size ?? staticProps?.size ?? { width: 100, height: 100 };
+      properties.originSize = size;
+    }
+
     return {
       type,
       shapeType: conf.shapeType,
-      properties: {
-        // TODO: 需要根据节点的类型，比如只有 node 才有 position，edge 则是 source 和 target
-        // 这里的数据尽量保存纯对象
-        position: { x: position.x, y: position.y },
-        ...conf?.initialProps?.(),
-        ...conf?.dropFactory?.({ graph: this.graph, nativeEvent }),
-      },
+      properties,
     };
   }
 
@@ -333,6 +368,19 @@ export class ShapeRegistry {
 
   getConfigurationByName(name: string) {
     return shapes.get(name);
+  }
+
+  private getAutoResizeGroupConfig(context: { graph: Graph; node: Node }) {
+    const { graph, node } = context;
+    this.bindGraphIfNeed(graph);
+
+    const conf = this.getConfigurationByCell(node);
+
+    if (!conf?.group) {
+      return false;
+    }
+
+    return conf?.autoResizeGroup ?? false;
   }
 
   private bindGraphIfNeed(graph: Graph) {

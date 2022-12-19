@@ -165,6 +165,13 @@ export interface GraphBindingProps {
   onCell$Change$Parent?: (evt: EventArgs['cell:change:parent']) => void;
 
   /**
+   * 子节点变更
+   * @param evt
+   * @returns
+   */
+  onCell$Change$Children?: (evt: EventArgs['cell:change:children']) => void;
+
+  /**
    * 选择变动
    */
   onSelection$Changed?: (evt: EventArgs['selection:changed']) => void;

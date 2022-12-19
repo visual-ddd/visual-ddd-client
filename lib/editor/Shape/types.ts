@@ -42,19 +42,31 @@ export interface ShapeConfiguration {
   /**
    * 是否支持尺寸调整, 默认 false
    * 仅 node 类型支持
+   * @note 仅 Node 支持
    */
   resizing?: boolean | ShapeResizingOptions | ((context: { node: Node; graph: Graph }) => ShapeResizingOptions);
 
   /**
    * 是否支持交互式修改节点旋转角度，默认 false
    * 如果传入 number，则是设置 grid
+   * @note 仅 Node 支持
    */
   rotating?: boolean | number;
 
   /**
    * 是否为群组，默认为 false
+   * @note 仅 Node 支持
    */
   group?: boolean;
+
+  /**
+   * 是否在子节点变动时自动调整分组的大小, 默认为 false
+   *
+   * 如果设置为 number, 则为分组的 padding, 默认 padding 为 30
+   *
+   * @note 只有在 group 开始后有效
+   */
+  autoResizeGroup?: boolean | number;
 
   /**
    * 是否支持内嵌节点

@@ -14,6 +14,7 @@ const setPortVisible = (cellId: string, visible: boolean) => {
 
 /**
  * 在 Hover 时显示 port
+ * TODO: 放到 CanvasModel 中全局实现
  *
  * X6 目前并没有提供响应的接口
  */

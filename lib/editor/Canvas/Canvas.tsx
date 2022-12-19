@@ -33,12 +33,14 @@ export const Canvas = memo((props: CanvasProps) => {
       onGraphReady={canvasModel.handleGraphReady}
       onCell$Change$ZIndex={canvasModel.handleZIndexChange}
       onCell$Change$Parent={canvasModel.handleParentChange}
+      onCell$Change$Children={canvasModel.handleChildrenChange}
       onNode$Moved={canvasModel.handleNodeMoved}
       onNode$Resize={canvasModel.handleNodeResizeStart}
       onNode$Change$Size={canvasModel.handleNodeSizeChange}
       onNode$Resized={canvasModel.handleNodeResized}
       onNode$Rotated={canvasModel.handleNodeRotated}
       onNode$Removed={evt => console.log('node remove', evt)}
+      onNode$Embedded={evt => console.log('node embed', evt)}
       onEdge$Connected={canvasModel.handleEdgeConnected}
       onEdge$Added={evt => console.log('edge added', evt)}
       onEdge$Removed={canvasModel.handleEdgeRemoved}

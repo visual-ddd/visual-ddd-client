@@ -1,6 +1,6 @@
 import { Graph, PointLike, Node } from '@antv/x6';
 import { Transform } from '@antv/x6-plugin-transform';
-import { booleanPredicate, Disposer } from '@wakeapp/utils';
+import { booleanPredicate, debounce, Disposer } from '@wakeapp/utils';
 import { message } from 'antd';
 
 import { wrapPreventListenerOptions } from '@/lib/g6-binding/hooks';
@@ -242,8 +242,14 @@ export class CanvasModel {
     }
   };
 
+  /**
+   * 节点移动结束
+   * @param evt
+   */
   handleNodeMoved: GraphBindingProps['onNode$Moved'] = evt => {
     const { node } = evt;
+
+    this.resizeParentGroupIfNeeded(node);
 
     const updatePosition = (node: Node) => {
       const model = this.editorIndex.getNodeById(node.id);
@@ -266,8 +272,15 @@ export class CanvasModel {
     updatePosition(node);
   };
 
+  /**
+   * 节点旋转结束
+   * @param evt
+   */
   handleNodeRotated: GraphBindingProps['onNode$Rotated'] = evt => {
     const { node } = evt;
+
+    this.resizeParentGroupIfNeeded(node);
+
     const model = this.shapeRegistry.getModelByCell(node);
     if (model) {
       this.editorCommandHandler.updateNodeProperty({ node: model, path: 'angle', value: node.getAngle() });
@@ -292,14 +305,16 @@ export class CanvasModel {
       return;
     }
 
-    const { node } = evt;
-    this.setNodeSize(node);
+    const { node, options } = evt;
+
+    this.setNodeSize(node, options.isAutoResizeGroup);
   };
 
   handleNodeResized: GraphBindingProps['onNode$Resized'] = evt => {
     this.resizing = false;
     const { node } = evt;
-    this.setNodeSize(node);
+
+    this.setNodeSize(node, false);
   };
 
   /**
@@ -350,7 +365,15 @@ export class CanvasModel {
     if (maybeParents.length) {
       // 获取第一个支持拖入的容器
       for (const candidate of maybeParents) {
-        if (candidate.isVisible() && this.shapeRegistry.isDroppable({ parent: candidate, sourceType: type, graph })) {
+        if (
+          candidate.isVisible() &&
+          candidate.isNode() &&
+          this.shapeRegistry.isDroppable({ parent: candidate, sourceType: type, graph })
+        ) {
+          // 尝试调整分组大小
+          requestAnimationFrame(() => {
+            this.resizeGroupIfNeeded(candidate);
+          });
           return insert(candidate);
         }
       }
@@ -428,6 +451,13 @@ export class CanvasModel {
         child: model,
         parent: current ? this.editorIndex.getNodeById(current) : undefined,
       });
+    }
+  };
+
+  handleChildrenChange: GraphBindingProps['onCell$Change$Children'] = evt => {
+    const { cell } = evt;
+    if (cell.isNode()) {
+      this.resizeGroupIfNeeded(cell);
     }
   };
 
@@ -540,6 +570,93 @@ export class CanvasModel {
     this.editorCommandHandler.redo();
   };
 
+  /**
+   * 按需调整分组大小
+   * @param node
+   */
+  protected resizeParentGroupIfNeeded(node?: Node) {
+    if (node?.parent && node.parent.isNode()) {
+      this.resizeGroupIfNeeded(node.parent);
+    }
+  }
+
+  protected resizeGroupIfNeeded(node?: Node) {
+    if (node == null || !node.isNode()) {
+      return;
+    }
+
+    const autoResize = this.shapeRegistry.isAutoResizeGroup({ node, graph: this.graph! });
+
+    if (!autoResize) {
+      return;
+    }
+
+    this.resizeGroup(node, this.shapeRegistry.getAutoResizeGroupPadding({ node, graph: this.graph! }));
+  }
+
+  protected resizeGroup = debounce((node: Node, padding: number) => {
+    const nodeChildren = node.getChildren()?.filter(c => c.isNode());
+    if (!nodeChildren?.length) {
+      return;
+    }
+
+    const model = this.shapeRegistry.getModelByCell(node);
+    const realSize = node.getSize();
+    const originSize = model?.properties.originSize ?? realSize;
+    let { x, y } = node.getPosition();
+    let cornerX = x + originSize.width;
+    let cornerY = y + originSize.height;
+
+    const childrenBBox = this.graph?.getCellsBBox(nodeChildren, {});
+    if (!childrenBBox) {
+      return;
+    }
+
+    childrenBBox.inflate(padding);
+
+    const childrenBBoxCorner = childrenBBox.getCorner();
+
+    let hasChange = false;
+    if (childrenBBox.x < x) {
+      x = childrenBBox.x;
+      hasChange = true;
+    }
+
+    if (childrenBBox.y < y) {
+      y = childrenBBox.y;
+      hasChange = true;
+    }
+
+    if (childrenBBoxCorner.x > cornerX) {
+      cornerX = childrenBBoxCorner.x;
+      hasChange = true;
+    }
+
+    if (childrenBBoxCorner.y > cornerY) {
+      cornerY = childrenBBoxCorner.y;
+      hasChange = true;
+    }
+
+    let nextWidth = cornerX - x;
+    let nextHeight = cornerY - y;
+
+    if (nextWidth !== realSize.width || nextHeight !== realSize.height) {
+      hasChange = true;
+    }
+
+    if (hasChange) {
+      node.prop(
+        {
+          position: { x, y },
+          size: { width: nextWidth, height: nextHeight },
+        },
+        {
+          isAutoResizeGroup: true,
+        }
+      );
+    }
+  }, 300);
+
   protected hasUnremovableNode = (node: BaseNode): boolean => {
     if (!this.shapeRegistry.isRemovable({ model: node })) {
       return true;
@@ -554,10 +671,18 @@ export class CanvasModel {
     return false;
   };
 
-  private setNodeSize(node: Node) {
+  protected setNodeSize(node: Node, autoResize: boolean) {
+    this.resizeParentGroupIfNeeded(node);
+
     const model = this.shapeRegistry.getModelByCell(node);
     if (model) {
-      this.editorCommandHandler.updateNodeProperty({ node: model, path: 'size', value: node.getSize() });
+      const size = node.getSize();
+      if (!autoResize && this.shapeRegistry.isAutoResizeGroup({ node, graph: this.graph! })) {
+        // 更新原始尺寸
+        this.editorCommandHandler.updateNodeProperty({ node: model, path: 'originSize', value: size });
+      }
+
+      this.editorCommandHandler.updateNodeProperty({ node: model, path: 'size', value: size });
     }
   }
 }
