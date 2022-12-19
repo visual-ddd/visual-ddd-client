@@ -5,6 +5,8 @@ import { Selection } from '@antv/x6-plugin-selection';
 import { Keyboard } from '@antv/x6-plugin-keyboard';
 import { Clipboard } from '@antv/x6-plugin-clipboard';
 import { Transform } from '@antv/x6-plugin-transform';
+import { Snapline } from '@antv/x6-plugin-snapline';
+import { Scroller } from '@antv/x6-plugin-scroller';
 import type { Options } from '@antv/x6/lib/graph/options';
 import { Portal } from '@antv/x6-react-shape';
 import { Noop, NoopArray } from '@wakeapp/utils';
@@ -26,6 +28,8 @@ export type GraphBindingOptions = Partial<Options.Manual> & {
   clipboard?: Clipboard.Options;
   resizing?: Transform.Options['resizing'];
   rotating?: Transform.Options['rotating'];
+  snapline?: Snapline.Options;
+  scroller?: Scroller.Options;
 };
 
 export interface GraphBindingProps {
@@ -440,6 +444,14 @@ export const GraphBinding = memo((props: GraphBindingProps) => {
             rotating: options.rotating,
           })
         );
+      }
+
+      if (options?.snapline) {
+        graph.use(new Snapline(options.snapline));
+      }
+
+      if (options?.scroller) {
+        graph.use(new Scroller(options.scroller));
       }
     }
 

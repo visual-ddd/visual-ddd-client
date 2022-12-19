@@ -1,4 +1,14 @@
 {
-  "cSpell.words": ["antv", "embeddable", "unembed", "Unhighlight", "wakeapp"],
+  "cSpell.words": [
+    "antv",
+    "embeddable",
+    "pannable",
+    "Rubberband",
+    "Scroller",
+    "Snapline",
+    "unembed",
+    "Unhighlight",
+    "wakeapp"
+  ],
   "typescript.tsserver.experimental.enableProjectDiagnostics": true
 }

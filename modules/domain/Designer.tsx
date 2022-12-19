@@ -21,6 +21,7 @@ import {
   useShapeModel,
   EditorLayout,
   EditorShapeLibrary,
+  EditorToolbar,
 } from '@/lib/editor';
 
 const MyComponent: FC<ReactComponentProps> = props => {
@@ -261,6 +262,7 @@ const Designer = observer(() => {
               </>
             }
             right={<Operations />}
+            toolbar={<EditorToolbar />}
           >
             {showCanvas && (
               <Canvas>

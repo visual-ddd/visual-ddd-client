@@ -6,6 +6,12 @@ import { BaseNode } from './BaseNode';
 
 export interface BaseEditorViewState {
   shapeLibraryFolded: boolean;
+  /**
+   * 鼠标拖拽的模式
+   * select 框选
+   * panning 拖拽画布, 默认
+   */
+  mouseDragMode: 'select' | 'panning';
 }
 
 /**
@@ -20,6 +26,7 @@ export class BaseEditorViewStore {
   @observable
   viewState: BaseEditorViewState = {
     shapeLibraryFolded: false,
+    mouseDragMode: 'panning',
   };
 
   /**
@@ -50,6 +57,11 @@ export class BaseEditorViewStore {
   @derive
   get canRedo() {
     return this.datasource.canRedo;
+  }
+
+  @derive
+  get canRemove() {
+    return !!this.selectedNodes.length;
   }
 
   constructor(inject: { datasource: BaseEditorDatasource }) {

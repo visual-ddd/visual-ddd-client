@@ -1,6 +1,6 @@
 import { makeAutoBindThis, push, pull } from '@/lib/store';
 import { Map as YMap, Doc as YDoc, AbstractType, UndoManager } from 'yjs';
-import { observable, action } from 'mobx';
+import { observable, action, makeObservable } from 'mobx';
 import toPairs from 'lodash/toPairs';
 import fromPairs from 'lodash/fromPairs';
 import toPath from 'lodash/toPath';
@@ -137,6 +137,7 @@ export class BaseEditorDatasource {
     });
 
     makeAutoBindThis(this);
+    makeObservable(this);
 
     this.initialDataSource();
     this.watchStore();

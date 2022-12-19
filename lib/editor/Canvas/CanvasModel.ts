@@ -2,6 +2,7 @@ import { Graph, PointLike, Node } from '@antv/x6';
 import { Transform } from '@antv/x6-plugin-transform';
 import { booleanPredicate, debounce, Disposer } from '@wakeapp/utils';
 import { message } from 'antd';
+import memoize from 'lodash/memoize';
 
 import { wrapPreventListenerOptions } from '@/lib/g6-binding/hooks';
 import { GraphBindingOptions, GraphBindingProps } from '@/lib/g6-binding';
@@ -11,6 +12,7 @@ import { BaseEditorModel, BaseNodeProperties, BaseNode } from '../Model';
 import { ShapeRegistry } from '../Shape';
 import { assertShapeInfo } from '../Shape';
 import { copy, paste } from './ClipboardUtils';
+import { KeyboardBinding } from './KeyboardBinding';
 
 const ResizingOptionsWithDefault: [keyof Transform.ResizingRaw, any][] = [
   ['minWidth', 0],
@@ -38,6 +40,11 @@ export class CanvasModel {
    * 图形组件管理器
    */
   shapeRegistry: ShapeRegistry;
+
+  /**
+   * 快捷键管理器
+   */
+  keyboardBinding: KeyboardBinding;
 
   /**
    * 编辑器模型
@@ -106,8 +113,35 @@ export class CanvasModel {
 
     // 默认配置
     this.graphOptions = {
-      background: { color: '#fffbe6' },
+      background: { color: '#f8f8f8' },
       grid: { size: 15, visible: true },
+
+      // 支持鼠标滚轮操作
+      mousewheel: {
+        enabled: true,
+        // 通过滚动缩放大小
+        zoomAtMousePosition: true,
+        // 缩放大小的修饰符
+        modifiers: ['meta', 'ctrl'],
+      },
+
+      panning: {
+        enabled: this.editorModel.viewStore.viewState.mouseDragMode === 'panning',
+      },
+
+      // 支持对齐线
+      snapline: {
+        enabled: true,
+      },
+
+      // 画布滚动
+      // 体验不是特别好，先使用原生的 panning
+      // scroller: {
+      //   enabled: true,
+      //   pannable: true,
+      //   pageVisible: true,
+      //   pageBreak: true,
+      // },
 
       // 分组嵌入
       // FIXME: X6 目前不支持批量
@@ -163,7 +197,8 @@ export class CanvasModel {
         multiple: true,
 
         // 框选
-        rubberband: true,
+        rubberband: this.editorModel.viewStore.viewState.mouseDragMode === 'select',
+
         // 严格框选
         strict: true,
 
@@ -205,6 +240,57 @@ export class CanvasModel {
       },
     };
 
+    // 快捷键绑定
+    this.keyboardBinding = new KeyboardBinding();
+
+    this.keyboardBinding
+      .bindKey({
+        name: 'delete',
+        title: '删除',
+        description: '删除选中图形',
+        key: 'backspace',
+        handler: this.handleRemoveSelected,
+      })
+      .bindKey({
+        name: 'copy',
+        title: '拷贝',
+        description: '拷贝选中图形',
+        key: { macos: 'command+c', other: 'ctrl+c' },
+        handler: this.handleCopy,
+      })
+      .bindKey({
+        name: 'paste',
+        title: '粘贴',
+        key: { macos: 'command+v', other: 'ctrl+v' },
+        handler: this.handlePaste,
+      })
+      .bindKey({
+        name: 'undo',
+        title: '撤销',
+        key: { macos: 'command+z', other: 'ctrl+z' },
+        handler: this.handleUndo,
+      })
+      .bindKey({
+        name: 'redo',
+        title: '重做',
+        key: { macos: 'shift+command+z', other: 'ctrl+y' },
+        handler: this.handleRedo,
+      })
+      .bindKey({
+        name: 'mouseSelectMode',
+        title: '框选',
+        description: '启用鼠标框选模式',
+        key: { macos: 'shift+command+s', other: 'shift+ctrl+s' },
+        handler: this.handleEnableMouseSelectMode,
+      })
+      .bindKey({
+        name: 'mousePanningMode',
+        title: '画布拖拽',
+        description: '启用鼠标拖拽画布模式',
+        key: { macos: 'shift+command+p', other: 'shift+ctrl+p' },
+        handler: this.handleEnableMousePanningMode,
+      });
+
     // 监听 EditorModel 事件
     this.disposer.push(
       this.editorModel.event.on('NODE_REMOVED', params => {
@@ -220,6 +306,10 @@ export class CanvasModel {
   dispose = () => {
     this.disposer.release();
   };
+
+  getCommandDescription = memoize((name: string) => {
+    return this.keyboardBinding.getReadableKeyBinding(name);
+  });
 
   handleMouseMove = (evt: React.MouseEvent) => {
     this.currentMousePagePosition = { x: evt.pageX, y: evt.pageY };
@@ -543,23 +633,7 @@ export class CanvasModel {
     this.shapeRegistry.bindGraph(graph);
 
     // 快捷键绑定
-    // 删除
-    graph.bindKey('backspace', e => {
-      e.preventDefault();
-      this.handleRemoveSelected();
-    });
-
-    // 拷贝
-    graph.bindKey(['command+c', 'ctrl+c'], e => {
-      e.preventDefault();
-      this.handleCopy();
-    });
-
-    // 粘贴
-    graph.bindKey(['command+v', 'ctrl+v'], e => {
-      e.preventDefault();
-      this.handlePaste();
-    });
+    this.keyboardBinding.bindGraph(graph);
   };
 
   handleUndo = () => {
@@ -568,6 +642,24 @@ export class CanvasModel {
 
   handleRedo = () => {
     this.editorCommandHandler.redo();
+  };
+
+  /**
+   * 切换到鼠标拖拽选择模式
+   */
+  handleEnableMouseSelectMode = () => {
+    this.graph?.disablePanning();
+    this.graph?.enableRubberband();
+    this.editorCommandHandler.setViewState({ key: 'mouseDragMode', value: 'select' });
+  };
+
+  /**
+   * 切换到鼠标拖拽移动画布模式
+   */
+  handleEnableMousePanningMode = () => {
+    this.graph?.enablePanning();
+    this.graph?.disableRubberband();
+    this.editorCommandHandler.setViewState({ key: 'mouseDragMode', value: 'panning' });
   };
 
   /**

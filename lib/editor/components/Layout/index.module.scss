@@ -31,3 +31,13 @@
     height: 1px;
   }
 }
+
+.body {
+  display: flex;
+  flex-direction: column;
+}
+
+.canvas {
+  width: 100%;
+  flex: 1;
+}
