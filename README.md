@@ -36,7 +36,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 ## TODO
 
 - Zoom 处理
-- BBox 平移后失效
+- BBox 平移、缩放后失效
 - 快捷键绑定支持全局
 - 无连接桩连接交互
 - defineShape 支持 decorator，用类组件实现

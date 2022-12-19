@@ -52,6 +52,15 @@ export class BaseEditorCommandHandler {
     this.viewStore.setViewState(params);
   }
 
+  setViewStateDebounce = debounce(
+    <T extends keyof BaseEditorViewState>(params: { key: T; value: BaseEditorViewState[T] }) => {
+      this.setViewState(params);
+    },
+    500,
+    // Leading 可以较快响应到页面上
+    { leading: true }
+  );
+
   @command('CREATE_NODE')
   createNode(params: { name: string; type: ShapeType; id?: string; properties: Properties; parent?: BaseNode }) {
     const node = this.store.createNode(params);
@@ -126,9 +135,13 @@ export class BaseEditorCommandHandler {
     this.store.updateNodeProperty(params);
   }
 
-  updateNodePropertyDebounced = debounce((params: { node: BaseNode; path: string; value: any }) => {
-    this.updateNodeProperty(params);
-  });
+  updateNodePropertyDebounced = debounce(
+    (params: { node: BaseNode; path: string; value: any }) => {
+      this.updateNodeProperty(params);
+    },
+    300,
+    { leading: true }
+  );
 
   /**
    * 节点扁平化

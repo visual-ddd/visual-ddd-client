@@ -26,7 +26,9 @@ export const Canvas = memo((props: CanvasProps) => {
     <GraphBinding
       options={finalOptions}
       className={classNames('vd-editor-canvas', s.root)}
+      minimapClassName={s.minimap}
       onDrop={canvasModel.handleDrop}
+      onScale={canvasModel.handleScaleChange}
       onMouseMove={canvasModel.handleMouseMove}
       onMouseEnter={canvasModel.handleMouseEnter}
       onMouseLeave={canvasModel.handleMouseLeave}

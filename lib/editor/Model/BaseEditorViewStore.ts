@@ -12,6 +12,16 @@ export interface BaseEditorViewState {
    * panning 拖拽画布, 默认
    */
   mouseDragMode: 'select' | 'panning';
+
+  /**
+   * 画布缩放状态
+   */
+  canvasScale?: {
+    sx: number;
+    sy: number;
+    ox: number;
+    oy: number;
+  };
 }
 
 /**
@@ -34,6 +44,11 @@ export class BaseEditorViewStore {
    */
   @observable
   selectedNodes: BaseNode[] = [];
+
+  @derive
+  get zoomFactor() {
+    return this.viewState.canvasScale?.sx ?? 1;
+  }
 
   /**
    * 当前聚焦的节点(单一节点)

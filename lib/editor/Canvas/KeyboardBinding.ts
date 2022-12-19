@@ -20,7 +20,7 @@ export interface KeyboardBindingDescriptor {
   /**
    * 快捷键
    */
-  key: string | { macos: string; other: string };
+  key: string | string[] | { macos: string | string[]; other: string | string[] };
 
   /**
    * 处理器
@@ -28,10 +28,14 @@ export interface KeyboardBindingDescriptor {
   handler: () => void;
 }
 
-//
+const OTHER_KEY_MAP: Record<string, string> = {
+  plus: '+',
+};
+
 const MAC_OS_KEY_MAP: Record<string, string> = {
   command: '⌘',
   alt: '⌥',
+  plus: '+',
   option: '⌥',
   ctrl: '⌃',
   shift: '⇧',
@@ -86,7 +90,7 @@ export class KeyboardBinding {
 
     const key = this.getBindingKey(desc);
 
-    const readableKey = this.getReadableKey(key);
+    const readableKey = this.getReadableKey(Array.isArray(key) ? key[0] : key);
     const { title, description } = desc;
 
     return {
@@ -100,8 +104,8 @@ export class KeyboardBinding {
 
   private getBindingKey(desc: KeyboardBindingDescriptor) {
     const { key } = desc;
-    let finalKey: string;
-    if (typeof key === 'object') {
+    let finalKey: string | string[];
+    if (typeof key === 'object' && !Array.isArray(key)) {
       if (this.isMacos) {
         finalKey = key.macos;
       } else {
@@ -119,8 +123,12 @@ export class KeyboardBinding {
       .split('+')
       .map(i => {
         const k = i.trim();
-        if (this.isMacos && k in MAC_OS_KEY_MAP) {
-          return MAC_OS_KEY_MAP[k];
+        if (this.isMacos) {
+          if (k in MAC_OS_KEY_MAP) {
+            return MAC_OS_KEY_MAP[k];
+          }
+        } else if (k in OTHER_KEY_MAP) {
+          return OTHER_KEY_MAP[k];
         }
 
         return k;

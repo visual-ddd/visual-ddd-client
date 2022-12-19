@@ -1,6 +1,6 @@
-import { Toolbar } from '@antv/x6-react-components';
 import { observer } from 'mobx-react';
 import { useMemo } from 'react';
+import { Toolbar, Menu } from '@antv/x6-react-components';
 import Icon, {
   ZoomInOutlined,
   ZoomOutOutlined,
@@ -9,6 +9,7 @@ import Icon, {
   CopyOutlined,
   SnippetsOutlined,
   DeleteOutlined,
+  ExpandOutlined,
 } from '@ant-design/icons';
 import memoize from 'lodash/memoize';
 
@@ -37,11 +38,54 @@ export const EditorToolbar = observer(function EditorToolbar() {
     });
   }, [model]);
 
+  const handleZoomTo = (value?: string) => {
+    if (!value) {
+      return;
+    }
+
+    const v = parseInt(value, 10) / 100;
+
+    model.handleZoomTo(v);
+  };
+
   return (
     <Toolbar className={classNames('vd-editor-toolbar', s.root)} hoverEffect>
       <Group>
-        <Item name="zoomIn" tooltip="缩小 (Cmd +)" icon={<ZoomInOutlined />} />
-        <Item name="zoomOut" tooltip="放大 (Cmd -)" icon={<ZoomOutOutlined />} />
+        <Item
+          name="zoomIn"
+          tooltip={getDesc('zoomIn').tooltip}
+          onClick={getDesc('zoomIn').handler}
+          icon={<ZoomInOutlined />}
+        />
+        <Item
+          name="zoom"
+          tooltip="缩放 (Ctrl + MouseWheel)"
+          tooltipAsTitle
+          onClick={handleZoomTo}
+          dropdown={
+            <Menu>
+              <Menu.Item name="50">50%</Menu.Item>
+              <Menu.Item name="75">75%</Menu.Item>
+              <Menu.Item name="100">100%</Menu.Item>
+              <Menu.Item name="150">150%</Menu.Item>
+              <Menu.Item name="200">200%</Menu.Item>
+            </Menu>
+          }
+        >
+          {editorViewStore.zoomFactor * 100}%
+        </Item>
+        <Item
+          name="zoomOut"
+          tooltip={getDesc('zoomOut').tooltip}
+          onClick={getDesc('zoomOut').handler}
+          icon={<ZoomOutOutlined />}
+        />
+        <Item
+          name="zoomToCenter"
+          tooltip={getDesc('zoomToCenter').tooltip}
+          onClick={getDesc('zoomToCenter').handler}
+          icon={<ExpandOutlined />}
+        ></Item>
       </Group>
       <Group>
         <Item

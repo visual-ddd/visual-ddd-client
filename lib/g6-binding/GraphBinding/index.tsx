@@ -7,6 +7,7 @@ import { Clipboard } from '@antv/x6-plugin-clipboard';
 import { Transform } from '@antv/x6-plugin-transform';
 import { Snapline } from '@antv/x6-plugin-snapline';
 import { Scroller } from '@antv/x6-plugin-scroller';
+import { MiniMap } from '@antv/x6-plugin-minimap';
 import type { Options } from '@antv/x6/lib/graph/options';
 import { Portal } from '@antv/x6-react-shape';
 import { Noop, NoopArray } from '@wakeapp/utils';
@@ -21,6 +22,7 @@ import {
   OnGraphReadyListener,
 } from './GraphBindingContext';
 import { useEventStore } from '../hooks';
+import classNames from 'classnames';
 
 export type GraphBindingOptions = Partial<Options.Manual> & {
   selection?: Selection.Options;
@@ -30,11 +32,15 @@ export type GraphBindingOptions = Partial<Options.Manual> & {
   rotating?: Transform.Options['rotating'];
   snapline?: Snapline.Options;
   scroller?: Scroller.Options;
+  minimap?: Omit<MiniMap.Options, 'container'>;
 };
 
 export interface GraphBindingProps {
   className?: string;
   style?: React.CSSProperties;
+  minimapClassName?: string;
+  minimapStyle?: React.CSSProperties;
+
   children?: React.ReactNode;
 
   /**
@@ -64,6 +70,13 @@ export interface GraphBindingProps {
   onMouseMove?: (evt: React.MouseEvent) => void;
   onMouseEnter?: (evt: React.MouseEvent) => void;
   onMouseLeave?: (evt: React.MouseEvent) => void;
+
+  /**
+   * 画布缩放
+   * @param evt
+   * @returns
+   */
+  onScale?: (evt: EventArgs['scale']) => void;
 
   /**
    * 开启嵌入，在开始拖动节点时触发
@@ -194,6 +207,8 @@ export const GraphBinding = memo((props: GraphBindingProps) => {
   const {
     className,
     style,
+    minimapClassName,
+    minimapStyle,
     children,
     options,
     onMouseMove,
@@ -207,6 +222,7 @@ export const GraphBinding = memo((props: GraphBindingProps) => {
   const disposer = useDisposer();
   const eventStore = useEventStore(other);
   const containerRef = useRef<HTMLDivElement>(null);
+  const minimapRef = useRef<HTMLDivElement>(null);
   const graphRef = useRef<Graph>();
   const ReactPortalProvider = useMemo(() => {
     return Portal.getProvider();
@@ -453,6 +469,15 @@ export const GraphBinding = memo((props: GraphBindingProps) => {
       if (options?.scroller) {
         graph.use(new Scroller(options.scroller));
       }
+
+      if (options?.minimap) {
+        graph.use(
+          new MiniMap({
+            container: minimapRef.current!,
+            ...options.minimap,
+          })
+        );
+      }
     }
 
     // 通知就绪
@@ -486,22 +511,32 @@ export const GraphBinding = memo((props: GraphBindingProps) => {
   }, []);
 
   return (
-    <div
-      className={cls('vd-graph-binding', className)}
-      style={style}
-      data-id={id}
-      ref={containerRef}
-      onDragOver={handleDragOver}
-      onDrop={handleDrop}
-      onMouseMove={onMouseMove}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-    >
-      <GraphBindingProvider value={contextValue}>
-        <ReactPortalProvider />
-        {children}
-      </GraphBindingProvider>
-    </div>
+    <>
+      <div
+        className={cls('vd-graph-binding', className)}
+        style={style}
+        data-id={id}
+        ref={containerRef}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
+        onMouseMove={onMouseMove}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+      >
+        <GraphBindingProvider value={contextValue}>
+          <ReactPortalProvider />
+          {children}
+        </GraphBindingProvider>
+      </div>
+      {!!options?.minimap && (
+        <div
+          className={classNames('vd-graph-binding__minimap', minimapClassName)}
+          style={minimapStyle}
+          ref={minimapRef}
+        ></div>
+      )}
+      <div></div>
+    </>
   );
 });
 

@@ -116,6 +116,13 @@ export class CanvasModel {
       background: { color: '#f8f8f8' },
       grid: { size: 15, visible: true },
 
+      // 体验不好，暂时关闭
+      // minimap: {
+      //   width: 200,
+      //   height: 150,
+      //   padding: 10,
+      // },
+
       // 支持鼠标滚轮操作
       mousewheel: {
         enabled: true,
@@ -125,8 +132,15 @@ export class CanvasModel {
         modifiers: ['meta', 'ctrl'],
       },
 
+      // 画布拖拽平移
       panning: {
         enabled: this.editorModel.viewStore.viewState.mouseDragMode === 'panning',
+      },
+
+      // 缩放限制
+      scaling: {
+        min: 0.5,
+        max: 3.5,
       },
 
       // 支持对齐线
@@ -289,6 +303,30 @@ export class CanvasModel {
         description: '启用鼠标拖拽画布模式',
         key: { macos: 'shift+command+p', other: 'shift+ctrl+p' },
         handler: this.handleEnableMousePanningMode,
+      })
+      .bindKey({
+        name: 'zoomIn',
+        title: '放大',
+        key: { macos: ['command+plus', 'command+='], other: ['ctrl+plus', 'command+='] },
+        handler: this.handleZoomIn,
+      })
+      .bindKey({
+        name: 'zoomOut',
+        title: '缩小',
+        key: { macos: 'command+-', other: 'ctrl+-' },
+        handler: this.handleZoomOut,
+      })
+      .bindKey({
+        name: 'zoomToFit',
+        title: '适配内容',
+        key: { macos: 'shift+command+f', other: 'shift+ctrl+f' },
+        handler: this.handleZoomToFit,
+      })
+      .bindKey({
+        name: 'zoomToCenter',
+        title: '居中并还原',
+        key: { macos: 'shift+command+c', other: 'shift+ctrl+c' },
+        handler: this.handleZoomToCenter,
       });
 
     // 监听 EditorModel 事件
@@ -321,6 +359,56 @@ export class CanvasModel {
 
   handleMouseLeave = () => {
     this.graphHovering = true;
+  };
+
+  /**
+   * 放大
+   */
+  handleZoomIn = () => {
+    if (this.graph == null) {
+      return;
+    }
+    const zoom = this.graph.zoom();
+
+    this.handleZoomTo(zoom + 0.25);
+  };
+
+  /**
+   * 缩小
+   */
+  handleZoomOut = () => {
+    if (this.graph == null) {
+      return;
+    }
+    const zoom = this.graph.zoom();
+
+    this.handleZoomTo(zoom - 0.25);
+  };
+
+  handleZoomTo = (zoom: number) => {
+    this.graph?.zoomTo(zoom);
+  };
+
+  handleZoomToCenter = () => {
+    this.graph?.zoomTo(1);
+    this.graph?.center();
+  };
+
+  handleZoomToFit = () => {
+    this.graph?.zoomToFit();
+  };
+
+  /**
+   * 处理画布缩放
+   * @param evt
+   */
+  handleScaleChange: GraphBindingProps['onScale'] = evt => {
+    const { sx, sy, ox, oy } = evt;
+
+    this.editorCommandHandler.setViewStateDebounce({
+      key: 'canvasScale',
+      value: { sx, sy, ox, oy },
+    });
   };
 
   handleZIndexChange: GraphBindingProps['onCell$Change$ZIndex'] = evt => {
@@ -634,6 +722,14 @@ export class CanvasModel {
 
     // 快捷键绑定
     this.keyboardBinding.bindGraph(graph);
+
+    // 恢复缩放比例
+    const scale = this.editorViewStore.viewState.canvasScale;
+    if (scale) {
+      requestAnimationFrame(() => {
+        graph.scale(scale.sx, scale.sy, scale.ox, scale.oy);
+      });
+    }
   };
 
   handleUndo = () => {
