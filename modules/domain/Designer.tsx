@@ -20,19 +20,21 @@ import {
   useHoverShowPorts,
   BaseEditorModel,
   useCanvasModel,
+  useShapeModel,
 } from '@/lib/editor';
 
 const MyComponent: FC<ReactComponentProps> = props => {
-  const [count, setCount] = useState('0');
+  const { properties, updateProperty } = useShapeModel(props.node);
   return (
     <div
-      onClick={() => setCount(i => i + '0')}
+      onClick={() => updateProperty('count', properties.count + 1)}
       style={{ background: 'green', width: '100%', height: '100%', whiteSpace: 'nowrap' }}
     >
-      hello {count}
+      hello {properties.count}
     </div>
   );
 };
+MyComponent.displayName = 'MyComponent';
 
 registerReactComponent('hello', MyComponent);
 
@@ -41,6 +43,7 @@ defineShape('react', {
   initialProps() {
     return {
       size: { width: 100, height: 100 },
+      count: 0,
     };
   },
   component(props) {

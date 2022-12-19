@@ -35,9 +35,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 ## TODO
 
-- x6 decorator 的实现预研
 - defineShape 支持 decorator，用类组件实现
-- react portable, context 测试
 
 - 分组大小自动扩展
 - node edit

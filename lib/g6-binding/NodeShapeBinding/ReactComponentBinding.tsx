@@ -25,6 +25,9 @@ const decorators: Map<string, ReactDecorator> = new Map();
 
 /**
  * 注册装饰器
+ *
+ * 先注册的在最里层
+ *
  * @param name
  */
 export function registerReactDecorator(name: string, component: ReactDecorator) {
@@ -41,8 +44,7 @@ export function registerReactDecorator(name: string, component: ReactDecorator) 
 function applyDecorator(component: FC<ReactComponentProps>) {
   let output = component;
 
-  const reversed = Array.from(decorators.entries()).reverse();
-  for (const [name, dec] of reversed) {
+  for (const [name, dec] of decorators.entries()) {
     const originName = output.displayName;
     output = dec(output);
     output.displayName = `${name}${originName ? `(${originName})` : ''}`;

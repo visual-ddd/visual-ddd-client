@@ -6,6 +6,7 @@ import { Keyboard } from '@antv/x6-plugin-keyboard';
 import { Clipboard } from '@antv/x6-plugin-clipboard';
 import { Transform } from '@antv/x6-plugin-transform';
 import type { Options } from '@antv/x6/lib/graph/options';
+import { Portal } from '@antv/x6-react-shape';
 import { Noop, NoopArray } from '@wakeapp/utils';
 import { useDisposer } from '@wakeapp/hooks';
 
@@ -196,6 +197,9 @@ export const GraphBinding = memo((props: GraphBindingProps) => {
   const eventStore = useEventStore(other);
   const containerRef = useRef<HTMLDivElement>(null);
   const graphRef = useRef<Graph>();
+  const ReactPortalProvider = useMemo(() => {
+    return Portal.getProvider();
+  }, []);
   const contextValue = useMemo(() => {
     let graphReadyListeners: OnGraphReadyListener[] = [];
     const cellReadyListeners: [OnCellReadyListener, string | undefined][] = [];
@@ -474,7 +478,10 @@ export const GraphBinding = memo((props: GraphBindingProps) => {
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
-      <GraphBindingProvider value={contextValue}>{children}</GraphBindingProvider>
+      <GraphBindingProvider value={contextValue}>
+        <ReactPortalProvider />
+        {children}
+      </GraphBindingProvider>
     </div>
   );
 });
