@@ -4,7 +4,9 @@ import { defineShape } from '../defineShape';
 /**
  * 默认边
  */
-defineShape('edge', {
+defineShape({
+  name: 'edge',
+  title: '默认边',
   shapeType: 'edge',
   staticProps: () => {
     return { attrs: { line: { stroke: 'red' } } };

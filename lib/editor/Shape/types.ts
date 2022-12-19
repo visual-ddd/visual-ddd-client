@@ -35,6 +35,26 @@ export type ShapeResizingOptions = Omit<Transform.ResizingRaw, 'enabled'>;
 
 export interface ShapeConfiguration {
   /**
+   * 图形名称，需要全局唯一
+   */
+  name: string;
+
+  /**
+   * 标题
+   */
+  title: string;
+
+  /**
+   * 描述
+   */
+  description?: string;
+
+  /**
+   * 图标 URL
+   */
+  icon?: string;
+
+  /**
    * 组件的类型
    */
   shapeType: ShapeType;

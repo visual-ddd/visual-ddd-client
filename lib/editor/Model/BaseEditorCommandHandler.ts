@@ -6,7 +6,7 @@ import type { PickParams, ShapeType, Properties } from './types';
 import { BaseNode } from './BaseNode';
 import { BaseEditorEvent } from './BaseEditorEvent';
 import { BaseEditorDatasource } from './BaseEditorDatasource';
-import { BaseEditorViewStore } from './BaseEditorViewStore';
+import { BaseEditorViewStore, BaseEditorViewState } from './BaseEditorViewStore';
 
 /**
  * 用于统一处理 View 层的命令
@@ -45,6 +45,11 @@ export class BaseEditorCommandHandler {
   @command('SET_SELECTED')
   setSelected(params: PickParams<BaseEditorViewStore['setSelected']>) {
     this.viewStore.setSelected(params);
+  }
+
+  @command('SET_VIEW_STATE')
+  setViewState<T extends keyof BaseEditorViewState>(params: { key: T; value: BaseEditorViewState[T] }) {
+    this.viewStore.setViewState(params);
   }
 
   @command('CREATE_NODE')

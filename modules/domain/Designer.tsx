@@ -11,8 +11,6 @@ import {
   registerReactComponent,
 } from '@/lib/g6-binding';
 import {
-  ComponentContainer,
-  ComponentItem,
   EditorModelProvider,
   Canvas,
   CanvasModelProvider,
@@ -21,6 +19,8 @@ import {
   BaseEditorModel,
   useCanvasModel,
   useShapeModel,
+  EditorLayout,
+  EditorShapeLibrary,
 } from '@/lib/editor';
 
 const MyComponent: FC<ReactComponentProps> = props => {
@@ -38,7 +38,9 @@ MyComponent.displayName = 'MyComponent';
 
 registerReactComponent('hello', MyComponent);
 
-defineShape('react', {
+defineShape({
+  name: 'react',
+  title: 'React 组件',
   shapeType: 'node',
   initialProps() {
     return {
@@ -51,8 +53,10 @@ defineShape('react', {
   },
 });
 
-defineShape('rect', {
+defineShape({
+  name: 'rect',
   shapeType: 'node',
+  title: '大分组',
   group: true,
   autoResizeGroup: 20,
   initialProps: () => {
@@ -87,7 +91,9 @@ defineShape('rect', {
   },
 });
 
-defineShape('rect-child', {
+defineShape({
+  name: 'rect-child',
+  title: '小分组',
   shapeType: 'node',
   group: true,
   autoResizeGroup: 20,
@@ -105,7 +111,9 @@ defineShape('rect-child', {
   },
 });
 
-defineShape('child', {
+defineShape({
+  name: 'child',
+  title: '子节点1',
   group: false,
   shapeType: 'node',
   rotating: 20,
@@ -155,7 +163,9 @@ defineShape('child', {
   },
 });
 
-defineShape('child-2', {
+defineShape({
+  name: 'child-2',
+  title: '子节点2',
   group: false,
   shapeType: 'node',
   dropFactory() {
@@ -229,31 +239,29 @@ const Designer = observer(() => {
     <div>
       <EditorModelProvider value={model}>
         <CanvasModelProvider>
-          <ComponentContainer>
-            <ComponentItem name="rect" data={{ type: 'rect' }}></ComponentItem>
-            <ComponentItem name="rect-child" data={{ type: 'rect-child' }}></ComponentItem>
-            <ComponentItem name="child" data={{ type: 'child' }}></ComponentItem>
-            <ComponentItem name="child-2" data={{ type: 'child-2' }}></ComponentItem>
-            <ComponentItem name="react" data={{ type: 'react' }}></ComponentItem>
-          </ComponentContainer>
+          <EditorLayout
+            left={
+              <>
+                <EditorShapeLibrary shapes={['rect', 'rect-child', 'child', 'child-2', 'react']} />
+                <button
+                  onClick={() => {
+                    setShowEdge(true);
+                  }}
+                >
+                  showEdge
+                </button>
 
-          <button
-            onClick={() => {
-              setShowEdge(true);
-            }}
+                <button
+                  onClick={() => {
+                    setShowCanvas(v => !v);
+                  }}
+                >
+                  toggleShowCanvas
+                </button>
+              </>
+            }
+            right={<Operations />}
           >
-            showEdge
-          </button>
-
-          <button
-            onClick={() => {
-              setShowCanvas(v => !v);
-            }}
-          >
-            toggleShowCanvas
-          </button>
-
-          <div style={{ width: 500, height: 500, position: 'relative' }}>
             {showCanvas && (
               <Canvas>
                 {/* <RectBinding
@@ -272,9 +280,7 @@ const Designer = observer(() => {
                 {model.viewStore.focusingNode && <NodeBBox node={model.viewStore.focusingNode.id}>ok</NodeBBox>}
               </Canvas>
             )}
-          </div>
-
-          <Operations />
+          </EditorLayout>
         </CanvasModelProvider>
       </EditorModelProvider>
     </div>

@@ -1,0 +1,33 @@
+.root {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--vd-color-white);
+}
+
+.left,
+.right,
+.body {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.root {
+  :global(.x6-split-box-resizer) {
+    background-color: var(--vd-color-border-light);
+
+    &:hover {
+      background-color: var(--vd-color-border);
+    }
+  }
+
+  :global(.x6-split-box-vertical .x6-split-box-resizer) {
+    width: 1px;
+  }
+
+  :global(.x6-split-box-horizontal .x6-split-box-resizer) {
+    height: 1px;
+  }
+}

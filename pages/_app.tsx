@@ -11,6 +11,7 @@ import 'antd/dist/reset.css';
 import { useSyncEffect } from '@/lib/hooks';
 import { createPageScope } from '@/lib/framework';
 
+import '../styles/theme.css';
 import '../styles/globals.css';
 
 configure({

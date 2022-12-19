@@ -1,0 +1,212 @@
+/**
+ * 根据惟客云平台 UI 规范定义: https://codesign.qq.com/s/GyOl9yVmqn0dxaW/OD8r0BXKByjRXkg
+ */
+
+/**
+ * 调色盘
+ */
+:root {
+  --vd-color-primary-900: #fa7516;
+  --vd-color-primary-800: #fb931a;
+  --vd-color-primary-700: #fca31d;
+  --vd-color-primary-600: #fcb620;
+  --vd-color-primary-500: #fdc325;
+  --vd-color-primary-400: #fdcc37;
+  --vd-color-primary-300: #fdd758;
+  --vd-color-primary-200: #fee187;
+  --vd-color-primary-100: #feedb6;
+  --vd-color-primary-50: #fff8e2;
+
+  --vd-color-secondary-900: #111c4e;
+  --vd-color-secondary-800: #1c2c65;
+  --vd-color-secondary-700: #233571;
+  --vd-color-secondary-600: #2c3e7c;
+  --vd-color-secondary-500: #314584;
+  --vd-color-secondary-400: #505f94;
+  --vd-color-secondary-300: #6d7aa6;
+  --vd-color-secondary-200: #959fbf;
+  --vd-color-secondary-100: #bec4d9;
+  --vd-color-secondary-50: #e5e8ef;
+
+  --vd-color-success-900: #006a00;
+  --vd-color-success-800: #008c00;
+  --vd-color-success-700: #26a001;
+  --vd-color-success-600: #42b411;
+  --vd-color-success-500: #53c41a;
+  --vd-color-success-400: #71cd47;
+  --vd-color-success-300: #8dd66b;
+  --vd-color-success-200: #b0e297;
+  --vd-color-success-100: #d0eec0;
+  --vd-color-success-50: #ecf8e6;
+
+  --vd-color-danger-900: #c8000f;
+  --vd-color-danger-800: #d6001f;
+  --vd-color-danger-700: #e31127;
+  --vd-color-danger-600: #f5222d;
+  --vd-color-danger-500: #ff2f2c;
+  --vd-color-danger-400: #fe474a;
+  --vd-color-danger-300: #f26d70;
+  --vd-color-danger-200: #f99798;
+  --vd-color-danger-100: #ffccd2;
+  --vd-color-danger-50: #ffebee;
+
+  --vd-color-warning-900: #e35919;
+  --vd-color-warning-800: #ed721c;
+  --vd-color-warning-700: #f4811e;
+  --vd-color-warning-600: #fb9021;
+  --vd-color-warning-500: #ff9c23;
+  --vd-color-warning-400: #ffaa37;
+  --vd-color-warning-300: #ffba58;
+  --vd-color-warning-200: #ffce87;
+  --vd-color-warning-100: #ffe1b6;
+  --vd-color-warning-50: #fff3e2;
+
+  --vd-color-info-900: #1f3eaa;
+  --vd-color-info-800: #205dca;
+  --vd-color-info-700: #206fdc;
+  --vd-color-info-600: #1e81f0;
+  --vd-color-info-500: #188fff;
+  --vd-color-info-400: #3ba0ff;
+  --vd-color-info-300: #5fb1ff;
+  --vd-color-info-200: #8ec7ff;
+  --vd-color-info-100: #badcff;
+  --vd-color-info-50: #e2f1ff;
+
+  --vd-color-gray-900: #303133;
+  --vd-color-gray-800: #535456;
+  --vd-color-gray-700: #737476;
+  --vd-color-gray-600: #88898b;
+  --vd-color-gray-500: #b2b3b6;
+  --vd-color-gray-400: #cfd0d3;
+  --vd-color-gray-300: #edeef1;
+  --vd-color-gray-200: #f2f3f6;
+  --vd-color-gray-100: #f7f8fb;
+  --vd-color-gray-50: #fcfdff;
+  --vd-color-gray-0: #ffffff;
+}
+
+/**
+ * 颜色定义，从上述调色盘中取色
+ */
+:root {
+  /**
+    * 主体色一般采用企业品牌色或者品牌邻近色，根据品牌色衍生每个主题色板可以有不超过三个颜色。
+    * 由于主体色与品牌色相关，设计师可根据项目的对象、行业属性、客户品牌要求进行颜色选择；
+    * 本规范默认按照惟客品牌色衍生色作为主体色搭配。
+    */
+  --vd-color-primary: var(--vd-color-primary-900);
+  --vd-color-secondary: var(--vd-color-secondary-900);
+
+  /**
+   * 功能色代表具有信息表达或者行为特征的颜色，如：成功、失败、警告、链接...
+   * 功能色需符合用户对颜色操作的基本认知，建议整个产品体系所有的设计师及开发者固定使用同一套功能色板。
+   */
+  --vd-color-success: var(--vd-color-success-500);
+  --vd-color-danger: var(--vd-color-danger-600);
+  --vd-color-warning: var(--vd-color-warning-500);
+  --vd-color-info: var(--vd-color-info-500);
+
+  --vd-color-white: var(--vd-color-gray-0);
+  --vd-color-black: var(--vd-color-gray-900);
+
+  /**
+   * 中性色是界面的灰度颜色，主要作用于界面的字体颜色、背景色、分割线、边框…
+   * 合理地选择中性色能够令页面信息具备良好的主次关系，助力阅读体验。
+   */
+  /* 字体颜色, 数字表示色重， 越大(0-1000 大概分为 10级), 颜色越重 */
+  --vd-color-font-primary: var(--vd-color-gray-900); /* 主色 */
+  --vd-color-font-regular: #717378; /* 常规颜色, 常用于大面积的正文 */
+  --vd-color-font-secondary: #909399; /* 次要颜色，常用于描述语 */
+  --vd-color-font-placeholder: #b1b5bd; /* 占位符 */
+  --vd-color-font-disabled: #c0c4cc; /* 禁用 */
+  --vd-color-font-inverse: var(--vd-color-gray-0); /* 主色反转, 用于深色背景 */
+
+  /* 边框/分割线颜色 */
+  --vd-color-border-dark: #cfd4d9;
+  --vd-color-border: #dce1e6;
+  --vd-color-border-light: var(--vd-color-gray-300);
+  --vd-color-border-lighter: var(--vd-color-gray-200);
+  --vd-color-border-extra-light: var(--vd-color-gray-100);
+
+  /* 背景色 */
+  --vd-color-bg: #f5f7fa;
+  --vd-color-bg-dark: #f0f2f5;
+
+  /* 链接颜色 */
+  --vd-color-link: var(--vd-color-info);
+  --vd-color-link-hover: var(--vd-color-info-300);
+}
+
+/**
+ * 文字、排版
+ */
+:root {
+  /**
+   * 字体
+   */
+  /* 通常为 无衬线字体 */
+  --vd-font-family: PingFangSC, Inter var, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
+    Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+  /* 有衬线字体 */
+  --vd-font-family-serif: ui-serif, Georgia, Cambria, Times New Roman, Times, serif;
+  /* 等宽字体，用于代码 */
+  --vd-font-family-mono: Menlo, ui-monospace, SFMono-Regular, Monaco, Consolas, Liberation Mono, Courier New, monospace;
+  /* 数字字体 */
+  --vd-font-family-number: 'Oswald';
+
+  /**
+   * 字体大小
+   */
+  --vd-font-size-h1: 20px;
+  --vd-font-line-height-h1: 32px;
+
+  --vd-font-size-h2: 18px;
+  --vd-font-line-height-h2: 28px;
+
+  --vd-font-size-h3: 16px;
+  --vd-font-line-height-h3: 26px;
+
+  --vd-font-size-h4: 14px;
+  --vd-font-line-height-h4: 22px;
+
+  --vd-font-size-h5: 13px;
+  --vd-font-line-height-h5: 21px;
+
+  --vd-font-size-h6: 12px;
+  --vd-font-line-height-h6: 20px;
+
+  /* 正文 */
+  --vd-font-size: var(--vd-font-size-h4);
+  --vd-font-line-height: var(--vd-font-line-height-h4);
+  --vd-font-weight: 500;
+}
+
+/**
+ * 其他
+ */
+:root {
+  /**
+   * 边框:大小、圆角
+   */
+  --vd-border-radius-sm: 2px;
+  --vd-border-radius-base: 4px;
+  --vd-border-radius-md: 16px;
+  --vd-border-radius-lg: 24px;
+  --vd-border-radius-full: 9999px;
+
+  /* 边距 */
+  --vd-spacing-xs: 8px;
+  --vd-spacing-sm: 16px;
+  --vd-spacing-base: 24px;
+  --vd-spacing-md: 32px;
+  --vd-spacing-lg: 48px;
+  --vd-spacing-xl: 64px;
+
+  /* 叠层顺序 z-index */
+  --vd-z-index-normal: 1; /* 常规, 高于默认优先级 */
+  --vd-z-index-dropdown: 1000; /* 下拉列表 */
+  --vd-z-index-sticky: 1020; /* 粘顶元素 */
+  --vd-z-index-fixed: 1030; /* fixed 定位元素 */
+  --vd-z-index-modal: 1040; /* 模态框、对话框、抽屉等 */
+  --vd-z-index-tooltip: 1050; /* 提示框、弹出框、消息提醒 */
+}
