@@ -4,6 +4,7 @@ import { Transform } from '@antv/x6-plugin-transform';
 
 import { BaseEditorModel, BaseNode, Properties, ShapeType } from '../Model';
 import { CopyPayload } from '../Canvas/ClipboardUtils';
+import { FormRules } from '../Model/FormModel';
 
 export interface ShapeCoreInfo {
   type: string;
@@ -58,6 +59,11 @@ export interface ShapeConfiguration {
    * 组件的类型
    */
   shapeType: ShapeType;
+
+  /**
+   * 验证规则
+   */
+  rules?: FormRules;
 
   /**
    * 是否支持尺寸调整, 默认 false

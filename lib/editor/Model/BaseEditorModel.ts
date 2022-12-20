@@ -5,6 +5,7 @@ import { BaseEditorDatasource } from './BaseEditorDatasource';
 import { BaseEditorEvent } from './BaseEditorEvent';
 import { BaseEditorIndex } from './BaseEditorIndex';
 import { BaseEditorViewStore } from './BaseEditorViewStore';
+import { BaseEditorFormStore } from './BaseEditorFormStore';
 
 export interface BaseEditorModelOptions {
   datasource: YMap<any>;
@@ -29,6 +30,11 @@ export class BaseEditorModel {
    * 视图模型状态存储
    */
   readonly viewStore: BaseEditorViewStore;
+
+  /**
+   * 表单模型
+   */
+  readonly formStore: BaseEditorFormStore;
 
   /**
    * 模型层事件
@@ -59,6 +65,7 @@ export class BaseEditorModel {
       doc,
     });
     this.viewStore = new BaseEditorViewStore({ datasource: this.datasource });
+    this.formStore = new BaseEditorFormStore({ event: this.event, store: this.store });
     this.commandHandler = new BaseEditorCommandHandler({
       event: this.event,
       store: this.store,

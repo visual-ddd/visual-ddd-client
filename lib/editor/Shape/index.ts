@@ -7,4 +7,4 @@ export * from './defineShape';
 export * from './ShapeRenderer';
 export * from './utils';
 export * from './hooks';
-export { getShape } from './store';
+export { getShape, getRules } from './store';

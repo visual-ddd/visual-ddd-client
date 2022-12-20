@@ -2,11 +2,11 @@ import { storeAutoBindingKey } from './auto-bind-this';
 
 let UNDER_COMMAND = 0;
 
-export const runInCommand = (name: string, runner: () => any, args?: any) => {
+export const runInCommand = (name: string | undefined, runner: () => any, args?: any) => {
   try {
     UNDER_COMMAND++;
 
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV !== 'production' && name) {
       console.debug(`Running Command: ${name}`, args?.[0]);
     }
 
