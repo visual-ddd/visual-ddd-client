@@ -1,5 +1,5 @@
 import { FC, ReactNode, useEffect, useRef, useState } from 'react';
-import { Disposer } from '@wakeapp/utils';
+import { Disposer, rafDebounce } from '@wakeapp/utils';
 import { Cell, Node } from '@antv/x6';
 
 import classNames from 'classnames';
@@ -82,24 +82,33 @@ export const NodeBBox: FC<NodeBBoxProps> = props => {
         return;
       }
 
-      const { x, y, width, height } = rectangle;
+      // 需要考虑画布平移、缩放等因素
+      const graphRectangle = graph.localToGraph(rectangle);
+
+      const { x, y, width, height } = graphRectangle;
 
       style.width = `${width}px`;
       style.height = `${height}px`;
       style.transform = `translate(${x}px, ${y}px)`;
     };
 
-    const listener = (evt: Cell.EventArgs['change:*']) => {
+    const listener = rafDebounce(() => {
       // 变更 bbox
       updateState();
-    };
+    });
 
+    graph.on('scale', listener);
+    graph.on('resize', listener);
+    graph.on('translate', listener);
     instance.on('change:*', listener);
 
     updateState();
 
     return () => {
       instance.off('change:*', listener);
+      graph.off('scale', listener);
+      graph.off('resize', listener);
+      graph.off('translate', listener);
     };
   }, [instance]);
 
