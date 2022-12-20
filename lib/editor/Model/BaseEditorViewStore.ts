@@ -47,7 +47,7 @@ export class BaseEditorViewStore {
 
   @derive
   get zoomFactor() {
-    return this.viewState.canvasScale?.sx ?? 1;
+    return Math.round((this.viewState.canvasScale?.sx ?? 1) * 100);
   }
 
   /**

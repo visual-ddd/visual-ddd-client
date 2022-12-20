@@ -26,6 +26,10 @@ import s from './index.module.scss';
 const Group = Toolbar.Group;
 const Item = Toolbar.Item;
 
+const ZOOM_FACTOR_STYLE: React.CSSProperties = {
+  width: 35,
+};
+
 export const EditorToolbar = observer(function EditorToolbar() {
   const { model } = useCanvasModel();
   const editorViewStore = model.editorViewStore;
@@ -72,7 +76,7 @@ export const EditorToolbar = observer(function EditorToolbar() {
             </Menu>
           }
         >
-          {editorViewStore.zoomFactor * 100}%
+          <span style={ZOOM_FACTOR_STYLE}>{editorViewStore.zoomFactor}%</span>
         </Item>
         <Item
           name="zoomOut"
