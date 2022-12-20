@@ -1,14 +1,10 @@
 import { derive } from '@/lib/store';
 import { makeObservable, observable } from 'mobx';
 import { set, get } from '@wakeapp/utils';
-import memoize from 'lodash/memoize';
-import toPath from 'lodash/toPath';
+
+import { getPaths, unset } from '@/lib/utils';
 
 import type { BaseNodeProperties, ShapeType } from './types';
-
-const getPaths = memoize(path => {
-  return toPath(path);
-});
 
 /**
  * 节点基类
@@ -92,6 +88,23 @@ export class BaseNode {
     set(this.properties, pathInArray, value);
 
     return true;
+  }
+
+  /**
+   * 删除属性
+   * @param path
+   */
+  deleteProperty(path: string): boolean {
+    return unset(this.properties, path);
+  }
+
+  /**
+   * 获取属性
+   * @param path
+   * @returns
+   */
+  getProperty(path: string): any {
+    return get(this.properties, getPaths(path));
   }
 
   /**

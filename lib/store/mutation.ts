@@ -5,7 +5,7 @@ import { isInPull } from './pull';
 
 let UNDER_MUTATION = 0;
 
-export const runInMutation = (name: string, args: any, runner: () => any) => {
+export const runInMutation = (name: string, runner: () => any, args?: any) => {
   try {
     UNDER_MUTATION++;
 
@@ -40,9 +40,13 @@ export const mutation = (name: string): MethodDecorator => {
 
       const self = this;
       const args = arguments;
-      return runInMutation(name, args, () => {
-        return origin.apply(self, args);
-      });
+      return runInMutation(
+        name,
+        () => {
+          return origin.apply(self, args);
+        },
+        args
+      );
     };
 
     actionWithName(target, key);

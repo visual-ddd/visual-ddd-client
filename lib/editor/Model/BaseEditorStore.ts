@@ -34,7 +34,7 @@ export class BaseEditorStore {
   constructor(inject: { event: BaseEditorEvent }) {
     this.event = inject.event;
 
-    runInCommand('INITIAL_STORE', [], () => {
+    runInCommand('INITIAL_STORE', () => {
       // @ts-expect-error
       this.root = this.createNode({ name: ROOT_ID, type: 'node', id: ROOT_ID, properties: {} });
     });
@@ -93,6 +93,16 @@ export class BaseEditorStore {
     const changed = node.setProperty(path, value);
     if (changed) {
       this.event.emit('NODE_UPDATE_PROPERTY', { node, path, value });
+    }
+  }
+
+  @mutation('DELETE_NODE_PROPERTY')
+  deleteNodeProperty(params: { node: BaseNode; path: string }) {
+    const { node, path } = params;
+    const deleted = node.deleteProperty(path);
+
+    if (deleted) {
+      this.event.emit('NODE_DELETE_PROPERTY', { node, path });
     }
   }
 

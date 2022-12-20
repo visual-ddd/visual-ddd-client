@@ -2,7 +2,7 @@ import { storeAutoBindingKey } from './auto-bind-this';
 
 let UNDER_COMMAND = 0;
 
-export const runInCommand = (name: string, args: any, runner: () => any) => {
+export const runInCommand = (name: string, runner: () => any, args?: any) => {
   try {
     UNDER_COMMAND++;
 
@@ -33,9 +33,13 @@ export const command = (name: string): MethodDecorator => {
       const self = this;
       const args = arguments;
 
-      return runInCommand(name, args, () => {
-        return origin.apply(self, args);
-      });
+      return runInCommand(
+        name,
+        () => {
+          return origin.apply(self, args);
+        },
+        args
+      );
     };
 
     storeAutoBindingKey(target, key);

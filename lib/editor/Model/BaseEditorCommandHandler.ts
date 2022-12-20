@@ -130,7 +130,7 @@ export class BaseEditorCommandHandler {
     return true;
   }
 
-  @command('COMMAND_UPDATE_NODE_PROPERTY')
+  @command('UPDATE_NODE_PROPERTY')
   updateNodeProperty(params: { node: BaseNode; path: string; value: any }) {
     this.store.updateNodeProperty(params);
   }
@@ -142,6 +142,11 @@ export class BaseEditorCommandHandler {
     300,
     { leading: true }
   );
+
+  @command('DELETE_NODE_PROPERTY')
+  deleteNodeProperty(params: { node: BaseNode; path: string }) {
+    this.store.deleteNodeProperty(params);
+  }
 
   /**
    * 节点扁平化

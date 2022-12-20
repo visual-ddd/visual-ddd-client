@@ -3,8 +3,8 @@ import { Map as YMap, Doc as YDoc, AbstractType, UndoManager } from 'yjs';
 import { observable, action, makeObservable } from 'mobx';
 import toPairs from 'lodash/toPairs';
 import fromPairs from 'lodash/fromPairs';
-import toPath from 'lodash/toPath';
 import cloneDeep from 'lodash/cloneDeep';
+import { getPaths } from '@/lib/utils';
 
 import { BaseEditorStore } from './BaseEditorStore';
 import { BaseNode } from './BaseNode';
@@ -80,6 +80,10 @@ class NodeYMap {
 
   updateProperty(key: string, value: any) {
     this.properties.set(key, cloneDeep(value));
+  }
+
+  deleteProperty(key: string) {
+    this.properties.delete(key);
   }
 
   toYMap() {
@@ -213,10 +217,30 @@ export class BaseEditorDatasource {
   protected updateNodeProperty(params: { node: BaseNode; path: string; value: any }) {
     this.doUpdate(() => {
       const { node, path, value } = params;
-      const paths = toPath(path);
+      const paths = getPaths(path);
       const nodeMap = NodeYMap.fromYMap(this.datasource.get(node.id));
       if (nodeMap != null) {
         nodeMap.updateProperty(paths[0], value);
+      }
+    });
+  }
+
+  @push('DELETE_NODE_PROPERTY')
+  protected deleteNodeProperty(params: { node: BaseNode; path: string }) {
+    this.doUpdate(() => {
+      const { node, path } = params;
+      const paths = getPaths(path);
+      const isRoot = path.length === 1;
+
+      const nodeMap = NodeYMap.fromYMap(this.datasource.get(node.id));
+
+      if (nodeMap != null) {
+        const field = paths[0];
+        if (isRoot) {
+          nodeMap.deleteProperty(field);
+        } else {
+          nodeMap.updateProperty(field, node.getProperty(field));
+        }
       }
     });
   }
@@ -279,6 +303,15 @@ export class BaseEditorDatasource {
     }
   }
 
+  @pull('DELETE_NODE_PROPERTY')
+  protected handleDeleteNodeProperty(param: { node: NodePO; path: string }) {
+    const { node, path } = param;
+    const model = this.index.getNodeById(node.id);
+    if (model) {
+      this.store.deleteNodeProperty({ node: model, path: path });
+    }
+  }
+
   private initialDataSource() {
     const root = toNodePO(this.store.root);
     this.datasource.set(root.id, NodeYMap.fromNodePO(root).toYMap());
@@ -293,6 +326,7 @@ export class BaseEditorDatasource {
     this.event.on('NODE_APPEND_CHILD', this.addChild);
     this.event.on('NODE_REMOVE_CHILD', this.removeChild);
     this.event.on('NODE_UPDATE_PROPERTY', this.updateNodeProperty);
+    this.event.on('NODE_DELETE_PROPERTY', this.deleteNodeProperty);
   }
 
   private watchUndoManager() {
@@ -352,8 +386,12 @@ export class BaseEditorDatasource {
           // 属性变动
           const nodePO = NodeYMap.fromYMap(target.parent as YMap<any>)!.toNodePO();
 
-          for (const [key] of evt.keys) {
-            this.handleUpdateNodeProperty({ node: nodePO, path: key });
+          for (const [key, action] of evt.keys) {
+            if (action.action === 'delete') {
+              this.handleDeleteNodeProperty({ node: nodePO, path: key });
+            } else {
+              this.handleUpdateNodeProperty({ node: nodePO, path: key });
+            }
           }
         } else if (this.isYMap(target)) {
           // children 变动
