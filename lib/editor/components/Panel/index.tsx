@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { RightOutlined, DownOutlined } from '@ant-design/icons';
+import { CaretRightOutlined, CaretDownOutlined } from '@ant-design/icons';
 import { memo } from 'react';
 
 import s from './index.module.scss';
@@ -39,7 +39,7 @@ export const EditorPanel = memo((props: EditorPanelProps) => {
     <div className={classNames('vd-editor-panel', className, s.root)} {...other}>
       <div className={classNames('vd-editor-panel__header', s.header)} onClick={handleFoldClick}>
         <span className={classNames('vd-editor-panel__title', s.title)}>{title}</span>
-        {folded ? <RightOutlined /> : <DownOutlined />}
+        {folded ? <CaretRightOutlined /> : <CaretDownOutlined />}
       </div>
       <div className={classNames('vd-editor-panel__body', s.body, { [s.bodyFolded]: folded })}>{children}</div>
     </div>
