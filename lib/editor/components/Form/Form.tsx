@@ -4,8 +4,6 @@ import { BaseNode, useEditorModel } from '../../Model';
 import { EditorFormContext, EditorFormContextProvider } from './FormContext';
 import { ConfigProvider } from 'antd';
 
-console.log(ConfigProvider);
-
 export interface EditorFormProps {
   node: BaseNode;
 

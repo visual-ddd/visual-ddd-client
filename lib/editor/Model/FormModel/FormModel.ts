@@ -26,6 +26,9 @@ export class FormModel {
   @observable.shallow
   errorMap: Map<string, FormItemValidateStatus> = new Map();
 
+  @observable.shallow
+  private touchedMap: Map<string, boolean> = new Map();
+
   @derive
   get errorInArray() {
     return Array.from(this.errorMap.values());
@@ -93,6 +96,15 @@ export class FormModel {
   }
 
   /**
+   * 是否变更过
+   * @param path
+   * @returns
+   */
+  isTouched(path: string) {
+    return !!this.touchedMap.get(path);
+  }
+
+  /**
    * 获取属性
    */
   getProperty(path: string) {
@@ -107,6 +119,9 @@ export class FormModel {
   @command('UPDATE_PROPERTY')
   setProperty(path: string, value: any) {
     this.store.updateNodeProperty({ node: this.node, path, value });
+    if (!this.isTouched(path)) {
+      this.setTouched({ path, value: true });
+    }
   }
 
   /**
@@ -117,6 +132,9 @@ export class FormModel {
   deleteProperty(path: string) {
     this.store.deleteNodeProperty({ node: this.node, path });
     this.deleteValidateStatus({ path: normalizePath(path) });
+    if (this.isTouched(path)) {
+      this.setTouched({ path, value: false });
+    }
   }
 
   /**
@@ -191,6 +209,12 @@ export class FormModel {
     });
 
     return !!status;
+  }
+
+  @mutation('FORM_MODEL:SET_TOUCHED')
+  protected setTouched(params: { path: string; value: boolean }) {
+    const { path, value } = params;
+    this.touchedMap.set(path, value);
   }
 
   /**

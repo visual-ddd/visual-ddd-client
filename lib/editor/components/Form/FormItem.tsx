@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
-import { ReactNode, cloneElement, isValidElement, useMemo } from 'react';
+import { reaction } from 'mobx';
+import { ReactNode, cloneElement, isValidElement, useMemo, useEffect } from 'react';
 
 import { useEditorFormContext } from './FormContext';
 import s from './FormItem.module.scss';
@@ -39,6 +40,11 @@ export interface EditorFormItemProps {
   validateTrigger?: EditorFormItemTrigger;
 
   /**
+   * 字段依赖，当指定的字段值发生变化时，将重新验证
+   */
+  dependencies?: string | string[];
+
+  /**
    * 设置收集字段值变更的时机 , 默认为 onChange
    */
   trigger?: string;
@@ -71,12 +77,34 @@ export const EditorFormItem = observer(function EditorFormItem(props: EditorForm
     trigger = 'onChange',
     validateTrigger = 'onChange',
     valuePropName = 'value',
+    dependencies,
   } = props;
   const { formModel } = useEditorFormContext()!;
 
   const isRequired = useMemo(() => {
     return !!(required || formModel.isRequired(path));
   }, [required, formModel, path]);
+
+  useEffect(() => {
+    if (!dependencies) {
+      return;
+    }
+
+    return reaction(
+      () => {
+        return (Array.isArray(dependencies) ? dependencies : [dependencies]).map(i => {
+          formModel.getProperty(i);
+        });
+      },
+      () => {
+        if (formModel.isTouched(path)) {
+          formModel.validateField(path);
+        }
+      },
+      { delay: 500, name: 'FormItemDependencies' }
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [...(Array.isArray(dependencies) ? dependencies : [dependencies]), formModel, path]);
 
   const injectChildren = (child: ReactNode) => {
     if (isValidElement(child)) {

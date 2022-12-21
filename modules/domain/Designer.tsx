@@ -92,7 +92,7 @@ defineShape({
           <EditorFormItem path="count" label="计数" tooltip="很重要">
             <InputNumber />
           </EditorFormItem>
-          <EditorFormItem path="name" label="名称">
+          <EditorFormItem path="name" label="名称" dependencies="count">
             <Input />
           </EditorFormItem>
         </EditorFormContainer>
