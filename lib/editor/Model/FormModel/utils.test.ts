@@ -1,5 +1,6 @@
+import { catchPromise } from '@/lib/utils';
 import { FormRuleReportType, FormRules } from './types';
-import { findRule, rulesToAsyncValidateSchema, rulesToValidator, ruleToValidator } from './utils';
+import { findRule, normalizeRules, rulesToAsyncValidatorSchema, rulesToValidator, ruleToValidator } from './utils';
 
 test('findRule', () => {
   const rules: FormRules = {
@@ -46,16 +47,16 @@ test('ruleToValidator', () => {
 
 test('rulesToAsyncValidateSchema', async () => {
   expect(() => {
-    rulesToAsyncValidateSchema({
+    rulesToAsyncValidatorSchema({
       $self: {},
     });
   }).toThrowError();
 
   expect(() => {
-    rulesToAsyncValidateSchema({});
+    rulesToAsyncValidatorSchema({});
   }).toThrowError();
 
-  const schema = rulesToAsyncValidateSchema({
+  const schema = rulesToAsyncValidatorSchema({
     fields: {
       a: {
         $self: { required: true },
@@ -225,7 +226,7 @@ test('rulesToValidator', async () => {
     },
   });
 
-  const results = await validate({ c: [1] });
+  const results = await validate({ c: [1] }, { firstFields: false });
 
   expect(Array.from(results!.values())).toEqual([
     {
@@ -252,5 +253,43 @@ test('rulesToValidator', async () => {
       value: undefined,
       warnings: ['a is required'],
     },
+  ]);
+});
+
+test('normalizeRules', async () => {
+  const context: any = {
+    a: 1,
+    b: 2,
+  };
+
+  const aValidator = jest.fn(() => Promise.reject(new Error('some error')));
+  const rules = normalizeRules(
+    {
+      fields: {
+        a: {
+          $self: [{ required: true }, { validator: aValidator }],
+        },
+        b: {
+          $self: [{ required: true }],
+        },
+      },
+    },
+    () => context
+  );
+
+  const schema = rulesToAsyncValidatorSchema(rules);
+  const result1 = await catchPromise(
+    schema.validate({}, { firstFields: true, suppressWarning: true, suppressValidatorError: true })
+  );
+  expect((result1 as any).errors).toEqual([
+    { message: 'a is required', field: 'a' },
+    { message: 'b is required', field: 'b' },
+  ]);
+
+  const result2 = await catchPromise(schema.validate({}, { suppressWarning: true, suppressValidatorError: true }));
+  expect((result2 as any).errors).toEqual([
+    { message: 'b is required', field: 'b' },
+    { message: 'a is required', field: 'a' },
+    { message: 'some error', field: 'a' },
   ]);
 });

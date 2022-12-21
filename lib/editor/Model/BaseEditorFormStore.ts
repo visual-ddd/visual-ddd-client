@@ -3,6 +3,7 @@ import { makeObservable, observable } from 'mobx';
 import { getRules } from '../Shape';
 
 import { BaseEditorEvent } from './BaseEditorEvent';
+import { BaseEditorModel } from './BaseEditorModel';
 import { BaseEditorStore } from './BaseEditorStore';
 import { BaseNode } from './BaseNode';
 import { FormModel, FormRules } from './FormModel';
@@ -17,6 +18,7 @@ const DEFAULT_RULES: FormRules = {
 export class BaseEditorFormStore {
   private event: BaseEditorEvent;
   private store: BaseEditorStore;
+  private editorModel: BaseEditorModel;
 
   @observable.shallow
   private formModels: Map<string, FormModel> = new Map();
@@ -32,9 +34,10 @@ export class BaseEditorFormStore {
     return false;
   }
 
-  constructor(inject: { event: BaseEditorEvent; store: BaseEditorStore }) {
+  constructor(inject: { event: BaseEditorEvent; store: BaseEditorStore; editorModel: BaseEditorModel }) {
     this.event = inject.event;
     this.store = inject.store;
+    this.editorModel = inject.editorModel;
 
     makeAutoBindThis(this);
     makeObservable(this);
@@ -72,6 +75,7 @@ export class BaseEditorFormStore {
         node,
         rules: rules ?? DEFAULT_RULES,
         store: this.store,
+        editorModel: this.editorModel,
       }),
     });
   }

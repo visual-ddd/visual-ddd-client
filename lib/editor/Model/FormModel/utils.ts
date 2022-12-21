@@ -4,11 +4,26 @@ import memoize from 'lodash/memoize';
 import { booleanPredicate, cloneDeep } from '@wakeapp/utils';
 import { catchPromise } from '@/lib/utils';
 
-import { FormRules, FormRule, FormRuleError, FormRuleItem, FormItemValidateStatus, FormRuleReportType } from './types';
+import {
+  FormRules,
+  FormRule,
+  FormRuleError,
+  FormRuleItem,
+  FormItemValidateStatus,
+  FormRuleReportType,
+  FormValidator,
+  FormValidatorContext,
+} from './types';
 
 type RawAsyncValidateError = {
   errors: ValidateError[];
   fields: Record<string, ValidateError[]>;
+};
+
+const VALIDATE_OPTIONS: ValidateOption = {
+  suppressValidatorError: true,
+  suppressWarning: true,
+  firstFields: true,
 };
 
 export const toPathArray = memoize(path => {
@@ -51,7 +66,7 @@ export const findRule = (rules: FormRules, path: string): FormRule | null => {
   return current?.$self ?? null;
 };
 
-const normalizeRules = (rule: FormRule): FormRuleItem[] => {
+const normalizeRule = (rule: FormRule): FormRuleItem[] => {
   if (Array.isArray(rule)) {
     return rule;
   }
@@ -59,19 +74,63 @@ const normalizeRules = (rule: FormRule): FormRuleItem[] => {
   return [rule];
 };
 
-const VALIDATE_OPTIONS: ValidateOption = {
-  suppressValidatorError: true,
-  suppressWarning: true,
+/**
+ * 规范化验证规则，支持获取上下文
+ * @param rules
+ */
+export const normalizeRules = (rules: FormRules, getContext: () => Omit<FormValidatorContext, 'rule'>) => {
+  const wrapContextAndCompatible = (fn: FormValidator | undefined, rule: FormRuleItem): FormValidator | undefined => {
+    if (fn == null) {
+      return fn;
+    }
+
+    // 兼容 async-validator
+    const validator: RuleItem['validator'] = (_rule, value, callback) => {
+      fn(value, { rule, ...getContext() }).then(
+        () => {
+          callback();
+        },
+        reason => {
+          callback(typeof reason === 'object' ? reason.message : reason);
+        }
+      );
+    };
+
+    return validator as any as FormValidator | undefined;
+  };
+
+  const walk = (rules: FormRules) => {
+    if (rules.$self) {
+      rules.$self = normalizeRule(rules.$self);
+      for (const r of rules.$self) {
+        r.validator = wrapContextAndCompatible(r.validator, r);
+      }
+    }
+
+    if (rules.fields) {
+      for (const key in rules.fields) {
+        walk(rules.fields[key]);
+      }
+    }
+
+    if (rules['*']) {
+      walk(rules['*']);
+    }
+  };
+
+  walk(rules);
+
+  return rules;
 };
 
 /**
  * 单规则验证
  */
 export const ruleToValidator = (path: string, rule: FormRule) => {
-  const rules = normalizeRules(rule);
+  const rules = normalizeRule(rule);
   const schemas = rules.map(i => {
     const schema = new Schema({
-      [path]: i,
+      [path]: i as RuleItem,
     });
 
     return {
@@ -80,14 +139,15 @@ export const ruleToValidator = (path: string, rule: FormRule) => {
     };
   });
 
-  return async (value: any): Promise<FormItemValidateStatus | null> => {
+  return async (value: any, options?: ValidateOption): Promise<FormItemValidateStatus | null> => {
     const datasource = { [path]: value };
+    const validateOptions = { ...VALIDATE_OPTIONS, ...options };
 
     const errors = (
       await Promise.all(
         schemas.map(async ({ schema, rule }): Promise<FormRuleError | null> => {
           try {
-            await schema.validate(datasource, VALIDATE_OPTIONS);
+            await schema.validate(datasource, validateOptions);
 
             return null;
           } catch (error) {
@@ -116,10 +176,10 @@ export const NoopValidator = () => Promise.resolve(null);
  * 转换 Rules 为 AsyncValidate Schema
  * @param rules
  */
-export const rulesToAsyncValidateSchema = (rules: FormRules): Schema => {
+export const rulesToAsyncValidatorSchema = (rules: FormRules): Schema => {
   const walk = (rules: FormRules, desc: RuleItem[]) => {
     if (rules.$self) {
-      const nSelfRules = normalizeRules(rules.$self);
+      const nSelfRules = normalizeRule(rules.$self) as RuleItem[]; // FormRuleItem 会规范化和 RuleItem 兼容
       desc.push(...nSelfRules);
     }
 
@@ -131,7 +191,7 @@ export const rulesToAsyncValidateSchema = (rules: FormRules): Schema => {
         throw new Error(`当字段指定了 fields 或 * 时, $self 必须定义`);
       }
 
-      const nSelfRules = normalizeRules(selfRule);
+      const nSelfRules = normalizeRule(selfRule);
       const types = nSelfRules.filter(r => !!r.type);
       if (!types.length) {
         console.log(rules);
@@ -194,7 +254,7 @@ export const rulesToValidator = memoize((rules: FormRules) => {
 
   const walkAndFilterRules = (rules: FormRules, filter: (rule: FormRuleItem) => boolean) => {
     if (rules.$self) {
-      const list = normalizeRules(rules.$self).filter(filter);
+      const list = normalizeRule(rules.$self).filter(filter);
       rules.$self = list;
     }
 
@@ -226,13 +286,14 @@ export const rulesToValidator = memoize((rules: FormRules) => {
   walkAndFilterRules(errorRules, i => i.reportType !== FormRuleReportType.Warning);
   walkAndFilterRules(warningRules, i => i.reportType === FormRuleReportType.Warning);
 
-  const errorSchema = rulesToAsyncValidateSchema(errorRules);
-  const warningSchema = rulesToAsyncValidateSchema(warningRules);
+  const errorSchema = rulesToAsyncValidatorSchema(errorRules);
+  const warningSchema = rulesToAsyncValidatorSchema(warningRules);
 
-  return async (value: any): Promise<Map<string, FormItemValidateStatus> | null> => {
+  return async (value: any, options?: ValidateOption): Promise<Map<string, FormItemValidateStatus> | null> => {
+    const validateOptions = { ...VALIDATE_OPTIONS, ...options };
     const [error, warnings] = await Promise.all([
-      catchPromise<RawAsyncValidateError>(errorSchema.validate(value, VALIDATE_OPTIONS)),
-      catchPromise<RawAsyncValidateError>(warningSchema.validate(value, VALIDATE_OPTIONS)),
+      catchPromise<RawAsyncValidateError>(errorSchema.validate(value, validateOptions)),
+      catchPromise<RawAsyncValidateError>(warningSchema.validate(value, validateOptions)),
     ]);
 
     if (error || warnings) {

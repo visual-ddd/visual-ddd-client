@@ -1,15 +1,31 @@
 import { RuleItem } from 'async-validator';
+import { BaseEditorModel } from '../BaseEditorModel';
+import { FormModel } from './FormModel';
 
 export enum FormRuleReportType {
   Error,
   Warning,
 }
 
-export interface FormRuleItem extends RuleItem {
+export type FormValidatorContext = {
+  rule: FormRuleItem;
+  model: FormModel;
+  editorModel: BaseEditorModel;
+  scope: IBaseEditorScopeMembers;
+};
+
+export type FormValidator = (value: any, context: FormValidatorContext) => Promise<void>;
+
+export interface FormRuleItem extends Omit<RuleItem, 'validator' | 'asyncValidator'> {
   /**
    * 报告类型，默认为 error
    */
   reportType?: FormRuleReportType;
+
+  /**
+   * 自定义验证器
+   */
+  validator?: FormValidator;
 
   /**
    * 无法作用的验证规则

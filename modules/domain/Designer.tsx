@@ -67,7 +67,21 @@ defineShape({
         },
       },
       name: {
-        $self: { required: true },
+        $self: [
+          { required: true },
+          {
+            validator: async (value: string, context) => {
+              if (!value) {
+                return;
+              }
+
+              const count = context.model.getProperty('count');
+              if (value.length < count) {
+                throw new Error(`长度不能低于 ${count}`);
+              }
+            },
+          },
+        ],
       },
     },
   },

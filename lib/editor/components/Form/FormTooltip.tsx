@@ -56,7 +56,7 @@ export const EditorFormTooltip = observer(function EditFormTooltip(props: Editor
       style={style}
     >
       {hasIssue ? (
-        <Popover content={<EditorFormIssues issues={status!} />} title="告警" trigger="click">
+        <Popover content={<EditorFormIssues issues={status!} />} title="告警">
           <ExclamationCircleFilled />
         </Popover>
       ) : tooltip ? (

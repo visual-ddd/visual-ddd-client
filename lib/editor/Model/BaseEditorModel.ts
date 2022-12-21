@@ -102,7 +102,7 @@ export class BaseEditorModel {
       doc,
     });
     this.viewStore = new BaseEditorViewStore({ datasource: this.datasource });
-    this.formStore = new BaseEditorFormStore({ event: this.event, store: this.store });
+    this.formStore = new BaseEditorFormStore({ event: this.event, store: this.store, editorModel: this });
     this.commandHandler = new BaseEditorCommandHandler({
       event: this.event,
       store: this.store,

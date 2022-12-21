@@ -1,11 +1,13 @@
 import { makeObservable, observable } from 'mobx';
 import memoize from 'lodash/memoize';
+import { cloneDeep } from '@wakeapp/utils';
 import { command, derive, effect, makeAutoBindThis, mutation, runInCommand } from '@/lib/store';
 
 import { BaseNode } from '../BaseNode';
-import { findRule, NoopValidator, normalizePath, rulesToValidator, ruleToValidator } from './utils';
+import { findRule, NoopValidator, normalizePath, normalizeRules, rulesToValidator, ruleToValidator } from './utils';
 import { FormRules, FormItemValidateStatus, FormRuleReportType } from './types';
 import { BaseEditorStore } from '../BaseEditorStore';
+import { BaseEditorModel } from '../BaseEditorModel';
 
 /**
  * 表单验证模型
@@ -72,10 +74,19 @@ export class FormModel {
     return this.errorType === FormRuleReportType.Warning;
   }
 
-  constructor(inject: { node: BaseNode; rules: FormRules; store: BaseEditorStore }) {
+  constructor(inject: { node: BaseNode; rules: FormRules; store: BaseEditorStore; editorModel: BaseEditorModel }) {
     this.node = inject.node;
-    this.rules = inject.rules;
     this.store = inject.store;
+
+    // 规范化规则
+    const clone = cloneDeep(inject.rules);
+    normalizeRules(clone, () => ({
+      model: this,
+      editorModel: inject.editorModel,
+      scope: inject.editorModel.scope.getMembers(),
+    }));
+
+    this.rules = clone;
 
     makeAutoBindThis(this);
     makeObservable(this);

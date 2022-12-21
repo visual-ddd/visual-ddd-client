@@ -58,6 +58,10 @@ export class BaseEditorScope {
     return BaseEditorScope.currentScope === this;
   }
 
+  getMembers() {
+    return this.members;
+  }
+
   /**
    * 注册成员
    * @param name
