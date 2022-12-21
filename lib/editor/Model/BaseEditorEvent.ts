@@ -12,6 +12,8 @@ export interface BaseEditorEventDefinitions {
   NODE_MOVE: { from?: BaseNode; node: BaseNode; to?: BaseNode };
   NODE_UPDATE_PROPERTY: { node: BaseNode; path: string; value: any };
   NODE_DELETE_PROPERTY: { node: BaseNode; path: string };
+  NODE_ACTIVE: { node: BaseNode };
+  NODE_UNACTIVE: { node: BaseNode };
 }
 
 export type BaseEditorEventsWithoutArg = EventsWithoutArg<BaseEditorEventDefinitions>;

@@ -24,7 +24,9 @@ export const AutoResizeDecorator: ReactDecorator = Input => {
 
       const observer = new ResizeObserver(entries => {
         for (const entry of entries) {
-          props.node.resize(entry.contentRect.width, entry.contentRect.height, wrapPreventListenerOptions({}));
+          requestAnimationFrame(() => {
+            props.node.resize(entry.contentRect.width, entry.contentRect.height, wrapPreventListenerOptions({}));
+          });
         }
       });
 

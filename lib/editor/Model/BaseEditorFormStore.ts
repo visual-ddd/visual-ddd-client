@@ -44,6 +44,7 @@ export class BaseEditorFormStore {
 
     this.event.on('NODE_CREATED', this.handleAddNode);
     this.event.on('NODE_REMOVED', this.handleRemoveNode);
+    this.event.on('NODE_UNACTIVE', this.handleNodeUnactive);
   }
 
   /**
@@ -99,6 +100,15 @@ export class BaseEditorFormStore {
         });
       }
     });
+  }
+
+  @command('FORM_STORE:NODE_UNACTIVE')
+  protected handleNodeUnactive(params: { node: BaseNode }) {
+    const model = this.formModels.get(params.node.id);
+
+    if (model) {
+      model.validateAll();
+    }
   }
 
   @mutation('FORM_STORE:ADD_FORM_MODEL')

@@ -1,8 +1,9 @@
-import { makeObservable, observable } from 'mobx';
+import { makeObservable, observable, reaction } from 'mobx';
 import { makeAutoBindThis, derive, mutation } from '@/lib/store';
 
 import { BaseEditorDatasource } from './BaseEditorDatasource';
 import { BaseNode } from './BaseNode';
+import { BaseEditorEvent } from './BaseEditorEvent';
 
 export interface BaseEditorViewState {
   shapeLibraryFolded: boolean;
@@ -29,6 +30,7 @@ export interface BaseEditorViewState {
  */
 export class BaseEditorViewStore {
   private datasource: BaseEditorDatasource;
+  private event: BaseEditorEvent;
 
   /**
    * 编辑器视图状态
@@ -79,19 +81,34 @@ export class BaseEditorViewStore {
     return !!this.selectedNodes.length;
   }
 
-  constructor(inject: { datasource: BaseEditorDatasource }) {
+  constructor(inject: { datasource: BaseEditorDatasource; event: BaseEditorEvent }) {
     this.datasource = inject.datasource;
+    this.event = inject.event;
 
     makeObservable(this);
     makeAutoBindThis(this);
+
+    reaction(
+      () => this.focusingNode,
+      (node, preNode) => {
+        if (node) {
+          this.event.emit('NODE_ACTIVE', { node });
+        }
+
+        if (preNode) {
+          this.event.emit('NODE_UNACTIVE', { node: preNode });
+        }
+      },
+      { name: 'VIEW_STORE:WATCH_FOCUSING_NODE' }
+    );
   }
 
-  @mutation('SET_SELECTED')
+  @mutation('VIEW_STORE:SET_SELECTED')
   setSelected(params: { selected: BaseNode[] }) {
     this.selectedNodes = params.selected;
   }
 
-  @mutation('SET_VIEW_STATE')
+  @mutation('VIEW_STORE:SET_VIEW_STATE')
   setViewState<T extends keyof BaseEditorViewState>(params: { key: T; value: BaseEditorViewState[T] }) {
     const { key, value } = params;
 
