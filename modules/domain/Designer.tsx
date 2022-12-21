@@ -240,7 +240,7 @@ const domainDatabase = ydoc.getMap('domain');
 // new IndexeddbPersistence('just-do-it', ydoc);
 new WebrtcProvider('just-do-it', ydoc);
 
-const model = new BaseEditorModel({ datasource: domainDatabase, doc: ydoc });
+const model = new BaseEditorModel({ datasource: domainDatabase, doc: ydoc, scopeId: 'domain' });
 
 const Operations = observer(() => {
   const canvasModel = useCanvasModel();

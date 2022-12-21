@@ -8,3 +8,4 @@ export * from './EditorModelContext';
 export * from './BaseEditorCommandHandler';
 export * from './BaseEditorModel';
 export * from './BaseEditorEvent';
+export * from './BaseEditorScope';

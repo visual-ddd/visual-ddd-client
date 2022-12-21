@@ -38,6 +38,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 - EditorModel 新增 scope, activeScope, registerScopeMember, isScopeActive -> 将影响全局上下文, 存储，全局 keyboard 绑定
 - 全局告警
 - rule 包含 label
+- 验证器上下文
 - 编辑器面板
 - 快捷键绑定支持全局
 - 无连接桩连接交互

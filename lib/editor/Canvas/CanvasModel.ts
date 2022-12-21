@@ -26,6 +26,12 @@ const ResizingOptionsWithDefault: [keyof Transform.ResizingRaw, any][] = [
   ['allowReverse', true],
 ];
 
+declare global {
+  interface IBaseEditorScopeMembers {
+    canvasModel: CanvasModel;
+  }
+}
+
 /**
  * 这个模型是无状态的，核心状态保存在 EditorModel
  * 这里主要是为了几种处理画布(View)相关逻辑, 会耦合 UI
@@ -94,6 +100,7 @@ export class CanvasModel {
   constructor(inject: { editorModel: BaseEditorModel }) {
     this.editorModel = inject.editorModel;
     const shapeRegistry = (this.shapeRegistry = new ShapeRegistry({ editorModel: inject.editorModel }));
+    this.editorModel.scope.registerScopeMember('canvasModel', this);
 
     // 尺寸变换配置
     type Resizing = GraphBindingOptions['resizing'];
@@ -231,9 +238,12 @@ export class CanvasModel {
 
       // 快捷键处理
       keyboard: {
-        // 单个页面可能存在多个画布实例
-        global: false,
+        global: true,
         enabled: true,
+        // 单个页面可能存在多个画布实例, 通过 editorModel 判断是否激活
+        guard: () => {
+          return this.editorModel.isActive;
+        },
       },
 
       // 剪切板
