@@ -3,6 +3,7 @@
   padding: 0;
 
   color: var(--vd-color-font-regular);
+  font-size: var(--vd-font-size-h6);
 
   :global(.anticon) {
     margin-right: 4px;
@@ -13,6 +14,7 @@
 .group {
   list-style: none;
   padding: 0;
+  font-size: var(--vd-font-size-h5);
 }
 
 .groupItem {

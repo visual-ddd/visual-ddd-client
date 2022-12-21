@@ -35,6 +35,9 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 ## TODO
 
+- EditorModel 新增 scope, activeScope, registerScopeMember, isScopeActive -> 将影响全局上下文, 存储，全局 keyboard 绑定
+- 全局告警
+- rule 包含 label
 - 编辑器面板
 - 快捷键绑定支持全局
 - 无连接桩连接交互
@@ -50,3 +53,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 - layout 支持折叠
 - derive 支持 memo
 - 被其他成员选中的不能修改
+- 告警信息定位

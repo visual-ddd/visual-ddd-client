@@ -17,18 +17,21 @@
 .root {
   :global(.x6-split-box-resizer) {
     background-color: var(--vd-color-border-light);
+    --width: 1px;
 
-    &:hover {
+    &:hover,
+    &:active {
       background-color: var(--vd-color-border);
+      --width: 4px;
     }
   }
 
   :global(.x6-split-box-vertical .x6-split-box-resizer) {
-    width: 1px;
+    width: var(--width);
   }
 
   :global(.x6-split-box-horizontal .x6-split-box-resizer) {
-    height: 1px;
+    height: var(--width);
   }
 }
 
