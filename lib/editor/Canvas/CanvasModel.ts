@@ -67,6 +67,10 @@ export class CanvasModel {
     return this.editorModel.viewStore;
   }
 
+  get editorFormStore() {
+    return this.editorModel.formStore;
+  }
+
   /**
    * X6 画布对象
    */

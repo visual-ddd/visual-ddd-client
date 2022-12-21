@@ -1,0 +1,26 @@
+.root {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  line-height: 0;
+  margin-left: 4px;
+  cursor: pointer;
+
+  color: var(--vd-color-gray-500);
+
+  &:global(.error) {
+    color: var(--vd-color-danger-300);
+
+    &:hover {
+      color: var(--vd-color-danger);
+    }
+  }
+
+  &:global(.warning) {
+    color: var(--vd-color-warning-300);
+
+    &:hover {
+      color: var(--vd-color-warning);
+    }
+  }
+}

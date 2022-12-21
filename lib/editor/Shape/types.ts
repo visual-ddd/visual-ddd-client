@@ -4,7 +4,7 @@ import { Transform } from '@antv/x6-plugin-transform';
 
 import { BaseEditorModel, BaseNode, Properties, ShapeType } from '../Model';
 import { CopyPayload } from '../Canvas/ClipboardUtils';
-import { FormRules } from '../Model/FormModel';
+import { FormModel, FormRules } from '../Model/FormModel';
 
 export interface ShapeCoreInfo {
   type: string;
@@ -33,6 +33,18 @@ export interface ShapeComponentCellProps {
 }
 
 export type ShapeResizingOptions = Omit<Transform.ResizingRaw, 'enabled'>;
+
+export interface ShapeComponentProps {
+  cellProps: ShapeComponentCellProps;
+  model: BaseEditorModel;
+  node: BaseNode;
+}
+
+export interface ShapeAttributesComponentProps {
+  model: BaseEditorModel;
+  node: BaseNode;
+  formModel: FormModel;
+}
 
 export interface ShapeConfiguration {
   /**
@@ -185,9 +197,10 @@ export interface ShapeConfiguration {
   /**
    * 组件渲染定义
    */
-  component: (props: {
-    cellProps: ShapeComponentCellProps;
-    model: BaseEditorModel;
-    node: BaseNode;
-  }) => React.ReactElement;
+  component: React.ComponentType<ShapeComponentProps>;
+
+  /**
+   * 属性编辑器渲染
+   */
+  attributeComponent?: React.ComponentType<ShapeAttributesComponentProps>;
 }

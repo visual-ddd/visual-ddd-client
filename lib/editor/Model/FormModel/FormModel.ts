@@ -22,25 +22,38 @@ export class FormModel {
    * 错误列表收集
    */
   @observable.shallow
-  errorList: Map<string, FormItemValidateStatus> = new Map();
+  errorMap: Map<string, FormItemValidateStatus> = new Map();
+
+  @derive
+  get errorInArray() {
+    return Array.from(this.errorMap.values());
+  }
 
   /**
    * 当前节点错误类型
    */
   @derive
   get errorType(): FormRuleReportType | null {
-    const len = this.errorList.size;
+    const len = this.errorMap.size;
     if (!len) {
       return null;
     }
 
-    for (const i of this.errorList.values()) {
+    for (const i of this.errorMap.values()) {
       if (i.errors.length) {
         return FormRuleReportType.Error;
       }
     }
 
     return FormRuleReportType.Warning;
+  }
+
+  /**
+   * 当前节点是否包含问题，不管是错误还是警告
+   */
+  @derive
+  get hasIssue() {
+    return !!this.errorMap.size;
   }
 
   /**
@@ -101,7 +114,7 @@ export class FormModel {
    * @returns
    */
   getValidateStatus(path: string): FormItemValidateStatus | undefined {
-    return this.errorList.get(normalizePath(path));
+    return this.errorMap.get(normalizePath(path));
   }
 
   /**
@@ -112,9 +125,9 @@ export class FormModel {
     const np = normalizePath(path);
     const list: FormItemValidateStatus[] = [];
 
-    for (const key of this.errorList.keys()) {
+    for (const key of this.errorMap.keys()) {
       if (key.startsWith(np)) {
-        list.push(this.errorList.get(key)!);
+        list.push(this.errorMap.get(key)!);
       }
     }
 
@@ -174,7 +187,7 @@ export class FormModel {
    */
   @mutation('CLEAR_VALIDATE_STATUS')
   protected clearValidateStatus() {
-    this.errorList.clear();
+    this.errorMap.clear();
   }
 
   /**
@@ -185,7 +198,7 @@ export class FormModel {
   protected setValidateStatus(params: { path: string; status?: FormItemValidateStatus | null }) {
     const { path, status } = params;
     if (status) {
-      this.errorList.set(path, status);
+      this.errorMap.set(path, status);
     } else {
       this.deleteValidateStatus({ path });
     }
@@ -198,12 +211,12 @@ export class FormModel {
   @mutation('DELETE_VALIDATE_STATUS')
   protected deleteValidateStatus(params: { path: string }) {
     const { path } = params;
-    this.errorList.delete(path);
+    this.errorMap.delete(path);
   }
 
   @mutation('RESET_VALIDATE_STATUS')
   protected resetValidateStatus(params: { status: Map<string, FormItemValidateStatus> }) {
-    this.errorList = params.status;
+    this.errorMap = params.status;
   }
 
   /**

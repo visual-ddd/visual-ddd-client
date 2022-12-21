@@ -15,3 +15,15 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.u-danger {
+  color: var(--vd-color-danger);
+}
+
+.u-warning {
+  color: var(--vd-color-warning);
+}
+
+.u-ml-xs {
+  margin-left: var(--vd-spacing-xs);
+}

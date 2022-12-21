@@ -1,0 +1,24 @@
+.list {
+  list-style: none;
+  padding: 0;
+
+  color: var(--vd-color-font-regular);
+
+  :global(.anticon) {
+    margin-right: 4px;
+    vertical-align: middle;
+  }
+}
+
+.group {
+  list-style: none;
+  padding: 0;
+}
+
+.groupItem {
+  margin-bottom: var(--vd-spacing-sm);
+}
+
+.groupBody {
+  padding-left: var(--vd-spacing-xs);
+}

@@ -1,6 +1,6 @@
 import { NoopArray, NoopObject } from '@wakeapp/utils';
 import { observer } from 'mobx-react';
-import { useMemo } from 'react';
+import { useMemo, createElement } from 'react';
 
 import { BaseNode, useEditorModel } from '../Model';
 import { shapes } from './store';
@@ -60,7 +60,7 @@ export const ShapeRenderer = observer(function Shape(props: ShapeRendererProps) 
     }
   }
 
-  return config.component({
+  return createElement(config.component, {
     cellProps,
     model: editorModel,
     node: node,

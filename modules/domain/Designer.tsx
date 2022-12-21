@@ -1,5 +1,6 @@
 import { Doc as YDoc } from 'yjs';
 import { WebrtcProvider } from 'y-webrtc';
+import { Input, InputNumber } from 'antd';
 // import { IndexeddbPersistence } from 'y-indexeddb';
 import { observer } from 'mobx-react';
 import { useState, FC } from 'react';
@@ -22,7 +23,11 @@ import {
   EditorLayout,
   EditorShapeLibrary,
   EditorToolbar,
+  EditorInspectPanel,
+  EditorFormItem,
+  FormRuleReportType,
 } from '@/lib/editor';
+import { EditorFormContainer } from '@/lib/editor/components/Form/FormContainer';
 
 const MyComponent: FC<ReactComponentProps> = props => {
   const { properties, updateProperty } = useShapeModel(props.node);
@@ -46,11 +51,39 @@ defineShape({
   initialProps() {
     return {
       size: { width: 100, height: 100 },
-      count: 0,
+      count: 9,
     };
   },
   component(props) {
     return <ReactComponentBinding {...props.cellProps} component="hello" />;
+  },
+  rules: {
+    fields: {
+      count: {
+        $self: {
+          type: 'number',
+          max: 10,
+          reportType: FormRuleReportType.Warning,
+        },
+      },
+      name: {
+        $self: { required: true },
+      },
+    },
+  },
+  attributeComponent(props) {
+    return (
+      <>
+        <EditorFormContainer>
+          <EditorFormItem path="count" label="计数" tooltip="很重要">
+            <InputNumber />
+          </EditorFormItem>
+          <EditorFormItem path="name" label="名称">
+            <Input />
+          </EditorFormItem>
+        </EditorFormContainer>
+      </>
+    );
   },
 });
 
@@ -259,9 +292,10 @@ const Designer = observer(() => {
                 >
                   toggleShowCanvas
                 </button>
+                <Operations />
               </>
             }
-            right={<Operations />}
+            right={<EditorInspectPanel />}
             toolbar={<EditorToolbar />}
           >
             {showCanvas && (

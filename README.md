@@ -35,16 +35,18 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 ## TODO
 
-- Zoom 处理
-- BBox 平移、缩放后失效
+- 编辑器面板
 - 快捷键绑定支持全局
 - 无连接桩连接交互
 - defineShape 支持 decorator，用类组件实现
 - node edit
 - label edit
-- 编辑器面板
 - edge/node selected 状态高亮
 - 边拖入
 - 创建后选中
+- debounce 发布 yjs 事件
 - 只读模式
+- 右键菜单
+- layout 支持折叠
+- derive 支持 memo
 - 被其他成员选中的不能修改

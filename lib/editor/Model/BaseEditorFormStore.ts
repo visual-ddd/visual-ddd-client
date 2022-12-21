@@ -5,7 +5,11 @@ import { getRules } from '../Shape';
 import { BaseEditorEvent } from './BaseEditorEvent';
 import { BaseEditorStore } from './BaseEditorStore';
 import { BaseNode } from './BaseNode';
-import { FormModel } from './FormModel';
+import { FormModel, FormRules } from './FormModel';
+
+const DEFAULT_RULES: FormRules = {
+  fields: {},
+};
 
 /**
  * 表单验证状态
@@ -62,16 +66,14 @@ export class BaseEditorFormStore {
     const { node } = params;
     const rules = getRules(node.name);
 
-    if (rules) {
-      this.addFormModel({
+    this.addFormModel({
+      node,
+      model: new FormModel({
         node,
-        model: new FormModel({
-          node,
-          rules,
-          store: this.store,
-        }),
-      });
-    }
+        rules: rules ?? DEFAULT_RULES,
+        store: this.store,
+      }),
+    });
   }
 
   @command('FORM_STORE:REMOVE_NODE')

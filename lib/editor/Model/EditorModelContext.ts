@@ -51,6 +51,7 @@ export function useEditorModel<Model extends BaseEditorModel = BaseEditorModel>(
     model,
     store: model.store,
     viewStore: model.viewStore,
+    formStore: model.formStore,
     event: model.event,
     commandHandler: model.commandHandler,
     index: model.index,
