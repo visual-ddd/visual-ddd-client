@@ -45,7 +45,10 @@ export class CellUpdater<T extends Cell = Cell> {
   }
 
   set data(value: any) {
-    this.instance.current!.setData(value, wrapPreventListenerOptions({ overwrite: true }));
+    // 这里更新比较昂贵，我们假设 data 是引用数据，就是一直不变的
+    // this.instance.current!.setData(value, wrapPreventListenerOptions({ overwrite: true }));
+    // @ts-expect-error
+    this.instance.current.store.data.data = value;
   }
 
   get tools() {

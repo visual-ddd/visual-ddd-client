@@ -223,6 +223,9 @@ export function useCell<Props extends CellBindingProps>({
         // 恢复的实例，需要重新更新
         if (recoveredInstance) {
           updater.accept(propsRef.current);
+        } else {
+          // 仅更新 data, 这个是引用数据
+          updater.accept({ data: propsRef.current.data });
         }
 
         disposers.push(() => {
