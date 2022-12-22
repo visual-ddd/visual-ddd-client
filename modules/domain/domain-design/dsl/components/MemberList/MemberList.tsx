@@ -137,6 +137,7 @@ const Member = observer(function Member<T extends IDDSL>(props: {
             title={context.getEditorTitle()}
             destroyTooltipOnHide
             content={context.handleRenderEditor(`${path}[${index}]`, value)}
+            placement="left"
           >
             <EditTwoTone
               onClick={() => {
@@ -164,7 +165,8 @@ const Member = observer(function Member<T extends IDDSL>(props: {
 
 /**
  * 属性编辑器
- * TODO: 数据验证
+ * TODO: 数据结果回显
+ * TODO: 触发验证
  */
 export const MemberList = observer(function MemberList<T extends IDDSL>(props: MemberListProps<T>) {
   const { className, style, value, addText, path, renderEditor, editorTitle, editorDisplayType } = props;

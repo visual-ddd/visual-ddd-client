@@ -99,6 +99,13 @@ export const SortableList = observer(function SortableList<T = any, C extends {}
     onChange?.(clone);
   };
 
-  // @ts-expect-error
-  return <Container {...props} onSortEnd={handleSortEnd} useDragHandle></Container>;
+  return (
+    // @ts-expect-error
+    <Container
+      {...props}
+      onSortEnd={handleSortEnd}
+      useDragHandle
+      helperClass={classNames(s.dragging, 'dragging')}
+    ></Container>
+  );
 });

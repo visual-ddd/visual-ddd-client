@@ -27,7 +27,8 @@ export function createProperty(): PropertyDSL {
 
 export function createParameter(): ParameterDSL {
   return {
-    ...createNameDSL({ wordCase: 'camelCase' }),
+    ...createNameDSL({}),
+    name: 'arg',
     type: 'String',
   };
 }

@@ -11,6 +11,7 @@
   align-items: center;
   padding: 4px;
   border: 1px solid var(--vd-color-border);
+  background-color: white;
   border-radius: 4px;
   margin-bottom: var(--vd-spacing-xs);
   user-select: none;
@@ -19,6 +20,8 @@
 
 .itemContent {
   flex: 1;
+  overflow: hidden;
+  word-break: break-word;
 }
 
 .itemActions {

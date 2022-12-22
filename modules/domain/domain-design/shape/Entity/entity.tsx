@@ -8,7 +8,7 @@ import {
 import { ReactComponentBinding, registerReactComponent } from '@/lib/g6-binding';
 import { Input } from 'antd';
 
-import { createEntity, PropertiesEditor } from '../../dsl';
+import { createEntity, MethodsEditor, PropertiesEditor } from '../../dsl';
 
 import { EntityReactShapeComponent } from './ReactShapeComponent';
 import icon from './entity.png';
@@ -38,7 +38,7 @@ export const EntityShapeAttributeComponent = () => {
         <PropertiesEditor />
       </EditorFormCollapsePanel>
       <EditorFormCollapsePanel header="方法" key="methods">
-        x
+        <MethodsEditor />
       </EditorFormCollapsePanel>
     </EditorFormCollapse>
   );

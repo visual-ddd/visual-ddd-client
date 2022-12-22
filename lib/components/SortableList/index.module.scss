@@ -3,3 +3,7 @@
   padding: 0 4px;
   font-size: 14px;
 }
+
+.dragging {
+  z-index: var(--vd-z-index-tooltip);
+}
