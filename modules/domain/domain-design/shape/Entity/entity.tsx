@@ -8,10 +8,10 @@ import {
 import { ReactComponentBinding, registerReactComponent } from '@/lib/g6-binding';
 import { Input } from 'antd';
 
-import { createEntity } from '../../dsl';
+import { createEntity, PropertiesEditor } from '../../dsl';
+
 import { EntityReactShapeComponent } from './ReactShapeComponent';
 import icon from './entity.png';
-import { PropertiesEditor } from './PropertiesEditor';
 
 registerReactComponent('entity', EntityReactShapeComponent);
 

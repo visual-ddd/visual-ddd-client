@@ -46,7 +46,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 - edge/node selected 状态高亮
 - 边拖入
 - 创建后选中
-- debounce 发布 yjs 事件
+- updateProperty debounce 发布 yjs 事件, 使用合并事件形式
 - 只读模式
 - 右键菜单
 - layout 支持折叠
