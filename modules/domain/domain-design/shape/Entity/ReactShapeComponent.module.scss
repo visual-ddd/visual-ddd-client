@@ -1,0 +1,65 @@
+.root {
+  min-width: 200px;
+  max-width: 500px;
+  background-color: #d9f7be;
+  border: 2px solid var(--vd-color-gray-900);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid var(--vd-color-gray-800);
+  align-items: center;
+  gap: 4px;
+  padding: var(--vd-spacing-xs);
+}
+
+.type {
+  font-size: var(--vd-font-size-h6);
+  font-weight: bold;
+}
+
+.name {
+  font-size: var(--vd-font-size-h6);
+  font-style: italic;
+  color: var(--vd-color-font-regular);
+}
+
+.title {
+}
+
+.cells {
+  min-height: 10px;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid var(--vd-color-gray-800);
+  }
+}
+
+/**
+ * 属性
+ */
+
+.property,
+.method {
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  font-size: var(--vd-font-size-h6);
+}
+
+.propertyName {
+  flex: 1;
+  white-space: nowrap;
+  padding-right: var(--vd-spacing-sm);
+}
+
+.propertyComment,
+.methodComment {
+  font-style: italic;
+  color: var(--vd-color-font-placeholder);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100px;
+}

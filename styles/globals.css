@@ -27,3 +27,7 @@ a {
 .u-ml-xs {
   margin-left: var(--vd-spacing-xs);
 }
+
+.u-bold {
+  font-weight: bold;
+}

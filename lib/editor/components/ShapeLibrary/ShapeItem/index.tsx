@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import Image from 'next/image';
+import Image, { StaticImageData } from 'next/image';
 import React, { memo } from 'react';
 import { ALLOWED_DROP_SOURCE } from '@/lib/g6-binding';
 
@@ -7,7 +7,7 @@ import defaultIcon from './default-logo.svg';
 import s from './index.module.scss';
 
 export interface ShapeItemProps {
-  icon?: string;
+  icon?: string | StaticImageData;
   name: string;
   type: string;
 }

@@ -32,7 +32,7 @@ export const DomainEditor = observer(function DomainEditor() {
           <EditorLayout
             left={
               <>
-                <EditorShapeLibrary shapes={['rect', 'rect-child', 'child', 'child-2', 'react']} />
+                <EditorShapeLibrary shapes={['entity', 'rect', 'rect-child', 'child', 'child-2', 'react']} />
               </>
             }
             right={<EditorInspectPanel />}

@@ -37,6 +37,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 - 全局告警
 - rule 包含 label
+- 节点级别验证
 - 编辑器面板
 - 无连接桩连接交互
 - defineShape 支持 decorator，用类组件实现
