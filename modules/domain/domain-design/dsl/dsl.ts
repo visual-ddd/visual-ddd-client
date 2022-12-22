@@ -1,12 +1,15 @@
 /**
  * 核心元数据
  */
-export interface NameDSL {
+
+export interface IDDSL {
   /**
    * 自动生成的唯一标识符
    */
   uuid: string;
+}
 
+export interface NameDSL extends IDDSL {
   /**
    * 唯一标识符, 用户输入
    */

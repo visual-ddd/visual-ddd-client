@@ -1,0 +1,47 @@
+.root {
+  pointer-events: auto;
+  background: white;
+  position: absolute;
+  right: 0px;
+  top: 0;
+  min-width: 230px;
+  max-width: 300px;
+  min-height: 300px;
+  max-height: 100%;
+  border: 1px solid var(--vd-color-border-light);
+  display: flex;
+  flex-direction: column;
+  resize: both;
+  overflow: hidden;
+}
+
+.header {
+  padding: var(--vd-spacing-xs);
+  background-color: var(--vd-color-gray-100);
+  font-size: var(--vd-font-size-h6);
+  font-weight: bold;
+  height: 37px;
+  display: flex;
+  align-items: center;
+  cursor: grab;
+}
+
+.title {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.close {
+  color: var(--vd-color-font-placeholder);
+  cursor: pointer;
+}
+
+.body {
+  padding: var(--vd-spacing-xs);
+  width: 100%;
+  flex: 1;
+  overflow-x: hidden;
+  overflow-y: auto;
+}

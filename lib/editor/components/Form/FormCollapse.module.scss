@@ -1,0 +1,19 @@
+.root {
+  :global(.ant-collapse-item:not(:last-child)) {
+    border-bottom: 1px solid var(--vd-color-border-light);
+  }
+
+  :global(.ant-collapse-header) {
+    padding: var(--vd-spacing-xs) !important;
+    user-select: none;
+    font-size: var(--vd-font-size-h6);
+    line-height: var(--vd-font-line-height-h6) !important;
+    align-items: center !important;
+    background-color: var(--vd-color-gray-100);
+    font-weight: bold;
+  }
+
+  :global(.ant-collapse-content-box) {
+    padding: var(--vd-spacing-xs) !important;
+  }
+}

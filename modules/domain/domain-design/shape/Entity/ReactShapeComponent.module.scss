@@ -46,12 +46,17 @@
   display: flex;
   align-items: center;
   font-size: var(--vd-font-size-h6);
+  width: 100%;
+  overflow: hidden;
 }
 
-.propertyName {
+.propertyName,
+.methodName {
   flex: 1;
   white-space: nowrap;
   padding-right: var(--vd-spacing-sm);
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .propertyComment,

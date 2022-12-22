@@ -17,3 +17,9 @@ export const AccessModifier = {
   private: '-',
   protected: '#',
 };
+
+export const AccessList = [
+  { label: 'public(公开)', value: 'public' },
+  { label: 'private(私有)', value: 'private' },
+  { label: 'protected(保护)', value: 'protected' },
+];

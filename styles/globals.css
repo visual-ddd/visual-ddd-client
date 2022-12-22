@@ -31,3 +31,7 @@ a {
 .u-bold {
   font-weight: bold;
 }
+
+.u-fw {
+  width: 100%;
+}

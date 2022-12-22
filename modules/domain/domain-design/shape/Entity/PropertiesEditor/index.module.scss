@@ -1,0 +1,32 @@
+.root {
+  margin-bottom: var(--vd-spacing-sm);
+}
+
+.add {
+  width: 100%;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  padding: 4px;
+  border: 1px solid var(--vd-color-border);
+  border-radius: 4px;
+  margin-bottom: var(--vd-spacing-xs);
+  user-select: none;
+  font-size: var(--vd-font-size-h6);
+}
+
+.itemContent {
+  flex: 1;
+}
+
+.itemActions {
+  display: flex;
+
+  :global(.anticon) {
+    font-size: 15px;
+    padding: 2px 4px;
+    cursor: pointer;
+  }
+}

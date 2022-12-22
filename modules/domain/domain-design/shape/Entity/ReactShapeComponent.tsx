@@ -1,4 +1,4 @@
-import { FC, memo } from 'react';
+import { FC } from 'react';
 import { ReactComponentProps } from '@/lib/g6-binding';
 
 import classNames from 'classnames';
@@ -6,11 +6,12 @@ import { useShapeModel } from '@/lib/editor';
 
 import { EntityDSL, PropertyDSL, UntitledInCamelCase, VoidClass, AccessModifier, MethodDSL, Void } from '../../dsl';
 import s from './ReactShapeComponent.module.scss';
+import { observer } from 'mobx-react';
 
 /**
  * 属性渲染
  */
-const Property = memo((props: { value: PropertyDSL }) => {
+const Property = observer(function Property(props: { value: PropertyDSL }) {
   const { value } = props;
   const { access = 'public', type = VoidClass, title, name = UntitledInCamelCase, description } = value;
 
@@ -27,12 +28,10 @@ const Property = memo((props: { value: PropertyDSL }) => {
   );
 });
 
-Property.displayName = 'Property';
-
 /**
  * 方法渲染
  */
-const Method = memo((props: { value: MethodDSL }) => {
+const Method = observer(function Method(props: { value: MethodDSL }) {
   const { value } = props;
   const {
     access = 'public',
@@ -51,7 +50,7 @@ const Method = memo((props: { value: MethodDSL }) => {
         <span className="u-bold">{name}</span>(
         {parameters
           .map(p => {
-            return `${p.name ?? UntitledInCamelCase}: ${p.type ?? VoidClass}`;
+            return `${p.name || UntitledInCamelCase}: ${p.type || VoidClass}`;
           })
           .join(', ')}
         ): {result}
@@ -63,8 +62,6 @@ const Method = memo((props: { value: MethodDSL }) => {
   );
 });
 
-Method.displayName = 'Method';
-
 export const EntityReactShapeComponent: FC<ReactComponentProps> = props => {
   const properties = useShapeModel(props.node).properties as unknown as EntityDSL;
 
@@ -72,8 +69,8 @@ export const EntityReactShapeComponent: FC<ReactComponentProps> = props => {
     <div className={classNames('shape-entity', s.root)}>
       <div className={classNames('shape-entity__header', s.header)}>
         <div className={classNames('shape-entity__type', s.type)}>《实体》</div>
-        <div className={classNames('shape-entity__name', s.name)}>{properties.name ?? 'Untitled'}</div>
-        <div className={classNames('shape-entity__title', s.title)}>{properties.title ?? '未命名'}</div>
+        <div className={classNames('shape-entity__name', s.name)}>{properties.name || 'Untitled'}</div>
+        <div className={classNames('shape-entity__title', s.title)}>{properties.title || '未命名'}</div>
       </div>
       <div className={classNames('shape-entity__cells', s.cells)}>
         {properties.properties.map(i => {

@@ -38,9 +38,11 @@
 .body {
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .canvas {
   width: 100%;
   flex: 1;
+  position: relative;
 }

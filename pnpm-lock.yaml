@@ -40,6 +40,8 @@ specifiers:
   prettier-config-wk: ^0.2.4
   react: 18.2.0
   react-dom: 18.2.0
+  react-draggable: ^4.4.5
+  react-sortable-hoc: ^2.0.0
   reflect-metadata: ^0.1.13
   sass: ^1.56.2
   typescript: 4.9.4
@@ -74,6 +76,8 @@ dependencies:
   next: 13.0.6_iburw4xngv4nuxezlam7kbvdc4
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
+  react-draggable: 4.4.5_biqbaboplfbrettd7655fr4n2y
+  react-sortable-hoc: 2.0.0_biqbaboplfbrettd7655fr4n2y
   reflect-metadata: 0.1.13
   uuid: 9.0.0
   y-indexeddb: 9.0.9_yjs@13.5.43
@@ -2307,6 +2311,12 @@ packages:
       wrap-ansi: 7.0.0
     dev: true
 
+  /clsx/1.2.1:
+    resolution:
+      { integrity: sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg== }
+    engines: { node: '>=6' }
+    dev: false
+
   /co/4.6.0:
     resolution:
       { integrity: sha512-QVb0dM5HvG+uaxitm8wONl7jltx8dqhfU33DcqtOZcLSVIKSDDLDi7+0LbAKiyI8hD9u42m2YxXSkMGWThaecQ== }
@@ -3688,6 +3698,13 @@ packages:
       has: 1.0.3
       side-channel: 1.0.4
     dev: true
+
+  /invariant/2.2.4:
+    resolution:
+      { integrity: sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA== }
+    dependencies:
+      loose-envify: 1.4.0
+    dev: false
 
   /is-arguments/1.1.1:
     resolution:
@@ -5919,6 +5936,19 @@ packages:
       react: 18.2.0
       scheduler: 0.23.0
 
+  /react-draggable/4.4.5_biqbaboplfbrettd7655fr4n2y:
+    resolution:
+      { integrity: sha512-OMHzJdyJbYTZo4uQE393fHcqqPYsEtkjfMgvCHr6rejT+Ezn4OZbNyGH50vv+SunC1RMvwOTSWkEODQLzw1M9g== }
+    peerDependencies:
+      react: '>= 16.3.0'
+      react-dom: '>= 16.3.0'
+    dependencies:
+      clsx: 1.2.1
+      prop-types: 15.8.1
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+    dev: false
+
   /react-is/16.13.1:
     resolution:
       { integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ== }
@@ -5946,6 +5976,20 @@ packages:
       react-dom: ^16.0.0 || ^17.0.0 || ^18.0.0
     dependencies:
       lodash: 4.17.21
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+    dev: false
+
+  /react-sortable-hoc/2.0.0_biqbaboplfbrettd7655fr4n2y:
+    resolution:
+      { integrity: sha512-JZUw7hBsAHXK7PTyErJyI7SopSBFRcFHDjWW5SWjcugY0i6iH7f+eJkY8cJmGMlZ1C9xz1J3Vjz0plFpavVeRg== }
+    peerDependencies:
+      react: ^16.3.0 || ^17.0.0
+      react-dom: ^16.3.0 || ^17.0.0
+    dependencies:
+      '@babel/runtime': 7.20.6
+      invariant: 2.2.4
+      prop-types: 15.8.1
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
     dev: false

@@ -1,5 +1,6 @@
 import { SplitBox } from '@antv/x6-react-components';
 import classNames from 'classnames';
+import { EditorFormPortalContextProvider } from '../Form';
 
 import s from './index.module.scss';
 
@@ -33,7 +34,10 @@ export const EditorLayout = (props: EditorLayoutProps) => {
   const { left, children, toolbar, right } = props;
 
   return (
-    <div className={classNames('vd-editor-layout', s.root)}>
+    <EditorFormPortalContextProvider
+      className={classNames('vd-editor-layout', s.root)}
+      target=".vd-editor-layout__canvas"
+    >
       <SplitBox split="vertical" defaultSize={SIDE_WIDTH} minSize={MIN_SIDE_WIDTH} maxSize={MAX_SIDE_WIDTH}>
         <div className={classNames('vd-editor-layout__left-side', s.left)}>{left}</div>
         <SplitBox primary="second" defaultSize={SIDE_WIDTH} minSize={MIN_SIDE_WIDTH} maxSize={MAX_SIDE_WIDTH}>
@@ -44,6 +48,6 @@ export const EditorLayout = (props: EditorLayoutProps) => {
           <div className={classNames('vd-editor-layout__right-side', s.right)}>{right}</div>
         </SplitBox>
       </SplitBox>
-    </div>
+    </EditorFormPortalContextProvider>
   );
 };
