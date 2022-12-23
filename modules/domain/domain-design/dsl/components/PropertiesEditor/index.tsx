@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { observer } from 'mobx-react';
 
 import { PropertyDSL } from '../../dsl';
-import { VoidClass, UntitledInCamelCase, AccessModifier, NameTooltip } from '../../constants';
+import { NameTooltip } from '../../constants';
 import { createProperty } from '../../factory';
 import { AccessSelect } from '../AccessSelect';
 import { MemberList } from '../MemberList';
@@ -12,21 +12,13 @@ import { NameInput } from '../NameInput';
 
 import s from './index.module.scss';
 import { DescriptionInput } from '../DescriptionInput';
+import { stringifyProperty } from '../../stringify';
+import { TypeInput } from '../TypeInput';
 
 export interface PropertiesEditorProps {}
 
 const renderItem = (value: PropertyDSL) => {
-  const { access, type, title, name } = value;
-  return (
-    <div className={classNames('vd-properties-editor-item', s.item)}>
-      <span className={classNames('vd-properties-editor-item__access', s.itemAccess)}>
-        {AccessModifier[access || 'public']}
-      </span>
-      <span className={classNames('vd-properties-editor-item__name', s.itemName)} title={title}>
-        <span className="u-bold">{name || UntitledInCamelCase}</span>: {type || VoidClass}
-      </span>
-    </div>
-  );
+  return <div className={classNames('vd-properties-editor-item', s.item)}>{stringifyProperty(value)}</div>;
 };
 
 const renderEditor = (path: string) => {
@@ -43,7 +35,7 @@ const renderEditor = (path: string) => {
         <DescriptionInput />
       </EditorFormItem>
       <EditorFormItem path={p('type')} label="类型">
-        <Input />
+        <TypeInput />
       </EditorFormItem>
       <EditorFormItem path={p('access')} label="访问控制">
         <AccessSelect />

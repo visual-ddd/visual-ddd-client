@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { observer } from 'mobx-react';
 
 import { MethodDSL } from '../../dsl';
-import { UntitledInCamelCase, AccessModifier, Void, VoidClass, NameTooltip } from '../../constants';
+import { NameTooltip } from '../../constants';
 import { createMethod } from '../../factory';
 import { AccessSelect } from '../AccessSelect';
 import { MemberList } from '../MemberList';
@@ -13,26 +13,17 @@ import { DescriptionInput } from '../DescriptionInput';
 import { NameInput } from '../NameInput';
 
 import s from './index.module.scss';
+import { stringifyMethod } from '../../stringify';
+import { TypeInput } from '../TypeInput';
 
 export interface MethodsEditorProps {}
 type Item = MethodDSL;
 
 const renderItem = (value: Item) => {
-  const { access, result, title, parameters, name } = value;
+  const { title } = value;
   return (
-    <div className={classNames('vd-methods-editor-item', s.item)}>
-      <span className={classNames('vd-methods-editor-item__access', s.itemAccess)}>
-        {AccessModifier[access || 'public']}
-      </span>
-      <span className={classNames('vd-methods-editor-item__name', s.itemName)} title={title}>
-        <span className="u-bold">{name || UntitledInCamelCase}</span>(
-        {parameters
-          .map((i, idx) => {
-            return `${i.name || 'arg' + idx}: ${i.type || VoidClass}`;
-          })
-          .join(', ')}
-        ): {result || Void}
-      </span>
+    <div className={classNames('vd-methods-editor-item', s.item)} title={title}>
+      {stringifyMethod(value)}
     </div>
   );
 };
@@ -60,7 +51,7 @@ const renderEditor = (path: string) => {
         <ParameterEditor path={path} />
       </EditorFormItem>
       <EditorFormItem path={p('result')} label="返回值类型">
-        <Input />
+        <TypeInput />
       </EditorFormItem>
     </>
   );

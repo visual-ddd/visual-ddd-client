@@ -1,7 +1,43 @@
 import { NoopObject } from '@wakeapp/utils';
 import { v4 } from 'uuid';
 import { UntitledInCamelCase, UntitledInTitle, UntitledInUpperCamelCase } from './constants';
-import { ClassDSL, EntityDSL, MethodDSL, NameCase, NameDSL, ParameterDSL, PropertyDSL } from './dsl';
+import {
+  BaseType,
+  ClassDSL,
+  ContainerType,
+  EntityDSL,
+  MethodDSL,
+  NameCase,
+  NameDSL,
+  ParameterDSL,
+  PropertyDSL,
+  TypeDSL,
+  TypeType,
+} from './dsl';
+
+export function createBaseType(type: BaseType): TypeDSL {
+  return { type: TypeType.Base, name: type };
+}
+
+export function createVoidClass() {
+  return createBaseType('Void');
+}
+
+export function createContainerType(container: ContainerType): TypeDSL {
+  return {
+    type: TypeType.Container,
+    name: container,
+    params: container === 'Map' ? { key: createVoidClass(), value: createVoidClass() } : { item: createVoidClass() },
+  };
+}
+
+export function createReferenceType(id: string, name: string): TypeDSL {
+  return {
+    type: TypeType.Reference,
+    referenceId: id,
+    name,
+  };
+}
 
 export function createNameDSL(options: { wordCase?: NameCase; title?: boolean } = NoopObject): NameDSL {
   const { wordCase = 'CamelCase', title } = options;
@@ -17,7 +53,7 @@ export function createNameDSL(options: { wordCase?: NameCase; title?: boolean } 
 export function createProperty(): PropertyDSL {
   return {
     ...createNameDSL({ wordCase: 'camelCase' }),
-    type: 'String',
+    type: createBaseType('String'),
     access: 'public',
     description: '注释',
   };
@@ -27,7 +63,7 @@ export function createParameter(): ParameterDSL {
   return {
     ...createNameDSL({}),
     name: 'arg',
-    type: 'String',
+    type: createBaseType('String'),
   };
 }
 

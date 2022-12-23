@@ -150,7 +150,7 @@ const Member = observer(function Member<T extends IDDSL>(props: {
             title={context.getEditorTitle()}
             destroyTooltipOnHide
             onOpenChange={v => {
-              if (v) {
+              if (!v) {
                 context.handleEditHided();
               } else {
                 context.handleEdit(value);

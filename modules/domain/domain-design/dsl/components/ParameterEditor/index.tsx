@@ -4,13 +4,15 @@ import classNames from 'classnames';
 import { observer } from 'mobx-react';
 
 import { ParameterDSL } from '../../dsl';
-import { NameTooltip, VoidClass } from '../../constants';
+import { NameTooltip } from '../../constants';
 import { createParameter } from '../../factory';
 import { MemberList } from '../MemberList';
 import { DescriptionInput } from '../DescriptionInput';
 
 import s from './index.module.scss';
 import { NameInput } from '../NameInput';
+import { stringifyParameter } from '../../stringify';
+import { TypeInput } from '../TypeInput';
 
 export interface ParameterEditorProps {
   /**
@@ -22,10 +24,10 @@ export interface ParameterEditorProps {
 type Item = ParameterDSL;
 
 const renderItem = (value: Item, index: number) => {
-  const { type, title, name } = value;
+  const { title } = value;
   return (
     <div className={classNames('vd-parameters-editor-item', s.item)} title={title}>
-      <span className="u-bold">{name || `arg${index}`}</span>: {type || VoidClass}
+      {stringifyParameter(value, index)}
     </div>
   );
 };
@@ -44,7 +46,7 @@ const renderEditor = (path: string) => {
         <DescriptionInput />
       </EditorFormItem>
       <EditorFormItem path={p('type')} label="类型">
-        <Input />
+        <TypeInput />
       </EditorFormItem>
     </>
   );

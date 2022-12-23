@@ -35,16 +35,77 @@ export interface NameDSL extends IDDSL {
  */
 export type NameCase = 'CamelCase' | 'camelCase' | 'SNAKE_CASE';
 
+export type BaseType =
+  | 'String'
+  | 'Integer'
+  | 'Long'
+  | 'Double'
+  | 'Float'
+  | 'Date'
+  | 'Boolean'
+  | 'BigDecimal'
+  | 'Char'
+  | 'Byte'
+  | 'Short'
+  | 'Void';
+
+export const BaseTypeInArray: BaseType[] = [
+  'String',
+  'Integer',
+  'Long',
+  'Double',
+  'Float',
+  'Date',
+  'Boolean',
+  'BigDecimal',
+  'Char',
+  'Byte',
+  'Short',
+  'Void',
+];
+
+export type ContainerType = 'List' | 'Set' | 'Map';
+export const ContainerTypeInArray: ContainerType[] = ['List', 'Set', 'Map'];
+
+export enum TypeType {
+  Base = 'base',
+  Container = 'container',
+  Reference = 'reference',
+}
+
 /**
  * 类型应用的表示
- * TODO: 详细定义, 前期用户手动输入，辅助 AutoComplement, 执行 AST 验证
- * 一个巧妙的办法是转换为函数调用语法，或者直接写一个 lisp AST 解析器
- * https://bernsteinbear.com/blog/lisp/08_asts/
- * 基础类型: String, Integer, Long, Double, Float, Date, Boolean, BigDecimal, Char, Byte, Short
+ * 基础类型: String, Integer, Long, Double, Float, Date, Boolean, BigDecimal, Char, Byte, Short, Void
  * 集合类型：List<T>, Set<T>, Map<K, V>
- * 对象类型：
+ * 引用类型：
  */
-export type TypeDSL = string;
+export type TypeDSL =
+  | {
+      // 基础类型
+      type: TypeType.Base;
+      name: BaseType;
+    }
+  | {
+      // 容器数据
+      type: TypeType.Container;
+      name: ContainerType;
+
+      /**
+       * 泛型变量, 默认为 Void
+       */
+      params: { [key: string]: TypeDSL | undefined };
+    }
+  | {
+      // 引用数据
+      type: TypeType.Reference;
+      /**
+       * 引用 ID, 这个通常是不变的
+       */
+      referenceId: string;
+
+      // 冗余字段，方便回显, 并不可靠
+      name: string;
+    };
 
 /**
  * 访问控制
@@ -58,7 +119,7 @@ export interface PropertyDSL extends NameDSL {
   /**
    * 成员类型
    */
-  type: TypeDSL;
+  type?: TypeDSL;
 
   /**
    * 访问控制, 默认 public
@@ -73,7 +134,7 @@ export interface ParameterDSL extends NameDSL {
   /**
    * 参数
    */
-  type: TypeDSL;
+  type?: TypeDSL;
 }
 
 /**

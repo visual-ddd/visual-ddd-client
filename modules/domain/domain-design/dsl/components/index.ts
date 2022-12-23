@@ -2,6 +2,7 @@
 export * from './AccessSelect';
 export * from './NameInput';
 export * from './DescriptionInput';
+export * from './TypeInput';
 
 // 列表
 export * from './MemberList';

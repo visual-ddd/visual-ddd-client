@@ -4,7 +4,7 @@ import { ReactComponentProps } from '@/lib/g6-binding';
 import classNames from 'classnames';
 import { useShapeModel } from '@/lib/editor';
 
-import { EntityDSL, PropertyDSL, UntitledInCamelCase, VoidClass, AccessModifier, MethodDSL, Void } from '../../dsl';
+import { EntityDSL, PropertyDSL, MethodDSL, stringifyProperty, stringifyMethod } from '../../dsl';
 import s from './ReactShapeComponent.module.scss';
 import { observer } from 'mobx-react';
 
@@ -13,13 +13,12 @@ import { observer } from 'mobx-react';
  */
 const Property = observer(function Property(props: { value: PropertyDSL }) {
   const { value } = props;
-  const { access = 'public', type = VoidClass, title, name = UntitledInCamelCase, description } = value;
+  const { title, description } = value;
 
   return (
     <div className={classNames('shape-class-property', s.property)}>
-      <span className={classNames('shape-class-property__access', s.propertyAccess)}>{AccessModifier[access]}</span>
       <span className={classNames('shape-class-property__name', s.propertyName)} title={title}>
-        <span className="u-bold">{name}</span>: {type}
+        {stringifyProperty(value)}
       </span>
       <span className={classNames('shape-class-property__comment', s.propertyComment)} title={description}>
         {description}
@@ -33,27 +32,12 @@ const Property = observer(function Property(props: { value: PropertyDSL }) {
  */
 const Method = observer(function Method(props: { value: MethodDSL }) {
   const { value } = props;
-  const {
-    access = 'public',
-    result = Void,
-    parameters = [],
-    title,
-    abstract,
-    name = UntitledInCamelCase,
-    description,
-  } = value;
+  const { title, abstract, description } = value;
 
   return (
     <div className={classNames('shape-class-method', s.method, { abstract })}>
-      <span className={classNames('shape-class-method__access', s.methodAccess)}>{AccessModifier[access]}</span>
       <span className={classNames('shape-class-method__name', s.methodName)} title={title}>
-        <span className="u-bold">{name}</span>(
-        {parameters
-          .map(p => {
-            return `${p.name || UntitledInCamelCase}: ${p.type || VoidClass}`;
-          })
-          .join(', ')}
-        ): {result}
+        {stringifyMethod(value)}
       </span>
       <span className={classNames('shape-class-method__comment', s.methodComment)} title={description}>
         {description}

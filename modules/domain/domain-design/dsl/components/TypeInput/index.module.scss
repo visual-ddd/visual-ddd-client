@@ -1,0 +1,32 @@
+.menu {
+  background-color: white;
+  border: 1px solid var(--vd-color-border-light);
+  padding: var(--vd-spacing-sm) var(--vd-spacing-xs);
+  border-radius: var(--vd-border-radius-base);
+  box-shadow: 0 6px 16px 0 rgb(0 0 0 / 8%), 0 3px 6px -4px rgb(0 0 0 / 12%), 0 9px 28px 8px rgb(0 0 0 / 5%);
+  min-width: 300px;
+  max-width: 600px;
+  max-height: 60vh;
+  overflow: auto;
+}
+
+.ctorParams {
+  margin-left: 4%;
+  padding-left: var(--vd-spacing-xs);
+  border-left: 1px dashed var(--vd-color-border-lighter);
+}
+
+.ctorParam {
+  position: relative;
+  margin-top: var(--vd-spacing-xs);
+}
+
+.ctorType {
+  width: 100%;
+  min-width: 184px;
+}
+
+.ctorLabel {
+  font-size: var(--vd-font-size-h6);
+  color: var(--vd-color-font-regular);
+}
