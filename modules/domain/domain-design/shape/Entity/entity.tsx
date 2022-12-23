@@ -1,10 +1,15 @@
-import { defineShape, ShapeComponentProps } from '@/lib/editor';
-import { ReactComponentBinding, registerReactComponent } from '@/lib/g6-binding';
+import { defineShape, ShapeComponentProps, useShapeModel } from '@/lib/editor';
+import { ReactComponentBinding, ReactComponentProps, registerReactComponent } from '@/lib/g6-binding';
 
-import { createEntity, EntityEditor } from '../../dsl';
+import { ClassShape, createEntity, EntityEditor, EntityDSL } from '../../dsl';
 
-import { EntityReactShapeComponent } from './ReactShapeComponent';
 import icon from './entity.png';
+
+const EntityReactShapeComponent = (props: ReactComponentProps) => {
+  const properties = useShapeModel(props.node).properties as unknown as EntityDSL;
+
+  return <ClassShape dsl={properties} type="实体" style={{ backgroundColor: '#d9f7be' }} />;
+};
 
 registerReactComponent('entity', EntityReactShapeComponent);
 

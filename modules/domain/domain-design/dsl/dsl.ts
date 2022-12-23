@@ -200,7 +200,7 @@ export interface ClassDSL extends NameDSL {
   /**
    * 类方法，静态方法，默认为 []
    */
-  classMethods?: MethodDSL[];
+  classMethods: MethodDSL[];
 }
 
 /**

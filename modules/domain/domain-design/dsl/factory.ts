@@ -1,6 +1,6 @@
 import { NoopObject } from '@wakeapp/utils';
 import { v4 } from 'uuid';
-import { UntitledInCamelCase, UntitledInTitle, UntitledInUpperCamelCase } from './constants';
+import { UntitledInCamelCase, UntitledInHumanReadable, UntitledInUpperCamelCase } from './constants';
 import {
   BaseType,
   ClassDSL,
@@ -44,7 +44,7 @@ export function createNameDSL(options: { wordCase?: NameCase; title?: boolean } 
   return {
     uuid: v4(),
     name: wordCase === 'CamelCase' ? UntitledInUpperCamelCase : UntitledInCamelCase,
-    title: title ? UntitledInTitle : '',
+    title: title ? UntitledInHumanReadable : '',
     description: '',
     meta: {},
   };
