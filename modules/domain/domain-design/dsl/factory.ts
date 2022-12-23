@@ -54,8 +54,9 @@ export function createProperty(): PropertyDSL {
   return {
     ...createNameDSL({ wordCase: 'camelCase' }),
     type: createBaseType('String'),
+    title: UntitledInHumanReadable,
     access: 'public',
-    description: '注释',
+    description: '',
   };
 }
 
@@ -91,9 +92,10 @@ export function createClass(): ClassDSL {
 }
 
 export function createEntity(): EntityDSL {
+  const cls = createClass();
   return {
-    ...createClass(),
+    ...cls,
     isAggregationRoot: false,
-    id: 'untitled',
+    id: cls.properties[0].uuid,
   };
 }

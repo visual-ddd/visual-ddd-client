@@ -4,6 +4,7 @@ import { useEditorModel } from '../../Model';
 
 /**
  * 获取节点模型
+ * 只能在 React Shape 组件里面使用
  */
 export function useShapeModel(cell: Cell) {
   const editorModel = useEditorModel();

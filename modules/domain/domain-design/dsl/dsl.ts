@@ -1,3 +1,5 @@
+export type UUID = string;
+
 /**
  * 核心元数据
  */
@@ -5,7 +7,7 @@ export interface IDDSL {
   /**
    * 自动生成的唯一标识符
    */
-  uuid: string;
+  uuid: UUID;
 }
 
 export interface NameDSL extends IDDSL {
@@ -213,7 +215,7 @@ export interface EntityDSL extends ClassDSL {
   isAggregationRoot?: boolean;
 
   /**
-   * 声明实体 id 的属性名称
+   * 声明实体 id uuid
    */
-  id: string;
+  id: UUID;
 }
