@@ -85,6 +85,8 @@ export function EditorFormPortalContextProvider(props: EditorFormPortalContextPr
           const copy = currentShowing;
           currentShowing = null;
           copy.onClose();
+
+          hide();
         }
 
         currentShowing = { instance, onClose };
