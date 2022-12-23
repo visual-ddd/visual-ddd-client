@@ -4,11 +4,13 @@ import classNames from 'classnames';
 import { observer } from 'mobx-react';
 
 import { ParameterDSL } from '../../dsl';
-import { VoidClass, UntitledInCamelCase } from '../../constants';
+import { NameTooltip, VoidClass } from '../../constants';
 import { createParameter } from '../../factory';
 import { MemberList } from '../MemberList';
+import { DescriptionInput } from '../DescriptionInput';
 
 import s from './index.module.scss';
+import { NameInput } from '../NameInput';
 
 export interface ParameterEditorProps {
   /**
@@ -19,11 +21,11 @@ export interface ParameterEditorProps {
 
 type Item = ParameterDSL;
 
-const renderItem = (value: Item) => {
-  const { type = VoidClass, title, name = UntitledInCamelCase } = value;
+const renderItem = (value: Item, index: number) => {
+  const { type, title, name } = value;
   return (
     <div className={classNames('vd-parameters-editor-item', s.item)} title={title}>
-      <span className="u-bold">{name}</span>: {type}
+      <span className="u-bold">{name || `arg${index}`}</span>: {type || VoidClass}
     </div>
   );
 };
@@ -32,14 +34,14 @@ const renderEditor = (path: string) => {
   const p = (cp: string) => `${path}.${cp}`;
   return (
     <>
-      <EditorFormItem path={p('name')} label="标识符">
-        <Input />
+      <EditorFormItem path={p('name')} label="标识符" tooltip={NameTooltip['camelCase']}>
+        <NameInput nameCase="camelCase" />
       </EditorFormItem>
       <EditorFormItem path={p('title')} label="标题">
         <Input />
       </EditorFormItem>
       <EditorFormItem path={p('description')} label="描述">
-        <Input.TextArea />
+        <DescriptionInput />
       </EditorFormItem>
       <EditorFormItem path={p('type')} label="类型">
         <Input />

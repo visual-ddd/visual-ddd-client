@@ -5,6 +5,7 @@ import { NameTooltip } from '../../constants';
 import { PropertiesEditor } from '../PropertiesEditor';
 import { MethodsEditor } from '../MethodsEditor';
 import { NameInput } from '../NameInput';
+import { DescriptionInput } from '../DescriptionInput';
 
 const DEFAULT_ACTIVE = ['base', 'properties', 'methods'];
 
@@ -19,7 +20,7 @@ export const EntityEditor = () => {
           <Input placeholder="使用统一语言起个标题" />
         </EditorFormItem>
         <EditorFormItem path="description" label="描述">
-          <Input.TextArea placeholder="写点注释吧" />
+          <DescriptionInput />
         </EditorFormItem>
       </EditorFormCollapsePanel>
       <EditorFormCollapsePanel header="属性" key="properties">

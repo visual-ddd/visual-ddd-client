@@ -4,30 +4,34 @@ import classNames from 'classnames';
 import { observer } from 'mobx-react';
 
 import { MethodDSL } from '../../dsl';
-import { UntitledInCamelCase, AccessModifier, Void, VoidClass } from '../../constants';
+import { UntitledInCamelCase, AccessModifier, Void, VoidClass, NameTooltip } from '../../constants';
 import { createMethod } from '../../factory';
 import { AccessSelect } from '../AccessSelect';
 import { MemberList } from '../MemberList';
+import { ParameterEditor } from '../ParameterEditor';
+import { DescriptionInput } from '../DescriptionInput';
+import { NameInput } from '../NameInput';
 
 import s from './index.module.scss';
-import { ParameterEditor } from '../ParameterEditor';
 
 export interface MethodsEditorProps {}
 type Item = MethodDSL;
 
 const renderItem = (value: Item) => {
-  const { access = 'public', result = Void, title, parameters, name = UntitledInCamelCase } = value;
+  const { access, result, title, parameters, name } = value;
   return (
     <div className={classNames('vd-methods-editor-item', s.item)}>
-      <span className={classNames('vd-methods-editor-item__access', s.itemAccess)}>{AccessModifier[access]}</span>
+      <span className={classNames('vd-methods-editor-item__access', s.itemAccess)}>
+        {AccessModifier[access || 'public']}
+      </span>
       <span className={classNames('vd-methods-editor-item__name', s.itemName)} title={title}>
-        <span className="u-bold">{name}</span>(
+        <span className="u-bold">{name || UntitledInCamelCase}</span>(
         {parameters
           .map((i, idx) => {
             return `${i.name || 'arg' + idx}: ${i.type || VoidClass}`;
           })
           .join(', ')}
-        ): {result}
+        ): {result || Void}
       </span>
     </div>
   );
@@ -37,14 +41,14 @@ const renderEditor = (path: string) => {
   const p = (cp: string) => `${path}.${cp}`;
   return (
     <>
-      <EditorFormItem path={p('name')} label="标识符">
-        <Input />
+      <EditorFormItem path={p('name')} label="标识符" tooltip={NameTooltip['camelCase']}>
+        <NameInput nameCase="camelCase" />
       </EditorFormItem>
       <EditorFormItem path={p('title')} label="标题">
         <Input />
       </EditorFormItem>
       <EditorFormItem path={p('description')} label="描述">
-        <Input.TextArea />
+        <DescriptionInput />
       </EditorFormItem>
       <EditorFormItem path={p('access')} label="访问控制">
         <AccessSelect />

@@ -11,6 +11,7 @@ import { MemberList } from '../MemberList';
 import { NameInput } from '../NameInput';
 
 import s from './index.module.scss';
+import { DescriptionInput } from '../DescriptionInput';
 
 export interface PropertiesEditorProps {}
 
@@ -39,7 +40,7 @@ const renderEditor = (path: string) => {
         <Input />
       </EditorFormItem>
       <EditorFormItem path={p('description')} label="描述">
-        <Input.TextArea />
+        <DescriptionInput />
       </EditorFormItem>
       <EditorFormItem path={p('type')} label="类型">
         <Input />

@@ -9,7 +9,14 @@ export interface MemberEditorProps<T extends IDDSL = any> {
    * 基础路径，用于拼接字段路径
    */
   path: string;
+
   list: T[];
+
+  /**
+   * 隐藏回调
+   * @returns
+   */
+  onHide?: () => void;
 
   /**
    * 编辑框标题, 默认为编辑
@@ -36,7 +43,7 @@ export function useMemberEditorRef<T extends IDDSL = any>() {
  */
 export const MemberEditor = observer(
   forwardRef<MemberEditorMethods, MemberEditorProps>(function MemberEditor(props, ref) {
-    const { path, list, title, children } = props;
+    const { path, list, title, children, onHide } = props;
     const [currentEditing, setCurrentEditing] = useState<IDDSL>();
     const [visible, setVisible] = useState(false);
 
@@ -51,6 +58,13 @@ export const MemberEditor = observer(
 
     const basePath = idx !== -1 ? `${path}[${idx}]` : '';
     const finalVisible = !!(visible && basePath);
+    const handleVisibleChange = (v: boolean) => {
+      setVisible(v);
+
+      if (!v) {
+        onHide?.();
+      }
+    };
 
     useImperativeHandle(
       ref,
@@ -69,7 +83,7 @@ export const MemberEditor = observer(
     );
 
     return (
-      <EditorFormPortal title={title ?? '编辑'} value={finalVisible} onChange={setVisible}>
+      <EditorFormPortal title={title ?? '编辑'} value={finalVisible} onChange={handleVisibleChange}>
         {typeof children === 'function' ? children(basePath, currentEditing) : children}
       </EditorFormPortal>
     );

@@ -11,6 +11,7 @@ import { MemberEditor, useMemberEditorRef } from './MemberEditor';
 import { useRefValue } from '@wakeapp/hooks';
 
 import s from './MemberList.module.scss';
+import { action, observable } from 'mobx';
 
 export interface MemberListProps<T extends IDDSL> {
   className?: string;
@@ -72,11 +73,22 @@ export interface MemberListProps<T extends IDDSL> {
 
 interface MemberListContext<T extends IDDSL> {
   /**
+   * 当前正在编辑的条项 id
+   */
+  editing?: string;
+
+  /**
    * 编辑
    * @param item
    * @returns
    */
   handleEdit: (item: T) => void;
+
+  /**
+   * 关闭编辑
+   * @returns
+   */
+  handleEditHided: () => void;
 
   /**
    * 移除
@@ -123,9 +135,10 @@ const Member = observer(function Member<T extends IDDSL>(props: {
   const { value, context, index } = props;
   const popoverEdit = context.getEditorDisplayType() === 'popover';
   const path = context.getPath();
+  const editing = value.uuid === context.editing;
 
   return (
-    <div className={classNames('vd-member-list-item', s.item)}>
+    <div className={classNames('vd-member-list-item', s.item, { editing })}>
       <DragHandle className={classNames('vd-member-list-item__handle', s.itemHandle)} />
       <div className={classNames('vd-member-list-item__content', s.itemContent)}>
         {context.handleRenderItem(value, index)}
@@ -136,6 +149,13 @@ const Member = observer(function Member<T extends IDDSL>(props: {
             trigger="click"
             title={context.getEditorTitle()}
             destroyTooltipOnHide
+            onOpenChange={v => {
+              if (v) {
+                context.handleEditHided();
+              } else {
+                context.handleEdit(value);
+              }
+            }}
             content={context.handleRenderEditor(`${path}[${index}]`, value)}
             placement="left"
           >
@@ -174,7 +194,15 @@ export const MemberList = observer(function MemberList<T extends IDDSL>(props: M
   const editorRef = useMemberEditorRef<T>();
 
   const context = useMemo<MemberListContext<T>>(() => {
-    return {
+    const store = observable({ editing: undefined as string | undefined });
+    const updateEditing = action('UPDATE_EDITING', (v?: string) => {
+      store.editing = v;
+    });
+
+    const self: MemberListContext<T> = {
+      get editing() {
+        return store.editing;
+      },
       getEditorDisplayType() {
         return propsRef.current.editorDisplayType;
       },
@@ -186,6 +214,12 @@ export const MemberList = observer(function MemberList<T extends IDDSL>(props: M
       },
       handleEdit(item) {
         editorRef.current?.show(item);
+        requestAnimationFrame(() => {
+          updateEditing(item.uuid);
+        });
+      },
+      handleEditHided() {
+        updateEditing();
       },
       handleRemove(item) {
         const list = propsRef.current.value;
@@ -206,7 +240,9 @@ export const MemberList = observer(function MemberList<T extends IDDSL>(props: M
         propsRef.current.onChange(clone);
 
         requestAnimationFrame(() => {
-          editorRef.current?.show(newItem);
+          if (editorRef.current) {
+            self.handleEdit(newItem);
+          }
         });
       },
       handleChange(list: T[]) {
@@ -219,6 +255,9 @@ export const MemberList = observer(function MemberList<T extends IDDSL>(props: M
         return propsRef.current.renderEditor(basePath, value);
       },
     };
+
+    return self;
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -235,7 +274,7 @@ export const MemberList = observer(function MemberList<T extends IDDSL>(props: M
         {addText ?? '添加属性'}
       </Button>
       {editorDisplayType === 'portal' && (
-        <MemberEditor list={value} path={path} ref={editorRef} title={editorTitle}>
+        <MemberEditor list={value} path={path} ref={editorRef} title={editorTitle} onHide={context.handleEditHided}>
           {renderEditor}
         </MemberEditor>
       )}
