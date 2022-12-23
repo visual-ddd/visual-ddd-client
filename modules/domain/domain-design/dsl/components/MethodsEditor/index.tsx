@@ -1,5 +1,5 @@
 import { useEditorFormContext, EditorFormItem } from '@/lib/editor';
-import { Input, Switch } from 'antd';
+import { Switch } from 'antd';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
 
@@ -15,6 +15,7 @@ import { NameInput } from '../NameInput';
 import s from './index.module.scss';
 import { stringifyMethod } from '../../stringify';
 import { TypeInput } from '../TypeInput';
+import { TitleInput } from '../TitleInput';
 
 export interface MethodsEditorProps {}
 type Item = MethodDSL;
@@ -36,7 +37,7 @@ const renderEditor = (path: string) => {
         <NameInput nameCase="camelCase" />
       </EditorFormItem>
       <EditorFormItem path={p('title')} label="标题">
-        <Input />
+        <TitleInput />
       </EditorFormItem>
       <EditorFormItem path={p('description')} label="描述">
         <DescriptionInput />

@@ -219,3 +219,8 @@ export interface EntityDSL extends ClassDSL {
    */
   id: UUID;
 }
+
+/**
+ * 值对象定义
+ */
+export interface ValueObjectDSL extends ClassDSL {}

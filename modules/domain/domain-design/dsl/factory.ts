@@ -13,6 +13,7 @@ import {
   PropertyDSL,
   TypeDSL,
   TypeType,
+  ValueObjectDSL,
 } from './dsl';
 
 export function createBaseType(type: BaseType): TypeDSL {
@@ -98,4 +99,13 @@ export function createEntity(): EntityDSL {
     isAggregationRoot: false,
     id: cls.properties[0].uuid,
   };
+}
+
+export function createValueObject(): ValueObjectDSL {
+  const cls = createClass();
+
+  // 默认不包含方法
+  cls.methods = [];
+
+  return cls;
 }

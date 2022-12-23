@@ -1,5 +1,4 @@
 import { useEditorFormContext, EditorFormItem } from '@/lib/editor';
-import { Input } from 'antd';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
 
@@ -13,6 +12,7 @@ import s from './index.module.scss';
 import { NameInput } from '../NameInput';
 import { stringifyParameter } from '../../stringify';
 import { TypeInput } from '../TypeInput';
+import { TitleInput } from '../TitleInput';
 
 export interface ParameterEditorProps {
   /**
@@ -40,7 +40,7 @@ const renderEditor = (path: string) => {
         <NameInput nameCase="camelCase" />
       </EditorFormItem>
       <EditorFormItem path={p('title')} label="标题">
-        <Input />
+        <TitleInput />
       </EditorFormItem>
       <EditorFormItem path={p('description')} label="描述">
         <DescriptionInput />

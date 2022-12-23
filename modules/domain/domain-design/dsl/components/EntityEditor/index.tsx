@@ -1,5 +1,5 @@
 import { EditorFormCollapse, EditorFormCollapsePanel, EditorFormConsumer, EditorFormItem } from '@/lib/editor';
-import { Input, Select, SelectProps, Switch } from 'antd';
+import { Select, SelectProps, Switch } from 'antd';
 import { observer } from 'mobx-react';
 
 import { NameTooltip, UntitledInCamelCase, UntitledInHumanReadable } from '../../constants';
@@ -8,6 +8,7 @@ import { MethodsEditor } from '../MethodsEditor';
 import { NameInput } from '../NameInput';
 import { DescriptionInput } from '../DescriptionInput';
 import { PropertyDSL } from '../../dsl';
+import { TitleInput } from '../TitleInput';
 
 const DEFAULT_ACTIVE = ['base', 'properties', 'methods'];
 
@@ -41,7 +42,7 @@ export const EntityEditor = () => {
           <NameInput nameCase="CamelCase" dbclickToEnable />
         </EditorFormItem>
         <EditorFormItem path="title" label="标题">
-          <Input placeholder="使用统一语言起个标题" />
+          <TitleInput />
         </EditorFormItem>
         <EditorFormItem path="description" label="描述">
           <DescriptionInput />
