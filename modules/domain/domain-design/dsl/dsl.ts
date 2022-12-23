@@ -1,7 +1,6 @@
 /**
  * 核心元数据
  */
-
 export interface IDDSL {
   /**
    * 自动生成的唯一标识符
@@ -30,6 +29,11 @@ export interface NameDSL extends IDDSL {
    */
   meta?: Record<string, string>;
 }
+
+/**
+ * 标识符命名规则
+ */
+export type NameCase = 'CamelCase' | 'camelCase' | 'SNAKE_CASE';
 
 /**
  * 类型应用的表示

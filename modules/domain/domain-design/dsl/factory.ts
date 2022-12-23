@@ -1,11 +1,9 @@
 import { NoopObject } from '@wakeapp/utils';
 import { v4 } from 'uuid';
 import { UntitledInCamelCase, UntitledInTitle, UntitledInUpperCamelCase } from './constants';
-import { ClassDSL, EntityDSL, MethodDSL, NameDSL, ParameterDSL, PropertyDSL } from './dsl';
+import { ClassDSL, EntityDSL, MethodDSL, NameCase, NameDSL, ParameterDSL, PropertyDSL } from './dsl';
 
-export function createNameDSL(
-  options: { wordCase?: 'CamelCase' | 'camelCase'; title?: boolean } = NoopObject
-): NameDSL {
+export function createNameDSL(options: { wordCase?: NameCase; title?: boolean } = NoopObject): NameDSL {
   const { wordCase = 'CamelCase', title } = options;
   return {
     uuid: v4(),
