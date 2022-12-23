@@ -28,7 +28,7 @@ defineShape({
   shapeType: 'node',
 
   initialProps: () => {
-    return createValueObject();
+    return { ...createValueObject(), zIndex: 2 };
   },
   component: ValueObjectShapeComponent,
   attributeComponent: ValueObjectEditor,

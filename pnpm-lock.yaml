@@ -14,10 +14,12 @@ specifiers:
   '@antv/x6-react-shape': ^2.1.0
   '@testing-library/jest-dom': ^5.16.5
   '@testing-library/react': ^13.4.0
+  '@types/color-string': ^1.5.2
   '@types/jest': ^29.2.4
   '@types/lodash': ^4.14.191
   '@types/node': 18.11.12
   '@types/react': 18.0.26
+  '@types/react-color': ^3.0.6
   '@types/react-dom': 18.0.9
   '@types/uuid': ^9.0.0
   '@wakeapp/framework-core': ^1.0.2
@@ -26,12 +28,14 @@ specifiers:
   antd: ^5.0.6
   async-validator: ^4.2.5
   classnames: ^2.3.2
+  color-string: ^1.9.1
   dayjs: ^1.11.7
   eslint: 8.29.0
   eslint-config-next: 13.0.6
   husky: ^8.0.2
   jest: ^29.3.1
   jest-environment-jsdom: ^29.3.1
+  localforage: ^1.10.0
   lodash: ^4.17.21
   mobx: ^6.7.0
   mobx-react: ^7.6.0
@@ -39,6 +43,7 @@ specifiers:
   prettier: ^2.8.1
   prettier-config-wk: ^0.2.4
   react: 18.2.0
+  react-color: ^2.19.3
   react-dom: 18.2.0
   react-draggable: ^4.4.5
   react-sortable-hoc: ^2.0.0
@@ -69,12 +74,15 @@ dependencies:
   antd: 5.0.6_biqbaboplfbrettd7655fr4n2y
   async-validator: 4.2.5
   classnames: 2.3.2
+  color-string: 1.9.1
   dayjs: 1.11.7
+  localforage: 1.10.0
   lodash: 4.17.21
   mobx: 6.7.0
   mobx-react: 7.6.0_jofyzmwkboewm6mjrhi25mngky
   next: 13.0.6_iburw4xngv4nuxezlam7kbvdc4
   react: 18.2.0
+  react-color: 2.19.3_react@18.2.0
   react-dom: 18.2.0_react@18.2.0
   react-draggable: 4.4.5_biqbaboplfbrettd7655fr4n2y
   react-sortable-hoc: 2.0.0_biqbaboplfbrettd7655fr4n2y
@@ -87,10 +95,12 @@ dependencies:
 devDependencies:
   '@testing-library/jest-dom': 5.16.5
   '@testing-library/react': 13.4.0_biqbaboplfbrettd7655fr4n2y
+  '@types/color-string': 1.5.2
   '@types/jest': 29.2.4
   '@types/lodash': 4.14.191
   '@types/node': 18.11.12
   '@types/react': 18.0.26
+  '@types/react-color': 3.0.6
   '@types/react-dom': 18.0.9
   '@types/uuid': 9.0.0
   eslint: 8.29.0
@@ -1424,6 +1434,11 @@ packages:
       { integrity: sha512-0r9J+Zz9rYm2hOTwiMAVkm3XFQ4u5uTK37xrQMhc9bysn/sf/okzovWMYYIBMFTn/yrEZ11pusgLEaoarTlQbA== }
     dev: false
 
+  /@types/color-string/1.5.2:
+    resolution:
+      { integrity: sha512-hAhTmfFYVdzgsKwpC9Flc6h9Do64PhKoNxy3YxE0ze+0LIh3a7TrDQAxiujmANQbDRDgGduEz+9sMS+Zd+J7hA== }
+    dev: true
+
   /@types/graceful-fs/4.1.5:
     resolution:
       { integrity: sha512-anKkLmZZ+xm4p8JWBf4hElkM4XR+EZeA2M9BAkkTldmcyDY4mbdIJnRghDJH3Ov5ooY7/UAoENtmdMSkaAd7Cw== }
@@ -1497,6 +1512,14 @@ packages:
       { integrity: sha512-JCB8C6SnDoQf0cNycqd/35A7MjcnK+ZTqE7judS6o7utxUCg6imJg3QK2qzHKszlTjcj2cn+NwMB2i96ubpj7w== }
     dev: true
 
+  /@types/react-color/3.0.6:
+    resolution:
+      { integrity: sha512-OzPIO5AyRmLA7PlOyISlgabpYUa3En74LP8mTMa0veCA719SvYQov4WLMsHvCgXP+L+KI9yGhYnqZafVGG0P4w== }
+    dependencies:
+      '@types/react': 18.0.26
+      '@types/reactcss': 1.2.6
+    dev: true
+
   /@types/react-dom/18.0.9:
     resolution:
       { integrity: sha512-qnVvHxASt/H7i+XG1U1xMiY5t+IHcPGUK7TDMDzom08xa7e86eCeKOiLZezwCKVxJn6NEiiy2ekgX8aQssjIKg== }
@@ -1511,6 +1534,13 @@ packages:
       '@types/prop-types': 15.7.5
       '@types/scheduler': 0.16.2
       csstype: 3.1.1
+    dev: true
+
+  /@types/reactcss/1.2.6:
+    resolution:
+      { integrity: sha512-qaIzpCuXNWomGR1Xq8SCFTtF4v8V27Y6f+b9+bzHiv087MylI/nTCqqdChNeWS7tslgROmYB7yeiruWX7WnqNg== }
+    dependencies:
+      '@types/react': 18.0.26
     dev: true
 
   /@types/scheduler/0.16.2:
@@ -2349,7 +2379,14 @@ packages:
   /color-name/1.1.4:
     resolution:
       { integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA== }
-    dev: true
+
+  /color-string/1.9.1:
+    resolution:
+      { integrity: sha512-shrVawQFojnZv6xM40anx4CkoDP+fZsw/ZerEMsW/pyzsRbElpsL/DBVW7q3ExxwusdNXI3lXpuhEZkzs8p5Eg== }
+    dependencies:
+      color-name: 1.1.4
+      simple-swizzle: 0.2.2
+    dev: false
 
   /combined-stream/1.0.8:
     resolution:
@@ -3622,6 +3659,11 @@ packages:
     engines: { node: '>= 4' }
     dev: true
 
+  /immediate/3.0.6:
+    resolution:
+      { integrity: sha512-XXOFtyqDjNDAQxVfYxuF7g9Il/IbWmmlQg2MYKOH8ExIT1qg6xc4zyS3HaEEATgs1btfzxq15ciUiY7gjSXRGQ== }
+    dev: false
+
   /immutable/4.1.0:
     resolution:
       { integrity: sha512-oNkuqVTA8jqG1Q6c+UglTOD1xhC1BtjKI7XkCXRkZHrN5m18/XsnUp8Q89GkQO/z+0WjonSvl0FLhDYftp46nQ== }
@@ -3719,6 +3761,11 @@ packages:
     resolution:
       { integrity: sha512-zz06S8t0ozoDXMG+ube26zeCTNXcKIPJZJi8hBrF4idCLms4CG9QtK7qBl1boi5ODzFpjswb5JPmHCbMpjaYzg== }
     dev: true
+
+  /is-arrayish/0.3.2:
+    resolution:
+      { integrity: sha512-eVRqCvVlZbuw3GrM63ovNSNAeA1K16kaR/LRY/92w0zxQ5/1YzwblUX652i4Xs9RwAGjW9d9y6X88t8OaAJfWQ== }
+    dev: false
 
   /is-bigint/1.0.4:
     resolution:
@@ -4613,10 +4660,24 @@ packages:
       isomorphic.js: 0.2.5
     dev: false
 
+  /lie/3.1.1:
+    resolution:
+      { integrity: sha512-RiNhHysUjhrDQntfYSfY4MU24coXXdEOgw9WGcKHNeEwffDYbF//u87M1EWaMGzuFoSbqW0C9C6lEEhDOAswfw== }
+    dependencies:
+      immediate: 3.0.6
+    dev: false
+
   /lines-and-columns/1.2.4:
     resolution:
       { integrity: sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg== }
     dev: true
+
+  /localforage/1.10.0:
+    resolution:
+      { integrity: sha512-14/H1aX7hzBBmmh7sGPd+AOMkkIrHM3Z1PAyGgZigA1H1p5O5ANnMyWzvpAETtG68/dC4pC0ncy3+PPGzXZHPg== }
+    dependencies:
+      lie: 3.1.1
+    dev: false
 
   /locate-path/5.0.0:
     resolution:
@@ -5915,6 +5976,22 @@ packages:
       tinycolor2: 1.4.2
     dev: false
 
+  /react-color/2.19.3_react@18.2.0:
+    resolution:
+      { integrity: sha512-LEeGE/ZzNLIsFWa1TMe8y5VYqr7bibneWmvJwm1pCn/eNmrabWDh659JSPn9BuaMpEfU83WTOJfnCcjDZwNQTA== }
+    peerDependencies:
+      react: '*'
+    dependencies:
+      '@icons/material': 0.2.4_react@18.2.0
+      lodash: 4.17.21
+      lodash-es: 4.17.21
+      material-colors: 1.2.6
+      prop-types: 15.8.1
+      react: 18.2.0
+      reactcss: 1.2.3_react@18.2.0
+      tinycolor2: 1.4.2
+    dev: false
+
   /react-colorful/5.6.1_biqbaboplfbrettd7655fr4n2y:
     resolution:
       { integrity: sha512-1exovf0uGTGyq5mXQT0zgQ80uvj2PCwvF8zY1RN9/vbJVSjSo3fsB/4L3ObbF7u70NduSiK4xu4Y6q1MHoUGEw== }
@@ -6285,6 +6362,13 @@ packages:
       readable-stream: 3.6.0
     transitivePeerDependencies:
       - supports-color
+    dev: false
+
+  /simple-swizzle/0.2.2:
+    resolution:
+      { integrity: sha512-JA//kQgZtbuY83m+xT+tXJkmJncGMTFT+C+g2h2R9uxkYIrE2yy9sgmcLhCnw57/WSD+Eh3J97FPEDFnbXnDUg== }
+    dependencies:
+      is-arrayish: 0.3.2
     dev: false
 
   /sisteransi/1.0.5:

@@ -224,3 +224,30 @@ export interface EntityDSL extends ClassDSL {
  * 值对象定义
  */
 export interface ValueObjectDSL extends ClassDSL {}
+
+export type EnumBaseType = 'string' | 'number';
+
+export interface EnumMemberDSL extends NameDSL {
+  code: string | number;
+}
+
+/**
+ * 枚举类型定义
+ */
+export interface EnumDSL extends NameDSL {
+  baseType: EnumBaseType;
+  members: EnumMemberDSL[];
+}
+
+/**
+ * 聚合定义
+ */
+export interface AggregationDSL extends NameDSL {
+  // 实体、值对象等关联关系不在这里定义，Model 中已经包含了上下文信息
+  /**
+   * 颜色标记
+   */
+  color: string;
+
+  // TODO: 命令引用
+}

@@ -33,7 +33,7 @@ export const DomainEditor = observer(function DomainEditor() {
             left={
               <>
                 <EditorShapeLibrary
-                  shapes={['entity', 'value-object', 'rect', 'rect-child', 'child', 'child-2', 'react']}
+                  shapes={['entity', 'value-object', 'aggregation', 'rect', 'rect-child', 'child', 'child-2', 'react']}
                 />
               </>
             }

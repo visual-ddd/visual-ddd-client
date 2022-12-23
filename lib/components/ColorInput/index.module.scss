@@ -1,0 +1,17 @@
+.root {
+}
+
+.preview {
+  width: 18px;
+  height: 18px;
+  border-radius: 3px;
+  background: white;
+  border: 1px solid #e6e6e6;
+  margin-left: -5px;
+}
+
+.popover {
+  :global(.ant-popover-inner-content) {
+    padding: 0;
+  }
+}

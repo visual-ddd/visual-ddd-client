@@ -14,3 +14,4 @@ export * from './ParameterEditor';
 // 图形编辑器
 export * from './EntityEditor';
 export * from './ValueObjectEditor';
+export * from './AggregationEditor';

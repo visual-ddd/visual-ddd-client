@@ -15,6 +15,11 @@ const STYLE: React.CSSProperties = {
 export const AutoResizeDecorator: ReactDecorator = Input => {
   // eslint-disable-next-line react/display-name
   return props => {
+    const { node } = props;
+    if (node.data.__prevent_auto_resize__) {
+      return <Input {...props} />;
+    }
+
     const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {

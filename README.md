@@ -37,20 +37,20 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 - 全局告警
 - rule 包含 label
-- 节点级别验证
-- 编辑器面板
-- 无连接桩连接交互
+- 节点级别验证, 使用特殊的 **ROOT**
 - defineShape 支持 decorator，用类组件实现
 - node edit
 - label edit
-- edge/node selected 状态高亮
-- 边拖入
+- 子元素 resize，auto 扩展父元素
 - 创建后选中
 - updateProperty debounce 发布 yjs 事件, 使用合并事件形式
 - 只读模式
 - 右键菜单
 - layout 支持折叠
+- edge/node selected 状态高亮
 - derive 支持 memo
 - 被其他成员选中的不能修改
 - 告警信息定位
 - 持久化 viewState
+- 边拖入
+- 无连接桩连接交互

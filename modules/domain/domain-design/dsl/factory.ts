@@ -2,6 +2,7 @@ import { NoopObject } from '@wakeapp/utils';
 import { v4 } from 'uuid';
 import { UntitledInCamelCase, UntitledInHumanReadable, UntitledInUpperCamelCase } from './constants';
 import {
+  AggregationDSL,
   BaseType,
   ClassDSL,
   ContainerType,
@@ -108,4 +109,15 @@ export function createValueObject(): ValueObjectDSL {
   cls.methods = [];
 
   return cls;
+}
+
+/**
+ * 构造聚合
+ * @returns
+ */
+export function createAggregation(): AggregationDSL {
+  return {
+    ...createNameDSL({ wordCase: 'CamelCase', title: true }),
+    color: '#D9F7BE',
+  };
 }

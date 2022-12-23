@@ -1,0 +1,32 @@
+.root {
+  width: 225px;
+
+  :global(.chrome-picker) {
+    box-shadow: none !important;
+  }
+
+  :global(.sketch-picker) {
+    box-shadow: none !important;
+    width: 100% !important;
+    padding: 0 !important;
+  }
+}
+
+.history {
+  margin-top: var(--vd-spacing-xs);
+}
+
+.colorListName {
+  font-size: var(--vd-font-size-h6);
+  color: var(--vd-color-font-regular);
+}
+
+.colorList {
+  width: 100%;
+  display: flex;
+}
+
+.colorItem {
+  width: 28px;
+  height: 28px;
+}

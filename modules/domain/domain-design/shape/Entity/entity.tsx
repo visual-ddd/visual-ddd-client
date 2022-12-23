@@ -28,7 +28,7 @@ defineShape({
   shapeType: 'node',
 
   initialProps: () => {
-    return createEntity();
+    return { ...createEntity(), zIndex: 2 };
   },
   component: EntityShapeComponent,
   attributeComponent: EntityEditor,
