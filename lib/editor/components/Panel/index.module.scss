@@ -1,5 +1,8 @@
 .root {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .header {
@@ -21,6 +24,12 @@
 }
 
 .title {
+}
+
+.body {
+  width: 100%;
+  flex: 1;
+  overflow: auto;
 }
 
 .bodyFolded {

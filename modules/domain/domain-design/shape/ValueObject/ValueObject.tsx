@@ -1,7 +1,7 @@
 import { defineShape, ShapeComponentProps, useShapeModel } from '@/lib/editor';
 import { ReactComponentBinding, ReactComponentProps, registerReactComponent } from '@/lib/g6-binding';
 
-import { ClassShape, createValueObject, ValueObjectDSL, ValueObjectEditor } from '../../dsl';
+import { ClassShape, createValueObject, DomainObjectName, ValueObjectDSL, ValueObjectEditor } from '../../dsl';
 
 import icon from './value-object.png';
 
@@ -11,17 +11,17 @@ const ValueObjectReactShapeComponent = (props: ReactComponentProps) => {
   return <ClassShape dsl={properties} type="值对象" style={{ backgroundColor: '#BAE7FF' }} />;
 };
 
-registerReactComponent('value-object', ValueObjectReactShapeComponent);
+registerReactComponent(DomainObjectName.ValueObject, ValueObjectReactShapeComponent);
 
 export const ValueObjectShapeComponent = (props: ShapeComponentProps) => {
-  return <ReactComponentBinding {...props.cellProps} component="value-object" />;
+  return <ReactComponentBinding {...props.cellProps} component={DomainObjectName.ValueObject} />;
 };
 
 /**
  * 实体
  */
 defineShape({
-  name: 'value-object',
+  name: DomainObjectName.ValueObject,
   title: '值对象',
   description: '值对象',
   icon: icon,

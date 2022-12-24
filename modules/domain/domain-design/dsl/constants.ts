@@ -37,3 +37,12 @@ export const NameTooltipSimple: Record<NameCase, string> = {
   camelCase: '输入小写驼峰式(camelCase)标识符',
   SNAKE_CASE: '输入大写蛇式(SNAKE_CASE)标识符',
 };
+
+/**
+ * 领域对象名称
+ */
+export enum DomainObjectName {
+  Aggregation = 'aggregation',
+  Entity = 'entity',
+  ValueObject = 'value-object',
+}

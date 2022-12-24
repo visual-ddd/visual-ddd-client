@@ -4,6 +4,8 @@ import { EditorFormPortalContextProvider } from '../Form';
 
 import s from './index.module.scss';
 
+export * from './PanelLayout';
+
 export interface EditorLayoutProps {
   /**
    * 左侧侧边栏
@@ -30,6 +32,7 @@ const SIDE_WIDTH = 230;
 const MIN_SIDE_WIDTH = SIDE_WIDTH;
 const MAX_SIDE_WIDTH = SIDE_WIDTH * 1.5;
 
+// TODO: 记忆
 export const EditorLayout = (props: EditorLayoutProps) => {
   const { left, children, toolbar, right } = props;
 

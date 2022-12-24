@@ -49,7 +49,7 @@ export class NodeUpdater<T extends Node = Node> extends CellUpdater<T> {
     this.instance.current?.rotate(angle ?? 0, wrapPreventListenerOptions({ absolute: true }));
   }
 
-  accept(props: Record<string, any>): void {
+  override accept(props: Record<string, any>): void {
     super.accept(props);
 
     for (const key of this.nodeKeys) {

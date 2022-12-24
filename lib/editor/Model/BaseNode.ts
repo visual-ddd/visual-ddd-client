@@ -5,6 +5,7 @@ import { set, get } from '@wakeapp/utils';
 import { getPaths, unset } from '@/lib/utils';
 
 import type { BaseNodeProperties, ShapeType } from './types';
+import { ROOT_ID } from './constants';
 
 /**
  * 节点基类
@@ -55,6 +56,14 @@ export class BaseNode {
   @derive
   get depth(): number {
     return this.parent == null ? 0 : this.parent.depth + 1;
+  }
+
+  /**
+   * 是否有父节点(根节点是一个虚拟节点)
+   */
+  @derive
+  get hasParent() {
+    return this.parent && this.parent.id !== ROOT_ID;
   }
 
   constructor(name: string, id: string, type: ShapeType = 'node') {

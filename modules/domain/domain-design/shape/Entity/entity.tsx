@@ -1,7 +1,7 @@
 import { defineShape, ShapeComponentProps, useShapeModel } from '@/lib/editor';
 import { ReactComponentBinding, ReactComponentProps, registerReactComponent } from '@/lib/g6-binding';
 
-import { ClassShape, createEntity, EntityEditor, EntityDSL } from '../../dsl';
+import { ClassShape, createEntity, EntityEditor, EntityDSL, DomainObjectName } from '../../dsl';
 
 import icon from './entity.png';
 
@@ -11,17 +11,17 @@ const EntityReactShapeComponent = (props: ReactComponentProps) => {
   return <ClassShape dsl={properties} type="实体" style={{ backgroundColor: '#d9f7be' }} />;
 };
 
-registerReactComponent('entity', EntityReactShapeComponent);
+registerReactComponent(DomainObjectName.Entity, EntityReactShapeComponent);
 
 export const EntityShapeComponent = (props: ShapeComponentProps) => {
-  return <ReactComponentBinding {...props.cellProps} component="entity" />;
+  return <ReactComponentBinding {...props.cellProps} component={DomainObjectName.Entity} />;
 };
 
 /**
  * 实体
  */
 defineShape({
-  name: 'entity',
+  name: DomainObjectName.Entity,
   title: '实体',
   description: '领域实体',
   icon: icon,

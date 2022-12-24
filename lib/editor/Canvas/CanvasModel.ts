@@ -773,6 +773,17 @@ export class CanvasModel {
   };
 
   /**
+   * 节点选择
+   * @param params
+   */
+  handleSelect = (params: { cellIds: string[] }) => {
+    const { cellIds } = params;
+    if (cellIds.length) {
+      this.graph?.resetSelection(cellIds);
+    }
+  };
+
+  /**
    * 按需调整分组大小
    * @param node
    */

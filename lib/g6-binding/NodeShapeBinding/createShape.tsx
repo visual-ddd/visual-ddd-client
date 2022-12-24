@@ -24,7 +24,7 @@ export function createShape<Props extends NodeBindingProps>(
   };
 
   class CustomShapeUpdater extends NodeUpdater {
-    accept(props: Record<string, any>): void {
+    override accept(props: Record<string, any>): void {
       super.accept(props);
       for (const { name } of properties) {
         this.doUpdate(name, props[name], { object: props });

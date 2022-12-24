@@ -4,20 +4,24 @@ import localforage from 'localforage';
 export class ColorHistory {
   static MAX = 12;
   static CACHE_KEY = 'color-history';
+
+  @observable
   list: string[] = [];
 
   constructor() {
-    makeObservable(this, { list: observable, push: action });
     this.initial();
+
+    makeObservable(this);
   }
 
   async initial() {
     const list = await localforage.getItem<string[]>(ColorHistory.CACHE_KEY);
     if (list) {
-      this.list = list;
+      this.setList(list);
     }
   }
 
+  @action
   push(item: string) {
     if (this.list.includes(item)) {
       return;
@@ -33,6 +37,11 @@ export class ColorHistory {
     localforage.setItem(ColorHistory.CACHE_KEY, clone);
 
     this.list = clone;
+  }
+
+  @action
+  private setList(list: string[]) {
+    this.list = list;
   }
 }
 

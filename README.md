@@ -38,6 +38,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 - 全局告警
 - rule 包含 label
 - 节点级别验证, 使用特殊的 **ROOT**
+- 列表移除，验证状态也需要移除
 - defineShape 支持 decorator，用类组件实现
 - node edit
 - label edit
@@ -45,7 +46,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 - 创建后选中
 - updateProperty debounce 发布 yjs 事件, 使用合并事件形式
 - 只读模式
-- 右键菜单
+- 右键菜单, 画布，节点，组件树
 - layout 支持折叠
 - edge/node selected 状态高亮
 - derive 支持 memo
@@ -54,3 +55,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 - 持久化 viewState
 - 边拖入
 - 无连接桩连接交互
+- 支持切换图形类型

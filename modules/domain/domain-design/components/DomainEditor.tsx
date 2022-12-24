@@ -10,8 +10,10 @@ import {
   EditorShapeLibrary,
   EditorToolbar,
   EditorInspectPanel,
+  EditorPanelLayout,
 } from '@/lib/editor';
 import { DomainEditorModel } from '../model';
+import { ShapeTree } from './ShapeTree';
 
 const ydoc = new YDoc();
 const domainDatabase = ydoc.getMap('domain');
@@ -19,7 +21,7 @@ const domainDatabase = ydoc.getMap('domain');
 // new IndexeddbPersistence('just-do-it', ydoc);
 new WebrtcProvider('just-do-it', ydoc);
 
-const model = new DomainEditorModel({ datasource: domainDatabase, doc: ydoc, scopeId: 'domain' });
+const model = new DomainEditorModel({ datasource: domainDatabase, doc: ydoc });
 
 /**
  * 领域模型编辑器
@@ -31,11 +33,11 @@ export const DomainEditor = observer(function DomainEditor() {
         <CanvasModelProvider>
           <EditorLayout
             left={
-              <>
+              <EditorPanelLayout bottom={<ShapeTree />}>
                 <EditorShapeLibrary
                   shapes={['entity', 'value-object', 'aggregation', 'rect', 'rect-child', 'child', 'child-2', 'react']}
                 />
-              </>
+              </EditorPanelLayout>
             }
             right={<EditorInspectPanel />}
             toolbar={<EditorToolbar />}

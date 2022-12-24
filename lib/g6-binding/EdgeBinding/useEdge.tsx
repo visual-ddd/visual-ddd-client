@@ -101,7 +101,7 @@ class EdgeUpdater<T extends Edge = Edge> extends CellUpdater<T> {
 
   private edgeKeys = ['source', 'target', 'label', 'router', 'vertices', 'connector', 'labels'];
 
-  accept(props: Record<string, any>): void {
+  override accept(props: Record<string, any>): void {
     super.accept(props);
 
     for (const key of this.edgeKeys) {

@@ -26,11 +26,11 @@
     }
   }
 
-  :global(.x6-split-box-vertical .x6-split-box-resizer) {
+  :global(.x6-split-box-vertical > .x6-split-box-resizer) {
     width: var(--width);
   }
 
-  :global(.x6-split-box-horizontal .x6-split-box-resizer) {
+  :global(.x6-split-box-horizontal > .x6-split-box-resizer) {
     height: var(--width);
   }
 }

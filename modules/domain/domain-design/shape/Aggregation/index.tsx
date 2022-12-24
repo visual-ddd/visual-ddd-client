@@ -1,8 +1,7 @@
 import { defineShape, ShapeComponentProps, useShapeModel } from '@/lib/editor';
 import { ReactComponentBinding, ReactComponentProps, registerReactComponent } from '@/lib/g6-binding';
-import { makeSet } from '@/lib/utils';
 
-import { AggregationDSL, AggregationEditor, AggregationShape, createAggregation } from '../../dsl';
+import { AggregationDSL, AggregationEditor, AggregationShape, createAggregation, DomainObjectName } from '../../dsl';
 
 import icon from './aggregation.png';
 
@@ -12,19 +11,19 @@ const AggregationReactShapeComponent = (props: ReactComponentProps) => {
   return <AggregationShape dsl={properties} />;
 };
 
-registerReactComponent('aggregation', AggregationReactShapeComponent);
+registerReactComponent(DomainObjectName.Aggregation, AggregationReactShapeComponent);
 
 export const AggregationShapeComponent = (props: ShapeComponentProps) => {
-  return <ReactComponentBinding {...props.cellProps} component="aggregation" />;
+  return <ReactComponentBinding {...props.cellProps} component={DomainObjectName.Aggregation} />;
 };
 
-const ALLOWED_CHILD = makeSet('entity,value-object');
+const ALLOWED_CHILD = new Set<string>([DomainObjectName.Entity, DomainObjectName.ValueObject]);
 
 /**
  * 实体
  */
 defineShape({
-  name: 'aggregation',
+  name: DomainObjectName.Aggregation,
   title: '聚合',
   description: '聚合',
   icon: icon,
