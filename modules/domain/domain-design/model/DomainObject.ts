@@ -63,6 +63,14 @@ export abstract class DomainObject<DSL extends NameDSL> {
   abstract dependencies: DomainObject<NameDSL>[];
 
   /**
+   * 排除掉自身的循环依赖
+   */
+  @derive
+  get dependenciesWithoutSelf() {
+    return this.dependencies.filter(i => i.id !== this.id);
+  }
+
+  /**
    * 是否可以被引用, 比如实体、值对象可以被引入，聚合、命令不能被引用
    */
   abstract referable: boolean;

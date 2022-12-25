@@ -1,6 +1,7 @@
 import { Cell, Edge, PointLike, Size } from '@antv/x6';
-import { NoopArray } from '@wakeapp/utils';
+import { isObject, NoopArray } from '@wakeapp/utils';
 import { v4 } from 'uuid';
+import { Base64 } from 'js-base64';
 
 import { BaseNodeProperties } from '../Model';
 
@@ -34,6 +35,10 @@ export type CopyPayload =
   | ({ type: 'edge'; source: Edge.TerminalData; target: Edge.TerminalData } & CommonCopyPayload)
   | ({ type: 'node'; position: PointLike; size: Size } & CommonCopyPayload);
 
+function isBaseNodeProperties(data: any): data is BaseNodeProperties {
+  return isObject(data) && '__node_name__' in data;
+}
+
 /**
  * 序列化为复制载荷
  */
@@ -46,6 +51,11 @@ function serializeToCopyPayload(cells: Cell[]): CopyPayload[] {
 
   for (const cell of cells) {
     const json = cell.toJSON();
+
+    if (!isBaseNodeProperties(json.data)) {
+      continue;
+    }
+
     const item: CommonCopyPayload = {
       properties: json.data,
       id: json.id!,
@@ -88,14 +98,14 @@ export function copy(cells: Cell[]) {
   }
 
   const json = JSON.stringify(payload);
-  const encoded = window.btoa(PAYLOAD_PREFIX + json);
+  const encoded = Base64.encode(PAYLOAD_PREFIX + json);
 
   window.navigator.clipboard.writeText(encoded);
 }
 
 function tryParsePayload(text: string): CopyPayload[] | null {
   try {
-    const source = window.atob(text);
+    const source = Base64.decode(text);
 
     if (!source.startsWith(PAYLOAD_PREFIX)) {
       return null;
@@ -103,6 +113,7 @@ function tryParsePayload(text: string): CopyPayload[] | null {
 
     return JSON.parse(source.slice(PAYLOAD_PREFIX.length));
   } catch (err) {
+    console.warn(`粘贴错误: `, err);
     return null;
   }
 }
@@ -242,6 +253,7 @@ export async function paste(options: {
       return !whitelist.includes(i.properties.__node_type__);
     })
   ) {
+    return;
   }
 
   resetId(payload);

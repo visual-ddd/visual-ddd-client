@@ -103,7 +103,6 @@ class NodeYMap {
 /**
  * yjs 数据库
  * TODO: 初始化
- * TODO: 避免循环
  * TODO: 离线编辑
  */
 export class BaseEditorDatasource {
@@ -216,11 +215,13 @@ export class BaseEditorDatasource {
   @push('UPDATE_NODE_PROPERTY')
   protected updateNodeProperty(params: { node: BaseNode; path: string; value: any }) {
     this.doUpdate(() => {
-      const { node, path, value } = params;
+      const { node, path } = params;
       const paths = getPaths(path);
       const nodeMap = NodeYMap.fromYMap(this.datasource.get(node.id));
+
       if (nodeMap != null) {
-        nodeMap.updateProperty(paths[0], value);
+        const field = paths[0];
+        nodeMap.updateProperty(field, node.getProperty(field));
       }
     });
   }

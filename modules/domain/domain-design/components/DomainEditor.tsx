@@ -14,6 +14,7 @@ import {
 } from '@/lib/editor';
 import { DomainEditorModel } from '../model';
 import { ShapeTree } from './ShapeTree';
+import { DomainObjectReferenceEdges } from './DomainObjectReferenceEdges';
 
 const ydoc = new YDoc();
 const domainDatabase = ydoc.getMap('domain');
@@ -42,7 +43,10 @@ export const DomainEditor = observer(function DomainEditor() {
             right={<EditorInspectPanel />}
             toolbar={<EditorToolbar />}
           >
-            <Canvas>{/* TODO: 扩展连线 */}</Canvas>
+            <Canvas>
+              {/* 扩展连线 */}
+              <DomainObjectReferenceEdges />
+            </Canvas>
           </EditorLayout>
         </CanvasModelProvider>
       </EditorModelProvider>

@@ -7,6 +7,12 @@ import { DomainObject } from './DomainObject';
 import { DomainObjectFactory } from './DomainObjectFactory';
 import { IDomainObjectContainer } from './IDomainContainer';
 
+export interface EdgeDeclaration {
+  id: string;
+  source: string;
+  target: string;
+}
+
 /**
  * 描述和计算对象之间的依赖关系
  */
@@ -69,6 +75,25 @@ export class DomainObjectContainer implements IDomainObjectContainer {
     }
 
     return result;
+  }
+
+  /**
+   * 根据依赖关系计算的边
+   */
+  @derive
+  get dependencyEdges(): EdgeDeclaration[] {
+    const list = this.referableObjects;
+    return list
+      .map(i => {
+        return i.dependenciesWithoutSelf.map(j => {
+          return {
+            id: `${i.id}->${j.id}`,
+            source: i.id,
+            target: j.id,
+          };
+        });
+      })
+      .flat();
   }
 
   constructor(inject: { event: BaseEditorEvent }) {
