@@ -4,6 +4,7 @@ export * from './NameInput';
 export * from './DescriptionInput';
 export * from './TypeInput';
 export * from './TitleInput';
+export * from './SourceInput';
 
 // 列表
 export * from './MemberList';
@@ -15,3 +16,4 @@ export * from './ParameterEditor';
 export * from './EntityEditor';
 export * from './ValueObjectEditor';
 export * from './AggregationEditor';
+export * from './CommandEditor';

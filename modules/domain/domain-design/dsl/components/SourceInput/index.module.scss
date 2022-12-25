@@ -1,0 +1,30 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  & > label {
+    margin-inline-start: 0 !important;
+    margin-bottom: 4px;
+    width: 100%;
+
+    & > span:nth-child(2) {
+      flex: 1;
+    }
+  }
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+
+  & > :global(span) {
+    width: 65px;
+    flex-shrink: 0;
+  }
+
+  & > :global(.ant-input) {
+    flex: 1;
+  }
+}

@@ -45,4 +45,5 @@ export enum DomainObjectName {
   Aggregation = 'aggregation',
   Entity = 'entity',
   ValueObject = 'value-object',
+  Command = 'command',
 }

@@ -15,7 +15,12 @@ import { stringifyProperty } from '../../stringify';
 import { TypeInput } from '../TypeInput';
 import { TitleInput } from '../TitleInput';
 
-export interface PropertiesEditorProps {}
+export interface PropertiesEditorProps {
+  /**
+   * 属性列表的路径， 默认是 properties
+   */
+  path?: string;
+}
 
 const renderItem = (value: PropertyDSL) => {
   return <div className={classNames('vd-properties-editor-item', s.item)}>{stringifyProperty(value)}</div>;
@@ -48,8 +53,8 @@ const renderEditor = (path: string) => {
  * 属性编辑器
  */
 export const PropertiesEditor = observer(function PropertiesEditor(props: PropertiesEditorProps) {
+  const { path = 'properties' } = props;
   const { formModel } = useEditorFormContext()!;
-  const path = 'properties';
   const properties = formModel.getProperty(path);
   const handleChange = (list: PropertyDSL[]) => {
     formModel.setProperty(path, list);

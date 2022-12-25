@@ -5,4 +5,13 @@
     height: 37px;
     margin-bottom: 0 !important;
   }
+
+  :global(.ant-tabs-content) {
+    height: 100%;
+  }
+
+  :global(.ant-tabs-tabpane) {
+    height: 100%;
+    overflow: auto;
+  }
 }

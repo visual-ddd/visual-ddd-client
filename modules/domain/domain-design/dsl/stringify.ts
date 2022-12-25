@@ -1,6 +1,7 @@
 import { AccessModifier, UntitledInCamelCase, Void, VoidClass } from './constants';
 import { AccessDSL, MethodDSL, ParameterDSL, PropertyDSL, TypeDSL, TypeType } from './dsl';
 
+// TODO: 引用标题响应化
 export function stringifyTypeDSL(type?: TypeDSL): string {
   if (type == null) {
     return VoidClass;

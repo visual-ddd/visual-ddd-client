@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { observer } from 'mobx-react';
 import classNames from 'classnames';
 
@@ -59,40 +59,117 @@ export interface ClassShapeProps {
   className?: string;
 }
 
-export const ClassShape: FC<ClassShapeProps> = observer(function ClassShape(props) {
-  const { dsl, type, className, style } = props;
-  const hasProperties = !!(dsl.properties.length || dsl.classProperties.length);
-  const hasMethods = !!(dsl.methods.length || dsl.classMethods.length);
+export interface ClassShapeBaseProps {
+  style?: React.CSSProperties;
+  className?: string;
+
+  /**
+   * 描述符
+   */
+  type?: React.ReactNode;
+
+  /**
+   * 名称
+   */
+  name?: React.ReactNode;
+
+  /**
+   * 显示名称，默认 true
+   */
+  showName?: boolean;
+
+  title?: React.ReactNode;
+
+  /**
+   * 显示标题，默认true
+   */
+  showTitle?: boolean;
+
+  /**
+   * 抽象类？
+   */
+  abstract?: boolean;
+
+  properties?: PropertyDSL[];
+  classProperties?: PropertyDSL[];
+
+  methods?: MethodDSL[];
+  classMethods?: MethodDSL[];
+}
+
+/**
+ * 类 UML 基础渲染
+ */
+export const ClassShapeBase: FC<ClassShapeBaseProps> = observer(function ClassShapeBase(props) {
+  const {
+    className,
+    style,
+    type,
+    name,
+    showName = true,
+    title,
+    showTitle = true,
+    abstract,
+    properties,
+    classProperties,
+    methods,
+    classMethods,
+  } = props;
+  const hasProperties = !!(properties?.length || classProperties?.length);
+  const hasMethods = !!(methods?.length || classMethods?.length);
 
   return (
     <div className={classNames('shape-class', s.root, className)} style={style}>
       <div className={classNames('shape-class__header', s.header)}>
         {!!type && <div className={classNames('shape-class__type', s.type)}>《{type}》</div>}
-        <div className={classNames('shape-class__name', s.name, { abstract: dsl.abstract })}>
-          {dsl.name || UntitledInUpperCamelCase}
-        </div>
-        <div className={classNames('shape-class__title', s.title)}>{dsl.title || UntitledInHumanReadable}</div>
+        {showName && (
+          <div className={classNames('shape-class__name', s.name, { abstract: abstract })}>
+            {name || UntitledInUpperCamelCase}
+          </div>
+        )}
+        {showTitle && (
+          <div className={classNames('shape-class__title', s.title)}>{title || UntitledInHumanReadable}</div>
+        )}
       </div>
       {hasProperties && (
         <div className={classNames('shape-class__cells', s.cells)}>
-          {dsl.classProperties.map(i => {
+          {classProperties?.map(i => {
             return <ClassShapeProperty key={i.uuid} value={i} isClassMember></ClassShapeProperty>;
           })}
-          {dsl.properties.map(i => {
+          {properties?.map(i => {
             return <ClassShapeProperty key={i.uuid} value={i}></ClassShapeProperty>;
           })}
         </div>
       )}
       {hasMethods && (
         <div className={classNames('shape-class__cells', s.cells)}>
-          {dsl.classMethods.map(i => {
+          {classMethods?.map(i => {
             return <ClassShapeMethod key={i.uuid} value={i} isClassMember></ClassShapeMethod>;
           })}
-          {dsl.methods.map(i => {
+          {methods?.map(i => {
             return <ClassShapeMethod key={i.uuid} value={i}></ClassShapeMethod>;
           })}
         </div>
       )}
     </div>
+  );
+});
+
+export const ClassShape: FC<ClassShapeProps> = observer(function ClassShape(props) {
+  const { dsl, type, className, style } = props;
+
+  return (
+    <ClassShapeBase
+      className={className}
+      style={style}
+      type={type}
+      name={dsl.name}
+      title={dsl.title}
+      abstract={dsl.abstract}
+      properties={dsl.properties}
+      classProperties={dsl.classProperties}
+      methods={dsl.methods}
+      classMethods={dsl.classMethods}
+    />
   );
 });

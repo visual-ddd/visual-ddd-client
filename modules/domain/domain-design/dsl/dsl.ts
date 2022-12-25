@@ -10,6 +10,24 @@ export interface IDDSL {
   uuid: UUID;
 }
 
+/**
+ * 引用表述
+ */
+export interface ReferenceDSL {
+  referenceId: string;
+  name: string;
+}
+
+export interface MetaDSL {
+  key?: string;
+  value?: string;
+
+  /**
+   * 内部属性，不会在节点上显示
+   */
+  inner?: boolean;
+}
+
 export interface NameDSL extends IDDSL {
   /**
    * 唯一标识符, 用户输入
@@ -29,7 +47,7 @@ export interface NameDSL extends IDDSL {
   /**
    * 元数据，由开发者自行扩展,  DSL 本身不会关心其内容，DSL 消费者会关心
    */
-  meta?: Record<string, string>;
+  meta?: MetaDSL[];
 }
 
 /**
@@ -240,6 +258,65 @@ export interface EnumDSL extends NameDSL {
 }
 
 /**
+ * 命令来源
+ */
+export type SourceDSL = {
+  http: {
+    enabled: boolean;
+  };
+  rpc: {
+    enabled: boolean;
+  };
+  /**
+   * 外部事件
+   */
+  event: {
+    enabled: boolean;
+    /**
+     * 事件名
+     */
+    value: string;
+  };
+  schedule: {
+    enabled: boolean;
+    /**
+     *  cron 表达式
+     */
+    value: string;
+  };
+};
+
+/**
+ * 命令定义
+ */
+export interface CommandDSL extends NameDSL {
+  /**
+   * 命令来源
+   */
+  source: SourceDSL;
+
+  /**
+   * 属性
+   */
+  properties: PropertyDSL[];
+
+  /**
+   * 命令属性
+   */
+  eventProperties: PropertyDSL[];
+
+  /**
+   * 规则引用
+   */
+  rules: ReferenceDSL[];
+
+  /**
+   * 返回值
+   */
+  result?: TypeDSL;
+}
+
+/**
  * 聚合定义
  */
 export interface AggregationDSL extends NameDSL {
@@ -249,5 +326,8 @@ export interface AggregationDSL extends NameDSL {
    */
   color: string;
 
-  // TODO: 命令引用
+  /**
+   * 命令引用
+   */
+  commands: ReferenceDSL[];
 }

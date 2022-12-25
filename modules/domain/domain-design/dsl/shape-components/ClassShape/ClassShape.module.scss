@@ -12,17 +12,22 @@
   align-items: center;
   gap: 4px;
   padding: var(--vd-spacing-xs);
+
+  &:only-child {
+    border-bottom: none;
+  }
 }
 
 .type {
   font-size: var(--vd-font-size-h6);
   font-weight: bold;
+  transform: scale(0.9);
+  color: var(--vd-color-font-regular);
 }
 
 .name {
-  font-size: var(--vd-font-size-h6);
-  font-style: italic;
-  color: var(--vd-color-font-regular);
+  font-size: var(--vd-font-size-h5);
+  font-weight: bold;
 
   &:global(.abstract) {
     font-style: italic;
@@ -30,6 +35,8 @@
 }
 
 .title {
+  font-size: var(--vd-font-size-h6);
+  color: var(--vd-color-font-regular);
 }
 
 .cells {

@@ -5,6 +5,7 @@ import {
   AggregationDSL,
   BaseType,
   ClassDSL,
+  CommandDSL,
   ContainerType,
   EntityDSL,
   MethodDSL,
@@ -12,6 +13,7 @@ import {
   NameDSL,
   ParameterDSL,
   PropertyDSL,
+  SourceDSL,
   TypeDSL,
   TypeType,
   ValueObjectDSL,
@@ -48,7 +50,7 @@ export function createNameDSL(options: { wordCase?: NameCase; title?: boolean } 
     name: wordCase === 'CamelCase' ? UntitledInUpperCamelCase : UntitledInCamelCase,
     title: title ? UntitledInHumanReadable : '',
     description: '',
-    meta: {},
+    meta: [],
   };
 }
 
@@ -111,6 +113,29 @@ export function createValueObject(): ValueObjectDSL {
   return cls;
 }
 
+export function createSourceDSL(): SourceDSL {
+  return {
+    http: { enabled: true },
+    rpc: { enabled: true },
+    event: { enabled: false, value: '' },
+    schedule: { enabled: false, value: '' },
+  };
+}
+
+/**
+ * 构造命令
+ */
+export function createCommand(): CommandDSL {
+  return {
+    ...createNameDSL({ wordCase: 'CamelCase', title: true }),
+    source: createSourceDSL(),
+    properties: [createProperty()],
+    eventProperties: [],
+    rules: [],
+    result: undefined,
+  };
+}
+
 /**
  * 构造聚合
  * @returns
@@ -119,5 +144,6 @@ export function createAggregation(): AggregationDSL {
   return {
     ...createNameDSL({ wordCase: 'CamelCase', title: true }),
     color: '#D9F7BE',
+    commands: [],
   };
 }
