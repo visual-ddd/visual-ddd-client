@@ -2,6 +2,7 @@ import { DomainObjectName, NameDSL } from '../dsl';
 
 import { DomainObject, DomainObjectInject } from './DomainObject';
 import { DomainObjectAggregation } from './DomainObjectAggregation';
+import { DomainObjectCommand } from './DomainObjectCommand';
 import { DomainObjectEntity } from './DomainObjectEntity';
 import { DomainObjectValueObject } from './DomainObjectValueObject';
 
@@ -15,6 +16,8 @@ export class DomainObjectFactory {
         return new DomainObjectEntity(inject);
       case DomainObjectName.ValueObject:
         return new DomainObjectValueObject(inject);
+      case DomainObjectName.Command:
+        return new DomainObjectCommand(inject);
       default:
         return null;
     }
@@ -43,5 +46,14 @@ export class DomainObjectFactory {
    */
   static isEntity(object: DomainObject<NameDSL>): object is DomainObjectEntity {
     return object instanceof DomainObjectEntity;
+  }
+
+  /**
+   * 是否为命令
+   * @param object
+   * @returns
+   */
+  static isCommand(object: DomainObject<NameDSL>): object is DomainObjectCommand {
+    return object instanceof DomainObjectCommand;
   }
 }

@@ -780,6 +780,12 @@ export class CanvasModel {
     const { cellIds } = params;
     if (cellIds.length) {
       this.graph?.resetSelection(cellIds);
+      if (cellIds.length === 1) {
+        const cell = this.graph?.getCellById(cellIds[0]);
+        if (cell) {
+          this.graph?.centerCell(cell);
+        }
+      }
     }
   };
 

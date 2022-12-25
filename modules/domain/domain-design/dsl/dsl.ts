@@ -15,7 +15,7 @@ export interface IDDSL {
  */
 export interface ReferenceDSL {
   referenceId: string;
-  name: string;
+  name?: string;
 }
 
 export interface MetaDSL {

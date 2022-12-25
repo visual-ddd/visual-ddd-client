@@ -4,6 +4,7 @@ import { makeObservable, observable } from 'mobx';
 
 import { NameDSL } from '../dsl';
 import { DomainObject } from './DomainObject';
+import { DomainObjectAggregation } from './DomainObjectAggregation';
 import { DomainObjectFactory } from './DomainObjectFactory';
 import { IDomainObjectContainer } from './IDomainContainer';
 
@@ -11,6 +12,16 @@ export interface EdgeDeclaration {
   id: string;
   source: string;
   target: string;
+
+  /**
+   * 对象关系
+   * https://www.cnblogs.com/zhongj/p/11169780.html
+   *
+   * dependency 依赖关系，严格意义上还有关联(Association), 这里暂时没有实现
+   * aggregation 聚合
+   * composition 组合(统一生命周期的整体和部分的关系)
+   */
+  type: 'dependency' | 'aggregation' | 'composition';
 }
 
 /**
@@ -50,6 +61,14 @@ export class DomainObjectContainer implements IDomainObjectContainer {
   }
 
   /**
+   * 命令
+   */
+  @derive
+  get commands() {
+    return this.objectsInArray.filter(i => DomainObjectFactory.isCommand(i));
+  }
+
+  /**
    * 未关联聚合的领域对象(实体、值对象、命令)
    */
   @derive
@@ -71,7 +90,13 @@ export class DomainObjectContainer implements IDomainObjectContainer {
       }
 
       // 命令
-      // TODO:
+      if (DomainObjectFactory.isCommand(item)) {
+        if (!this.isAggregationAssociateCommand(item)) {
+          result.push(item);
+        }
+      }
+
+      // TODO: 规则
     }
 
     return result;
@@ -81,7 +106,7 @@ export class DomainObjectContainer implements IDomainObjectContainer {
    * 根据依赖关系计算的边
    */
   @derive
-  get dependencyEdges(): EdgeDeclaration[] {
+  get dependencyEdgesFromReferableObjects(): EdgeDeclaration[] {
     const list = this.referableObjects;
     return list
       .map(i => {
@@ -90,10 +115,38 @@ export class DomainObjectContainer implements IDomainObjectContainer {
             id: `${i.id}->${j.id}`,
             source: i.id,
             target: j.id,
-          };
+            type: 'dependency',
+          } satisfies EdgeDeclaration;
         });
       })
       .flat();
+  }
+
+  /**
+   * 计算聚合和命令之间的管理关系
+   */
+  @derive
+  get dependencyEdgesFromAggregations(): EdgeDeclaration[] {
+    return this.aggregations
+      .map(i =>
+        (i as DomainObjectAggregation).dependenciesFromCommands.map(d => {
+          return {
+            id: `${i.id}->${d.id}`,
+            source: i.id,
+            target: d.id,
+            type: 'aggregation',
+          } satisfies EdgeDeclaration;
+        })
+      )
+      .flat();
+  }
+
+  /**
+   * 根据依赖关系计算的边
+   */
+  @derive
+  get dependencyEdges(): EdgeDeclaration[] {
+    return this.dependencyEdgesFromReferableObjects.concat(this.dependencyEdgesFromAggregations);
   }
 
   constructor(inject: { event: BaseEditorEvent }) {
@@ -119,5 +172,9 @@ export class DomainObjectContainer implements IDomainObjectContainer {
    */
   getObjectById(id: string): DomainObject<NameDSL> | undefined {
     return this.objects.get(id);
+  }
+
+  isAggregationAssociateCommand(command: DomainObject<NameDSL> | string) {
+    return this.aggregations.some(i => (i as DomainObjectAggregation).hasCommand(command));
   }
 }
