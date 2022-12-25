@@ -1,5 +1,6 @@
 import { defineShape, ShapeComponentProps, useShapeModel } from '@/lib/editor';
 import { ReactComponentBinding, ReactComponentProps, registerReactComponent } from '@/lib/g6-binding';
+import { DomainObjectReferenceContextProvider } from '../../components';
 
 import { ClassShape, createEntity, EntityEditor, EntityDSL, DomainObjectName } from '../../dsl';
 
@@ -13,8 +14,16 @@ const EntityReactShapeComponent = (props: ReactComponentProps) => {
 
 registerReactComponent(DomainObjectName.Entity, EntityReactShapeComponent);
 
-export const EntityShapeComponent = (props: ShapeComponentProps) => {
+const EntityShapeComponent = (props: ShapeComponentProps) => {
   return <ReactComponentBinding {...props.cellProps} component={DomainObjectName.Entity} />;
+};
+
+const EntityAttributesComponent = () => {
+  return (
+    <DomainObjectReferenceContextProvider>
+      <EntityEditor />
+    </DomainObjectReferenceContextProvider>
+  );
 };
 
 /**
@@ -31,5 +40,5 @@ defineShape({
     return { ...createEntity(), zIndex: 2 };
   },
   component: EntityShapeComponent,
-  attributeComponent: EntityEditor,
+  attributeComponent: EntityAttributesComponent,
 });

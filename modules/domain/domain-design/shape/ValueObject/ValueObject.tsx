@@ -1,5 +1,6 @@
 import { defineShape, ShapeComponentProps, useShapeModel } from '@/lib/editor';
 import { ReactComponentBinding, ReactComponentProps, registerReactComponent } from '@/lib/g6-binding';
+import { DomainObjectReferenceContextProvider } from '../../components';
 
 import { ClassShape, createValueObject, DomainObjectName, ValueObjectDSL, ValueObjectEditor } from '../../dsl';
 
@@ -13,8 +14,16 @@ const ValueObjectReactShapeComponent = (props: ReactComponentProps) => {
 
 registerReactComponent(DomainObjectName.ValueObject, ValueObjectReactShapeComponent);
 
-export const ValueObjectShapeComponent = (props: ShapeComponentProps) => {
+const ValueObjectShapeComponent = (props: ShapeComponentProps) => {
   return <ReactComponentBinding {...props.cellProps} component={DomainObjectName.ValueObject} />;
+};
+
+const ValueObjectAttributeComponent = () => {
+  return (
+    <DomainObjectReferenceContextProvider>
+      <ValueObjectEditor />
+    </DomainObjectReferenceContextProvider>
+  );
 };
 
 /**
@@ -31,5 +40,5 @@ defineShape({
     return { ...createValueObject(), zIndex: 2 };
   },
   component: ValueObjectShapeComponent,
-  attributeComponent: ValueObjectEditor,
+  attributeComponent: ValueObjectAttributeComponent,
 });

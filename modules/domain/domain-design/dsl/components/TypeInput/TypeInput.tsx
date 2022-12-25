@@ -3,6 +3,7 @@ import { Cascader, Dropdown, Input } from 'antd';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
 import { useMemo } from 'react';
+import { useReferencesContext } from '../../context';
 
 import { BaseType, BaseTypeInArray, ContainerType, ContainerTypeInArray, TypeDSL, TypeType } from '../../dsl';
 import { createBaseType, createContainerType, createReferenceType } from '../../factory';
@@ -45,20 +46,25 @@ const STATIC_OPTIONS: Node[] = [
       return { label: i, value: i };
     }),
   },
-  {
-    label: '引用类型',
-    value: TypeType.Reference,
-    children: [],
-  },
 ];
 
 const TypeSelect = observer(function TypeSelect(props: { value?: TypeDSL; onChange?: (value: TypeDSL) => void }) {
   const { value, onChange } = props;
+  const references = useReferencesContext();
 
   const options = useMemo(() => {
-    // TODO: 注入引用类型
-    return STATIC_OPTIONS.filter(i => i.children?.length);
-  }, []);
+    const options = STATIC_OPTIONS.slice(0);
+
+    if (references?.references.length) {
+      options.push({
+        label: '引用类型',
+        value: TypeType.Reference,
+        children: references.references,
+      });
+    }
+
+    return options;
+  }, [references?.references]);
 
   const finalValue = useMemo(() => {
     if (value == null) {
