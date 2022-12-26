@@ -166,6 +166,18 @@ export class BaseNode {
     return false;
   }
 
+  /**
+   * 递归遍历
+   */
+  walk(visitor: (node: this) => void) {
+    visitor(this);
+    if (this.children.length) {
+      for (const child of this.children) {
+        child.walk(visitor);
+      }
+    }
+  }
+
   private getNodeIdx(node: this) {
     return this.children.findIndex(child => BaseNode.isEqual(node, child));
   }

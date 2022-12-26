@@ -359,9 +359,53 @@ export class CanvasModel {
     this.disposer.release();
   };
 
+  getNodeById = (nodeId: string) => {
+    return this.editorIndex.getNodeById(nodeId);
+  };
+
+  /**
+   * 获取节点的可见性
+   * @param nodeId
+   * @returns
+   */
+  getNodeVisible = (nodeId: string) => {
+    const cell = this.graph?.getCellById(nodeId);
+    return cell?.isVisible() ?? true;
+  };
+
   getCommandDescription = memoize((name: string) => {
     return this.keyboardBinding.getReadableKeyBinding(name);
   });
+
+  /**
+   * 设置图形的可见性
+   *
+   * @note 可见性不会持久化
+   *
+   * @param nodeId
+   * @param visible
+   */
+  handleSetNodeVisible = (params: { id: string; visible: boolean; includeChildren?: boolean }) => {
+    const { id, visible, includeChildren } = params;
+
+    const cell = this.graph?.getCellById(id);
+
+    if (cell) {
+      cell.setVisible(visible);
+
+      // 递归
+      if (includeChildren) {
+        const children = cell.getChildren();
+        if (children?.length) {
+          for (const child of children) {
+            if (child.isNode()) {
+              this.handleSetNodeVisible({ id: child.id, visible, includeChildren });
+            }
+          }
+        }
+      }
+    }
+  };
 
   handleMouseMove = (evt: React.MouseEvent) => {
     this.currentMousePagePosition = { x: evt.pageX, y: evt.pageY };
@@ -431,6 +475,19 @@ export class CanvasModel {
 
     if (node) {
       this.editorCommandHandler.updateNodeProperty({ node, path: 'zIndex', value: current });
+    }
+  };
+
+  /**
+   * 处理可见性变动
+   * @param evt
+   */
+  handleVisibleChange: GraphBindingProps['onCell$Change$Visible'] = evt => {
+    const { cell, current } = evt;
+
+    // 取消选择
+    if (!current) {
+      this.graph?.unselect(cell.id);
     }
   };
 
@@ -778,13 +835,17 @@ export class CanvasModel {
    */
   handleSelect = (params: { cellIds: string[] }) => {
     const { cellIds } = params;
+
     if (cellIds.length) {
-      this.graph?.resetSelection(cellIds);
-      if (cellIds.length === 1) {
-        const cell = this.graph?.getCellById(cellIds[0]);
-        if (cell) {
-          this.graph?.centerCell(cell);
-        }
+      const cells = cellIds
+        .map(i => this.graph?.getCellById(i))
+        .filter(booleanPredicate)
+        .filter(i => i.isVisible());
+
+      this.graph?.resetSelection(cells);
+
+      if (cells.length === 1) {
+        this.graph?.centerCell(cells[0]);
       }
     }
   };

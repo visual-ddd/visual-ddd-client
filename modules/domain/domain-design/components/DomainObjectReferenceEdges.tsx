@@ -91,6 +91,9 @@ const AggregationAggregateEdge = observer(function AggregationAggregateEdge(prop
   return <EdgeBinding id={id} source={source.id} target={target.id} attrs={attrs}></EdgeBinding>;
 });
 
+/**
+ * 领域对象依赖关系渲染
+ */
 export const DomainObjectReferenceEdges = observer(function DomainObjectReferenceEdges() {
   const { model } = useEditorModel<DomainEditorModel>();
 

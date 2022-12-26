@@ -1,0 +1,9 @@
+.root {
+  color: var(--vd-color-gray-500);
+  margin-left: var(--vd-spacing-xs);
+  cursor: pointer;
+
+  &:global(.visible) {
+    color: var(--vd-color-gray-700);
+  }
+}

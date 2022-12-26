@@ -36,6 +36,7 @@ export const Canvas = memo((props: CanvasProps) => {
       onCell$Change$ZIndex={canvasModel.handleZIndexChange}
       onCell$Change$Parent={canvasModel.handleParentChange}
       onCell$Change$Children={canvasModel.handleChildrenChange}
+      onCell$Change$Visible={canvasModel.handleVisibleChange}
       onNode$Moved={canvasModel.handleNodeMoved}
       onNode$Resize={canvasModel.handleNodeResizeStart}
       onNode$Change$Size={canvasModel.handleNodeSizeChange}

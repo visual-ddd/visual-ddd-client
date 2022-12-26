@@ -1,15 +1,32 @@
-import { EditorPanel, useCanvasModel, useEditorModel } from '@/lib/editor';
+import { EditorNodeVisibleControl, EditorPanel, useCanvasModel, useEditorModel } from '@/lib/editor';
 import { NoopArray } from '@wakeapp/utils';
 import { Empty, Tree, TreeDataNode } from 'antd';
+import classNames from 'classnames';
 import { Observer, observer, useLocalObservable } from 'mobx-react';
 
 import { NameDSL } from '../../dsl';
-import { DomainEditorModel, DomainObject } from '../../model';
+import { DomainEditorModel, DomainObject, DomainObjectFactory } from '../../model';
+
+import s from './index.module.scss';
 
 export interface ShapeTreeProps {}
 
 const renderTitle = (item: DomainObject<NameDSL>) => {
-  return <Observer>{() => <span>{item.readableTitle}</span>}</Observer>;
+  return (
+    <Observer>
+      {() => (
+        <div className={classNames('vd-shape-tree-item', s.item)}>
+          <div className={classNames('vd-shape-tree-item__body', s.itemBody)}>
+            <span className={classNames('vd-shape-tree-item__type', s.itemType)}>{item.objectTypeTitle}-</span>
+            <span>{item.readableTitle}</span>
+          </div>
+          <div className={classNames('vd-shape-tree-item__extra', s.itemExtra)}>
+            {DomainObjectFactory.isAggregation(item) && <EditorNodeVisibleControl node={item.id} includeChildren />}
+          </div>
+        </div>
+      )}
+    </Observer>
+  );
 };
 
 const VIRTUAL_UNCONTROLLED_NODES = '__UNCONTROLLED_NODES__';
@@ -71,13 +88,15 @@ export const ShapeTree = observer(function ShapeTree(props: ShapeTreeProps) {
   }));
 
   return (
-    <EditorPanel title="组件树">
+    <EditorPanel title="组件树" className={classNames('vd-shape-tree', s.root)}>
       {!store.treeData.length ? (
         <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="拖拽组件到画布里面试试" />
       ) : (
         <Tree
           treeData={store.treeData}
           defaultExpandAll
+          virtual={false}
+          blockNode
           selectedKeys={store.selected}
           // 点击直接是多选的, 操作有点怪，先禁用
           // multiple

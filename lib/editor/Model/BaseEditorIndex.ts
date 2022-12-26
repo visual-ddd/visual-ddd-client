@@ -1,3 +1,4 @@
+import { observable } from 'mobx';
 import { BaseEditorEvent } from './BaseEditorEvent';
 import { BaseNode } from './BaseNode';
 
@@ -5,6 +6,7 @@ import { BaseNode } from './BaseNode';
  * 编辑器索引信息
  */
 export class BaseEditorIndex {
+  @observable.shallow
   private nodeIndexById: Map<string, BaseNode> = new Map();
 
   private event: BaseEditorEvent;

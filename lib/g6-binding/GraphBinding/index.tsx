@@ -170,6 +170,13 @@ export interface GraphBindingProps {
   onCell$Change$ZIndex?: (evt: EventArgs['cell:change:zIndex']) => void;
 
   /**
+   * visible 变动
+   * @param evt
+   * @returns
+   */
+  onCell$Change$Visible?: (evt: EventArgs['cell:change:visible']) => void;
+
+  /**
    * 节点移除
    */
   onCell$Removed?: (evt: EventArgs['cell:removed']) => void;

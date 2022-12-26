@@ -49,12 +49,22 @@ export abstract class DomainObject<DSL extends NameDSL> {
     return this.dsl.title || UntitledInHumanReadable;
   }
 
+  abstract objectTypeTitle: string;
+
   /**
    * 名称
    */
   @derive
   get name() {
     return this.dsl.name || UntitledInUpperCamelCase;
+  }
+
+  /**
+   * 界面上展示的名称
+   */
+  @derive
+  get readableTitle() {
+    return `${this.title}(${this.name})`;
   }
 
   @derive
@@ -86,11 +96,6 @@ export abstract class DomainObject<DSL extends NameDSL> {
    * 是否可以被引用, 比如实体、值对象可以被引入，聚合、命令不能被引用
    */
   abstract referable: boolean;
-
-  /**
-   * 界面上展示的名称
-   */
-  abstract readableTitle: string;
 
   /**
    * 依赖边

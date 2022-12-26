@@ -10,15 +10,12 @@ import { DomainObjectRule } from './DomainObjectRule';
  * 命令对象
  */
 export class DomainObjectCommand extends DomainObject<CommandDSL> {
+  objectTypeTitle = '命令';
+
   /**
    * 可以作为对象应用，通常作为实体、值对象的方法参数类型
    */
   referable: boolean = true;
-
-  @derive
-  get readableTitle() {
-    return `命令 - ${this.title}(${this.name})`;
-  }
 
   /**
    * 当前所属的聚合

@@ -1,0 +1,32 @@
+.root {
+  :global(.ant-tree-switcher-noop) {
+    display: none;
+  }
+
+  :global(.ant-tree-indent-unit) {
+    width: var(--vd-spacing-base);
+  }
+}
+
+.item {
+  padding-right: 4px;
+}
+
+.item,
+.itemBody,
+.itemExtra {
+  display: flex;
+  align-items: center;
+}
+
+.itemBody {
+  flex: 1;
+}
+
+.itemType {
+  font-size: var(--vd-font-size-h6);
+  color: var(--vd-color-font-regular);
+}
+
+.itemExtra {
+}

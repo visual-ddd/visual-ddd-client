@@ -10,10 +10,7 @@ import { DomainObject, DomainObjectInject } from './DomainObject';
 export class DomainObjectAggregation extends DomainObject<AggregationDSL> {
   referable: boolean = false;
 
-  @derive
-  get readableTitle() {
-    return `聚合 - ${this.title}(${this.name})`;
-  }
+  objectTypeTitle = '聚合';
 
   @derive
   get color() {

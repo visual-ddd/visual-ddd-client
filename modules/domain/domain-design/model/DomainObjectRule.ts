@@ -10,13 +10,10 @@ import { DomainObject, DomainObjectInject } from './DomainObject';
  * 规则对象
  */
 export class DomainObjectRule extends DomainObject<RuleDSL> {
+  objectTypeTitle = '规则';
+
   // 规则不能作为类型引用
   referable: boolean = false;
-
-  @derive
-  get readableTitle() {
-    return `规则 - ${this.title}(${this.name})`;
-  }
 
   /**
    * 所属的对象

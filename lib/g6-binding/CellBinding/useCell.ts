@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react';
-import { Disposer } from '@wakeapp/utils';
+import { Disposer, NoopArray } from '@wakeapp/utils';
 import { useRefValue } from '@wakeapp/hooks';
 import { Cell, Graph } from '@antv/x6';
 import memoize from 'lodash/memoize';
@@ -279,11 +279,12 @@ export function useCell<Props extends CellBindingProps>({
     );
 
     return disposers.release;
-  }, []);
+  }, NoopArray);
 
   // 监听属性变动
-
-  updater.accept(props);
+  useEffect(() => {
+    updater.accept(props);
+  });
 
   return { instanceRef, contextValue };
 }

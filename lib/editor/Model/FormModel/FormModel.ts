@@ -16,7 +16,8 @@ import { BaseEditorModel } from '../BaseEditorModel';
  * TODO: 验证性能优化
  */
 export class FormModel {
-  private node: BaseNode;
+  readonly node: BaseNode;
+
   private rules: FormRules;
   private store: BaseEditorStore;
 
