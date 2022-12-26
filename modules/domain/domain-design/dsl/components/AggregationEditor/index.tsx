@@ -1,34 +1,46 @@
-import { EditorFormContainer, EditorFormItem, useEditorModel } from '@/lib/editor';
+import {
+  EditorFormContainer,
+  EditorFormItem,
+  EditorFormItemStatic,
+  useEditorFormContext,
+  useEditorModel,
+} from '@/lib/editor';
 import { ColorInput } from '@/lib/components';
-import { observer } from 'mobx-react';
+import { observer, useLocalObservable } from 'mobx-react';
 import { Select } from 'antd';
+import diff from 'lodash/difference';
 
 import { DomainEditorModel } from '../../../model';
 import { NameTooltip } from '../../constants';
-import { ReferenceDSL } from '../../dsl';
 import { NameInput } from '../NameInput';
 import { DescriptionInput } from '../DescriptionInput';
 import { TitleInput } from '../TitleInput';
-import { useMemo } from 'react';
-import { booleanPredicate, NoopArray } from '@wakeapp/utils';
+import { DomainObjectAggregation } from '../../../model/DomainObjectAggregation';
+import { DomainObjectCommand } from '../../../model/DomainObjectCommand';
 
-interface CommandSelectProps {
-  value?: ReferenceDSL[];
-  onChange?: (value: ReferenceDSL[]) => void;
-}
+interface CommandSelectProps {}
 
 const CommandSelect = observer(function CommandSelect(props: CommandSelectProps) {
-  const { value, onChange } = props;
+  const { formModel } = useEditorFormContext()!;
   const { model } = useEditorModel<DomainEditorModel>();
+  const aggregation = model.domainObjectContainer.getObjectById(formModel.id) as DomainObjectAggregation;
 
-  const finalValue = useMemo(() => {
-    return value?.map(i => i.referenceId) ?? NoopArray;
-  }, [value]);
+  const store = useLocalObservable(() => ({
+    get value() {
+      return aggregation.commands.map(i => i.id);
+    },
+  }));
 
   const handleChange = (value: string[]) => {
-    const objects = value.map(i => model.domainObjectContainer.getObjectById(i)).filter(booleanPredicate);
+    const removed = diff(store.value, value);
 
-    onChange?.(objects.map(i => ({ referenceId: i.id, name: `${i.title}(${i.name})` })));
+    model.domainObjectContainer.toObjects<DomainObjectCommand>(removed).map(i => {
+      i.setAggregation({ aggregation: undefined });
+    });
+
+    model.domainObjectContainer.toObjects<DomainObjectCommand>(value).map(i => {
+      i.setAggregation({ aggregation });
+    });
   };
 
   return (
@@ -38,12 +50,12 @@ const CommandSelect = observer(function CommandSelect(props: CommandSelectProps)
       mode="multiple"
       showSearch
       optionFilterProp="children"
-      value={finalValue}
+      value={store.value}
       onChange={handleChange}
     >
       {model.domainObjectContainer.commands.map(i => {
         return (
-          <Select.Option key={i.id} value={i.id}>
+          <Select.Option key={i.id} value={i.id} disabled={i.aggregation && i.aggregation !== aggregation}>
             {i.title}({i.name})
           </Select.Option>
         );
@@ -67,9 +79,9 @@ export const AggregationEditor = () => {
       <EditorFormItem path="color" label="颜色标注">
         <ColorInput />
       </EditorFormItem>
-      <EditorFormItem path="commands" label="命令关联">
+      <EditorFormItemStatic label="命令关联">
         <CommandSelect />
-      </EditorFormItem>
+      </EditorFormItemStatic>
     </EditorFormContainer>
   );
 };

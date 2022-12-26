@@ -4,6 +4,7 @@ import { NameTooltip } from '../../constants';
 import { NameInput } from '../NameInput';
 import { DescriptionInput } from '../DescriptionInput';
 import { TitleInput } from '../TitleInput';
+import { CommandSelect } from '../CommandSelect';
 
 export const RuleEditor = () => {
   return (
@@ -16,6 +17,9 @@ export const RuleEditor = () => {
       </EditorFormItem>
       <EditorFormItem path="description" label="规则描述">
         <DescriptionInput />
+      </EditorFormItem>
+      <EditorFormItem path="association" label="关联命令">
+        <CommandSelect />
       </EditorFormItem>
     </EditorFormContainer>
   );

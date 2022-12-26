@@ -100,7 +100,17 @@ test('extraDependenciesFromClass', () => {
         {
           uuid: '3',
           name: 'method',
-          parameters: [],
+          parameters: [
+            {
+              uuid: '5',
+              name: 'arg1',
+              type: {
+                type: TypeType.Reference,
+                referenceId: 'ok',
+                name: 'Ok',
+              },
+            },
+          ],
           result: {
             type: TypeType.Reference,
             name: 'Ok',
@@ -110,5 +120,8 @@ test('extraDependenciesFromClass', () => {
       ],
       classMethods: [],
     })
-  ).toEqual(['ok', 'foo']);
+  ).toEqual({
+    association: new Set(['ok']),
+    dependency: new Set(['foo']),
+  });
 });

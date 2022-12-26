@@ -16,6 +16,7 @@
     "UNACTIVE",
     "unembed",
     "Unhighlight",
+    "unreferable",
     "wakeapp"
   ],
   "typescript.tsserver.experimental.enableProjectDiagnostics": true

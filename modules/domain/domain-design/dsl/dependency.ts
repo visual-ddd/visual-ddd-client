@@ -1,8 +1,24 @@
 import { NoopArray } from '@wakeapp/utils';
 import uniq from 'lodash/uniq';
 
-import { ClassDSL, EntityDSL, MethodDSL, ParameterDSL, PropertyDSL, TypeDSL, TypeType, ValueObjectDSL } from './dsl';
+import {
+  ClassDSL,
+  CommandDSL,
+  EntityDSL,
+  MethodDSL,
+  ParameterDSL,
+  PropertyDSL,
+  RelationShipDSL,
+  TypeDSL,
+  TypeType,
+  ValueObjectDSL,
+} from './dsl';
 
+/**
+ * 从类型声明中提取引用
+ * @param type
+ * @returns
+ */
 export function extraDependenciesFromTypeDSL(type?: TypeDSL): string[] {
   if (!type) {
     return NoopArray;
@@ -44,14 +60,46 @@ export function extraDependenciesFromMethods(methods: MethodDSL[]): string[] {
   );
 }
 
-export function extraDependenciesFromClass(type: ClassDSL) {
-  return uniq(
-    extraDependenciesFromProperties(type.properties).concat(
-      extraDependenciesFromParameters(type.classProperties),
-      extraDependenciesFromMethods(type.methods),
-      extraDependenciesFromMethods(type.classMethods)
-    )
+export interface ClassDependencies {
+  /**
+   * 依赖关系
+   */
+  [RelationShipDSL.Dependency]: Set<string>;
+
+  /**
+   * 关联关系
+   */
+  [RelationShipDSL.Association]: Set<string>;
+}
+
+export function extraDependenciesFromClass(type: ClassDSL): ClassDependencies {
+  const deps: ClassDependencies = {
+    [RelationShipDSL.Dependency]: new Set(),
+    [RelationShipDSL.Association]: new Set(),
+  };
+
+  const properties = extraDependenciesFromProperties(type.properties).concat(
+    extraDependenciesFromProperties(type.classProperties)
   );
+
+  const methods = extraDependenciesFromMethods(type.methods).concat(extraDependenciesFromMethods(type.classMethods));
+
+  // 属性依赖为关联关系
+  for (const ref of properties) {
+    deps[RelationShipDSL.Association].add(ref);
+  }
+
+  // 方法依赖为依赖关系
+  for (const ref of methods) {
+    // 关联关系优先级更高
+    if (deps[RelationShipDSL.Association].has(ref)) {
+      continue;
+    }
+
+    deps[RelationShipDSL.Dependency].add(ref);
+  }
+
+  return deps;
 }
 
 export function extraDependenciesFromEntity(type: EntityDSL) {
@@ -60,4 +108,15 @@ export function extraDependenciesFromEntity(type: EntityDSL) {
 
 export function extraDependenciesFromValueObject(type: ValueObjectDSL) {
   return extraDependenciesFromClass(type);
+}
+
+/**
+ * 从命令中提取依赖关系
+ *
+ * 命令只有属性，所以都是关联关系
+ */
+export function extraDependenciesFromCommand(type: CommandDSL): string[] {
+  return uniq(
+    extraDependenciesFromProperties(type.properties).concat(extraDependenciesFromProperties(type.eventProperties))
+  );
 }

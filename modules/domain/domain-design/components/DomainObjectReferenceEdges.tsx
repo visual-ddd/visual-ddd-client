@@ -6,13 +6,13 @@ import { DomainEditorModel } from '../model';
 export const DomainObjectReferenceEdges = observer(function DomainObjectReferenceEdges() {
   const { model } = useEditorModel<DomainEditorModel>();
 
-  if (!model.domainObjectContainer.dependencyEdges.length) {
+  if (!model.domainObjectContainer.edges.length) {
     return null;
   }
 
   return (
     <>
-      {model.domainObjectContainer.dependencyEdges.map(i => {
+      {model.domainObjectContainer.edges.map(i => {
         return <EdgeBinding key={i.id} source={i.source} target={i.target}></EdgeBinding>;
       })}
     </>

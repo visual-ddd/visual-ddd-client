@@ -1,11 +1,14 @@
-import { BaseNode } from '@/lib/editor';
+import { BaseEditorModel, BaseNode } from '@/lib/editor';
 import { derive } from '@/lib/store';
+import { booleanPredicate } from '@wakeapp/utils';
 import { makeObservable } from 'mobx';
-import { NameDSL, UntitledInHumanReadable, UntitledInUpperCamelCase } from '../dsl';
+import { NameDSL, RelationShipDSL, UntitledInHumanReadable, UntitledInUpperCamelCase } from '../dsl';
 import { IDomainObjectContainer } from './IDomainContainer';
+import { IEdgeDeclaration } from './IEdgeDeclaration';
 
 export interface DomainObjectInject {
   node: BaseNode;
+  editorModel: BaseEditorModel;
   container: IDomainObjectContainer;
 }
 
@@ -16,7 +19,9 @@ export abstract class DomainObject<DSL extends NameDSL> {
   /**
    * 基础对象
    */
-  node: BaseNode;
+  protected node: BaseNode;
+  protected container: IDomainObjectContainer;
+  protected editorModel: BaseEditorModel;
 
   get id() {
     return this.node.id;
@@ -58,17 +63,24 @@ export abstract class DomainObject<DSL extends NameDSL> {
   }
 
   /**
-   * 依赖, 根据不同的类型计算
+   * 依赖关系
    */
   abstract dependencies: DomainObject<NameDSL>[];
 
   /**
-   * 排除掉自身的循环依赖
+   * 关联关系
    */
-  @derive
-  get dependenciesWithoutSelf() {
-    return this.dependencies.filter(i => i.id !== this.id);
-  }
+  abstract associations: DomainObject<NameDSL>[];
+
+  /**
+   * 聚合关系
+   */
+  abstract aggregations: DomainObject<NameDSL>[];
+
+  /**
+   * 组合关系
+   */
+  abstract compositions: DomainObject<NameDSL>[];
 
   /**
    * 是否可以被引用, 比如实体、值对象可以被引入，聚合、命令不能被引用
@@ -80,12 +92,61 @@ export abstract class DomainObject<DSL extends NameDSL> {
    */
   abstract readableTitle: string;
 
-  protected container: IDomainObjectContainer;
+  /**
+   * 依赖边
+   */
+  @derive
+  get dependenciesEdges(): IEdgeDeclaration[] {
+    return this.getEdges(this.dependencies, RelationShipDSL.Dependency);
+  }
+
+  /**
+   * 关联边
+   */
+  @derive
+  get associationsEdges(): IEdgeDeclaration[] {
+    return this.getEdges(this.associations, RelationShipDSL.Association);
+  }
+
+  /**
+   * 聚合边
+   */
+  @derive
+  get aggregationsEdges(): IEdgeDeclaration[] {
+    return this.getEdges(this.aggregations, RelationShipDSL.Aggregation);
+  }
+
+  /**
+   * 所有关联边
+   */
+  @derive
+  get edges() {
+    return this.dependenciesEdges.concat(this.associationsEdges).concat(this.aggregationsEdges);
+  }
 
   constructor(inject: DomainObjectInject) {
     this.node = inject.node;
     this.container = inject.container;
+    this.editorModel = inject.editorModel;
 
     makeObservable(this);
+  }
+
+  private getEdges(targets: DomainObject<NameDSL>[], type: RelationShipDSL) {
+    return targets
+      .map(target => {
+        // 过滤掉自我循环
+        if (target.id === this.id) {
+          return null;
+        }
+
+        return {
+          id: `${this.id}->${target.id}`,
+          source: this.id,
+          target: target.id,
+          type: type,
+        };
+      })
+      .filter(booleanPredicate);
   }
 }

@@ -20,6 +20,10 @@ export class FormModel {
   private rules: FormRules;
   private store: BaseEditorStore;
 
+  get id() {
+    return this.node.id;
+  }
+
   /**
    * 错误列表收集
    */

@@ -10,6 +10,6 @@ export class DomainEditorModel extends BaseEditorModel {
   constructor(options: Omit<BaseEditorModelOptions, 'scopeId'>) {
     super({ ...options, scopeId: 'domain' });
 
-    this.domainObjectContainer = new DomainObjectContainer({ event: this.event });
+    this.domainObjectContainer = new DomainObjectContainer({ event: this.event, editorModel: this });
   }
 }

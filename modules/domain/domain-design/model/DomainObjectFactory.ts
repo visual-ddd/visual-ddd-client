@@ -4,6 +4,7 @@ import { DomainObject, DomainObjectInject } from './DomainObject';
 import { DomainObjectAggregation } from './DomainObjectAggregation';
 import { DomainObjectCommand } from './DomainObjectCommand';
 import { DomainObjectEntity } from './DomainObjectEntity';
+import { DomainObjectRule } from './DomainObjectRule';
 import { DomainObjectValueObject } from './DomainObjectValueObject';
 
 export class DomainObjectFactory {
@@ -18,6 +19,8 @@ export class DomainObjectFactory {
         return new DomainObjectValueObject(inject);
       case DomainObjectName.Command:
         return new DomainObjectCommand(inject);
+      case DomainObjectName.Rule:
+        return new DomainObjectRule(inject);
       default:
         return null;
     }
@@ -55,5 +58,14 @@ export class DomainObjectFactory {
    */
   static isCommand(object: DomainObject<NameDSL>): object is DomainObjectCommand {
     return object instanceof DomainObjectCommand;
+  }
+
+  /**
+   * 是否为规则
+   * @param object
+   * @returns
+   */
+  static isRule(object: DomainObject<NameDSL>): object is DomainObjectRule {
+    return object instanceof DomainObjectRule;
   }
 }

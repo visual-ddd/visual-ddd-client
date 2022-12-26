@@ -1,14 +1,72 @@
-import { EditorFormCollapse, EditorFormCollapsePanel, EditorFormItem } from '@/lib/editor';
+import {
+  EditorFormCollapse,
+  EditorFormCollapsePanel,
+  EditorFormItem,
+  EditorFormItemStatic,
+  useEditorFormContext,
+  useEditorModel,
+} from '@/lib/editor';
+import { observer, useLocalObservable } from 'mobx-react';
+import { Select } from 'antd';
+import diff from 'lodash/difference';
+
+import type { DomainEditorModel, DomainObjectCommand, DomainObjectRule } from '../../../model';
 
 import { NameTooltip } from '../../constants';
+
 import { PropertiesEditor } from '../PropertiesEditor';
 import { NameInput } from '../NameInput';
 import { DescriptionInput } from '../DescriptionInput';
 import { TitleInput } from '../TitleInput';
 import { SourceInput } from '../SourceInput';
 import { TypeInput } from '../TypeInput';
+import { AggregationSelect } from '../AggregationSelect';
 
 const DEFAULT_ACTIVE = ['base', 'properties', 'eventProperties'];
+
+const RulesSelect = observer(function RulesSelect() {
+  const { formModel } = useEditorFormContext()!;
+  const { model } = useEditorModel<DomainEditorModel>();
+  const command = model.domainObjectContainer.getObjectById(formModel.id) as DomainObjectCommand;
+
+  const store = useLocalObservable(() => ({
+    get value() {
+      return command.rules.map(i => i.id);
+    },
+  }));
+
+  const handleChange = (value: string[]) => {
+    const removed = diff(store.value, value);
+
+    model.domainObjectContainer.toObjects<DomainObjectRule>(removed).map(i => {
+      i.setAssociation({ association: undefined });
+    });
+
+    model.domainObjectContainer.toObjects<DomainObjectRule>(value).map(i => {
+      i.setAssociation({ association: command });
+    });
+  };
+
+  return (
+    <Select
+      className="u-fw"
+      placeholder="关联规则，支持多选"
+      mode="multiple"
+      showSearch
+      optionFilterProp="children"
+      value={store.value}
+      onChange={handleChange}
+    >
+      {model.domainObjectContainer.rules.map(i => {
+        return (
+          <Select.Option key={i.id} value={i.id} disabled={i.association && i.association !== command}>
+            {i.title}({i.name})
+          </Select.Option>
+        );
+      })}
+    </Select>
+  );
+});
 
 export const CommandEditor = () => {
   return (
@@ -23,12 +81,18 @@ export const CommandEditor = () => {
         <EditorFormItem path="description" label="描述">
           <DescriptionInput />
         </EditorFormItem>
+        <EditorFormItem path="aggregation" label="所属聚合">
+          <AggregationSelect />
+        </EditorFormItem>
         <EditorFormItem path="source" label="触发来源">
           <SourceInput />
         </EditorFormItem>
         <EditorFormItem path="result" label="返回值">
           <TypeInput isMethodResult />
         </EditorFormItem>
+        <EditorFormItemStatic label="规则关联">
+          <RulesSelect />
+        </EditorFormItemStatic>
       </EditorFormCollapsePanel>
       <EditorFormCollapsePanel header="属性" key="properties">
         <PropertiesEditor />

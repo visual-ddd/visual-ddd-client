@@ -40,7 +40,7 @@ export const ShapeTree = observer(function ShapeTree(props: ShapeTreeProps) {
         return {
           key: i.id,
           title: () => renderTitle(i),
-          children: i.dependencies.map(j => {
+          children: i.compositions.concat(i.aggregations).map(j => {
             return {
               key: j.id,
               title: () => renderTitle(j),

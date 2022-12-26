@@ -9,15 +9,11 @@ import { EditorFormTooltip } from './FormTooltip';
 
 export type EditorFormItemTrigger = string | string[];
 
-export interface EditorFormItemProps {
+export interface EditorFormItemBaseProps {
   className?: string;
   style?: React.CSSProperties;
   children?: ReactNode;
-
-  /**
-   * 字段路径
-   */
-  path: string;
+  path?: string;
 
   /**
    * 标签
@@ -33,6 +29,13 @@ export interface EditorFormItemProps {
    * 必填样式
    */
   required?: boolean;
+}
+
+export interface EditorFormItemProps extends EditorFormItemBaseProps {
+  /**
+   * 字段路径
+   */
+  path: string;
 
   /**
    * 设置收集字段值变更的时机, 默认 onChange
@@ -65,6 +68,25 @@ export function defaultGetValueFromEvent(valuePropName: string, ...args: any[]) 
   return event;
 }
 
+export const EditorFormItemStatic = observer(function EditorFormItemStatic(props: EditorFormItemBaseProps) {
+  const { className, style, required, label, tooltip, path, children } = props;
+  const { formModel } = useEditorFormContext()!;
+
+  return (
+    <div className={classNames('vd-form-item', className, s.root)} style={style}>
+      <label className={classNames('vd-form-item__label', s.label)}>
+        {required && <span className={classNames('vd-form-item__require', s.required)}>*</span>}
+        {label}
+        <EditorFormTooltip tooltip={tooltip} path={path} formModel={formModel} />
+      </label>
+      <div className={classNames('vd-form-item__body', s.body)}>{children}</div>
+    </div>
+  );
+});
+
+/**
+ * 表单项
+ */
 export const EditorFormItem = observer(function EditorFormItem(props: EditorFormItemProps) {
   const {
     label,
@@ -137,13 +159,15 @@ export const EditorFormItem = observer(function EditorFormItem(props: EditorForm
   };
 
   return (
-    <div className={classNames('vd-form-item', className, s.root)} style={style}>
-      <label className={classNames('vd-form-item__label', s.label)}>
-        {isRequired && <span className={classNames('vd-form-item__require', s.required)}>*</span>}
-        {label}
-        <EditorFormTooltip tooltip={tooltip} path={path} formModel={formModel} />
-      </label>
-      <div className={classNames('vd-form-item__body', s.body)}>{injectChildren(children)}</div>
-    </div>
+    <EditorFormItemStatic
+      className={className}
+      style={style}
+      path={path}
+      label={label}
+      required={isRequired}
+      tooltip={tooltip}
+    >
+      {injectChildren(children)}
+    </EditorFormItemStatic>
   );
 });

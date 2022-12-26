@@ -15,13 +15,30 @@ export class DomainObjectAggregation extends DomainObject<AggregationDSL> {
     return `聚合 - ${this.title}(${this.name})`;
   }
 
+  /**
+   * 当前聚合包含的命令
+   */
   @derive
   get commands() {
-    return this.dsl.commands;
+    console.log('getting commands');
+    return this.container.commands.filter(i => {
+      return i.aggregation === this;
+    });
   }
 
+  /**
+   * 组合
+   */
   @derive
-  get dependenciesFromChildren() {
+  get aggregations() {
+    return this.commands;
+  }
+
+  /**
+   * 组合。聚合下的实体、值对象都是组合关系，生命周期一致
+   */
+  @derive
+  get compositions() {
     console.log('getting dependencies');
     return this.node.children
       .map(i => {
@@ -30,24 +47,8 @@ export class DomainObjectAggregation extends DomainObject<AggregationDSL> {
       .filter(booleanPredicate);
   }
 
-  @derive
-  get dependenciesFromCommands() {
-    console.log('getting commands');
-    return this.commands
-      .map(i => {
-        return this.container.getObjectById(i.referenceId);
-      })
-      .filter(booleanPredicate);
-  }
-
-  /**
-   * 依赖，从 children 中计算即可
-   * TODO: 命令
-   */
-  @derive
-  get dependencies() {
-    return this.dependenciesFromChildren.concat(this.dependenciesFromCommands);
-  }
+  dependencies = [];
+  associations = [];
 
   constructor(inject: DomainObjectInject) {
     super(inject);
@@ -62,6 +63,7 @@ export class DomainObjectAggregation extends DomainObject<AggregationDSL> {
    */
   hasCommand(command: DomainObject<NameDSL> | string) {
     const id = typeof command === 'string' ? command : command.id;
-    return this.commands.some(i => i.referenceId === id);
+
+    return this.commands.some(i => i.id === id);
   }
 }

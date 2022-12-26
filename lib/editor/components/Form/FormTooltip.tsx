@@ -18,12 +18,12 @@ export interface EditorFormTooltipProps {
   /**
    * 指定路径, 可选，如果为空则限制整个 model 的错误
    */
-  path: string;
+  path?: string;
 
   /**
    * 表单模型
    */
-  formModel: FormModel;
+  formModel?: FormModel;
 
   /**
    * 是否获聚合下级属性的错误信息, 默认 false
@@ -36,7 +36,12 @@ export interface EditorFormTooltipProps {
 
 export const EditorFormTooltip = observer(function EditFormTooltip(props: EditorFormTooltipProps) {
   const { tooltip, path, formModel, aggregated = false, className, style } = props;
-  const status = aggregated ? formModel.getAggregatedValidateStatus(path) : formModel.getValidateStatus(path);
+  const status =
+    path && formModel
+      ? aggregated
+        ? formModel.getAggregatedValidateStatus(path)
+        : formModel.getValidateStatus(path)
+      : undefined;
   const hasIssue = Array.isArray(status) ? status.length : status;
   const hasError =
     hasIssue && (Array.isArray(status) ? status.length && status.some(s => s.errors.length) : status?.errors.length);

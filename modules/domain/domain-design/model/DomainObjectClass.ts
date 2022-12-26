@@ -1,5 +1,5 @@
 import { derive } from '@/lib/store';
-import { booleanPredicate } from '@wakeapp/utils';
+import { booleanPredicate, NoopArray } from '@wakeapp/utils';
 import { makeObservable } from 'mobx';
 import { ClassDSL, extraDependenciesFromClass } from '../dsl';
 import { DomainObject, DomainObjectInject } from './DomainObject';
@@ -15,11 +15,8 @@ export class DomainObjectClass<T extends ClassDSL = ClassDSL> extends DomainObje
     return `类 - ${this.title}(${this.name})`;
   }
 
-  /**
-   * 依赖 ID，计算比较昂贵
-   */
   @derive({ requiresReaction: true })
-  get dependenciesInId(): string[] {
+  get rawDependencies() {
     return extraDependenciesFromClass(this.dsl);
   }
 
@@ -28,12 +25,27 @@ export class DomainObjectClass<T extends ClassDSL = ClassDSL> extends DomainObje
    */
   @derive
   get dependencies() {
-    return this.dependenciesInId
+    return Array.from(this.rawDependencies.dependency)
       .map(i => {
         return this.container.getObjectById(i);
       })
       .filter(booleanPredicate);
   }
+
+  /**
+   * 关联
+   */
+  @derive
+  get associations() {
+    return Array.from(this.rawDependencies.association)
+      .map(i => {
+        return this.container.getObjectById(i);
+      })
+      .filter(booleanPredicate);
+  }
+
+  aggregations = NoopArray;
+  compositions = NoopArray;
 
   constructor(inject: DomainObjectInject) {
     super(inject);

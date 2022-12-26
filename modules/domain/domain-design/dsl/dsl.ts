@@ -11,6 +11,25 @@ export interface IDDSL {
 }
 
 /**
+ * 关系描述
+ */
+export enum RelationShipDSL {
+  /**
+   * 对象关系
+   * https://www.cnblogs.com/zhongj/p/11169780.html
+   *
+   * dependency 依赖关系, 在Java中，类A当中使用了类B，其中类B是作为类A的**方法参数**、方法中的局部变量、返回值、或者静态方法调用
+   * association 关联关系、作为成员强依赖时
+   * aggregation 聚合
+   * composition 组合(统一生命周期的整体和部分的关系)
+   */
+  Dependency = 'dependency',
+  Association = 'association',
+  Aggregation = 'aggregation',
+  Composition = 'composition',
+}
+
+/**
  * 引用表述
  */
 export interface ReferenceDSL {
@@ -306,9 +325,9 @@ export interface CommandDSL extends NameDSL {
   eventProperties: PropertyDSL[];
 
   /**
-   * 规则引用
+   * 所属的聚合
    */
-  rules: ReferenceDSL[];
+  aggregation?: ReferenceDSL;
 
   /**
    * 返回值
@@ -319,7 +338,12 @@ export interface CommandDSL extends NameDSL {
 /**
  * 规则定义
  */
-export interface RuleDSL extends NameDSL {}
+export interface RuleDSL extends NameDSL {
+  /**
+   * 所属的对象
+   */
+  association?: ReferenceDSL;
+}
 
 /**
  * 聚合定义
@@ -330,9 +354,4 @@ export interface AggregationDSL extends NameDSL {
    * 颜色标记
    */
   color: string;
-
-  /**
-   * 命令引用
-   */
-  commands: ReferenceDSL[];
 }

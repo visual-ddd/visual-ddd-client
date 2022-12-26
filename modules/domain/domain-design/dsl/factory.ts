@@ -132,13 +132,13 @@ export function createCommand(): CommandDSL {
     source: createSourceDSL(),
     properties: [createProperty()],
     eventProperties: [],
-    rules: [],
+    aggregation: undefined,
     result: undefined,
   };
 }
 
 export function createRule(): RuleDSL {
-  return { ...createNameDSL({ wordCase: 'CamelCase', title: true }), description: '规则描述' };
+  return { ...createNameDSL({ wordCase: 'CamelCase', title: true }), description: '规则描述', association: undefined };
 }
 
 /**
@@ -149,6 +149,5 @@ export function createAggregation(): AggregationDSL {
   return {
     ...createNameDSL({ wordCase: 'CamelCase', title: true }),
     color: '#D9F7BE',
-    commands: [],
   };
 }
