@@ -40,6 +40,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 - 节点级别验证, 使用特殊的 **ROOT**
 - 列表移除，验证状态也需要移除
 - defineShape 支持 decorator，用类组件实现
+- 引用关系支持可见性控制
 - node edit
 - label edit
 - 子元素 resize，auto 扩展父元素

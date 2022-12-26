@@ -2,7 +2,7 @@ import { useEditorFormContext, EditorFormItem } from '@/lib/editor';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
 
-import { PropertyDSL } from '../../dsl';
+import { NameDSL, PropertyDSL } from '../../dsl';
 import { NameTooltip } from '../../constants';
 import { createProperty } from '../../factory';
 import { AccessSelect } from '../AccessSelect';
@@ -12,8 +12,9 @@ import { NameInput } from '../NameInput';
 import s from './index.module.scss';
 import { DescriptionInput } from '../DescriptionInput';
 import { stringifyProperty } from '../../stringify';
-import { TypeInput } from '../TypeInput';
+import { ReferenceTypeProvider, TypeInput } from '../TypeInput';
 import { TitleInput } from '../TitleInput';
+import { DomainObject, DomainObjectFactory } from '../../../model';
 
 export interface PropertiesEditorProps {
   /**
@@ -24,6 +25,10 @@ export interface PropertiesEditorProps {
 
 const renderItem = (value: PropertyDSL) => {
   return <div className={classNames('vd-properties-editor-item', s.item)}>{stringifyProperty(value)}</div>;
+};
+
+const omitCommand = (i: DomainObject<NameDSL>) => {
+  return !DomainObjectFactory.isCommand(i);
 };
 
 const renderEditor = (path: string) => {
@@ -39,9 +44,11 @@ const renderEditor = (path: string) => {
       <EditorFormItem path={p('description')} label="描述">
         <DescriptionInput />
       </EditorFormItem>
-      <EditorFormItem path={p('type')} label="类型">
-        <TypeInput />
-      </EditorFormItem>
+      <ReferenceTypeProvider filter={omitCommand}>
+        <EditorFormItem path={p('type')} label="类型">
+          <TypeInput />
+        </EditorFormItem>
+      </ReferenceTypeProvider>
       <EditorFormItem path={p('access')} label="访问控制">
         <AccessSelect />
       </EditorFormItem>

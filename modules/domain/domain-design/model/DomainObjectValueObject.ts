@@ -3,5 +3,7 @@ import { ValueObjectDSL } from '../dsl';
 import { DomainObjectClass } from './DomainObjectClass';
 
 export class DomainObjectValueObject extends DomainObjectClass<ValueObjectDSL> {
-  override objectTypeTitle = '值对象';
+  override get objectTypeTitle() {
+    return '值对象';
+  }
 }

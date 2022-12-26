@@ -11,7 +11,7 @@ import { DescriptionInput } from '../DescriptionInput';
 import s from './index.module.scss';
 import { NameInput } from '../NameInput';
 import { stringifyParameter } from '../../stringify';
-import { TypeInput } from '../TypeInput';
+import { ReferenceTypeProvider, TypeInput } from '../TypeInput';
 import { TitleInput } from '../TitleInput';
 
 export interface ParameterEditorProps {
@@ -45,9 +45,12 @@ const renderEditor = (path: string) => {
       <EditorFormItem path={p('description')} label="描述">
         <DescriptionInput />
       </EditorFormItem>
-      <EditorFormItem path={p('type')} label="类型">
-        <TypeInput />
-      </EditorFormItem>
+      {/* 实体、值对象方法签名支持所有引用类型  */}
+      <ReferenceTypeProvider>
+        <EditorFormItem path={p('type')} label="类型">
+          <TypeInput />
+        </EditorFormItem>
+      </ReferenceTypeProvider>
     </>
   );
 };

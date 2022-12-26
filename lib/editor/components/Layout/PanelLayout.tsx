@@ -17,7 +17,7 @@ export const EditorPanelLayout: FC<EditorPanelLayoutProps> = props => {
   }
 
   return (
-    <SplitBox split="horizontal" defaultSize="50%" minSize={37} maxSize={500}>
+    <SplitBox split="horizontal" defaultSize="40%" minSize={37} maxSize={500}>
       {children}
       {bottom}
     </SplitBox>

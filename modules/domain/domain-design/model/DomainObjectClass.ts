@@ -10,7 +10,9 @@ import { DomainObject, DomainObjectInject } from './DomainObject';
 export class DomainObjectClass<T extends ClassDSL = ClassDSL> extends DomainObject<T> {
   referable: boolean = true;
 
-  objectTypeTitle = '类';
+  get objectTypeTitle() {
+    return '类';
+  }
 
   @derive({ requiresReaction: true })
   get rawDependencies() {

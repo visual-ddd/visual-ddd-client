@@ -1,11 +1,12 @@
+import { useEditorModel } from '@/lib/editor';
 import { NoopArray } from '@wakeapp/utils';
 import { Cascader, Dropdown, Input } from 'antd';
 import classNames from 'classnames';
-import { observer } from 'mobx-react';
-import { useMemo } from 'react';
-import { useReferencesContext } from '../../context';
+import { observer, useLocalObservable } from 'mobx-react';
+import { createContext, useContext, useMemo } from 'react';
+import { DomainEditorModel, DomainObject } from '../../../model';
 
-import { BaseType, BaseTypeInArray, ContainerType, ContainerTypeInArray, TypeDSL, TypeType } from '../../dsl';
+import { BaseType, BaseTypeInArray, ContainerType, ContainerTypeInArray, NameDSL, TypeDSL, TypeType } from '../../dsl';
 import { createBaseType, createContainerType, createReferenceType } from '../../factory';
 import { stringifyMethodResult, stringifyTypeDSL } from '../../stringify';
 import s from './index.module.scss';
@@ -28,6 +29,7 @@ export interface TypeInputProps {
 type Node = {
   label: string;
   value: string;
+  name?: string;
   children?: Node[];
 };
 
@@ -48,23 +50,72 @@ const STATIC_OPTIONS: Node[] = [
   },
 ];
 
+export interface ReferenceTypeProviderProps {
+  /**
+   * false 表示不支持所有引用类型
+   */
+  filter?: false | ((type: DomainObject<NameDSL>) => boolean);
+  children: React.ReactNode;
+}
+
+const CONTEXT_DEFAULT_VALUE = { references: NoopArray };
+const CONTEXT = createContext<{ references: Node[] }>(CONTEXT_DEFAULT_VALUE);
+
+export const ReferenceTypeProvider = observer(function ReferenceTypeProvider(props: ReferenceTypeProviderProps) {
+  const { filter = true, children } = props;
+  const { model } = useEditorModel<DomainEditorModel>();
+  const store = useLocalObservable(() => {
+    return {
+      get references() {
+        if (!filter) {
+          return NoopArray;
+        } else if (typeof filter === 'function') {
+          return model.domainObjectStore.referableObjects.filter(filter);
+        } else {
+          return model.domainObjectStore.referableObjects;
+        }
+      },
+      get options(): Node[] {
+        return this.references.map(i => {
+          return {
+            value: i.id,
+            get label() {
+              return `${i.objectTypeTitle}-${i.readableTitle}`;
+            },
+            get name() {
+              return i.name;
+            },
+          };
+        });
+      },
+      get context() {
+        return { references: this.options };
+      },
+    };
+  });
+
+  return <CONTEXT.Provider value={store.context}>{children}</CONTEXT.Provider>;
+});
+
 const TypeSelect = observer(function TypeSelect(props: { value?: TypeDSL; onChange?: (value: TypeDSL) => void }) {
   const { value, onChange } = props;
-  const references = useReferencesContext();
+  const { references } = useContext(CONTEXT);
 
   const options = useMemo(() => {
-    const options = STATIC_OPTIONS.slice(0);
+    let options = STATIC_OPTIONS;
 
-    if (references?.references.length) {
+    if (references.length) {
+      options = options.slice(0);
+
       options.push({
         label: '引用类型',
         value: TypeType.Reference,
-        children: references.references,
+        children: references,
       });
     }
 
     return options;
-  }, [references?.references]);
+  }, [references]);
 
   const finalValue = useMemo(() => {
     if (value == null) {
@@ -104,7 +155,7 @@ const TypeSelect = observer(function TypeSelect(props: { value?: TypeDSL; onChan
       case TypeType.Reference: {
         const list = options.find(i => i.value === TypeType.Reference);
         const item = list!.children!.find(i => i.value === id)!;
-        value = createReferenceType(id, item.label);
+        value = createReferenceType(id, item.name ?? item.label);
         break;
       }
     }

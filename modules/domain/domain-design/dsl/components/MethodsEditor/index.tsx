@@ -3,7 +3,7 @@ import { Switch } from 'antd';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
 
-import { MethodDSL } from '../../dsl';
+import { MethodDSL, NameDSL } from '../../dsl';
 import { NameTooltip } from '../../constants';
 import { createMethod } from '../../factory';
 import { AccessSelect } from '../AccessSelect';
@@ -14,8 +14,9 @@ import { NameInput } from '../NameInput';
 
 import s from './index.module.scss';
 import { stringifyMethod } from '../../stringify';
-import { TypeInput } from '../TypeInput';
+import { ReferenceTypeProvider, TypeInput } from '../TypeInput';
 import { TitleInput } from '../TitleInput';
+import { DomainObject, DomainObjectFactory } from '../../../model';
 
 export interface MethodsEditorProps {}
 type Item = MethodDSL;
@@ -27,6 +28,10 @@ const renderItem = (value: Item) => {
       {stringifyMethod(value)}
     </div>
   );
+};
+
+const omitCommand = (i: DomainObject<NameDSL>) => {
+  return !DomainObjectFactory.isCommand(i);
 };
 
 const renderEditor = (path: string) => {
@@ -51,9 +56,11 @@ const renderEditor = (path: string) => {
       <EditorFormItem path={p('parameters')} label="参数">
         <ParameterEditor path={path} />
       </EditorFormItem>
-      <EditorFormItem path={p('result')} label="返回值类型">
-        <TypeInput />
-      </EditorFormItem>
+      <ReferenceTypeProvider filter={omitCommand}>
+        <EditorFormItem path={p('result')} label="返回值类型">
+          <TypeInput />
+        </EditorFormItem>
+      </ReferenceTypeProvider>
     </>
   );
 };
