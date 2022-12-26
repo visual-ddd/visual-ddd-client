@@ -17,3 +17,4 @@ export * from './EntityEditor';
 export * from './ValueObjectEditor';
 export * from './AggregationEditor';
 export * from './CommandEditor';
+export * from './RuleEditor';

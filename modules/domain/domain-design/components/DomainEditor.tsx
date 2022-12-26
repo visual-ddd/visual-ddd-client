@@ -41,6 +41,7 @@ export const DomainEditor = observer(function DomainEditor() {
                     'value-object',
                     'aggregation',
                     'command',
+                    'rule',
                     'rect',
                     'rect-child',
                     'child',

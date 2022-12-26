@@ -13,6 +13,7 @@ import {
   NameDSL,
   ParameterDSL,
   PropertyDSL,
+  RuleDSL,
   SourceDSL,
   TypeDSL,
   TypeType,
@@ -134,6 +135,10 @@ export function createCommand(): CommandDSL {
     rules: [],
     result: undefined,
   };
+}
+
+export function createRule(): RuleDSL {
+  return { ...createNameDSL({ wordCase: 'CamelCase', title: true }), description: '规则描述' };
 }
 
 /**

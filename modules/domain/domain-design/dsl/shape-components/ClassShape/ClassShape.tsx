@@ -81,11 +81,6 @@ export interface ClassShapeBaseProps {
   title?: React.ReactNode;
 
   /**
-   * 显示标题，默认true
-   */
-  showTitle?: boolean;
-
-  /**
    * 抽象类？
    */
   abstract?: boolean;
@@ -108,7 +103,6 @@ export const ClassShapeBase: FC<ClassShapeBaseProps> = observer(function ClassSh
     name,
     showName = true,
     title,
-    showTitle = true,
     abstract,
     properties,
     classProperties,
@@ -124,11 +118,8 @@ export const ClassShapeBase: FC<ClassShapeBaseProps> = observer(function ClassSh
         {!!type && <div className={classNames('shape-class__type', s.type)}>《{type}》</div>}
         {showName && (
           <div className={classNames('shape-class__name', s.name, { abstract: abstract })}>
-            {name || UntitledInUpperCamelCase}
+            {title || UntitledInHumanReadable}({name || UntitledInUpperCamelCase})
           </div>
-        )}
-        {showTitle && (
-          <div className={classNames('shape-class__title', s.title)}>{title || UntitledInHumanReadable}</div>
         )}
       </div>
       {hasProperties && (

@@ -35,7 +35,6 @@ export const CommandShape: FC<CommandShapeProps> = observer(function CommandShap
       <ClassShapeBase
         type="事件"
         showName={false}
-        showTitle={false}
         properties={dsl.eventProperties}
         style={EVENT_STYLE}
       ></ClassShapeBase>

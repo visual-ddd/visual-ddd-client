@@ -46,4 +46,6 @@ export enum DomainObjectName {
   Entity = 'entity',
   ValueObject = 'value-object',
   Command = 'command',
+  Rule = 'rule',
+  Enum = 'enum',
 }

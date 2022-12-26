@@ -317,6 +317,11 @@ export interface CommandDSL extends NameDSL {
 }
 
 /**
+ * 规则定义
+ */
+export interface RuleDSL extends NameDSL {}
+
+/**
  * 聚合定义
  */
 export interface AggregationDSL extends NameDSL {

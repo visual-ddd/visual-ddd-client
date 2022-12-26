@@ -29,7 +29,7 @@ defineShape({
   icon: icon,
   shapeType: 'node',
   group: true,
-  autoResizeGroup: 35,
+  autoResizeGroup: 45,
   embeddable(ctx) {
     const { childModel } = ctx;
     return !!(childModel && ALLOWED_CHILD.has(childModel.name));
