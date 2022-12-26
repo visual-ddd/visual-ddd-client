@@ -10,7 +10,7 @@ export const DomainObjectReferenceContextProvider = observer(function DomainObje
   const store = useLocalObservable(() => {
     return {
       get references() {
-        return model.domainObjectContainer.referableObjects.map(i => {
+        return model.domainObjectStore.referableObjects.map(i => {
           return {
             get label() {
               return i.name;

@@ -23,7 +23,7 @@ interface CommandSelectProps {}
 const CommandSelect = observer(function CommandSelect(props: CommandSelectProps) {
   const { formModel } = useEditorFormContext()!;
   const { model } = useEditorModel<DomainEditorModel>();
-  const aggregation = model.domainObjectContainer.getObjectById(formModel.id) as DomainObjectAggregation;
+  const aggregation = model.domainObjectStore.getObjectById(formModel.id) as DomainObjectAggregation;
 
   const store = useLocalObservable(() => ({
     get value() {
@@ -34,11 +34,11 @@ const CommandSelect = observer(function CommandSelect(props: CommandSelectProps)
   const handleChange = (value: string[]) => {
     const removed = diff(store.value, value);
 
-    model.domainObjectContainer.toObjects<DomainObjectCommand>(removed).map(i => {
+    model.domainObjectStore.toObjects<DomainObjectCommand>(removed).map(i => {
       i.setAggregation({ aggregation: undefined });
     });
 
-    model.domainObjectContainer.toObjects<DomainObjectCommand>(value).map(i => {
+    model.domainObjectStore.toObjects<DomainObjectCommand>(value).map(i => {
       i.setAggregation({ aggregation });
     });
   };
@@ -53,7 +53,7 @@ const CommandSelect = observer(function CommandSelect(props: CommandSelectProps)
       value={store.value}
       onChange={handleChange}
     >
-      {model.domainObjectContainer.commands.map(i => {
+      {model.domainObjectStore.commands.map(i => {
         return (
           <Select.Option key={i.id} value={i.id} disabled={i.aggregation && i.aggregation !== aggregation}>
             {i.title}({i.name})

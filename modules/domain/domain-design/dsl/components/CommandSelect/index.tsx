@@ -28,7 +28,7 @@ export const CommandSelect = observer(function CommandSelect(props: CommandSelec
       return;
     }
 
-    const object = model.domainObjectContainer.getObjectById(value);
+    const object = model.domainObjectStore.getObjectById(value);
 
     if (object) {
       onChange?.({ referenceId: object.id, name: `${object.title}(${object.name})` });
@@ -45,7 +45,7 @@ export const CommandSelect = observer(function CommandSelect(props: CommandSelec
       value={finalValue}
       onChange={handleChange}
     >
-      {model.domainObjectContainer.commands.map(i => {
+      {model.domainObjectStore.commands.map(i => {
         return (
           <Select.Option key={i.id} value={i.id}>
             {i.title}({i.name})

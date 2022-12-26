@@ -20,7 +20,7 @@ export const ShapeTree = observer(function ShapeTree(props: ShapeTreeProps) {
 
   const store = useLocalObservable(() => ({
     get uncontrolled(): TreeDataNode | undefined {
-      const uncontrolledDomainObjects = model.domainObjectContainer.uncontrolledDomainObjects;
+      const uncontrolledDomainObjects = model.domainObjectStore.uncontrolledDomainObjects;
       if (uncontrolledDomainObjects.length) {
         return {
           key: VIRTUAL_UNCONTROLLED_NODES,
@@ -36,7 +36,7 @@ export const ShapeTree = observer(function ShapeTree(props: ShapeTreeProps) {
       }
     },
     get aggregations(): TreeDataNode[] {
-      return model.domainObjectContainer.aggregations.map(i => {
+      return model.domainObjectStore.aggregations.map(i => {
         return {
           key: i.id,
           title: () => renderTitle(i),

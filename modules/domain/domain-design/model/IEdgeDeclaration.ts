@@ -1,9 +1,13 @@
-import { RelationShipDSL } from '../dsl';
+import { NameDSL, RelationShipDSL } from '../dsl';
+import { DomainObject } from './DomainObject';
 
 export interface IEdgeDeclaration {
   id: string;
   source: string;
   target: string;
+
+  sourceObject: DomainObject<NameDSL>;
+  targetObject: DomainObject<NameDSL>;
 
   /**
    * 对象关系

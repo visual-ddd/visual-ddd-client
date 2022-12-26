@@ -12,7 +12,7 @@ import { IEdgeDeclaration } from './IEdgeDeclaration';
 /**
  * 描述和计算对象之间的依赖关系
  */
-export class DomainObjectContainer implements IDomainObjectContainer {
+export class DomainObjectStore implements IDomainObjectContainer {
   private event: BaseEditorEvent;
   private editorModel: BaseEditorModel;
 

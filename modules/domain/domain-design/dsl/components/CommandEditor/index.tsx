@@ -27,7 +27,7 @@ const DEFAULT_ACTIVE = ['base', 'properties', 'eventProperties'];
 const RulesSelect = observer(function RulesSelect() {
   const { formModel } = useEditorFormContext()!;
   const { model } = useEditorModel<DomainEditorModel>();
-  const command = model.domainObjectContainer.getObjectById(formModel.id) as DomainObjectCommand;
+  const command = model.domainObjectStore.getObjectById(formModel.id) as DomainObjectCommand;
 
   const store = useLocalObservable(() => ({
     get value() {
@@ -38,11 +38,11 @@ const RulesSelect = observer(function RulesSelect() {
   const handleChange = (value: string[]) => {
     const removed = diff(store.value, value);
 
-    model.domainObjectContainer.toObjects<DomainObjectRule>(removed).map(i => {
+    model.domainObjectStore.toObjects<DomainObjectRule>(removed).map(i => {
       i.setAssociation({ association: undefined });
     });
 
-    model.domainObjectContainer.toObjects<DomainObjectRule>(value).map(i => {
+    model.domainObjectStore.toObjects<DomainObjectRule>(value).map(i => {
       i.setAssociation({ association: command });
     });
   };
@@ -57,7 +57,7 @@ const RulesSelect = observer(function RulesSelect() {
       value={store.value}
       onChange={handleChange}
     >
-      {model.domainObjectContainer.rules.map(i => {
+      {model.domainObjectStore.rules.map(i => {
         return (
           <Select.Option key={i.id} value={i.id} disabled={i.association && i.association !== command}>
             {i.title}({i.name})

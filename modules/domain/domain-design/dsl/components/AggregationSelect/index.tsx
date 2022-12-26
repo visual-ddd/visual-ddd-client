@@ -28,7 +28,7 @@ export const AggregationSelect = observer(function RulesSelect(props: Aggregatio
       return;
     }
 
-    const object = model.domainObjectContainer.getObjectById(value);
+    const object = model.domainObjectStore.getObjectById(value);
 
     if (object) {
       onChange?.({ referenceId: object.id, name: `${object.title}(${object.name})` });
@@ -45,7 +45,7 @@ export const AggregationSelect = observer(function RulesSelect(props: Aggregatio
       value={finalValue}
       onChange={handleChange}
     >
-      {model.domainObjectContainer.aggregations.map(i => {
+      {model.domainObjectStore.aggregations.map(i => {
         return (
           <Select.Option key={i.id} value={i.id}>
             {i.title}({i.name})

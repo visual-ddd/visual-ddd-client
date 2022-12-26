@@ -132,7 +132,7 @@ export abstract class DomainObject<DSL extends NameDSL> {
     makeObservable(this);
   }
 
-  private getEdges(targets: DomainObject<NameDSL>[], type: RelationShipDSL) {
+  private getEdges(targets: DomainObject<NameDSL>[], type: RelationShipDSL): IEdgeDeclaration[] {
     return targets
       .map(target => {
         // 过滤掉自我循环
@@ -145,7 +145,9 @@ export abstract class DomainObject<DSL extends NameDSL> {
           source: this.id,
           target: target.id,
           type: type,
-        };
+          sourceObject: this,
+          targetObject: target,
+        } satisfies IEdgeDeclaration;
       })
       .filter(booleanPredicate);
   }

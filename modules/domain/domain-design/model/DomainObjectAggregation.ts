@@ -15,6 +15,11 @@ export class DomainObjectAggregation extends DomainObject<AggregationDSL> {
     return `聚合 - ${this.title}(${this.name})`;
   }
 
+  @derive
+  get color() {
+    return this.dsl.color;
+  }
+
   /**
    * 当前聚合包含的命令
    */
