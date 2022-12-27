@@ -52,6 +52,15 @@ export class DomainObjectFactory {
   }
 
   /**
+   * 判断是否为聚合根
+   * @param object
+   * @returns
+   */
+  static isAggregationRoot(object: DomainObject<NameDSL>): object is DomainObjectEntity {
+    return this.isEntity(object) && object.isAggregationRoot;
+  }
+
+  /**
    * 是否为命令
    * @param object
    * @returns

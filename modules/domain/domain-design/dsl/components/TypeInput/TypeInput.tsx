@@ -6,7 +6,7 @@ import { action, computed, observable } from 'mobx';
 import { observer, useLocalObservable } from 'mobx-react';
 import { createContext, useContext, useEffect, useMemo } from 'react';
 
-import { DomainEditorModel, DomainObject } from '../../../model';
+import { DomainEditorModel, DomainObject, DomainObjectFactory } from '../../../model';
 import { BaseType, BaseTypeInArray, ContainerType, ContainerTypeInArray, NameDSL, TypeDSL, TypeType } from '../../dsl';
 import { createBaseType, createContainerType, createReferenceType } from '../../factory';
 import { stringifyMethodResult, stringifyTypeDSL } from '../../stringify';
@@ -31,6 +31,7 @@ type Node = {
   label: string;
   value: string;
   name?: string;
+  disabled?: boolean;
   children?: Node[];
 };
 
@@ -80,6 +81,11 @@ export const ReferenceTypeProvider = observer(function ReferenceTypeProvider(pro
         return this.references.map(i => {
           return {
             value: i.id,
+            get disabled() {
+              const current = model.viewStore.focusingNode;
+              // 禁用聚合根
+              return current && current.id !== i.id && DomainObjectFactory.isAggregationRoot(i) ? true : undefined;
+            },
             get label() {
               return `${i.objectTypeTitle}-${i.readableTitle}`;
             },
