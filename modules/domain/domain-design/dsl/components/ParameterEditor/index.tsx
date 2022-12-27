@@ -77,6 +77,7 @@ export const ParameterEditor = observer(function ParameterEditor(props: Paramete
   return (
     <MemberList
       className="vd-parameters-editor"
+      showError
       path={path}
       value={value}
       onChange={handleChange}

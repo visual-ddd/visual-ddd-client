@@ -12,6 +12,7 @@ import { useRefValue } from '@wakeapp/hooks';
 
 import s from './MemberList.module.scss';
 import { action, observable } from 'mobx';
+import { EditorFormTooltip } from '@/lib/editor/components/Form/FormTooltip';
 
 export interface MemberListProps<T extends IDDSL> {
   className?: string;
@@ -21,6 +22,11 @@ export interface MemberListProps<T extends IDDSL> {
    * 列表字段路径
    */
   path: string;
+
+  /**
+   * 是否聚合字段异常, 默认 false
+   */
+  showError?: boolean;
 
   /**
    * 列表
@@ -63,6 +69,9 @@ export interface MemberListProps<T extends IDDSL> {
    */
   editorDisplayType: 'portal' | 'popover';
 
+  /**
+   * 编辑器模式
+   */
   editorTitle?: React.ReactNode;
 
   /**
@@ -125,6 +134,8 @@ interface MemberListContext<T extends IDDSL> {
   getEditorDisplayType: () => 'portal' | 'popover';
 
   getEditorTitle: () => React.ReactNode;
+
+  getShowError: () => boolean;
 }
 
 const Member = observer(function Member<T extends IDDSL>(props: {
@@ -136,6 +147,8 @@ const Member = observer(function Member<T extends IDDSL>(props: {
   const popoverEdit = context.getEditorDisplayType() === 'popover';
   const path = context.getPath();
   const editing = value.uuid === context.editing;
+  const showError = context.getShowError();
+  const pathWithIndex = `${path}[${index}]`;
 
   return (
     <div className={classNames('vd-member-list-item', s.item, { editing })}>
@@ -156,7 +169,7 @@ const Member = observer(function Member<T extends IDDSL>(props: {
                 context.handleEdit(value);
               }
             }}
-            content={context.handleRenderEditor(`${path}[${index}]`, value)}
+            content={context.handleRenderEditor(pathWithIndex, value)}
             placement="left"
           >
             <EditTwoTone
@@ -178,6 +191,8 @@ const Member = observer(function Member<T extends IDDSL>(props: {
             context.handleRemove(value);
           }}
         />
+
+        {showError && <EditorFormTooltip path={pathWithIndex} aggregated></EditorFormTooltip>}
       </div>
     </div>
   );
@@ -189,7 +204,17 @@ const Member = observer(function Member<T extends IDDSL>(props: {
  * TODO: 触发验证
  */
 export const MemberList = observer(function MemberList<T extends IDDSL>(props: MemberListProps<T>) {
-  const { className, style, value, addText, path, renderEditor, editorTitle, editorDisplayType } = props;
+  const {
+    className,
+    style,
+    value,
+    addText,
+    path,
+    renderEditor,
+    showError = false,
+    editorTitle,
+    editorDisplayType,
+  } = props;
   const propsRef = useRefValue(props);
   const editorRef = useMemberEditorRef<T>();
 
@@ -202,6 +227,9 @@ export const MemberList = observer(function MemberList<T extends IDDSL>(props: M
     const self: MemberListContext<T> = {
       get editing() {
         return store.editing;
+      },
+      getShowError() {
+        return showError;
       },
       getEditorDisplayType() {
         return propsRef.current.editorDisplayType;

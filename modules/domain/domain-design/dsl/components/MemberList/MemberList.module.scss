@@ -30,10 +30,11 @@
 
 .itemActions {
   display: flex;
+  gap: 2px;
 
   :global(.anticon) {
     font-size: 15px;
-    padding: 2px 4px;
+    padding: 2px 2px;
     cursor: pointer;
   }
 }

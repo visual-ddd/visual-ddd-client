@@ -87,6 +87,7 @@ export const MethodsEditor = observer(function MethodsEditor(props: MethodsEdito
     <MemberList
       className="vd-methods-editor"
       path={path}
+      showError
       value={properties}
       onChange={handleChange}
       factory={factory}

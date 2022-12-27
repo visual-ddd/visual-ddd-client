@@ -67,14 +67,20 @@ export const EntityEditor = () => {
         >
           <Switch />
         </EditorFormItem>
-        <EditorFormItem path="id" label="ID" tooltip="实体的唯一标识符属性" dependencies="properties">
+        <EditorFormItem
+          path="id"
+          label="ID"
+          tooltip="实体的唯一标识符属性"
+          dependencies="properties"
+          dependenciesTriggerWhenTouched={false}
+        >
           <IDSelector />
         </EditorFormItem>
       </EditorFormCollapsePanel>
-      <EditorFormCollapsePanel header="属性" key="properties">
+      <EditorFormCollapsePanel header="属性" key="properties" path="properties">
         <PropertiesEditor />
       </EditorFormCollapsePanel>
-      <EditorFormCollapsePanel header="方法" key="methods">
+      <EditorFormCollapsePanel header="方法" key="methods" path="methods">
         <MethodsEditor />
       </EditorFormCollapsePanel>
     </EditorFormCollapse>

@@ -1,6 +1,7 @@
 import { Collapse } from 'antd';
 import classNames from 'classnames';
 import s from './FormCollapse.module.scss';
+import { EditorFormTooltip } from './FormTooltip';
 
 export interface EditorFormCollapseProps {
   className?: string;
@@ -29,10 +30,23 @@ export interface EditorFormCollapsePanelProps {
   header: React.ReactNode;
   key: string;
 
-  // TODO: 用于收集异常信息
+  /**
+   * 用于收集异常信息
+   */
   path?: string;
 }
 
 export const EditorFormCollapsePanel = (props: EditorFormCollapsePanelProps) => {
-  return <Collapse.Panel {...props}></Collapse.Panel>;
+  let { path, header, ...other } = props;
+
+  if (path) {
+    header = (
+      <>
+        {header}
+        <EditorFormTooltip path={path} aggregated className="u-ml-xs" />
+      </>
+    );
+  }
+
+  return <Collapse.Panel header={header} {...other}></Collapse.Panel>;
 };

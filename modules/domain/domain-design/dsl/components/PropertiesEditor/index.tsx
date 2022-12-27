@@ -78,6 +78,7 @@ export const PropertiesEditor = observer(function PropertiesEditor(props: Proper
     <MemberList
       className="vd-properties-editor"
       path={path}
+      showError
       value={properties}
       onChange={handleChange}
       factory={factory}

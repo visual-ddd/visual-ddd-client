@@ -48,6 +48,11 @@ export interface EditorFormItemProps extends EditorFormItemBaseProps {
   dependencies?: string | string[];
 
   /**
+   * 是否只在字段touch 之后才允许 dependencies 触发验证, 默认 true
+   */
+  dependenciesTriggerWhenTouched?: boolean;
+
+  /**
    * 设置收集字段值变更的时机 , 默认为 onChange
    */
   trigger?: string;
@@ -70,14 +75,13 @@ export function defaultGetValueFromEvent(valuePropName: string, ...args: any[]) 
 
 export const EditorFormItemStatic = observer(function EditorFormItemStatic(props: EditorFormItemBaseProps) {
   const { className, style, required, label, tooltip, path, children } = props;
-  const { formModel } = useEditorFormContext()!;
 
   return (
     <div className={classNames('vd-form-item', className, s.root)} style={style}>
       <label className={classNames('vd-form-item__label', s.label)}>
         {required && <span className={classNames('vd-form-item__require', s.required)}>*</span>}
         {label}
-        <EditorFormTooltip tooltip={tooltip} path={path} formModel={formModel} />
+        <EditorFormTooltip tooltip={tooltip} path={path} />
       </label>
       <div className={classNames('vd-form-item__body', s.body)}>{children}</div>
     </div>
@@ -100,6 +104,7 @@ export const EditorFormItem = observer(function EditorFormItem(props: EditorForm
     validateTrigger = 'onChange',
     valuePropName = 'value',
     dependencies,
+    dependenciesTriggerWhenTouched = true,
   } = props;
   const { formModel } = useEditorFormContext()!;
 
@@ -119,7 +124,11 @@ export const EditorFormItem = observer(function EditorFormItem(props: EditorForm
         });
       },
       () => {
-        if (formModel.isTouched(path)) {
+        if (dependenciesTriggerWhenTouched) {
+          if (formModel.isTouched(path)) {
+            formModel.validateField(path);
+          }
+        } else {
           formModel.validateField(path);
         }
       },
