@@ -38,10 +38,22 @@ export const EntityEditor = () => {
   return (
     <EditorFormCollapse defaultActiveKey={DEFAULT_ACTIVE}>
       <EditorFormCollapsePanel header="基础信息" key="base">
-        <EditorFormItem path="name" label="标识符" tooltip={NameTooltip['CamelCase']}>
+        <EditorFormItem
+          path="name"
+          label="标识符"
+          tooltip={
+            <>
+              <div>- {NameTooltip['CamelCase']}</div>
+              <div>- 同一个聚合下，不能和其他实体、值对象冲突</div>
+              <div>
+                - 谨慎变更，可以<b>双击进行编辑</b>
+              </div>
+            </>
+          }
+        >
           <NameInput nameCase="CamelCase" dbclickToEnable />
         </EditorFormItem>
-        <EditorFormItem path="title" label="标题">
+        <EditorFormItem path="title" label="标题" tooltip="用统一语言来描述">
           <TitleInput />
         </EditorFormItem>
         <EditorFormItem path="description" label="描述">
@@ -55,7 +67,7 @@ export const EntityEditor = () => {
         >
           <Switch />
         </EditorFormItem>
-        <EditorFormItem path="id" label="ID" tooltip="实体的唯一标识符属性">
+        <EditorFormItem path="id" label="ID" tooltip="实体的唯一标识符属性" dependencies="properties">
           <IDSelector />
         </EditorFormItem>
       </EditorFormCollapsePanel>

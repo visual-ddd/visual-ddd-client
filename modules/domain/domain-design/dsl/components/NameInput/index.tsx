@@ -1,6 +1,6 @@
 import { AutoCompleteProps, AutoComplete } from 'antd';
 import classNames from 'classnames';
-import React, { memo, useState } from 'react';
+import React, { memo, useRef, useState } from 'react';
 import { NameTooltipSimple } from '../../constants';
 
 import { NameCase } from '../../dsl';
@@ -28,6 +28,7 @@ export interface NameInputProps extends AutoCompleteProps {
 export const NameInput = memo((props: NameInputProps) => {
   const { className, value, dbclickToEnable, nameCase = 'camelCase', onBlur, ...other } = props;
   const [disabled, setDisabled] = useState(!!dbclickToEnable);
+  const instanceRef = useRef<{ focus: () => void }>(null);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     e.stopPropagation();
@@ -44,6 +45,9 @@ export const NameInput = memo((props: NameInputProps) => {
   const handleDbclick = () => {
     if (dbclickToEnable && disabled) {
       setDisabled(false);
+      requestAnimationFrame(() => {
+        instanceRef.current?.focus();
+      });
     }
   };
 
@@ -61,6 +65,7 @@ export const NameInput = memo((props: NameInputProps) => {
       value={value}
       onKeyDown={handleKeyDown}
       maxLength={256}
+      ref={instanceRef as any}
       // 支持继承
       disabled={disabled ? true : undefined}
       placeholder={NameTooltipSimple[nameCase]}

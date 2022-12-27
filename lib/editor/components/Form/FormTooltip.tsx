@@ -46,6 +46,11 @@ export const EditorFormTooltip = observer(function EditFormTooltip(props: Editor
   const hasError =
     hasIssue && (Array.isArray(status) ? status.length && status.some(s => s.errors.length) : status?.errors.length);
   const hasWarning = hasIssue && !hasError;
+  const hasTooltipOrIssue = tooltip || hasIssue;
+
+  if (!hasTooltipOrIssue) {
+    return null;
+  }
 
   return (
     <span
@@ -61,7 +66,16 @@ export const EditorFormTooltip = observer(function EditFormTooltip(props: Editor
       style={style}
     >
       {hasIssue ? (
-        <Popover content={<EditorFormIssues issues={status!} />} title="告警">
+        <Popover
+          placement="bottomRight"
+          content={
+            <div className={classNames('vd-form-tooltip__content', s.content)}>
+              {!!tooltip && <div className={classNames('vd-form-tooltip__tooltip', s.tooltip)}>{tooltip}</div>}
+              <EditorFormIssues issues={status!} />
+            </div>
+          }
+          title="告警"
+        >
           <ExclamationCircleFilled />
         </Popover>
       ) : tooltip ? (

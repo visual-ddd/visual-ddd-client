@@ -20,8 +20,13 @@ export abstract class DomainObject<DSL extends NameDSL> {
    * 基础对象
    */
   protected node: BaseNode;
+
   protected container: IDomainObjectContainer;
   protected editorModel: BaseEditorModel;
+
+  get parentId() {
+    return this.node.parent?.id;
+  }
 
   get id() {
     return this.node.id;

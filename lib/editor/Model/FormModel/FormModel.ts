@@ -26,6 +26,13 @@ export class FormModel {
   }
 
   /**
+   * 所有属性
+   */
+  get properties() {
+    return this.node.properties;
+  }
+
+  /**
    * 错误列表收集
    */
   @observable.shallow

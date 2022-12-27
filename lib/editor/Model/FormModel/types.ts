@@ -1,13 +1,14 @@
-import { RuleItem } from 'async-validator';
+import { InternalRuleItem, RuleItem } from 'async-validator';
 import { BaseEditorModel } from '../BaseEditorModel';
 import { FormModel } from './FormModel';
 
 export enum FormRuleReportType {
-  Error,
-  Warning,
+  Error = 'error',
+  Warning = 'warning',
 }
 
 export type FormValidatorContext = {
+  rawRule: InternalRuleItem;
   rule: FormRuleItem;
   model: FormModel;
   editorModel: BaseEditorModel;

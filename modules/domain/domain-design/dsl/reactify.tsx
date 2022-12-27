@@ -61,9 +61,9 @@ export function reactifyMethodResult(type?: TypeDSL): React.ReactNode {
  */
 export function reactifyParameter(parameter: ParameterDSL, index: number): React.ReactNode {
   return (
-    <>
+    <React.Fragment key={parameter.uuid}>
       {parameter.name || 'arg' + index}: {reactifyTypeDSL(parameter.type)}
-    </>
+    </React.Fragment>
   );
 }
 

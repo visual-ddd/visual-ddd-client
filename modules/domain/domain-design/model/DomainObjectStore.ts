@@ -3,7 +3,7 @@ import { derive } from '@/lib/store';
 import { booleanPredicate } from '@wakeapp/utils';
 import { makeObservable, observable } from 'mobx';
 
-import { NameDSL } from '../dsl';
+import { DomainObjectName, NameDSL } from '../dsl';
 import { DomainObject } from './DomainObject';
 import { DomainObjectFactory } from './DomainObjectFactory';
 import { IDomainObjectContainer } from './IDomainContainer';
@@ -147,6 +147,28 @@ export class DomainObjectStore implements IDomainObjectContainer {
    */
   getObjectById(id: string): DomainObject<NameDSL> | undefined {
     return this.objects.get(id);
+  }
+
+  /**
+   * 根据名称获取对象
+   * @param name
+   * @param type
+   */
+  getObjectsByName(name: string, type?: DomainObjectName[]): DomainObject<NameDSL>[] {
+    const result: DomainObject<NameDSL>[] = [];
+    for (const item of this.objectsInArray) {
+      if (item.name !== name) {
+        continue;
+      }
+
+      if (type && !type.includes(item.shapeName)) {
+        continue;
+      }
+
+      result.push(item);
+    }
+
+    return result;
   }
 
   toObjects<T extends DomainObject<NameDSL> = DomainObject<NameDSL>>(ids: string[]): T[] {

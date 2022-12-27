@@ -24,3 +24,13 @@
     }
   }
 }
+
+.content {
+  max-width: 400px;
+}
+
+.tooltip {
+  font-size: var(--vd-font-size-h6);
+  color: var(--vd-color-font-regular);
+  margin-bottom: var(--vd-spacing-sm);
+}

@@ -23,7 +23,6 @@ type RawAsyncValidateError = {
 const VALIDATE_OPTIONS: ValidateOption = {
   suppressValidatorError: true,
   suppressWarning: true,
-  firstFields: true,
 };
 
 export const toPathArray = memoize(path => {
@@ -78,15 +77,15 @@ const normalizeRule = (rule: FormRule): FormRuleItem[] => {
  * 规范化验证规则，支持获取上下文
  * @param rules
  */
-export const normalizeRules = (rules: FormRules, getContext: () => Omit<FormValidatorContext, 'rule'>) => {
+export const normalizeRules = (rules: FormRules, getContext: () => Omit<FormValidatorContext, 'rule' | 'rawRule'>) => {
   const wrapContextAndCompatible = (fn: FormValidator | undefined, rule: FormRuleItem): FormValidator | undefined => {
     if (fn == null) {
       return fn;
     }
 
     // 兼容 async-validator
-    const validator: RuleItem['validator'] = (_rule, value, callback) => {
-      fn(value, { rule, ...getContext() }).then(
+    const validator: RuleItem['validator'] = (rawRule, value, callback, source, options) => {
+      fn(value, { rule, rawRule, ...getContext() }).then(
         () => {
           callback();
         },
@@ -188,7 +187,7 @@ export const rulesToAsyncValidatorSchema = (rules: FormRules): Schema => {
 
       if (selfRule == null) {
         console.log(rules);
-        throw new Error(`当字段指定了 fields 或 * 时, $self 必须定义`);
+        throw new Error(`当字段指定了 fields 或 * 时, $self 必须定义, 且 type 为 array 或 object`);
       }
 
       const nSelfRules = normalizeRule(selfRule);
@@ -256,12 +255,17 @@ export const rulesToValidator = memoize((rules: FormRules) => {
     if (rules.$self) {
       const list = normalizeRule(rules.$self).filter(filter);
       rules.$self = list;
+
+      if (!list.length) {
+        delete rules.$self;
+      }
     }
 
     if (rules['*']) {
-      const result = walkAndFilterRules(rules['*'], filter);
+      walkAndFilterRules(rules['*'], filter);
 
-      if (!result?.length) {
+      // 没有包含任何子规则
+      if (!Object.keys(rules['*']).length) {
         delete rules['*'];
       }
     }
@@ -269,18 +273,17 @@ export const rulesToValidator = memoize((rules: FormRules) => {
     if (rules.fields) {
       const keys = Object.keys(rules.fields);
       for (const key of keys) {
-        const result = walkAndFilterRules(rules.fields[key], filter);
-        if (!result?.length) {
+        const val = rules.fields[key];
+        walkAndFilterRules(val, filter);
+        if (!Object.keys(val).length) {
           delete rules.fields[key];
         }
       }
 
-      if (!Object.keys(rules.fields)) {
+      if (!Object.keys(rules.fields).length) {
         delete rules.fields;
       }
     }
-
-    return rules.$self;
   };
 
   walkAndFilterRules(errorRules, i => i.reportType !== FormRuleReportType.Warning);
