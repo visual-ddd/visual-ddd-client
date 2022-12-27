@@ -1,6 +1,7 @@
 .list {
   list-style: none;
   padding: 0;
+  white-space: pre-wrap;
 
   color: var(--vd-color-font-regular);
   font-size: var(--vd-font-size-h6);

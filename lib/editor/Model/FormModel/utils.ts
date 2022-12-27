@@ -170,12 +170,21 @@ export const ruleToValidator = (path: string, rule: FormRule) => {
 };
 
 export const NoopValidator = () => Promise.resolve(null);
+const NoopSchema = new Schema({});
 
 /**
  * 转换 Rules 为 AsyncValidate Schema
  * @param rules
  */
 export const rulesToAsyncValidatorSchema = (rules: FormRules): Schema => {
+  if (rules.fields == null) {
+    return NoopSchema;
+  }
+
+  if (rules.$self != null || rules['*'] != null) {
+    console.warn(`根对象的 $self、* 定义将被忽略`);
+  }
+
   const walk = (rules: FormRules, desc: RuleItem[]) => {
     if (rules.$self) {
       const nSelfRules = normalizeRule(rules.$self) as RuleItem[]; // FormRuleItem 会规范化和 RuleItem 兼容
@@ -229,10 +238,6 @@ export const rulesToAsyncValidatorSchema = (rules: FormRules): Schema => {
       }
     }
   };
-
-  if (rules.$self != null || rules['*'] != null || rules.fields == null) {
-    throw new Error(`根对象的 $self、* 定义将被忽略`);
-  }
 
   const descriptor: Rules = {};
   const fields = Object.keys(rules.fields);

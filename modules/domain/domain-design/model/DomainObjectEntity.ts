@@ -1,8 +1,8 @@
 import { derive } from '@/lib/store';
 import { EntityDSL } from '../dsl';
-import { DomainObjectClass } from './DomainObjectClass';
+import { DomainObjectUnderAggregation } from './DomainObjectUnderAggregation';
 
-export class DomainObjectEntity extends DomainObjectClass<EntityDSL> {
+export class DomainObjectEntity extends DomainObjectUnderAggregation<EntityDSL> {
   /**
    * 是否为聚合根
    */

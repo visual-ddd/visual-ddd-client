@@ -5,11 +5,12 @@ import { CommandDSL, extraDependenciesFromCommand, ReferenceDSL } from '../dsl';
 import { DomainObject, DomainObjectInject } from './DomainObject';
 import { DomainObjectAggregation } from './DomainObjectAggregation';
 import { DomainObjectRule } from './DomainObjectRule';
+import { IDomainObjectUnderAggregation } from './DomainObjectUnderAggregation';
 
 /**
  * 命令对象
  */
-export class DomainObjectCommand extends DomainObject<CommandDSL> {
+export class DomainObjectCommand extends DomainObject<CommandDSL> implements IDomainObjectUnderAggregation {
   objectTypeTitle = '命令';
 
   /**

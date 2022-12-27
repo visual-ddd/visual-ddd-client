@@ -1,4 +1,4 @@
-import { defineShape, FormRuleReportType, ShapeComponentProps, useShapeModel } from '@/lib/editor';
+import { defineShape, FormRuleReportType, ROOT_FIELD, ShapeComponentProps, useShapeModel } from '@/lib/editor';
 import { ReactComponentBinding, ReactComponentProps, registerReactComponent } from '@/lib/g6-binding';
 
 import {
@@ -10,6 +10,8 @@ import {
   checkDomainObjectNameUnderAggregation,
   checkPropertyName,
   getPrefixPath,
+  checkUnderAggregation,
+  checkSameAggregationReference,
 } from '../../dsl';
 
 import icon from './entity.png';
@@ -47,6 +49,23 @@ defineShape({
   shapeType: 'node',
   rules: {
     fields: {
+      [ROOT_FIELD]: {
+        $self: [
+          {
+            // 检查是否在聚合下
+            async validator(value, context) {
+              checkUnderAggregation(context);
+            },
+            reportType: FormRuleReportType.Warning,
+          },
+          {
+            // 检查引用
+            async validator(value, context) {
+              checkSameAggregationReference(context);
+            },
+          },
+        ],
+      },
       name: {
         $self: [
           { required: true, message: '标识符不能为空' },

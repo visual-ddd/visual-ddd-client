@@ -3,8 +3,9 @@ import { getPaths } from '@/lib/utils';
 import { get } from '@wakeapp/utils';
 import memoize from 'lodash/memoize';
 
-import { DomainEditorModel } from '../model';
+import { DomainObject, DomainEditorModel, DomainObjectFactory, IDomainObjectUnderAggregation } from '../model';
 import { DomainObjectName } from './constants';
+import { NameDSL } from './dsl';
 
 /**
  * 从验证上下文中获取 DomainObjectStore
@@ -13,6 +14,18 @@ export function getDomainObjectStoreFromFormValidatorContext(context: FormValida
   const { editorModel } = context;
 
   return (editorModel as DomainEditorModel).domainObjectStore;
+}
+
+/**
+ * 从验证上下文中获取 DomainObject
+ * @param context
+ * @returns
+ */
+export function getDomainObjectFromValidatorContext(context: FormValidatorContext) {
+  const { model } = context;
+  const store = getDomainObjectStoreFromFormValidatorContext(context);
+
+  return store.getObjectById(model.id);
 }
 
 export const getPrefixPath = memoize(
@@ -28,6 +41,60 @@ export const getPrefixPath = memoize(
     return `${f}:${p}`;
   }
 );
+
+/**
+ * 检查是否在聚合内
+ */
+export function checkUnderAggregation(context: FormValidatorContext) {
+  const object = getDomainObjectFromValidatorContext(context);
+
+  if (!object) {
+    return;
+  }
+
+  if (DomainObjectFactory.isUnderAggregation(object)) {
+    if (object.aggregation == null) {
+      throw new Error(`${object.objectTypeTitle} 必须关联到聚合`);
+    }
+  }
+}
+
+/**
+ * 检查引用是否在同一个聚合内
+ * @param context
+ */
+export function checkSameAggregationReference(context: FormValidatorContext) {
+  // 先检查是否绑定了聚合
+  try {
+    checkUnderAggregation(context);
+  } catch {
+    return;
+  }
+
+  // 可能是命令、以及聚合内部的对象，比如实体、值对象、枚举
+  const model = getDomainObjectFromValidatorContext(context) as DomainObject<NameDSL> & IDomainObjectUnderAggregation;
+  const aggregation = model.aggregation!;
+
+  const errors: DomainObject<NameDSL>[] = [];
+  const checkDeps = (deps: DomainObject<NameDSL>[]) => {
+    for (const dep of deps) {
+      if (DomainObjectFactory.isUnderAggregation(dep)) {
+        if (dep.aggregation !== aggregation) {
+          errors.push(dep);
+        }
+      }
+    }
+  };
+
+  checkDeps(model.associations);
+  checkDeps(model.dependencies);
+
+  if (errors.length) {
+    throw new Error(
+      `不能引用非同聚合的对象:\n${errors.map(i => `《${i.objectTypeTitle}》${i.readableTitle}`).join('\n')}`
+    );
+  }
+}
 
 /**
  * 检查聚合内领域对象的命名重复

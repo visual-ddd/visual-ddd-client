@@ -7,3 +7,4 @@ export * from './DomainObjectEntity';
 export * from './DomainObjectValueObject';
 export * from './DomainObjectRule';
 export * from './DomainObjectFactory';
+export * from './DomainObjectUnderAggregation';

@@ -5,6 +5,7 @@ import { DomainObjectAggregation } from './DomainObjectAggregation';
 import { DomainObjectCommand } from './DomainObjectCommand';
 import { DomainObjectEntity } from './DomainObjectEntity';
 import { DomainObjectRule } from './DomainObjectRule';
+import { DomainObjectUnderAggregation, IDomainObjectUnderAggregation } from './DomainObjectUnderAggregation';
 import { DomainObjectValueObject } from './DomainObjectValueObject';
 
 export class DomainObjectFactory {
@@ -76,5 +77,14 @@ export class DomainObjectFactory {
    */
   static isRule(object: DomainObject<NameDSL>): object is DomainObjectRule {
     return object instanceof DomainObjectRule;
+  }
+
+  /**
+   * 判断是否为归属聚合的对象
+   * @param object
+   * @returns
+   */
+  static isUnderAggregation(object: any): object is IDomainObjectUnderAggregation {
+    return this.isCommand(object) || object instanceof DomainObjectUnderAggregation;
   }
 }
