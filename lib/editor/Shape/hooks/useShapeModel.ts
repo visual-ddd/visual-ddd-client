@@ -9,15 +9,23 @@ import { useEditorModel } from '../../Model';
 export function useShapeModel(cell: Cell) {
   const editorModel = useEditorModel();
 
-  const model = useMemo(() => {
-    return editorModel.index.getNodeById(cell.id)!;
-  }, [cell.id, editorModel.index]);
+  const [model, formModel] = useMemo(() => {
+    const model = editorModel.index.getNodeById(cell.id)!;
+    const formModel = editorModel.formStore.getFormModel(cell.id)!;
+
+    return [model, formModel];
+  }, [cell.id, editorModel]);
 
   return {
     /**
      * 模型对象
      */
     model,
+
+    /**
+     * 表单模型对象
+     */
+    formModel,
 
     /**
      * 获取属性
