@@ -2,7 +2,7 @@ import { BaseEditorModel, BaseNode } from '@/lib/editor';
 import { derive } from '@/lib/store';
 import { booleanPredicate } from '@wakeapp/utils';
 import { makeObservable } from 'mobx';
-import { NameDSL, RelationShipDSL, UntitledInHumanReadable, UntitledInUpperCamelCase } from '../dsl';
+import { DomainObjectName, NameDSL, RelationShipDSL, UntitledInHumanReadable, UntitledInUpperCamelCase } from '../dsl';
 import { IDomainObjectContainer } from './IDomainContainer';
 import { IEdgeDeclaration } from './IEdgeDeclaration';
 
@@ -30,8 +30,8 @@ export abstract class DomainObject<DSL extends NameDSL> {
   /**
    * 图形名称
    */
-  get shapeName() {
-    return this.node.name;
+  get shapeName(): DomainObjectName {
+    return this.node.name as DomainObjectName;
   }
 
   /**

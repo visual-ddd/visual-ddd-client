@@ -13,7 +13,7 @@ import { DescriptionInput } from '../DescriptionInput';
 import { NameInput } from '../NameInput';
 
 import s from './index.module.scss';
-import { stringifyMethod } from '../../stringify';
+import { reactifyMethod } from '../../reactify';
 import { ReferenceTypeProvider, TypeInput } from '../TypeInput';
 import { TitleInput } from '../TitleInput';
 import { DomainObject, DomainObjectFactory } from '../../../model';
@@ -25,7 +25,7 @@ const renderItem = (value: Item) => {
   const { title } = value;
   return (
     <div className={classNames('vd-methods-editor-item', s.item)} title={title}>
-      {stringifyMethod(value)}
+      {reactifyMethod(value)}
     </div>
   );
 };

@@ -11,7 +11,7 @@ import { NameInput } from '../NameInput';
 
 import s from './index.module.scss';
 import { DescriptionInput } from '../DescriptionInput';
-import { stringifyProperty } from '../../stringify';
+import { reactifyProperty } from '../../reactify';
 import { ReferenceTypeProvider, TypeInput } from '../TypeInput';
 import { TitleInput } from '../TitleInput';
 import { DomainObject, DomainObjectFactory } from '../../../model';
@@ -24,7 +24,7 @@ export interface PropertiesEditorProps {
 }
 
 const renderItem = (value: PropertyDSL) => {
-  return <div className={classNames('vd-properties-editor-item', s.item)}>{stringifyProperty(value)}</div>;
+  return <div className={classNames('vd-properties-editor-item', s.item)}>{reactifyProperty(value)}</div>;
 };
 
 const omitCommand = (i: DomainObject<NameDSL>) => {

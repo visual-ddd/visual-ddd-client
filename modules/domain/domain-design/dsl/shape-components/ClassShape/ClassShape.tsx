@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import classNames from 'classnames';
 
 import { PropertyDSL, MethodDSL, ClassDSL } from '../../dsl';
-import { stringifyProperty, stringifyMethod } from '../../stringify';
+import { reactifyMethod, reactifyProperty } from '../../reactify';
 import { UntitledInHumanReadable, UntitledInUpperCamelCase } from '../../constants';
 
 import s from './ClassShape.module.scss';
@@ -21,7 +21,7 @@ export const ClassShapeProperty = observer(function Property(props: { value: Pro
         className={classNames('shape-class-property__name', s.propertyName, { class: isClassMember })}
         title={title}
       >
-        {stringifyProperty(value)}
+        {reactifyProperty(value)}
       </span>
       <span className={classNames('shape-class-property__comment', s.propertyComment)} title={description}>
         {description}
@@ -43,7 +43,7 @@ export const ClassShapeMethod = observer(function Method(props: { value: MethodD
         className={classNames('shape-class-method__name', s.methodName, { abstract, class: isClassMember })}
         title={title}
       >
-        {stringifyMethod(value)}
+        {reactifyMethod(value)}
       </span>
       <span className={classNames('shape-class-method__comment', s.methodComment)} title={description}>
         {description}

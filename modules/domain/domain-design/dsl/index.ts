@@ -5,4 +5,5 @@ export * from './constants';
 export * from './components';
 export * from './shape-components';
 export * from './stringify';
+export * from './reactify';
 export * from './dependency';

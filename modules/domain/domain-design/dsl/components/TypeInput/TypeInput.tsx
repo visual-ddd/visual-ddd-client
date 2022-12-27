@@ -2,10 +2,11 @@ import { useEditorModel } from '@/lib/editor';
 import { NoopArray } from '@wakeapp/utils';
 import { Cascader, Dropdown, Input } from 'antd';
 import classNames from 'classnames';
+import { action, computed, observable } from 'mobx';
 import { observer, useLocalObservable } from 'mobx-react';
-import { createContext, useContext, useMemo } from 'react';
-import { DomainEditorModel, DomainObject } from '../../../model';
+import { createContext, useContext, useEffect, useMemo } from 'react';
 
+import { DomainEditorModel, DomainObject } from '../../../model';
 import { BaseType, BaseTypeInArray, ContainerType, ContainerTypeInArray, NameDSL, TypeDSL, TypeType } from '../../dsl';
 import { createBaseType, createContainerType, createReferenceType } from '../../factory';
 import { stringifyMethodResult, stringifyTypeDSL } from '../../stringify';
@@ -230,14 +231,34 @@ const TypeConstructor = observer(function TypeConstructor(props: {
 
 export const TypeInput = observer(function TypeInput(props: TypeInputProps) {
   const { value, onChange, isMethodResult = false, onBlur } = props;
+  const { model: editorModel } = useEditorModel<DomainEditorModel>();
+  const store = useLocalObservable(
+    () => {
+      const getTitle = (id: string, name: string) => {
+        const object = editorModel.domainObjectStore.getObjectById(id);
 
-  const inputValue = useMemo(() => {
-    if (isMethodResult) {
-      return stringifyMethodResult(value);
-    }
+        return object?.readableTitle ?? name;
+      };
+      return {
+        value: value,
+        get inputValue() {
+          if (isMethodResult) {
+            return stringifyMethodResult(this.value, getTitle);
+          }
 
-    return stringifyTypeDSL(value);
-  }, [value, isMethodResult]);
+          return stringifyTypeDSL(this.value, getTitle);
+        },
+        updateValue(val: typeof value) {
+          this.value = val;
+        },
+      };
+    },
+    { value: observable.ref, inputValue: computed, updateValue: action }
+  );
+
+  useEffect(() => {
+    store.updateValue(value);
+  }, [value]);
 
   const handleInputChange: React.ChangeEventHandler<HTMLInputElement> = e => {
     if (!e.target.value && value) {
@@ -265,7 +286,7 @@ export const TypeInput = observer(function TypeInput(props: TypeInputProps) {
       onOpenChange={handleOpenChange}
       trigger={['click']}
     >
-      <Input value={inputValue} allowClear onChange={handleInputChange} placeholder="选择类型" />
+      <Input value={store.inputValue} allowClear onChange={handleInputChange} placeholder="选择类型" />
     </Dropdown>
   );
 });

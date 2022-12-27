@@ -10,7 +10,7 @@ import { DescriptionInput } from '../DescriptionInput';
 
 import s from './index.module.scss';
 import { NameInput } from '../NameInput';
-import { stringifyParameter } from '../../stringify';
+import { reactifyParameter } from '../../reactify';
 import { ReferenceTypeProvider, TypeInput } from '../TypeInput';
 import { TitleInput } from '../TitleInput';
 
@@ -27,7 +27,7 @@ const renderItem = (value: Item, index: number) => {
   const { title } = value;
   return (
     <div className={classNames('vd-parameters-editor-item', s.item)} title={title}>
-      {stringifyParameter(value, index)}
+      {reactifyParameter(value, index)}
     </div>
   );
 };

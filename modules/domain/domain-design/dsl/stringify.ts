@@ -1,8 +1,10 @@
+/**
+ * 序列化为字符串
+ */
 import { AccessModifier, UntitledInCamelCase, Void, VoidClass } from './constants';
 import { AccessDSL, MethodDSL, ParameterDSL, PropertyDSL, TypeDSL, TypeType } from './dsl';
 
-// TODO: 引用标题响应化
-export function stringifyTypeDSL(type?: TypeDSL): string {
+export function stringifyTypeDSL(type?: TypeDSL, getReferenceTypeName?: (id: string, name: string) => string): string {
   if (type == null) {
     return VoidClass;
   }
@@ -11,11 +13,19 @@ export function stringifyTypeDSL(type?: TypeDSL): string {
     case TypeType.Container: {
       switch (type.name) {
         case 'Map':
-          return `Map<${stringifyTypeDSL(type.params.key)}, ${stringifyTypeDSL(type.params.value)}>`;
+          return `Map<${stringifyTypeDSL(type.params.key, getReferenceTypeName)}, ${
+            (stringifyTypeDSL(type.params.value), getReferenceTypeName)
+          }>`;
         default:
-          return `${type.name}<${stringifyTypeDSL(type.params.item)}>`;
+          return `${type.name}<${stringifyTypeDSL(type.params.item, getReferenceTypeName)}>`;
       }
     }
+    case TypeType.Reference:
+      if (getReferenceTypeName) {
+        return getReferenceTypeName(type.referenceId, type.name);
+      } else {
+        return type.name;
+      }
     default:
       return type.name;
   }
@@ -23,8 +33,8 @@ export function stringifyTypeDSL(type?: TypeDSL): string {
   return VoidClass;
 }
 
-export function stringifyMethodResult(type?: TypeDSL) {
-  return type == null ? Void : stringifyTypeDSL(type);
+export function stringifyMethodResult(type?: TypeDSL, getReferenceTypeName?: (id: string, name: string) => string) {
+  return type == null ? Void : stringifyTypeDSL(type, getReferenceTypeName);
 }
 
 /**

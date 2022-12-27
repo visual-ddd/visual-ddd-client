@@ -49,3 +49,12 @@ export enum DomainObjectName {
   Rule = 'rule',
   Enum = 'enum',
 }
+
+export const DomainObjectColors = {
+  [DomainObjectName.Aggregation]: '#D9F7BE',
+  [DomainObjectName.Entity]: '#b1ed7c',
+  [DomainObjectName.ValueObject]: '#70cafa',
+  [DomainObjectName.Command]: '#f7f73d',
+  [DomainObjectName.Rule]: '#303133',
+  [DomainObjectName.Enum]: '#CDAEF2',
+};
