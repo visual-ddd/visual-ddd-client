@@ -35,19 +35,6 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 ## TODO
 
-- 重新验证时机算法
-  - 失去焦点：完全重新验证失去焦点的节点
-  - 副作用定义：
-    是否在同一个子级？引用聚合
-    关联关系变更？关联聚合
-    命名冲突检查？同一个聚合下对象
-    节点移除？ 依赖关系检查(同一个)
-    节点新增？ 命名冲突检查, 移除前后、同一个容器下的对象都要重新检查
-    节点移动？ 命名冲突检查、关联关系检查
-    总结 -> 节点的新增、移除、移动、关联关系的变动，都会影响其他节点的命名冲突、依赖关系检查
-  - 时机： 通过事件收集(事件需要携带之前、之后的状态)收集，验证则等到浏览器空闲
-  - 性能优化：区分依赖关系检查、命名冲突检查，验证时指定要进行验证的数据
-  - 影响范围： 节点本身，以及依赖(多种依赖关系都要处理)节点的节点
 - Member List 移除、新增、排序, 清空并重新验证子级
 - 全局告警
 - rule 包含 label, 更好的信息提示
@@ -56,6 +43,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 - 创建后选中
 - 验证性能优化
 - 保存时验证，并存储验证状态
+- NameInput 支持全选
 - node edit
 - label edit
 - 子元素 resize，auto 扩展父元素

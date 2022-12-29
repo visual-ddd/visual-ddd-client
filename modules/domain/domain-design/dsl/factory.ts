@@ -1,6 +1,11 @@
 import { NoopObject } from '@wakeapp/utils';
 import { v4 } from 'uuid';
-import { UntitledInCamelCase, UntitledInHumanReadable, UntitledInUpperCamelCase } from './constants';
+import {
+  UntitledInCamelCase,
+  UntitledInHumanReadable,
+  UntitledInUpperCamelCase,
+  UntitledInUpperCase,
+} from './constants';
 import {
   AggregationDSL,
   BaseType,
@@ -8,6 +13,8 @@ import {
   CommandDSL,
   ContainerType,
   EntityDSL,
+  EnumBaseType,
+  EnumDSL,
   MethodDSL,
   NameCase,
   NameDSL,
@@ -48,7 +55,12 @@ export function createNameDSL(options: { wordCase?: NameCase; title?: boolean } 
   const { wordCase = 'CamelCase', title } = options;
   return {
     uuid: v4(),
-    name: wordCase === 'CamelCase' ? UntitledInUpperCamelCase : UntitledInCamelCase,
+    name:
+      wordCase === 'CamelCase'
+        ? UntitledInUpperCamelCase
+        : wordCase === 'SNAKE_CASE'
+        ? UntitledInUpperCase
+        : UntitledInCamelCase,
     title: title ? UntitledInHumanReadable : '',
     description: '',
     meta: [],
@@ -112,6 +124,25 @@ export function createValueObject(): ValueObjectDSL {
   cls.methods = [];
 
   return cls;
+}
+
+export function createEnumMember(type: EnumBaseType) {
+  return {
+    ...createNameDSL({ wordCase: 'SNAKE_CASE' }),
+    code: type === 'string' ? UntitledInUpperCase : '0',
+  };
+}
+
+/**
+ * 构造枚举
+ * @returns
+ */
+export function createEnum(): EnumDSL {
+  return {
+    ...createNameDSL({ wordCase: 'CamelCase', title: true }),
+    baseType: 'number',
+    members: [createEnumMember('number')],
+  };
 }
 
 export function createSourceDSL(): SourceDSL {

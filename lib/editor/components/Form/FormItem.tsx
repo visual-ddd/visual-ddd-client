@@ -6,6 +6,7 @@ import { ReactNode, cloneElement, isValidElement, useMemo, useEffect } from 'rea
 import { useEditorFormContext } from './FormContext';
 import s from './FormItem.module.scss';
 import { EditorFormTooltip } from './FormTooltip';
+import identity from 'lodash/identity';
 
 export type EditorFormItemTrigger = string | string[];
 
@@ -61,6 +62,13 @@ export interface EditorFormItemProps extends EditorFormItemBaseProps {
    * 设置 value 传入，或者从 event 对象 target 中收集值的属性名称， 默认为 value
    */
   valuePropName?: string;
+
+  /**
+   * 支持在变更之间进行转换
+   * @param value
+   * @returns
+   */
+  onBeforeChange?: (value: any) => any;
 }
 
 export function defaultGetValueFromEvent(valuePropName: string, ...args: any[]) {
@@ -103,6 +111,7 @@ export const EditorFormItem = observer(function EditorFormItem(props: EditorForm
     trigger = 'onChange',
     validateTrigger = 'onChange',
     valuePropName = 'value',
+    onBeforeChange = identity,
     dependencies,
     dependenciesTriggerWhenTouched = true,
   } = props;
@@ -142,7 +151,8 @@ export const EditorFormItem = observer(function EditorFormItem(props: EditorForm
       const injected: any = {
         [valuePropName]: formModel.getProperty(path),
         [trigger]: (evt: any) => {
-          const value = defaultGetValueFromEvent(valuePropName, evt);
+          let value = defaultGetValueFromEvent(valuePropName, evt);
+          value = onBeforeChange(value);
 
           formModel.setProperty(path, value);
         },

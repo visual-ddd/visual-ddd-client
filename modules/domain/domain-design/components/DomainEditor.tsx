@@ -39,6 +39,7 @@ export const DomainEditor = observer(function DomainEditor() {
                   shapes={[
                     'entity',
                     'value-object',
+                    'enum',
                     'aggregation',
                     'command',
                     'rule',

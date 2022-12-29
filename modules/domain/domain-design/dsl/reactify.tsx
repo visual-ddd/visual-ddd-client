@@ -4,8 +4,8 @@
 import React from 'react';
 import { ReferenceTypeDisplay } from './components/ReferenceTypeDisplay';
 import { arrayJoin } from '@wakeapp/utils';
-import { UntitledInCamelCase, Void, VoidClass } from './constants';
-import { MethodDSL, ParameterDSL, PropertyDSL, TypeDSL, TypeType } from './dsl';
+import { UntitledInCamelCase, UntitledInUpperCase, Void, VoidClass } from './constants';
+import { EnumMemberDSL, MethodDSL, ParameterDSL, PropertyDSL, TypeDSL, TypeType } from './dsl';
 import { stringifyAccess } from './stringify';
 
 export function reactifyTypeDSL(type?: TypeDSL): React.ReactNode {
@@ -86,6 +86,14 @@ export function reactifyProperty(property: PropertyDSL): React.ReactNode {
     <>
       {stringifyAccess(property.access)}
       {property.name || UntitledInCamelCase}: {reactifyTypeDSL(property.type)}
+    </>
+  );
+}
+
+export function reactifyEnumMember(member: EnumMemberDSL): React.ReactNode {
+  return (
+    <>
+      {member.name || UntitledInUpperCase}: {member.code || '未定义'}
     </>
   );
 }

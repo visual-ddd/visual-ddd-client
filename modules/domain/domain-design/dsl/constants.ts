@@ -12,6 +12,7 @@ export const Void = 'void';
 
 export const UntitledInCamelCase = 'untitled';
 export const UntitledInUpperCamelCase = 'Untitled';
+export const UntitledInUpperCase = 'UNTITLED';
 export const UntitledInHumanReadable = '未命名';
 
 export const AccessModifier = {

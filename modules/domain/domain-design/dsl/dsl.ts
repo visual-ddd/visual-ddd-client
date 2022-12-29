@@ -265,7 +265,10 @@ export interface ValueObjectDSL extends ClassDSL {}
 export type EnumBaseType = 'string' | 'number';
 
 export interface EnumMemberDSL extends NameDSL {
-  code: string | number;
+  /**
+   * 后期进行转换
+   */
+  code: string;
 }
 
 /**

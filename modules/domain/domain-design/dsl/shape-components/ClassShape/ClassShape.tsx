@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, memo } from 'react';
 import { observer } from 'mobx-react';
 import classNames from 'classnames';
 
@@ -7,6 +7,37 @@ import { reactifyMethod, reactifyProperty } from '../../reactify';
 import { UntitledInHumanReadable, UntitledInUpperCamelCase } from '../../constants';
 
 import s from './ClassShape.module.scss';
+
+export interface ClassShapePropertyBaseProps {
+  name?: React.ReactNode;
+  comment?: string;
+}
+
+/**
+ * 基础列表项
+ */
+export const ClassShapePropertyBase = memo((props: ClassShapePropertyBaseProps) => {
+  const { name, comment } = props;
+  return (
+    <div className={classNames('shape-class-property', s.property)}>
+      <span className={classNames('shape-class-property__name', s.propertyName)}>{name}</span>
+      <span className={classNames('shape-class-property__comment', s.propertyComment)} title={comment}>
+        {comment}
+      </span>
+    </div>
+  );
+});
+
+ClassShapePropertyBase.displayName = 'ClassShapePropertyBase';
+
+/**
+ * 列表项容器
+ * @param props
+ * @returns
+ */
+export const ClassShapeCells = (props: React.HTMLProps<HTMLDivElement>) => {
+  return <div {...props} className={classNames('shape-class__cells', s.cells, props.className)}></div>;
+};
 
 /**
  * 属性渲染
@@ -90,6 +121,8 @@ export interface ClassShapeBaseProps {
 
   methods?: MethodDSL[];
   classMethods?: MethodDSL[];
+
+  children?: React.ReactNode;
 }
 
 /**
@@ -108,6 +141,7 @@ export const ClassShapeBase: FC<ClassShapeBaseProps> = observer(function ClassSh
     classProperties,
     methods,
     classMethods,
+    children,
   } = props;
   const hasProperties = !!(properties?.length || classProperties?.length);
   const hasMethods = !!(methods?.length || classMethods?.length);
@@ -142,6 +176,7 @@ export const ClassShapeBase: FC<ClassShapeBaseProps> = observer(function ClassSh
           })}
         </div>
       )}
+      {children}
     </div>
   );
 });

@@ -4,3 +4,4 @@ export * from './ValueObject';
 export * from './Aggregation';
 export * from './Command';
 export * from './Rule';
+export * from './Enum';
