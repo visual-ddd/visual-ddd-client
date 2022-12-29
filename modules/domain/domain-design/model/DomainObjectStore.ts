@@ -91,19 +91,13 @@ export class DomainObjectStore {
       }
 
       // 值对象或实体, 如果没有放在聚合容器内，说明是未关联
-      if (DomainObjectFactory.isEntity(item) || DomainObjectFactory.isValueObject(item)) {
-        if (!item.hasParent) {
-          result.push(item);
-        }
-      }
-
-      // 命令
-      if (DomainObjectFactory.isCommand(item)) {
+      if (DomainObjectFactory.isUnderAggregation(item)) {
         if (!item.aggregation) {
           result.push(item);
         }
       }
 
+      // 规则
       if (DomainObjectFactory.isRule(item)) {
         if (!item.aggregator) {
           result.push(item);

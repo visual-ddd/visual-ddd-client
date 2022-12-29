@@ -4,10 +4,9 @@
 import { derive } from '@/lib/store';
 import { NoopArray } from '@wakeapp/utils';
 
-import { ClassDSL, NameDSL } from '../dsl';
+import { NameDSL } from '../dsl';
 import { DomainObject } from './DomainObject';
 import { DomainObjectAggregation } from './DomainObjectAggregation';
-import { DomainObjectClass } from './DomainObjectClass';
 
 export interface IDomainObjectUnderAggregation {
   /**
@@ -16,8 +15,8 @@ export interface IDomainObjectUnderAggregation {
   aggregation: DomainObjectAggregation | undefined;
 }
 
-export abstract class DomainObjectUnderAggregation<T extends ClassDSL>
-  extends DomainObjectClass<T>
+export abstract class DomainObjectUnderAggregation<T extends NameDSL>
+  extends DomainObject<T>
   implements IDomainObjectUnderAggregation
 {
   @derive

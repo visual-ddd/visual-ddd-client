@@ -1,8 +1,8 @@
 import { ValueObjectDSL } from '../dsl';
 
-import { DomainObjectUnderAggregation } from './DomainObjectUnderAggregation';
+import { DomainObjectClass } from './DomainObjectClass';
 
-export class DomainObjectValueObject extends DomainObjectUnderAggregation<ValueObjectDSL> {
+export class DomainObjectValueObject extends DomainObjectClass<ValueObjectDSL> {
   override get objectTypeTitle() {
     return '值对象';
   }

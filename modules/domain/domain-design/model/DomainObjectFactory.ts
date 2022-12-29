@@ -7,6 +7,7 @@ import { DomainObjectEntity } from './DomainObjectEntity';
 import { DomainObjectRule } from './DomainObjectRule';
 import { DomainObjectUnderAggregation, IDomainObjectUnderAggregation } from './DomainObjectUnderAggregation';
 import { DomainObjectValueObject } from './DomainObjectValueObject';
+import { DomainObjectEnum } from './DomainObjectEnum';
 
 export class DomainObjectFactory {
   static getDomainObject(inject: DomainObjectInject): DomainObject<NameDSL> | null {
@@ -22,6 +23,8 @@ export class DomainObjectFactory {
         return new DomainObjectCommand(inject);
       case DomainObjectName.Rule:
         return new DomainObjectRule(inject);
+      case DomainObjectName.Enum:
+        return new DomainObjectEnum(inject);
       default:
         return null;
     }
@@ -68,6 +71,15 @@ export class DomainObjectFactory {
    */
   static isCommand(object: DomainObject<NameDSL>): object is DomainObjectCommand {
     return object instanceof DomainObjectCommand;
+  }
+
+  /**
+   * 是否为枚举
+   * @param object
+   * @returns
+   */
+  static isEnum(object: DomainObject<NameDSL>): object is DomainObjectEnum {
+    return object instanceof DomainObjectEnum;
   }
 
   /**

@@ -17,7 +17,7 @@ export const AggregationShapeComponent = (props: ShapeComponentProps) => {
   return <ReactComponentBinding {...props.cellProps} component={DomainObjectName.Aggregation} />;
 };
 
-const ALLOWED_CHILD = new Set<string>([DomainObjectName.Entity, DomainObjectName.ValueObject]);
+const ALLOWED_CHILD = new Set<string>([DomainObjectName.Entity, DomainObjectName.ValueObject, DomainObjectName.Enum]);
 
 /**
  * 实体

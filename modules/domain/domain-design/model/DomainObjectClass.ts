@@ -2,12 +2,13 @@ import { derive } from '@/lib/store';
 import { booleanPredicate, NoopArray } from '@wakeapp/utils';
 import { makeObservable } from 'mobx';
 import { ClassDSL, extraDependenciesFromClass } from '../dsl';
-import { DomainObject, DomainObjectInject } from './DomainObject';
+import { DomainObjectInject } from './DomainObject';
+import { DomainObjectUnderAggregation } from './DomainObjectUnderAggregation';
 
 /**
  * 实体
  */
-export abstract class DomainObjectClass<T extends ClassDSL = ClassDSL> extends DomainObject<T> {
+export abstract class DomainObjectClass<T extends ClassDSL = ClassDSL> extends DomainObjectUnderAggregation<T> {
   referable: boolean = true;
 
   get objectTypeTitle() {
