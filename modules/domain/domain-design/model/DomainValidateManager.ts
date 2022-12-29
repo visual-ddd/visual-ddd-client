@@ -215,7 +215,7 @@ export class DomainValidateManager {
         }
       }
     }
-  }, 1000);
+  }, 600);
 
   private validateFull(object: DomainObject<NameDSL>) {
     console.log(`---- check full: ${object.id}  ${object.readableTitle}  ----`);

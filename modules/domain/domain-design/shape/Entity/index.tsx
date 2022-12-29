@@ -7,7 +7,7 @@ import {
   EntityEditor,
   EntityDSL,
   DomainObjectName,
-  checkDomainObjectNameUnderAggregation,
+  checkDomainObjectNameConflict,
   checkPropertyName,
   getPrefixPath,
   checkUnderAggregation,
@@ -72,7 +72,7 @@ defineShape({
           {
             async validator(value, context) {
               // 检查命名是否冲突
-              checkDomainObjectNameUnderAggregation(value, context);
+              checkDomainObjectNameConflict(value, context);
             },
           },
         ],

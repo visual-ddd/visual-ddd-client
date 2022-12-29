@@ -4,7 +4,6 @@ import { get } from '@wakeapp/utils';
 import memoize from 'lodash/memoize';
 
 import { DomainObject, DomainEditorModel, DomainObjectFactory, IDomainObjectUnderAggregation } from '../model';
-import { DomainObjectName } from './constants';
 import { NameDSL } from './dsl';
 
 /**
@@ -52,10 +51,8 @@ export function checkUnderAggregation(context: FormValidatorContext) {
     return;
   }
 
-  if (DomainObjectFactory.isUnderAggregation(object)) {
-    if (object.aggregation == null) {
-      throw new Error(`${object.objectTypeTitle} 必须关联到聚合`);
-    }
+  if (object.package == null) {
+    throw new Error(`${object.objectTypeTitle} 必须关联到聚合`);
   }
 }
 
@@ -101,36 +98,17 @@ export function checkSameAggregationReference(context: FormValidatorContext) {
  * @param value
  * @param context
  */
-export function checkDomainObjectNameUnderAggregation(value: string, context: FormValidatorContext) {
+export function checkDomainObjectNameConflict(value: string, context: FormValidatorContext) {
   if (!value) {
     return null;
   }
 
-  const { model } = context;
-  const store = getDomainObjectStoreFromFormValidatorContext(context);
-  const currentObject = store.getObjectById(model.id)!;
+  const model = getDomainObjectFromValidatorContext(context) as DomainObject<NameDSL>;
 
-  const objects = store.getObjectsByName(value, [
-    DomainObjectName.Entity,
-    DomainObjectName.Enum,
-    DomainObjectName.ValueObject,
-  ]);
-  const filtered = objects.filter(o => {
-    // 相同对象: 跳过
-    if (o.id === currentObject.id) {
-      return false;
+  for (const obj of model.objectsInSameScope) {
+    if (obj.name === value) {
+      throw new Error(`名称 ${value} 已重复`);
     }
-
-    // 不同聚合，跳过
-    if (o.parentId !== currentObject.parentId) {
-      return false;
-    }
-
-    return true;
-  });
-
-  if (filtered.length) {
-    throw new Error(`名称 ${value} 已重复`);
   }
 }
 
