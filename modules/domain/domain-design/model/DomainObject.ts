@@ -1,7 +1,7 @@
 import { BaseEditorModel, BaseNode, IDisposable } from '@/lib/editor';
 import { derive } from '@/lib/store';
 import { booleanPredicate, Disposer } from '@wakeapp/utils';
-import { makeObservable } from 'mobx';
+import { makeObservable, reaction } from 'mobx';
 import { DomainObjectName, NameDSL, RelationShipDSL, UntitledInHumanReadable, UntitledInUpperCamelCase } from '../dsl';
 import { DomainObjectStore } from './DomainObjectStore';
 import { IEdgeDeclaration } from './IEdgeDeclaration';
@@ -173,6 +173,17 @@ export abstract class DomainObject<DSL extends NameDSL> implements IDisposable {
     this.editorModel = inject.editorModel;
 
     makeObservable(this);
+
+    // 监听名称变化
+    this.disposer.push(
+      reaction(
+        () => this.dsl.name,
+        name => {
+          this.store.emitNameChanged({ node: this.node, object: this });
+        },
+        { delay: 800, name: 'WATCH_OBJECT_NAME' }
+      )
+    );
   }
 
   dispose(): void {
