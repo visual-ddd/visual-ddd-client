@@ -340,9 +340,9 @@ export interface CommandDSL extends NameDSL {
  */
 export interface RuleDSL extends NameDSL {
   /**
-   * 所属的对象
+   * 聚合当前规则的父级
    */
-  association?: ReferenceDSL;
+  aggregator?: ReferenceDSL;
 }
 
 /**

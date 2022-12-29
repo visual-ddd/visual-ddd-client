@@ -138,7 +138,7 @@ export function createCommand(): CommandDSL {
 }
 
 export function createRule(): RuleDSL {
-  return { ...createNameDSL({ wordCase: 'CamelCase', title: true }), description: '规则描述', association: undefined };
+  return { ...createNameDSL({ wordCase: 'CamelCase', title: true }), description: '规则描述', aggregator: undefined };
 }
 
 /**

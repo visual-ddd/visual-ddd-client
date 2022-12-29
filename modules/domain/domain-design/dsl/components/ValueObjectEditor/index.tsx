@@ -3,9 +3,9 @@ import { EditorFormCollapse, EditorFormCollapsePanel, EditorFormItem } from '@/l
 import { NameTooltip } from '../../constants';
 import { PropertiesEditor } from '../PropertiesEditor';
 import { MethodsEditor } from '../MethodsEditor';
-import { NameInput } from '../NameInput';
 import { DescriptionInput } from '../DescriptionInput';
 import { TitleInput } from '../TitleInput';
+import { ObjectNameInput } from '../ObjectNameInput';
 
 const DEFAULT_ACTIVE = ['base', 'properties', 'methods'];
 
@@ -14,7 +14,7 @@ export const ValueObjectEditor = () => {
     <EditorFormCollapse defaultActiveKey={DEFAULT_ACTIVE}>
       <EditorFormCollapsePanel header="基础信息" key="base">
         <EditorFormItem path="name" label="标识符" tooltip={NameTooltip['CamelCase']}>
-          <NameInput nameCase="CamelCase" dbclickToEnable />
+          <ObjectNameInput />
         </EditorFormItem>
         <EditorFormItem path="title" label="标题">
           <TitleInput />

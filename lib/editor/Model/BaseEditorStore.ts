@@ -59,6 +59,8 @@ export class BaseEditorStore {
   removeChild(params: { parent: BaseNode; child: BaseNode }): void {
     const { parent, child } = params;
 
+    this.event.emit('NODE_BEFORE_REMOVE_CHILD', { parent, child });
+
     const removed = parent.removeChild(child);
 
     if (removed) {
@@ -90,6 +92,9 @@ export class BaseEditorStore {
   @mutation('UPDATE_NODE_PROPERTY')
   updateNodeProperty(params: { node: BaseNode; path: string; value: any }) {
     const { node, path, value } = params;
+
+    this.event.emit('NODE_BEFORE_UPDATE_PROPERTY', { node, path, value });
+
     const changed = node.setProperty(path, value);
     if (changed) {
       this.event.emit('NODE_UPDATE_PROPERTY', { node, path, value });

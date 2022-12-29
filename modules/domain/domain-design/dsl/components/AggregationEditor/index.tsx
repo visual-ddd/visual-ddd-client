@@ -10,13 +10,11 @@ import { observer, useLocalObservable } from 'mobx-react';
 import { Select } from 'antd';
 import diff from 'lodash/difference';
 
-import { DomainEditorModel } from '../../../model';
+import { DomainEditorModel, DomainObjectAggregation, DomainObjectCommand } from '../../../model';
 import { NameTooltip } from '../../constants';
-import { NameInput } from '../NameInput';
 import { DescriptionInput } from '../DescriptionInput';
 import { TitleInput } from '../TitleInput';
-import { DomainObjectAggregation } from '../../../model/DomainObjectAggregation';
-import { DomainObjectCommand } from '../../../model/DomainObjectCommand';
+import { ObjectNameInput } from '../ObjectNameInput';
 
 interface CommandSelectProps {}
 
@@ -68,7 +66,7 @@ export const AggregationEditor = () => {
   return (
     <EditorFormContainer>
       <EditorFormItem path="name" label="标识符" tooltip={NameTooltip['CamelCase']}>
-        <NameInput nameCase="CamelCase" dbclickToEnable />
+        <ObjectNameInput />
       </EditorFormItem>
       <EditorFormItem path="title" label="标题">
         <TitleInput />

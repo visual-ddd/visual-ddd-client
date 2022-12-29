@@ -1,6 +1,6 @@
 import { derive } from '@/lib/store';
 import { NoopArray } from '@wakeapp/utils';
-import { makeObservable } from 'mobx';
+import { intercept, makeObservable, reaction } from 'mobx';
 
 import { NameDSL, ReferenceDSL, RuleDSL } from '../dsl';
 
@@ -15,12 +15,24 @@ export class DomainObjectRule extends DomainObject<RuleDSL> {
   // 规则不能作为类型引用
   referable: boolean = false;
 
+  @derive
+  get package() {
+    return this.aggregator;
+  }
+
+  @derive
+  get objectsInSameScope() {
+    return this.aggregator?.aggregations.filter(i => i.id !== this.id) || NoopArray;
+  }
+
+  objectsDependentOnMe: DomainObject<NameDSL>[] = NoopArray;
+
   /**
    * 所属的对象
    */
   @derive
-  get association() {
-    return this.dsl.association && this.container.getObjectById(this.dsl.association.referenceId);
+  get aggregator() {
+    return this.dsl.aggregator && this.store.getObjectById(this.dsl.aggregator.referenceId);
   }
 
   /**
@@ -35,26 +47,49 @@ export class DomainObjectRule extends DomainObject<RuleDSL> {
     super(inject);
 
     makeObservable(this);
+
+    this.disposer.push(
+      intercept(this.dsl, 'aggregator', change => {
+        this.store.emitAggregationChanged({
+          node: this.node,
+          object: this,
+          current: this.aggregator,
+        });
+        return change;
+      }) as Function,
+      reaction(
+        () => this.dsl.aggregator,
+        (value, prevValue) => {
+          this.store.emitAggregationChanged({
+            node: this.node,
+            object: this,
+            previous: this.store.getObjectById(prevValue?.referenceId),
+            current: this.store.getObjectById(value?.referenceId),
+          });
+        },
+        { name: 'WATCH_RULE_AGGREGATOR' }
+      )
+    );
   }
 
   /**
    * 设置所属聚合
    * @param params
    */
-  setAssociation(params: { association: DomainObject<NameDSL> | undefined }) {
-    const { association } = params;
-    if (association && association === this.association) {
+  setAggregator(params: { aggregator: DomainObject<NameDSL> | undefined }) {
+    const { aggregator } = params;
+    if (aggregator && aggregator === this.aggregator) {
       return;
     }
 
     const formModel = this.editorModel.formStore.getFormModel(this.id);
     if (formModel) {
       formModel.setProperty(
-        'association',
-        association
+        'aggregator',
+        aggregator
           ? ({
-              referenceId: association.id,
-              name: `${association.title}(${association.name})`,
+              referenceId: aggregator.id,
+              name: `${aggregator.title}(${aggregator.name})`,
             } satisfies ReferenceDSL)
           : undefined
       );

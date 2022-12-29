@@ -1,20 +1,23 @@
-import { BaseEditorEvent, BaseEditorModel } from '@/lib/editor';
-import { derive } from '@/lib/store';
+import { BaseEditorEvent, BaseEditorModel, BaseNode, tryDispose } from '@/lib/editor';
+import { command, derive } from '@/lib/store';
 import { booleanPredicate } from '@wakeapp/utils';
-import { makeObservable, observable } from 'mobx';
+import { makeObservable, observable, runInAction } from 'mobx';
 
 import { DomainObjectName, NameDSL } from '../dsl';
 import { DomainObject } from './DomainObject';
+import { DomainObjectEvent } from './DomainObjectEvent';
 import { DomainObjectFactory } from './DomainObjectFactory';
-import { IDomainObjectContainer } from './IDomainContainer';
+import { DomainValidateManager } from './DomainValidateManager';
 import { IEdgeDeclaration } from './IEdgeDeclaration';
 
 /**
  * 描述和计算对象之间的依赖关系
  */
-export class DomainObjectStore implements IDomainObjectContainer {
-  private event: BaseEditorEvent;
-  private editorModel: BaseEditorModel;
+export class DomainObjectStore {
+  protected domainObjectEvent: DomainObjectEvent;
+  protected event: BaseEditorEvent;
+  protected editorModel: BaseEditorModel;
+  protected validateManager: DomainValidateManager;
 
   /**
    * 所有对象
@@ -102,7 +105,7 @@ export class DomainObjectStore implements IDomainObjectContainer {
       }
 
       if (DomainObjectFactory.isRule(item)) {
-        if (!item.association) {
+        if (!item.aggregator) {
           result.push(item);
         }
       }
@@ -124,17 +127,43 @@ export class DomainObjectStore implements IDomainObjectContainer {
   }
 
   constructor(inject: { event: BaseEditorEvent; editorModel: BaseEditorModel }) {
+    this.domainObjectEvent = new DomainObjectEvent();
     this.event = inject.event;
     this.editorModel = inject.editorModel;
 
     this.event.on('NODE_CREATED', ({ node }) => {
-      const object = DomainObjectFactory.getDomainObject({ node, container: this, editorModel: this.editorModel });
+      const object = DomainObjectFactory.getDomainObject({ node, store: this, editorModel: this.editorModel });
       if (object) {
+        const current = this.objects.get(object.id);
+        if (current) {
+          tryDispose(current);
+        }
+
         this.objects.set(object.id, object);
       }
     });
+
     this.event.on('NODE_REMOVED', ({ node }) => {
-      this.objects.delete(node.id);
+      const currentBeforeDelete = this.objects.get(node.id);
+
+      // 延迟删除, 方便其他地方计算依赖关系
+      requestAnimationFrame(() => {
+        const current = this.objects.get(node.id);
+        // 可能重新添加了
+        if (currentBeforeDelete === current) {
+          runInAction(() => {
+            tryDispose(current);
+            this.objects.delete(node.id);
+          });
+        }
+      });
+    });
+
+    this.validateManager = new DomainValidateManager({
+      event: this.event,
+      editorModel: this.editorModel,
+      store: this,
+      domainObjectEvent: this.domainObjectEvent,
     });
 
     makeObservable(this);
@@ -145,7 +174,11 @@ export class DomainObjectStore implements IDomainObjectContainer {
    * @param id
    * @returns
    */
-  getObjectById(id: string): DomainObject<NameDSL> | undefined {
+  getObjectById(id?: string): DomainObject<NameDSL> | undefined {
+    if (id == null) {
+      return undefined;
+    }
+
     return this.objects.get(id);
   }
 
@@ -171,7 +204,44 @@ export class DomainObjectStore implements IDomainObjectContainer {
     return result;
   }
 
+  /**
+   * 将 ids 转换为对象
+   * @param ids
+   * @returns
+   */
   toObjects<T extends DomainObject<NameDSL> = DomainObject<NameDSL>>(ids: string[]): T[] {
     return ids.map(i => this.getObjectById(i)).filter(booleanPredicate) as T[];
+  }
+
+  /**
+   * 聚合关系变动
+   * @param params
+   */
+  @command('OBJECT_STORE:BEFORE_AGGREGATION_CHANGE')
+  emitAggregationBeforeChange(params: {
+    node: BaseNode;
+    object: DomainObject<NameDSL>;
+    current?: DomainObject<NameDSL>;
+  }) {
+    this.domainObjectEvent.emit('OBJECT_BEFORE_AGGREGATION_CHANGE', params);
+  }
+
+  /**
+   * 聚合关系变动
+   * @param params
+   */
+  @command('OBJECT_STORE:AGGREGATION_CHANGE')
+  emitAggregationChanged(params: {
+    node: BaseNode;
+    object: DomainObject<NameDSL>;
+    previous?: DomainObject<NameDSL>;
+    current?: DomainObject<NameDSL>;
+  }) {
+    this.domainObjectEvent.emit('OBJECT_AGGREGATION_CHANGED', params);
+  }
+
+  @command('OBJECT_STORE:NAME_CHANGED')
+  emitNameChanged(params: { node: BaseNode; object: DomainObject<NameDSL> }) {
+    this.domainObjectEvent.emit('OBJECT_NAME_CHANGED', params);
   }
 }

@@ -7,7 +7,7 @@ import { DomainObject, DomainObjectInject } from './DomainObject';
 /**
  * 实体
  */
-export class DomainObjectClass<T extends ClassDSL = ClassDSL> extends DomainObject<T> {
+export abstract class DomainObjectClass<T extends ClassDSL = ClassDSL> extends DomainObject<T> {
   referable: boolean = true;
 
   get objectTypeTitle() {
@@ -26,7 +26,7 @@ export class DomainObjectClass<T extends ClassDSL = ClassDSL> extends DomainObje
   get dependencies() {
     return Array.from(this.rawDependencies.dependency)
       .map(i => {
-        return this.container.getObjectById(i);
+        return this.store.getObjectById(i);
       })
       .filter(booleanPredicate);
   }
@@ -38,7 +38,7 @@ export class DomainObjectClass<T extends ClassDSL = ClassDSL> extends DomainObje
   get associations() {
     return Array.from(this.rawDependencies.association)
       .map(i => {
-        return this.container.getObjectById(i);
+        return this.store.getObjectById(i);
       })
       .filter(booleanPredicate);
   }

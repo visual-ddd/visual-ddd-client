@@ -1,33 +1,49 @@
-import { BaseEditorModel, BaseNode } from '@/lib/editor';
+import { BaseEditorModel, BaseNode, IDisposable } from '@/lib/editor';
 import { derive } from '@/lib/store';
-import { booleanPredicate } from '@wakeapp/utils';
+import { booleanPredicate, Disposer } from '@wakeapp/utils';
 import { makeObservable } from 'mobx';
 import { DomainObjectName, NameDSL, RelationShipDSL, UntitledInHumanReadable, UntitledInUpperCamelCase } from '../dsl';
-import { IDomainObjectContainer } from './IDomainContainer';
+import { DomainObjectStore } from './DomainObjectStore';
 import { IEdgeDeclaration } from './IEdgeDeclaration';
 
 export interface DomainObjectInject {
   node: BaseNode;
   editorModel: BaseEditorModel;
-  container: IDomainObjectContainer;
+  store: DomainObjectStore;
 }
 
 /**
  * 领域对象
  */
-export abstract class DomainObject<DSL extends NameDSL> {
+export abstract class DomainObject<DSL extends NameDSL> implements IDisposable {
+  protected store: DomainObjectStore;
+  protected editorModel: BaseEditorModel;
   /**
    * 基础对象
    */
-  protected node: BaseNode;
+  readonly node: BaseNode;
 
-  protected container: IDomainObjectContainer;
-  protected editorModel: BaseEditorModel;
+  /**
+   * 资源释放器
+   */
+  protected disposer = new Disposer();
 
-  get parentId() {
-    return this.node.parent?.id;
+  @derive
+  get hasParent() {
+    return this.node.hasParent;
   }
 
+  /**
+   * 父节点(图形关系上的) ID,
+   */
+  @derive
+  get parentId() {
+    return this.hasParent ? this.node.parent?.id : undefined;
+  }
+
+  /**
+   * 节点唯一 ID
+   */
   get id() {
     return this.node.id;
   }
@@ -54,8 +70,6 @@ export abstract class DomainObject<DSL extends NameDSL> {
     return this.dsl.title || UntitledInHumanReadable;
   }
 
-  abstract objectTypeTitle: string;
-
   /**
    * 名称
    */
@@ -65,16 +79,16 @@ export abstract class DomainObject<DSL extends NameDSL> {
   }
 
   /**
+   * 可读的类型名称
+   */
+  abstract objectTypeTitle: string;
+
+  /**
    * 界面上展示的名称
    */
   @derive
   get readableTitle() {
     return `${this.title}(${this.name})`;
-  }
-
-  @derive
-  get hasParent() {
-    return this.node.hasParent;
   }
 
   /**
@@ -98,9 +112,28 @@ export abstract class DomainObject<DSL extends NameDSL> {
   abstract compositions: DomainObject<NameDSL>[];
 
   /**
-   * 是否可以被引用, 比如实体、值对象可以被引入，聚合、命令不能被引用
+   * 是否可以被引用, 比如实体、值对象、命令可以被引引用，聚合、规则不能被引用
    */
   abstract referable: boolean;
+
+  /**
+   * 当前对象所属的包，这将决定对象的作用域范围
+   */
+  abstract package?: DomainObject<NameDSL>;
+
+  /**
+   * 和当前对象处于相同作用域的对象
+   *
+   * - 相同作用域下的对象可以相互引用
+   * - 相同作用域下的对象不能存在命名冲突
+   * - 需要排除掉自身
+   */
+  abstract objectsInSameScope: DomainObject<NameDSL>[];
+
+  /**
+   * 获取依赖当前对象的对象
+   */
+  abstract objectsDependentOnMe: DomainObject<NameDSL>[];
 
   /**
    * 依赖边
@@ -136,10 +169,14 @@ export abstract class DomainObject<DSL extends NameDSL> {
 
   constructor(inject: DomainObjectInject) {
     this.node = inject.node;
-    this.container = inject.container;
+    this.store = inject.store;
     this.editorModel = inject.editorModel;
 
     makeObservable(this);
+  }
+
+  dispose(): void {
+    this.disposer.release();
   }
 
   private getEdges(targets: DomainObject<NameDSL>[], type: RelationShipDSL): IEdgeDeclaration[] {

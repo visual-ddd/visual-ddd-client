@@ -5,10 +5,10 @@ import { observer } from 'mobx-react';
 import { NameTooltip, UntitledInCamelCase, UntitledInHumanReadable } from '../../constants';
 import { PropertiesEditor } from '../PropertiesEditor';
 import { MethodsEditor } from '../MethodsEditor';
-import { NameInput } from '../NameInput';
 import { DescriptionInput } from '../DescriptionInput';
 import { PropertyDSL } from '../../dsl';
 import { TitleInput } from '../TitleInput';
+import { ObjectNameInput } from '../ObjectNameInput';
 
 const DEFAULT_ACTIVE = ['base', 'properties', 'methods'];
 
@@ -51,7 +51,7 @@ export const EntityEditor = () => {
             </>
           }
         >
-          <NameInput nameCase="CamelCase" dbclickToEnable />
+          <ObjectNameInput />
         </EditorFormItem>
         <EditorFormItem path="title" label="标题" tooltip="用统一语言来描述">
           <TitleInput />

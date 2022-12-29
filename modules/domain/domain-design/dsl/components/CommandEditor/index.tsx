@@ -15,12 +15,12 @@ import type { DomainEditorModel, DomainObjectCommand, DomainObjectRule } from '.
 import { NameTooltip } from '../../constants';
 
 import { PropertiesEditor } from '../PropertiesEditor';
-import { NameInput } from '../NameInput';
 import { DescriptionInput } from '../DescriptionInput';
 import { TitleInput } from '../TitleInput';
 import { SourceInput } from '../SourceInput';
 import { TypeInput } from '../TypeInput';
 import { AggregationSelect } from '../AggregationSelect';
+import { ObjectNameInput } from '../ObjectNameInput';
 
 const DEFAULT_ACTIVE = ['base', 'properties', 'eventProperties'];
 
@@ -39,11 +39,11 @@ const RulesSelect = observer(function RulesSelect() {
     const removed = diff(store.value, value);
 
     model.domainObjectStore.toObjects<DomainObjectRule>(removed).map(i => {
-      i.setAssociation({ association: undefined });
+      i.setAggregator({ aggregator: undefined });
     });
 
     model.domainObjectStore.toObjects<DomainObjectRule>(value).map(i => {
-      i.setAssociation({ association: command });
+      i.setAggregator({ aggregator: command });
     });
   };
 
@@ -59,7 +59,7 @@ const RulesSelect = observer(function RulesSelect() {
     >
       {model.domainObjectStore.rules.map(i => {
         return (
-          <Select.Option key={i.id} value={i.id} disabled={i.association && i.association !== command}>
+          <Select.Option key={i.id} value={i.id} disabled={i.aggregator && i.aggregator.id !== command.id}>
             {i.title}({i.name})
           </Select.Option>
         );
@@ -73,7 +73,7 @@ export const CommandEditor = () => {
     <EditorFormCollapse defaultActiveKey={DEFAULT_ACTIVE}>
       <EditorFormCollapsePanel header="基础信息" key="base">
         <EditorFormItem path="name" label="标识符" tooltip={NameTooltip['CamelCase']}>
-          <NameInput nameCase="CamelCase" dbclickToEnable />
+          <ObjectNameInput />
         </EditorFormItem>
         <EditorFormItem path="title" label="标题">
           <TitleInput />

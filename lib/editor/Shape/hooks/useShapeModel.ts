@@ -7,14 +7,14 @@ import { useEditorModel } from '../../Model';
  * 只能在 React Shape 组件里面使用
  */
 export function useShapeModel(cell: Cell) {
-  const editorModel = useEditorModel();
+  const { index, formStore, commandHandler } = useEditorModel();
 
   const [model, formModel] = useMemo(() => {
-    const model = editorModel.index.getNodeById(cell.id)!;
-    const formModel = editorModel.formStore.getFormModel(cell.id)!;
+    const model = index.getNodeById(cell.id)!;
+    const formModel = formStore.getFormModel(cell.id)!;
 
     return [model, formModel];
-  }, [cell.id, editorModel]);
+  }, [cell.id, index, formStore]);
 
   return {
     /**
@@ -30,7 +30,7 @@ export function useShapeModel(cell: Cell) {
     /**
      * 获取属性
      */
-    properties: model.properties,
+    properties: model?.properties,
 
     /**
      * 更新属性
@@ -40,9 +40,9 @@ export function useShapeModel(cell: Cell) {
      */
     updateProperty(path: string, value: any, debounce?: boolean) {
       if (debounce) {
-        editorModel.commandHandler.updateNodePropertyDebounced({ node: model, path, value });
+        commandHandler.updateNodePropertyDebounced({ node: model, path, value });
       } else {
-        editorModel.commandHandler.updateNodeProperty({ node: model, path, value });
+        commandHandler.updateNodeProperty({ node: model, path, value });
       }
     },
   };

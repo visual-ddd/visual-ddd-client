@@ -1,8 +1,10 @@
 import { derive } from '@/lib/store';
-import { booleanPredicate } from '@wakeapp/utils';
+import { booleanPredicate, NoopArray } from '@wakeapp/utils';
 import { makeObservable } from 'mobx';
 import { AggregationDSL, NameDSL } from '../dsl';
 import { DomainObject, DomainObjectInject } from './DomainObject';
+import { DomainObjectCommand } from './DomainObjectCommand';
+import { DomainObjectFactory } from './DomainObjectFactory';
 
 /**
  * 聚合对象
@@ -18,12 +20,34 @@ export class DomainObjectAggregation extends DomainObject<AggregationDSL> {
   }
 
   /**
+   * 聚合是顶级的，没有父级
+   */
+  package = undefined;
+
+  /**
+   * 所有顶级聚合
+   */
+  @derive
+  get objectsInSameScope(): DomainObjectAggregation[] {
+    const parent = this.node.parent;
+    if (!parent) {
+      return NoopArray;
+    }
+
+    return parent.children
+      .map(i => this.store.getObjectById(i.id))
+      .filter((i): i is DomainObjectAggregation => !!i && DomainObjectFactory.isAggregation(i) && i.id !== this.id);
+  }
+
+  objectsDependentOnMe = NoopArray;
+
+  /**
    * 当前聚合包含的命令
    */
   @derive
-  get commands() {
+  get commands(): DomainObjectCommand[] {
     console.log('getting commands');
-    return this.container.commands.filter(i => {
+    return this.store.commands.filter(i => {
       return i.aggregation === this;
     });
   }
@@ -44,7 +68,7 @@ export class DomainObjectAggregation extends DomainObject<AggregationDSL> {
     console.log('getting dependencies');
     return this.node.children
       .map(i => {
-        return this.container.getObjectById(i.id);
+        return this.store.getObjectById(i.id);
       })
       .filter(booleanPredicate);
   }

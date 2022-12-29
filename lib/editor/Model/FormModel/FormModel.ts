@@ -8,6 +8,7 @@ import { findRule, NoopValidator, normalizePath, normalizeRules, rulesToValidato
 import { FormRules, FormItemValidateStatus, FormRuleReportType } from './types';
 import { BaseEditorStore } from '../BaseEditorStore';
 import { BaseEditorModel } from '../BaseEditorModel';
+import { ROOT_FIELD } from './constants';
 
 /**
  * 表单验证模型
@@ -188,6 +189,11 @@ export class FormModel {
     return !!(Array.isArray(rule) ? rule.some(i => i.required) : rule.required);
   });
 
+  @effect('VALIDATE_ROOT')
+  async validateRoot() {
+    return this.validateField(ROOT_FIELD);
+  }
+
   /**
    * 验证指定字段
    */
@@ -246,7 +252,7 @@ export class FormModel {
     const { path, status } = params;
     if (status) {
       this.errorMap.set(path, status);
-    } else {
+    } else if (this.errorMap.has(path)) {
       this.deleteValidateStatus({ path });
     }
   }

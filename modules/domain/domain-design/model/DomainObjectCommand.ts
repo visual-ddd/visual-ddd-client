@@ -1,7 +1,7 @@
 import { derive } from '@/lib/store';
 import { booleanPredicate, NoopArray } from '@wakeapp/utils';
-import { makeObservable } from 'mobx';
-import { CommandDSL, extraDependenciesFromCommand, ReferenceDSL } from '../dsl';
+import { intercept, makeObservable, reaction } from 'mobx';
+import { CommandDSL, extraDependenciesFromCommand, NameDSL, ReferenceDSL } from '../dsl';
 import { DomainObject, DomainObjectInject } from './DomainObject';
 import { DomainObjectAggregation } from './DomainObjectAggregation';
 import { DomainObjectRule } from './DomainObjectRule';
@@ -19,13 +19,42 @@ export class DomainObjectCommand extends DomainObject<CommandDSL> implements IDo
   referable: boolean = true;
 
   /**
+   * 命令需要关联聚合
+   */
+  @derive
+  get package() {
+    return this.aggregation;
+  }
+
+  /**
+   * 同一作用域下下的命令
+   */
+  @derive
+  get objectsInSameScope() {
+    return this.aggregation?.commands.filter(i => i.id !== this.id) || NoopArray;
+  }
+
+  @derive
+  get objectsDependentOnMe(): DomainObject<NameDSL>[] {
+    const list: DomainObject<NameDSL>[] = [];
+
+    for (const obj of this.store.referableObjects) {
+      // 命令只能被依赖，不能使用关联
+      if (obj.dependencies.some(dep => dep.id === this.id)) {
+        list.push(obj);
+      }
+    }
+
+    return list;
+  }
+
+  /**
    * 当前所属的聚合
    */
   @derive
   get aggregation(): DomainObjectAggregation | undefined {
     return (
-      this.dsl.aggregation &&
-      (this.container.getObjectById(this.dsl.aggregation.referenceId) as DomainObjectAggregation)
+      this.dsl.aggregation && (this.store.getObjectById(this.dsl.aggregation.referenceId) as DomainObjectAggregation)
     );
   }
 
@@ -34,7 +63,7 @@ export class DomainObjectCommand extends DomainObject<CommandDSL> implements IDo
    */
   @derive
   get rules(): DomainObjectRule[] {
-    return this.container.rules.filter(i => i.association === this);
+    return this.store.rules.filter(i => i.aggregator?.id === this.id);
   }
 
   /**
@@ -50,7 +79,7 @@ export class DomainObjectCommand extends DomainObject<CommandDSL> implements IDo
    */
   @derive
   get associations() {
-    return this.rawDependencies.map(i => this.container.getObjectById(i)).filter(booleanPredicate);
+    return this.rawDependencies.map(i => this.store.getObjectById(i)).filter(booleanPredicate);
   }
 
   /**
@@ -71,6 +100,30 @@ export class DomainObjectCommand extends DomainObject<CommandDSL> implements IDo
     super(inject);
 
     makeObservable(this);
+
+    // 监听所属聚合变动
+    this.disposer.push(
+      intercept(this.dsl, 'aggregation', change => {
+        this.store.emitAggregationBeforeChange({
+          node: this.node,
+          object: this,
+          current: this.aggregation,
+        });
+        return change;
+      }) as Function,
+      reaction(
+        () => this.dsl.aggregation,
+        (value, prevValue) => {
+          this.store.emitAggregationChanged({
+            node: this.node,
+            object: this,
+            previous: this.store.getObjectById(prevValue?.referenceId),
+            current: this.store.getObjectById(value?.referenceId),
+          });
+        },
+        { name: 'WATCH_AGGREGATION_CHANGE' }
+      )
+    );
   }
 
   /**
