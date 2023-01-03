@@ -6,6 +6,7 @@
   height: 100%;
   border: 2px solid var(--color);
   outline: 2px solid var(--color);
+  z-index: 2;
 
   &:global(.error) {
     --color: var(--vd-color-danger-400);

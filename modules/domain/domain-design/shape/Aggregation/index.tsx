@@ -1,7 +1,16 @@
-import { defineShape, ShapeComponentProps, useShapeModel } from '@/lib/editor';
+import { defineShape, FormRuleReportType, ROOT_FIELD, ShapeComponentProps, useShapeModel } from '@/lib/editor';
 import { ReactComponentBinding, ReactComponentProps, registerReactComponent } from '@/lib/g6-binding';
 
-import { AggregationDSL, AggregationEditor, AggregationShape, createAggregation, DomainObjectName } from '../../dsl';
+import {
+  AggregationDSL,
+  AggregationEditor,
+  AggregationShape,
+  checkDomainObjectNameConflict,
+  createAggregation,
+  DomainObjectName,
+  getDomainObjectFromValidatorContext,
+} from '../../dsl';
+import { DomainObjectAggregation } from '../../model';
 
 import icon from './aggregation.png';
 
@@ -37,6 +46,38 @@ defineShape({
   droppable(ctx) {
     const { sourceType } = ctx;
     return ALLOWED_CHILD.has(sourceType);
+  },
+  rules: {
+    fields: {
+      [ROOT_FIELD]: {
+        $self: [
+          {
+            // 聚合根检查
+            async validator(value, context) {
+              const object = getDomainObjectFromValidatorContext(context) as DomainObjectAggregation;
+              if (object.aggregationRoots.length === 0) {
+                throw new Error('未配置聚合根');
+              } else if (object.aggregationRoots.length > 1) {
+                throw new Error('有且只有一个聚合根');
+              }
+            },
+            reportType: FormRuleReportType.Warning,
+          },
+        ],
+      },
+      name: {
+        $self: [
+          { required: true, message: '标识符不能为空' },
+          {
+            async validator(value, context) {
+              // 检查命名是否冲突
+              checkDomainObjectNameConflict(value, context);
+            },
+          },
+        ],
+      },
+      title: { $self: [{ required: true, reportType: FormRuleReportType.Warning, message: '请填写标题' }] },
+    },
   },
   initialProps: () => {
     return { ...createAggregation(), zIndex: 1, size: { width: 500, height: 300 }, __prevent_auto_resize__: true };

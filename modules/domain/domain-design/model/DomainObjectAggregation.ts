@@ -76,6 +76,14 @@ export class DomainObjectAggregation extends DomainObject<AggregationDSL> {
   dependencies = [];
   associations = [];
 
+  /**
+   * 聚合根
+   */
+  @derive
+  get aggregationRoots() {
+    return this.compositions.filter(DomainObjectFactory.isAggregationRoot);
+  }
+
   constructor(inject: DomainObjectInject) {
     super(inject);
 

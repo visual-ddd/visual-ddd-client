@@ -33,70 +33,70 @@ export class DomainObjectFactory {
   /**
    * 判断是否为聚合
    */
-  static isAggregation(object: DomainObject<NameDSL>): object is DomainObjectAggregation {
+  static isAggregation = (object: DomainObject<NameDSL>): object is DomainObjectAggregation => {
     return object instanceof DomainObjectAggregation;
-  }
+  };
 
   /**
    * 判断是否为值对象
    * @param object
    * @returns
    */
-  static isValueObject(object: DomainObject<NameDSL>): object is DomainObjectValueObject {
+  static isValueObject = (object: DomainObject<NameDSL>): object is DomainObjectValueObject => {
     return object instanceof DomainObjectValueObject;
-  }
+  };
 
   /**
    * 判断是否为实体
    * @param object
    * @returns
    */
-  static isEntity(object: DomainObject<NameDSL>): object is DomainObjectEntity {
+  static isEntity = (object: DomainObject<NameDSL>): object is DomainObjectEntity => {
     return object instanceof DomainObjectEntity;
-  }
+  };
 
   /**
    * 判断是否为聚合根
    * @param object
    * @returns
    */
-  static isAggregationRoot(object: DomainObject<NameDSL>): object is DomainObjectEntity {
+  static isAggregationRoot = (object: DomainObject<NameDSL>): object is DomainObjectEntity => {
     return this.isEntity(object) && object.isAggregationRoot;
-  }
+  };
 
   /**
    * 是否为命令
    * @param object
    * @returns
    */
-  static isCommand(object: DomainObject<NameDSL>): object is DomainObjectCommand {
+  static isCommand = (object: DomainObject<NameDSL>): object is DomainObjectCommand => {
     return object instanceof DomainObjectCommand;
-  }
+  };
 
   /**
    * 是否为枚举
    * @param object
    * @returns
    */
-  static isEnum(object: DomainObject<NameDSL>): object is DomainObjectEnum {
+  static isEnum = (object: DomainObject<NameDSL>): object is DomainObjectEnum => {
     return object instanceof DomainObjectEnum;
-  }
+  };
 
   /**
    * 是否为规则
    * @param object
    * @returns
    */
-  static isRule(object: DomainObject<NameDSL>): object is DomainObjectRule {
+  static isRule = (object: DomainObject<NameDSL>): object is DomainObjectRule => {
     return object instanceof DomainObjectRule;
-  }
+  };
 
   /**
    * 判断是否为归属聚合的对象
    * @param object
    * @returns
    */
-  static isUnderAggregation(object: any): object is IDomainObjectUnderAggregation {
+  static isUnderAggregation = (object: any): object is IDomainObjectUnderAggregation => {
     return this.isCommand(object) || object instanceof DomainObjectUnderAggregation;
-  }
+  };
 }
