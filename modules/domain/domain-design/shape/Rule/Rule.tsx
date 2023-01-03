@@ -1,7 +1,15 @@
-import { defineShape, ShapeComponentProps, useShapeModel } from '@/lib/editor';
+import { defineShape, FormRuleReportType, ROOT_FIELD, ShapeComponentProps, useShapeModel } from '@/lib/editor';
 import { ReactComponentBinding, ReactComponentProps, registerReactComponent } from '@/lib/g6-binding';
 
-import { RuleShape, RuleEditor, DomainObjectName, createRule, RuleDSL } from '../../dsl';
+import {
+  RuleShape,
+  RuleEditor,
+  DomainObjectName,
+  createRule,
+  RuleDSL,
+  checkUnderPackage,
+  checkDomainObjectNameConflict,
+} from '../../dsl';
 
 import icon from './rule.png';
 
@@ -30,6 +38,33 @@ defineShape({
   description: '业务规则描述',
   icon: icon,
   shapeType: 'node',
+  rules: {
+    fields: {
+      [ROOT_FIELD]: {
+        $self: [
+          {
+            // 检查是否在聚合下
+            async validator(value, context) {
+              checkUnderPackage(context, '命令');
+            },
+            reportType: FormRuleReportType.Warning,
+          },
+        ],
+      },
+      name: {
+        $self: [
+          { required: true, message: '标识符不能为空' },
+          {
+            async validator(value, context) {
+              // 检查命名是否冲突
+              checkDomainObjectNameConflict(value, context);
+            },
+          },
+        ],
+      },
+      title: { $self: [{ required: true, reportType: FormRuleReportType.Warning, message: '请填写标题' }] },
+    },
+  },
 
   initialProps: () => {
     return { ...createRule(), zIndex: 2 };

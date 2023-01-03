@@ -9,7 +9,7 @@ import {
   createCommand,
   DomainObjectName,
   CommandEditor,
-  checkUnderAggregation,
+  checkUnderPackage,
   checkSameAggregationReference,
   checkDomainObjectNameConflict,
   checkPropertyName,
@@ -58,7 +58,7 @@ defineShape({
           {
             // 检查是否在聚合下
             async validator(value, context) {
-              checkUnderAggregation(context);
+              checkUnderPackage(context);
             },
             reportType: FormRuleReportType.Warning,
           },

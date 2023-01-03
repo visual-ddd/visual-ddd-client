@@ -9,7 +9,7 @@ import {
   DomainObjectName,
   checkDomainObjectNameConflict,
   checkPropertyName,
-  checkUnderAggregation,
+  checkUnderPackage,
   checkSameAggregationReference,
 } from '../../dsl';
 import { getPrefixPath } from '@/lib/utils';
@@ -54,7 +54,7 @@ defineShape({
           {
             // 检查是否在聚合下
             async validator(value, context) {
-              checkUnderAggregation(context);
+              checkUnderPackage(context);
             },
             reportType: FormRuleReportType.Warning,
           },

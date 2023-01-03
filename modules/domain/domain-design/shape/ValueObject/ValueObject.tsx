@@ -6,7 +6,7 @@ import {
   checkDomainObjectNameConflict,
   checkPropertyName,
   checkSameAggregationReference,
-  checkUnderAggregation,
+  checkUnderPackage,
   ClassShape,
   createValueObject,
   DomainObjectName,
@@ -49,7 +49,7 @@ defineShape({
           {
             // 检查是否在聚合下
             async validator(value, context) {
-              checkUnderAggregation(context);
+              checkUnderPackage(context);
             },
             reportType: FormRuleReportType.Warning,
           },

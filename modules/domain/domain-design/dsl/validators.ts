@@ -29,7 +29,7 @@ export function getDomainObjectFromValidatorContext(context: FormValidatorContex
 /**
  * 检查是否在聚合内
  */
-export function checkUnderAggregation(context: FormValidatorContext) {
+export function checkUnderPackage(context: FormValidatorContext, packageName: string = '聚合') {
   const object = getDomainObjectFromValidatorContext(context);
 
   if (!object) {
@@ -37,7 +37,7 @@ export function checkUnderAggregation(context: FormValidatorContext) {
   }
 
   if (object.package == null) {
-    throw new Error(`${object.objectTypeTitle} 必须关联到聚合`);
+    throw new Error(`${object.objectTypeTitle} 必须关联到${packageName}`);
   }
 }
 
@@ -48,7 +48,7 @@ export function checkUnderAggregation(context: FormValidatorContext) {
 export function checkSameAggregationReference(context: FormValidatorContext) {
   // 先检查是否绑定了聚合
   try {
-    checkUnderAggregation(context);
+    checkUnderPackage(context);
   } catch {
     return;
   }
