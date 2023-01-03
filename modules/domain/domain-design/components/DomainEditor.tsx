@@ -43,6 +43,7 @@ export const DomainEditor = observer(function DomainEditor() {
                     'aggregation',
                     'command',
                     'rule',
+                    'activity',
                     'rect',
                     'rect-child',
                     'child',

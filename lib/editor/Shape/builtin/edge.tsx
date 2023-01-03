@@ -8,15 +8,15 @@ defineShape({
   name: 'edge',
   title: '默认边',
   shapeType: 'edge',
-  staticProps: () => {
-    return { attrs: { line: { stroke: 'red' } } };
-  },
+  // staticProps: () => {
+  //   return { attrs: { line: { stroke: 'red' } } };
+  // },
   component(props) {
     return (
       <EdgeBinding
         {...props.cellProps}
         label={props.node.properties.label}
-        tools={['target-arrowhead', 'source-arrowhead']}
+        // tools={['target-arrowhead', 'source-arrowhead']}
       />
     );
   },
