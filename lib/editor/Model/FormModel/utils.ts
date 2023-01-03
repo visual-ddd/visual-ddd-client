@@ -39,7 +39,7 @@ export const normalizePath = memoize((path: string) => {
  * @param path
  * @returns
  */
-export const findRule = (rules: FormRules, path: string): FormRule | null => {
+export const findRule = (rules: FormRules, path: string): FormRules | null => {
   const nPath = toPathArray(path);
   let current: FormRules | undefined = rules;
 
@@ -62,7 +62,28 @@ export const findRule = (rules: FormRules, path: string): FormRule | null => {
     }
   }
 
-  return current?.$self ?? null;
+  return current ?? null;
+};
+
+/**
+ * 判断是否包含必填规则
+ * @param rules
+ * @param path
+ * @returns
+ */
+export const isRequired = (rules: FormRules, path: string): boolean => {
+  const rule = findRule(rules, path);
+  if (rule == null) {
+    return false;
+  }
+
+  const self = rule.$self;
+
+  if (self == null) {
+    return false;
+  }
+
+  return !!(Array.isArray(self) ? self.some(i => i.required) : self.required);
 };
 
 const normalizeRule = (rule: FormRule): FormRuleItem[] => {
@@ -251,7 +272,12 @@ export const rulesToAsyncValidatorSchema = (rules: FormRules): Schema => {
   return new Schema(descriptor);
 };
 
-export const rulesToValidator = memoize((rules: FormRules) => {
+/**
+ * 将规则转换为验证器
+ * @param rules
+ * @returns
+ */
+export const rulesToValidator = (rules: FormRules) => {
   // 按照 warning 和 errors 拆分为两个 rules，方便后面独立验证
   const errorRules = cloneDeep(rules);
   const warningRules = cloneDeep(rules);
@@ -348,7 +374,7 @@ export const rulesToValidator = memoize((rules: FormRules) => {
 
     return null;
   };
-});
+};
 
 /**
  * 转化验证错误对象数组为状态对象
@@ -357,7 +383,7 @@ export const rulesToValidator = memoize((rules: FormRules) => {
  * @param errors
  * @returns
  */
-export const formRuleErrorsToFormItemValidateStatus = (
+const formRuleErrorsToFormItemValidateStatus = (
   path: string,
   value: string,
   errors: FormRuleError[]

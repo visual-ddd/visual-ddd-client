@@ -9,10 +9,10 @@ import {
   DomainObjectName,
   checkDomainObjectNameConflict,
   checkPropertyName,
-  getPrefixPath,
   checkUnderAggregation,
   checkSameAggregationReference,
 } from '../../dsl';
+import { getPrefixPath } from '@/lib/utils';
 
 import icon from './entity.png';
 

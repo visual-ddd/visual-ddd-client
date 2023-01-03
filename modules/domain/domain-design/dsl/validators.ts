@@ -1,7 +1,6 @@
-import { FormValidatorContext } from '@/lib/editor';
+import type { FormValidatorContext } from '@/lib/editor';
 import { getPaths } from '@/lib/utils';
 import { get } from '@wakeapp/utils';
-import memoize from 'lodash/memoize';
 
 import { DomainObject, DomainEditorModel, DomainObjectFactory, IDomainObjectUnderAggregation } from '../model';
 import { NameDSL } from './dsl';
@@ -26,20 +25,6 @@ export function getDomainObjectFromValidatorContext(context: FormValidatorContex
 
   return store.getObjectById(model.id);
 }
-
-export const getPrefixPath = memoize(
-  (fullPath: string, path: string) => {
-    const index = fullPath.indexOf(path);
-    if (index !== -1) {
-      return fullPath.slice(0, index + path.length);
-    }
-
-    return fullPath;
-  },
-  (f, p) => {
-    return `${f}:${p}`;
-  }
-);
 
 /**
  * 检查是否在聚合内

@@ -1,6 +1,13 @@
 import { catchPromise } from '@/lib/utils';
 import { FormRuleReportType, FormRules } from './types';
-import { findRule, normalizeRules, rulesToAsyncValidatorSchema, rulesToValidator, ruleToValidator } from './utils';
+import {
+  findRule,
+  isRequired,
+  normalizeRules,
+  rulesToAsyncValidatorSchema,
+  rulesToValidator,
+  ruleToValidator,
+} from './utils';
 
 test('findRule', () => {
   const rules: FormRules = {
@@ -8,13 +15,15 @@ test('findRule', () => {
       a: {
         $self: { type: 'any' },
         '*': {
-          $self: { type: 'string' },
+          $self: { type: 'string', required: true },
         },
         fields: {
           b: {
-            $self: {
-              required: true,
-            },
+            $self: [
+              {
+                required: true,
+              },
+            ],
           },
         },
       },
@@ -23,10 +32,36 @@ test('findRule', () => {
 
   expect(findRule(rules, 'b')).toBe(null);
   expect(findRule(rules, 'b.c')).toBe(null);
-  expect(findRule(rules, 'a')).toEqual({ type: 'any' });
-  expect(findRule(rules, 'a.b')).toEqual({ required: true });
-  expect(findRule(rules, 'a.c')).toEqual({ type: 'string' });
+  expect(findRule(rules, 'a')).toEqual({
+    $self: { type: 'any' },
+    '*': {
+      $self: { type: 'string', required: true },
+    },
+    fields: {
+      b: {
+        $self: [
+          {
+            required: true,
+          },
+        ],
+      },
+    },
+  });
+  expect(findRule(rules, 'a.b')).toEqual({
+    $self: [
+      {
+        required: true,
+      },
+    ],
+  });
+  expect(findRule(rules, 'a.c')).toEqual({
+    $self: { type: 'string', required: true },
+  });
   expect(findRule(rules, 'a.c.d')).toEqual(null);
+
+  expect(isRequired(rules, 'a')).toBe(false);
+  expect(isRequired(rules, 'a.b')).toBe(true);
+  expect(isRequired(rules, 'a.c')).toBe(true);
 });
 
 test('ruleToValidator', () => {
@@ -50,11 +85,11 @@ test('rulesToAsyncValidateSchema', async () => {
     rulesToAsyncValidatorSchema({
       $self: {},
     });
-  }).toThrowError();
+  }).not.toThrow();
 
   expect(() => {
     rulesToAsyncValidatorSchema({});
-  }).toThrowError();
+  }).not.toThrowError();
 
   const schema = rulesToAsyncValidatorSchema({
     fields: {

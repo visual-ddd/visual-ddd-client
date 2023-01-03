@@ -2,6 +2,20 @@ import memoize from 'lodash/memoize';
 import toPath from 'lodash/toPath';
 import { get } from '@wakeapp/utils';
 
+export const getPrefixPath = memoize(
+  (fullPath: string, path: string) => {
+    const index = fullPath.indexOf(path);
+    if (index !== -1) {
+      return fullPath.slice(0, index + path.length);
+    }
+
+    return fullPath;
+  },
+  (f, p) => {
+    return `${f}:${p}`;
+  }
+);
+
 export const getPaths = memoize(path => {
   return toPath(path);
 });

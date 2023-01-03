@@ -1,18 +1,26 @@
-import { makeObservable, observable } from 'mobx';
+import { makeObservable, observable, runInAction } from 'mobx';
 import memoize from 'lodash/memoize';
-import { cloneDeep } from '@wakeapp/utils';
-import { command, derive, effect, makeAutoBindThis, mutation, runInCommand } from '@/lib/store';
+import { cloneDeep, debounce } from '@wakeapp/utils';
+import { command, derive, effect, makeAutoBindThis, mutation } from '@/lib/store';
 
 import { BaseNode } from '../BaseNode';
-import { findRule, NoopValidator, normalizePath, normalizeRules, rulesToValidator, ruleToValidator } from './utils';
+import {
+  findRule,
+  isRequired,
+  NoopValidator,
+  normalizePath,
+  normalizeRules,
+  rulesToValidator,
+  ruleToValidator,
+} from './utils';
 import { FormRules, FormItemValidateStatus, FormRuleReportType } from './types';
 import { BaseEditorStore } from '../BaseEditorStore';
 import { BaseEditorModel } from '../BaseEditorModel';
 import { ROOT_FIELD } from './constants';
+import { StatusTree } from './StatusTree';
 
 /**
  * 表单验证模型
- * TODO: 汇总验证结果
  * TODO: 验证上下文
  * TODO: 验证性能优化
  */
@@ -21,6 +29,12 @@ export class FormModel {
 
   private rules: FormRules;
   private store: BaseEditorStore;
+  private statusTree: StatusTree;
+
+  /**
+   * 更新队列
+   */
+  private updateStatusQueue: [string, FormItemValidateStatus | undefined][] = [];
 
   get id() {
     return this.node.id;
@@ -39,6 +53,9 @@ export class FormModel {
   @observable.shallow
   errorMap: Map<string, FormItemValidateStatus> = new Map();
 
+  /**
+   * 计算哪些属性被变更过
+   */
   @observable.shallow
   private touchedMap: Map<string, boolean> = new Map();
 
@@ -104,6 +121,18 @@ export class FormModel {
 
     this.rules = clone;
 
+    this.statusTree = new StatusTree({
+      onAdd: (path, status) => {
+        this.pushStatusUpdateQueue(path, status);
+      },
+      onUpdate: (path, status) => {
+        this.pushStatusUpdateQueue(path, status);
+      },
+      onRemove: path => {
+        this.pushStatusUpdateQueue(path, undefined);
+      },
+    });
+
     makeAutoBindThis(this);
     makeObservable(this);
   }
@@ -144,7 +173,8 @@ export class FormModel {
   @command('DELETE_PROPERTY')
   deleteProperty(path: string) {
     this.store.deleteNodeProperty({ node: this.node, path });
-    this.deleteValidateStatus({ path: normalizePath(path) });
+    this.statusTree.removeStatus(path, true);
+
     if (this.isTouched(path)) {
       this.setTouched({ path, value: false });
     }
@@ -163,17 +193,8 @@ export class FormModel {
    * 获取聚合的错误状态
    * @param path
    */
-  getAggregatedValidateStatus(path: string) {
-    const np = normalizePath(path);
-    const list: FormItemValidateStatus[] = [];
-
-    for (const key of this.errorMap.keys()) {
-      if (key.startsWith(np)) {
-        list.push(this.errorMap.get(key)!);
-      }
-    }
-
-    return list;
+  getAggregatedValidateStatus(path: string): FormItemValidateStatus[] {
+    return this.statusTree.findRecursive(normalizePath(path));
   }
 
   /**
@@ -181,12 +202,7 @@ export class FormModel {
    * @param path
    */
   isRequired = memoize((path: string) => {
-    const rule = this.findRule(path);
-    if (rule == null) {
-      return false;
-    }
-
-    return !!(Array.isArray(rule) ? rule.some(i => i.required) : rule.required);
+    return isRequired(this.rules, path);
   });
 
   @effect('VALIDATE_ROOT')
@@ -202,31 +218,59 @@ export class FormModel {
     const np = normalizePath(path);
     const validate = this.getFormItemValidator(np);
     const value = this.getProperty(np);
+
     const status = await validate(value);
 
-    runInCommand('UPDATE_VALIDATE_STATUS', () => {
-      this.setValidateStatus({ path: np, status });
-    });
+    // 清理
+    this.statusTree.removeStatus(np);
+    // 添加状态
+    if (status) {
+      this.statusTree.addStatus(np, status);
+    }
+
+    return !!status;
+  }
+
+  /**
+   * 递归验证指定字段
+   * @returns
+   */
+  @effect('VALIDATE_FIELD_RECURSIVE')
+  async validateFieldRecursive(path: string) {
+    const np = normalizePath(path);
+    const validate = this.getFormItemRecursiveValidator(np);
+    const value = this.getProperty(np);
+
+    const statusMap = await validate(value);
+
+    // 清理
+    this.statusTree.removeStatus(np, true);
+
+    if (statusMap?.size) {
+      for (const [path, status] of statusMap.entries()) {
+        this.statusTree.addStatus(path, status);
+      }
+    }
+
+    return !!statusMap?.size;
   }
 
   /**
    * 验证所有
-   * TODO: 性能优化
    */
   @effect('VALIDATE_ALL')
   async validateAll(): Promise<boolean> {
-    const validate = rulesToValidator(this.rules);
+    const validate = this.getFormValidator();
 
-    const status = await validate(this.node.properties);
-
-    runInCommand('UPDATE_VALIDATE_STATUS', () => {
-      this.clearValidateStatus();
-      if (status) {
-        this.resetValidateStatus({ status });
+    const statusMap = await validate(this.node.properties);
+    this.statusTree.clearAll();
+    if (statusMap?.size) {
+      for (const [path, status] of statusMap.entries()) {
+        this.statusTree.addStatus(path, status);
       }
-    });
+    }
 
-    return !!status;
+    return !!statusMap?.size;
   }
 
   @mutation('FORM_MODEL:SET_TOUCHED')
@@ -236,59 +280,87 @@ export class FormModel {
   }
 
   /**
-   * 情况验证状态
-   */
-  @mutation('CLEAR_VALIDATE_STATUS')
-  protected clearValidateStatus() {
-    this.errorMap.clear();
-  }
-
-  /**
-   * 更新验证状态
-   * @param params
-   */
-  @mutation('UPDATE_VALIDATE_STATUS')
-  protected setValidateStatus(params: { path: string; status?: FormItemValidateStatus | null }) {
-    const { path, status } = params;
-    if (status) {
-      this.errorMap.set(path, status);
-    } else if (this.errorMap.has(path)) {
-      this.deleteValidateStatus({ path });
-    }
-  }
-
-  /**
-   * 删除验证状态
-   * @param params
-   */
-  @mutation('DELETE_VALIDATE_STATUS')
-  protected deleteValidateStatus(params: { path: string }) {
-    const { path } = params;
-    this.errorMap.delete(path);
-  }
-
-  @mutation('RESET_VALIDATE_STATUS')
-  protected resetValidateStatus(params: { status: Map<string, FormItemValidateStatus> }) {
-    this.errorMap = params.status;
-  }
-
-  /**
    * 获取验证规则
    */
-  protected findRule = memoize((path: string) => {
+  private findRule = memoize((path: string) => {
     return findRule(this.rules, path);
   });
 
-  protected getFormItemValidator = memoize((path: string) => {
+  /**
+   * 获取当个字段的验证器
+   */
+  private getFormItemValidator = memoize((path: string) => {
     const rule = this.findRule(path);
-    if (rule == null) {
+
+    if (rule == null || rule.$self == null) {
       return NoopValidator;
     }
 
-    const validate = ruleToValidator(path, rule);
+    const validate = ruleToValidator(path, rule.$self);
 
     return (value: any) => {
       return validate(value);
     };
+  });
+
+  /**
+   * 获取全量验证器
+   */
+  private getFormValidator = memoize(() => {
+    return rulesToValidator(this.rules);
+  });
+
+  /**
+   * 获取递归验证子项的验证器
+   */
+  private getFormItemRecursiveValidator = memoize((path: string) => {
+    const rule = this.findRule(path);
+
+    if (rule == null) {
+      return NoopValidator;
+    }
+
+    const np = normalizePath(path);
+    const rules: FormRules = {
+      fields: { [np]: rule },
+    };
+
+    const validator = rulesToValidator(rules);
+
+    return ((value, options) => {
+      return validator({ [np]: value }, options);
+    }) as typeof validator;
+  });
+
+  /**
+   * 状态更新队列
+   */
+  protected pushStatusUpdateQueue = (path: string, status?: FormItemValidateStatus) => {
+    this.updateStatusQueue.push([path, status]);
+
+    this.flushStatusQueue();
+  };
+
+  /**
+   * 状态更新
+   */
+  protected flushStatusQueue = debounce(() => {
+    const queue = this.updateStatusQueue;
+
+    if (!queue.length) {
+      return;
+    }
+
+    this.updateStatusQueue = [];
+
+    runInAction(() => {
+      for (const [path, status] of queue) {
+        if (status) {
+          this.errorMap.set(path, status);
+        } else {
+          this.errorMap.delete(path);
+        }
+      }
+    });
   });
 }

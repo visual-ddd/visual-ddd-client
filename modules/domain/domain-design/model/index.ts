@@ -3,6 +3,7 @@ export * from './DomainObject';
 export * from './DomainObjectStore';
 export * from './DomainObjectAggregation';
 export * from './DomainObjectCommand';
+export * from './DomainObjectEnum';
 export * from './DomainObjectEntity';
 export * from './DomainObjectValueObject';
 export * from './DomainObjectRule';

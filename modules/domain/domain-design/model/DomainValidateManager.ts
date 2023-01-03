@@ -1,5 +1,5 @@
 import { BaseEditorEvent, BaseEditorModel, BaseNode } from '@/lib/editor';
-import { debounce } from 'lodash';
+import { debounce } from '@wakeapp/utils';
 import { NameDSL } from '../dsl';
 import { DomainObject } from './DomainObject';
 import { DomainObjectEvent } from './DomainObjectEvent';

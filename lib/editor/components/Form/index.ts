@@ -5,3 +5,4 @@ export * from './FormContainer';
 export * from './FormCollapse';
 export { useEditorFormContext } from './FormContext';
 export * from './FormPortal';
+export * from './FormTooltip';

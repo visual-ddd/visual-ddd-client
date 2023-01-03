@@ -3,16 +3,17 @@ import { Button, Popover } from 'antd';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
 import { EditTwoTone, MinusCircleTwoTone } from '@ant-design/icons';
+import { action, observable } from 'mobx';
+import { useRefValue } from '@wakeapp/hooks';
 
+import { EditorFormTooltip, useEditorFormContext } from '@/lib/editor';
 import { DragHandle, SortableList } from '@/lib/components';
 
 import { IDDSL } from '../../dsl';
+
 import { MemberEditor, useMemberEditorRef } from './MemberEditor';
-import { useRefValue } from '@wakeapp/hooks';
 
 import s from './MemberList.module.scss';
-import { action, observable } from 'mobx';
-import { EditorFormTooltip } from '@/lib/editor/components/Form/FormTooltip';
 
 export interface MemberListProps<T extends IDDSL> {
   className?: string;
@@ -129,6 +130,12 @@ interface MemberListContext<T extends IDDSL> {
 
   handleRenderEditor: (basePath: string, value: T) => React.ReactElement;
 
+  /**
+   * 列表验证
+   * @returns
+   */
+  handleValidate: () => void;
+
   getPath: () => string;
 
   getEditorDisplayType: () => 'portal' | 'popover';
@@ -215,6 +222,7 @@ export const MemberList = observer(function MemberList<T extends IDDSL>(props: M
     editorTitle,
     editorDisplayType,
   } = props;
+  const { formModel } = useEditorFormContext()!;
   const propsRef = useRefValue(props);
   const editorRef = useMemberEditorRef<T>();
 
@@ -257,6 +265,7 @@ export const MemberList = observer(function MemberList<T extends IDDSL>(props: M
           clone.splice(idx, 1);
 
           propsRef.current.onChange(clone);
+          self.handleValidate();
         }
       },
       handleCreate() {
@@ -271,10 +280,18 @@ export const MemberList = observer(function MemberList<T extends IDDSL>(props: M
           if (editorRef.current) {
             self.handleEdit(newItem);
           }
+          self.handleValidate();
         });
+      },
+      handleValidate() {
+        // 触发验证
+        formModel.validateFieldRecursive(self.getPath());
       },
       handleChange(list: T[]) {
         propsRef.current.onChange(list);
+
+        // 触发验证
+        self.handleValidate();
       },
       handleRenderItem(item, index) {
         return propsRef.current.renderItem(item, index);

@@ -1,4 +1,4 @@
-import { getPrefixPath } from './validators';
+import { getPrefixPath } from './object';
 
 test('getPrefixPath', () => {
   expect(getPrefixPath('a.b.c', 'b')).toBe('a.b');
