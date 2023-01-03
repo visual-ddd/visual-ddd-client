@@ -35,8 +35,8 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 ## TODO
 
-- Member List 移除、新增、排序, 清空并重新验证子级
 - 全局告警
+- 成员删除后, 先遍历 edge，先删除 edge，再删除 node
 - rule 包含 label, 更好的信息提示
 - 引用关系支持可见性控制
 - 告警信息定位

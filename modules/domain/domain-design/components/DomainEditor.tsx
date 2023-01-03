@@ -36,20 +36,7 @@ export const DomainEditor = observer(function DomainEditor() {
             left={
               <EditorPanelLayout bottom={<ShapeTree />}>
                 <EditorShapeLibrary
-                  shapes={[
-                    'entity',
-                    'value-object',
-                    'enum',
-                    'aggregation',
-                    'command',
-                    'rule',
-                    'activity',
-                    'rect',
-                    'rect-child',
-                    'child',
-                    'child-2',
-                    'react',
-                  ]}
+                  shapes={['entity', 'value-object', 'enum', 'aggregation', 'command', 'rule', 'activity', 'comment']}
                 />
               </EditorPanelLayout>
             }
