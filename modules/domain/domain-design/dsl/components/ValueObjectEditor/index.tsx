@@ -19,7 +19,7 @@ export const ValueObjectEditor = () => {
           tooltip={
             <>
               <div>- {NameTooltip['CamelCase']}</div>
-              <div>- 同一个聚合下，不能和其他实体、值对象冲突</div>
+              <div>- 同一个聚合下，不能和其他实体、值对象、枚举冲突</div>
               <div>
                 - 谨慎变更，可以<b>双击进行编辑</b>
               </div>
@@ -35,10 +35,10 @@ export const ValueObjectEditor = () => {
           <DescriptionInput />
         </EditorFormItem>
       </EditorFormCollapsePanel>
-      <EditorFormCollapsePanel header="属性" key="properties">
+      <EditorFormCollapsePanel header="属性" key="properties" path="properties">
         <PropertiesEditor />
       </EditorFormCollapsePanel>
-      <EditorFormCollapsePanel header="方法" key="methods">
+      <EditorFormCollapsePanel header="方法" key="methods" path="methods">
         <MethodsEditor />
       </EditorFormCollapsePanel>
     </EditorFormCollapse>
