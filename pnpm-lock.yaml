@@ -29,6 +29,7 @@ specifiers:
   async-validator: ^4.2.5
   classnames: ^2.3.2
   color-string: ^1.9.1
+  cron-parser: ^4.7.0
   dayjs: ^1.11.7
   eslint: 8.29.0
   eslint-config-next: 13.0.6
@@ -77,6 +78,7 @@ dependencies:
   async-validator: 4.2.5
   classnames: 2.3.2
   color-string: 1.9.1
+  cron-parser: 4.7.0
   dayjs: 1.11.7
   immer: 9.0.16
   js-base64: 3.7.3
@@ -2439,6 +2441,14 @@ packages:
     requiresBuild: true
     dev: true
 
+  /cron-parser/4.7.0:
+    resolution:
+      { integrity: sha512-BdAELR+MCT2ZWsIBhZKDuUqIUCBjHHulPJnm53OfdRLA4EWBjva3R+KM5NeidJuGsNXdEcZkjC7SCnkW5rAFSA== }
+    engines: { node: '>=12.0.0' }
+    dependencies:
+      luxon: 3.2.0
+    dev: false
+
   /cross-spawn/7.0.3:
     resolution:
       { integrity: sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w== }
@@ -4742,6 +4752,12 @@ packages:
     dependencies:
       yallist: 4.0.0
     dev: true
+
+  /luxon/3.2.0:
+    resolution:
+      { integrity: sha512-Namj3XqoJjFekq/JHQEaaAv4zyE/fyyDBrMEBnIL2s/X54SC8W5Ea0uej1TRXUArWec8OojsAVsGBYhNRjpMVw== }
+    engines: { node: '>=12' }
+    dev: false
 
   /lz-string/1.4.4:
     resolution:

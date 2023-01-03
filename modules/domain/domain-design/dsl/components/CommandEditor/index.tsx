@@ -94,10 +94,10 @@ export const CommandEditor = () => {
           <RulesSelect />
         </EditorFormItemStatic>
       </EditorFormCollapsePanel>
-      <EditorFormCollapsePanel header="属性" key="properties">
+      <EditorFormCollapsePanel header="属性" key="properties" path="properties">
         <PropertiesEditor />
       </EditorFormCollapsePanel>
-      <EditorFormCollapsePanel header="事件属性" key="eventProperties">
+      <EditorFormCollapsePanel header="事件属性" key="eventProperties" path="eventProperties">
         <PropertiesEditor path="eventProperties" />
       </EditorFormCollapsePanel>
     </EditorFormCollapse>

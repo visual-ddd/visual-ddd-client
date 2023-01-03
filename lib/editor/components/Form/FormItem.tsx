@@ -17,6 +17,11 @@ export interface EditorFormItemBaseProps {
   path?: string;
 
   /**
+   * 是否获聚合下级属性的错误信息, 默认 false
+   */
+  aggregated?: boolean;
+
+  /**
    * 标签
    */
   label: ReactNode;
@@ -82,14 +87,14 @@ export function defaultGetValueFromEvent(valuePropName: string, ...args: any[]) 
 }
 
 export const EditorFormItemStatic = observer(function EditorFormItemStatic(props: EditorFormItemBaseProps) {
-  const { className, style, required, label, tooltip, path, children } = props;
+  const { className, style, required, label, tooltip, path, children, aggregated = false } = props;
 
   return (
     <div className={classNames('vd-form-item', className, s.root)} style={style}>
       <label className={classNames('vd-form-item__label', s.label)}>
         {required && <span className={classNames('vd-form-item__require', s.required)}>*</span>}
         {label}
-        <EditorFormTooltip tooltip={tooltip} path={path} />
+        <EditorFormTooltip tooltip={tooltip} path={path} aggregated={aggregated} />
       </label>
       <div className={classNames('vd-form-item__body', s.body)}>{children}</div>
     </div>
@@ -112,6 +117,7 @@ export const EditorFormItem = observer(function EditorFormItem(props: EditorForm
     validateTrigger = 'onChange',
     valuePropName = 'value',
     onBeforeChange = identity,
+    aggregated = false,
     dependencies,
     dependenciesTriggerWhenTouched = true,
   } = props;
@@ -185,6 +191,7 @@ export const EditorFormItem = observer(function EditorFormItem(props: EditorForm
       label={label}
       required={isRequired}
       tooltip={tooltip}
+      aggregated={aggregated}
     >
       {injectChildren(children)}
     </EditorFormItemStatic>

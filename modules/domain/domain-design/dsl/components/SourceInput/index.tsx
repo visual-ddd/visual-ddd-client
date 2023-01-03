@@ -36,6 +36,15 @@ export const SourceInput = memo((props: SourceInputProps) => {
     onChange?.(newValue);
   };
 
+  const handleInputChange =
+    (key: Extract<keyof SourceDSL, 'event' | 'schedule'>) => (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = getValue();
+      const newValue = prod(value, d => {
+        d[key].value = e.target.value;
+      });
+      onChange?.(newValue);
+    };
+
   return (
     <div className={classNames('vd-source-input', s.root)}>
       <Checkbox checked={value?.http.enabled} onChange={handleCheckboxChange('http')}>
@@ -46,12 +55,24 @@ export const SourceInput = memo((props: SourceInputProps) => {
       </Checkbox>
       <Checkbox checked={value?.event.enabled} onChange={handleCheckboxChange('event')}>
         <div className={s.row}>
-          <span>事件</span> <Input placeholder="事件名称" disabled={!value?.event.enabled} />
+          <span>事件</span>{' '}
+          <Input
+            placeholder="事件名称"
+            disabled={!value?.event.enabled}
+            value={value?.event.value ?? ''}
+            onChange={handleInputChange('event')}
+          />
         </div>
       </Checkbox>
       <Checkbox checked={value?.schedule.enabled} onChange={handleCheckboxChange('schedule')}>
         <div className={s.row}>
-          <span>定时任务</span> <Input placeholder="cron 表达式" disabled={!value?.schedule.enabled} />
+          <span>定时任务</span>{' '}
+          <Input
+            placeholder="cron 表达式"
+            disabled={!value?.schedule.enabled}
+            value={value?.schedule.value ?? ''}
+            onChange={handleInputChange('schedule')}
+          />
         </div>
       </Checkbox>
     </div>
