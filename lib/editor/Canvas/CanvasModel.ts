@@ -134,6 +134,18 @@ export class CanvasModel {
       //   padding: 10,
       // },
 
+      highlighting: {
+        embedding: {
+          name: 'stroke',
+          args: {
+            attrs: {
+              'stroke-width': 4,
+              stroke: '#3ba0ffad',
+            },
+          },
+        },
+      },
+
       // 支持鼠标滚轮操作
       mousewheel: {
         enabled: true,
