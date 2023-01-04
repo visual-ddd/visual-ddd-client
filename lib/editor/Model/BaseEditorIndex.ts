@@ -19,6 +19,14 @@ export class BaseEditorIndex {
   }
 
   /**
+   * 获取所有节点
+   * @returns
+   */
+  getNodes() {
+    return Array.from(this.nodeIndexById.values());
+  }
+
+  /**
    * 通过 id 获取节点
    * @param id
    * @returns

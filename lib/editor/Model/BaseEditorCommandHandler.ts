@@ -1,5 +1,6 @@
 import { makeAutoBindThis, command } from '@/lib/store';
 import { debounce, booleanPredicate } from '@wakeapp/utils';
+import type { Edge } from '@antv/x6';
 
 import { BaseEditorStore } from './BaseEditorStore';
 import type { PickParams, ShapeType, Properties } from './types';
@@ -7,6 +8,7 @@ import { BaseNode } from './BaseNode';
 import { BaseEditorEvent } from './BaseEditorEvent';
 import { BaseEditorDatasource } from './BaseEditorDatasource';
 import { BaseEditorViewStore, BaseEditorViewState } from './BaseEditorViewStore';
+import { BaseEditorIndex } from './BaseEditorIndex';
 
 /**
  * 用于统一处理 View 层的命令
@@ -16,18 +18,21 @@ export class BaseEditorCommandHandler {
   private viewStore: BaseEditorViewStore;
   private event: BaseEditorEvent;
   private datasource: BaseEditorDatasource;
+  private index: BaseEditorIndex;
 
   constructor(inject: {
     event: BaseEditorEvent;
     store: BaseEditorStore;
     viewStore: BaseEditorViewStore;
     datasource: BaseEditorDatasource;
+    index: BaseEditorIndex;
   }) {
-    const { store, event, datasource, viewStore } = inject;
+    const { store, event, datasource, viewStore, index } = inject;
     this.store = store;
     this.viewStore = viewStore;
     this.event = event;
     this.datasource = datasource;
+    this.index = index;
 
     makeAutoBindThis(this);
   }
@@ -99,6 +104,15 @@ export class BaseEditorCommandHandler {
     // 移除节点
     this.store.removeNode({ node });
 
+    const edges = this.getEdges(node);
+
+    // 删除边
+    if (edges.length) {
+      for (const edge of edges) {
+        this.removeNode({ node: edge });
+      }
+    }
+
     // 这里的的顺序很重要
     // 先删除父节点，后删除子节点，当执行撤销时顺序也是一样的，先创建父节点，后创建子节点
     // 深度优先递归删除
@@ -146,6 +160,54 @@ export class BaseEditorCommandHandler {
   @command('DELETE_NODE_PROPERTY')
   deleteNodeProperty(params: { node: BaseNode; path: string }) {
     this.store.deleteNodeProperty(params);
+  }
+
+  /**
+   * 获取和应用节点关联的边
+   * @param node
+   */
+  protected getEdges(node: BaseNode): BaseNode[] {
+    let edges: BaseNode[] = [];
+
+    for (const n of this.index.getNodes()) {
+      if (n.type !== 'edge') {
+        continue;
+      }
+
+      const { target, source } = n.properties as unknown as {
+        target?: Edge.TerminalData;
+        source?: Edge.TerminalData;
+      };
+
+      if (this.isTerminalDataEqual(target, node) || this.isTerminalDataEqual(source, node)) {
+        edges.push(n);
+      }
+    }
+
+    return edges;
+  }
+
+  /**
+   * 判断边终端是否相等
+   * @param t
+   * @param node
+   * @returns
+   */
+  protected isTerminalDataEqual(t: Edge.TerminalData | undefined, node: BaseNode) {
+    if (t == null) {
+      return false;
+    }
+
+    if ('cell' in t) {
+      const cell = t.cell;
+      if (typeof cell === 'string') {
+        return cell === node.id;
+      } else {
+        return cell.id === node.id;
+      }
+    }
+
+    return false;
   }
 
   /**

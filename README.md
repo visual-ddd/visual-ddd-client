@@ -50,6 +50,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 - 只读模式
 - 右键菜单, 画布，节点，组件树
 - layout 支持折叠
+- 选中高亮
 - edge/node selected 状态高亮
 - 被其他成员选中的不能修改
 - 持久化 viewState

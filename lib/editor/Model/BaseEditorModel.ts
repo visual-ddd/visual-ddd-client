@@ -108,6 +108,7 @@ export class BaseEditorModel {
       store: this.store,
       viewStore: this.viewStore,
       datasource: this.datasource,
+      index: this.index,
     });
 
     this.scope.registerScopeMember('editorModel', this);
