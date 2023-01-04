@@ -603,12 +603,17 @@ export class CanvasModel {
     // 插入操作
     const insert = (parentNode?: Node) => {
       const parent = parentNode && this.editorIndex.getNodeById(parentNode.id);
-      this.editorCommandHandler.createNode({
+      const node = this.editorCommandHandler.createNode({
         name: type,
         type: shapeType,
         properties,
         parent,
       });
+
+      // 选中
+      setTimeout(() => {
+        this.graph?.resetSelection(node.id);
+      }, 300);
     };
 
     if (maybeParents.length) {
@@ -746,13 +751,17 @@ export class CanvasModel {
         const { type, shapeType, properties } = this.shapeRegistry.copyFactory({ payload });
 
         const parent = payload.parent ? this.editorIndex.getNodeById(payload.parent) : undefined;
-        this.editorCommandHandler.createNode({
+        const node = this.editorCommandHandler.createNode({
           id: payload.id,
           name: type,
           type: shapeType,
           properties,
           parent,
         });
+
+        setTimeout(() => {
+          this.graph?.select(node.id);
+        }, 300);
       },
     });
   };

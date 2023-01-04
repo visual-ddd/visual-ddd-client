@@ -36,11 +36,9 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 ## TODO
 
 - 全局告警
-- 成员删除后, 先遍历 edge，先删除 edge，再删除 node
 - rule 包含 label, 更好的信息提示
 - 引用关系支持可见性控制
 - 告警信息定位
-- 创建后选中
 - 验证性能优化
 - 保存时验证，并存储验证状态
 - NameInput 支持全选
