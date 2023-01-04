@@ -1,0 +1,29 @@
+.root {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--vd-color-border-light);
+}
+
+.back {
+  width: 45px;
+  height: 100%;
+  border-right: 1px solid var(--vd-color-border-light);
+  font-size: 22px;
+  color: var(--vd-color-gray-700);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.aside {
+  padding: 0 var(--vd-spacing-sm);
+}

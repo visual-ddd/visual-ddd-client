@@ -26,7 +26,7 @@ export const isInMutation = () => {
 /**
  * 状态变更操作, 变更是同步的
  */
-export const mutation = (name: string): MethodDecorator => {
+export const mutation = (name: string, strict = true): MethodDecorator => {
   const actionWithName = action(name);
 
   return function (target, key, descriptor) {
@@ -34,7 +34,7 @@ export const mutation = (name: string): MethodDecorator => {
 
     // @ts-expect-error
     descriptor.value = function () {
-      if (!isInCommand() && !isInMutation() && !isInPull()) {
+      if (strict && !isInCommand() && !isInMutation() && !isInPull()) {
         throw new Error(`@mutation(${name}) 不能直接调用，只能在 @command 或 @pull 方法下调用`);
       }
 

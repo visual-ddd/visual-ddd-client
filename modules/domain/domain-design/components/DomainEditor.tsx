@@ -1,6 +1,4 @@
 import { observer } from 'mobx-react';
-import { Doc as YDoc } from 'yjs';
-import { WebrtcProvider } from 'y-webrtc';
 
 import {
   EditorModelProvider,
@@ -20,18 +18,18 @@ import { DomainObjectReferenceEdges } from './DomainObjectReferenceEdges';
 import { useMemo } from 'react';
 import { ShapeTitle } from './ShapeTitle';
 
-const ydoc = new YDoc();
-const domainDatabase = ydoc.getMap('domain');
-
-// new IndexeddbPersistence('just-do-it', ydoc);
-new WebrtcProvider('just-do-it', ydoc);
-
-const model = new DomainEditorModel({ datasource: domainDatabase, doc: ydoc });
+export interface DomainEditorProps {
+  /**
+   * 编辑器模型
+   */
+  model: DomainEditorModel;
+}
 
 /**
  * 领域模型编辑器
  */
-export const DomainEditor = observer(function DomainEditor() {
+export const DomainEditor = observer(function DomainEditor(props: DomainEditorProps) {
+  const { model } = props;
   const configuration = useMemo<EditorConfigurationValue>(() => {
     return {
       renderTitle(node) {
