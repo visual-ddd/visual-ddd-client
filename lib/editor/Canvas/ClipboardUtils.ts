@@ -224,6 +224,12 @@ export async function paste(options: {
   offset?: number;
 
   /**
+   * 粘贴前回调
+   * @returns
+   */
+  beforePaste: () => void;
+
+  /**
    * 遍历器，paste 会按照树的顺序遍历节点, 你可以在这个方法中进行创建
    * @param item
    * @returns
@@ -245,12 +251,12 @@ export async function paste(options: {
   // id 重新生成
   // position 偏移
   // 数据规范化
-  const { offset, position, whitelist, visitor } = options;
+  const { offset, position, whitelist, visitor, beforePaste } = options;
 
   if (
     whitelist?.length &&
     payload.some(i => {
-      return !whitelist.includes(i.properties.__node_type__);
+      return !whitelist.includes(i.properties.__node_name__);
     })
   ) {
     return;
@@ -308,6 +314,10 @@ export async function paste(options: {
       }
     }
   };
+
+  if (nodeRoots.length || edges.length) {
+    beforePaste?.();
+  }
 
   for (const root of nodeRoots) {
     visitNode(root);

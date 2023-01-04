@@ -15,7 +15,7 @@ export interface CanvasProps extends GraphBindingProps {}
  * 画布
  */
 export const Canvas = memo((props: CanvasProps) => {
-  const { options, children } = props;
+  const { options, children, className, style } = props;
   const { model: canvasModel } = useCanvasModel();
 
   const finalOptions: GraphBindingOptions = useMemo(() => {
@@ -25,7 +25,8 @@ export const Canvas = memo((props: CanvasProps) => {
   return (
     <GraphBinding
       options={finalOptions}
-      className={classNames('vd-editor-canvas', s.root)}
+      className={classNames('vd-editor-canvas', s.root, className)}
+      style={style}
       minimapClassName={s.minimap}
       onDrop={canvasModel.handleDrop}
       onScale={canvasModel.handleScaleChange}

@@ -7,10 +7,8 @@ import { DomainObjectStore } from './DomainObjectStore';
 export class DomainEditorModel extends BaseEditorModel {
   domainObjectStore: DomainObjectStore;
 
-  constructor(options: Omit<BaseEditorModelOptions, 'scopeId'> & { scopeId?: string }) {
-    const { scopeId } = options;
-
-    super({ ...options, scopeId: scopeId ?? 'domain' });
+  constructor(options: BaseEditorModelOptions) {
+    super(options);
 
     this.domainObjectStore = new DomainObjectStore({ event: this.event, editorModel: this });
   }

@@ -8,6 +8,7 @@ import { useShapeModel } from '../hooks';
 import icon from './comment.png';
 
 import s from './comment.module.scss';
+import { BuiltinShapeName } from './constants';
 
 registerReactComponent('comment', props => {
   const properties = useShapeModel(props.node).properties as unknown as { content: string };
@@ -16,7 +17,7 @@ registerReactComponent('comment', props => {
 });
 
 defineShape({
-  name: 'comment',
+  name: BuiltinShapeName.Comment,
   title: '注释',
   shapeType: 'node',
   description: '注释',

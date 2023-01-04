@@ -241,7 +241,7 @@ export class CanvasModel {
 
         // 选择框, 选择框可能会阻挡事件?
         showNodeSelectionBox: true,
-        showEdgeSelectionBox: true, // edge 选择框是方形
+        // showEdgeSelectionBox: true, // edge 选择框是方形
         pointerEvents: 'none', // SelectionBox 会阻挡事件
         filter(cell) {
           return shapeRegistry.isSelectable({ cell, graph: this });
@@ -757,8 +757,11 @@ export class CanvasModel {
         : undefined;
 
     paste({
-      // TODO: 白名单
+      whitelist: this.editorModel.whitelist,
       position,
+      beforePaste: () => {
+        this.graph?.cleanSelection();
+      },
       visitor: payload => {
         const { type, shapeType, properties } = this.shapeRegistry.copyFactory({ payload });
 

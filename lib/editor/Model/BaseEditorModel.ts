@@ -20,6 +20,16 @@ export interface BaseEditorModelOptions {
   activeScope?: boolean;
 
   /**
+   * 支持的图形白名单, 主要用于拷贝粘贴时过滤
+   */
+  whitelist: string[];
+
+  /**
+   * 支持的图形列表
+   */
+  shapeList: string[];
+
+  /**
    * yjs 数据源
    */
   datasource: YMap<any>;
@@ -40,6 +50,9 @@ declare global {
  * 编辑器模型入口
  */
 export class BaseEditorModel {
+  readonly whitelist: string[];
+  readonly shapeList: string[];
+
   /**
    * 命令处理器
    */
@@ -87,9 +100,15 @@ export class BaseEditorModel {
     return this.scope.isActive();
   }
 
-  constructor(options: BaseEditorModelOptions) {
-    const { datasource, doc, scopeId, activeScope = true } = options;
+  get scopeId() {
+    return this.scope.scopeId;
+  }
 
+  constructor(options: BaseEditorModelOptions) {
+    const { datasource, doc, scopeId, activeScope = true, whitelist, shapeList } = options;
+
+    this.shapeList = shapeList;
+    this.whitelist = whitelist;
     this.scope = new BaseEditorScope({ scopeId });
     this.event = new BaseEditorEvent();
     this.index = new BaseEditorIndex({ event: this.event });

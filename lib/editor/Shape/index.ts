@@ -1,6 +1,6 @@
 import './react-component-decorators';
-import './builtin';
 
+export * from './builtin';
 export * from './types';
 export * from './ShapeRegistry';
 export * from './defineShape';

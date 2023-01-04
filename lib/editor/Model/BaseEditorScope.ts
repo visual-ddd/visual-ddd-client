@@ -25,7 +25,7 @@ export class BaseEditorScope {
     return this.currentScope.members;
   }
 
-  private scopeId: string;
+  scopeId: string;
 
   private members: IBaseEditorScopeMembers;
 

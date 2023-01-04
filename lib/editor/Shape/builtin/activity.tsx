@@ -5,17 +5,18 @@ import { EditorFormContainer, EditorFormItem } from '../../components';
 import { defineShape } from '../defineShape';
 import { useHoverShowPorts } from '../hooks';
 
+import { BuiltinShapeName } from './constants';
 import icon from './activity.png';
 
 defineShape({
-  name: 'activity',
+  name: BuiltinShapeName.Activity,
   title: '业务活动',
   shapeType: 'node',
   description: '业务活动',
   icon,
   group: false,
   allowLoopConnect: false,
-  allowConnectNodes: ['activity'],
+  allowConnectNodes: [BuiltinShapeName.Activity],
   resizing: { minHeight: 70, maxHeight: 200, minWidth: 120, maxWidth: 400 },
   initialProps() {
     return {

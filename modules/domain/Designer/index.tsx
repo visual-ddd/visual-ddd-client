@@ -51,7 +51,7 @@ const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerPro
       {
         label: DomainDesignerTabsMap[DomainDesignerTabs.QueryModel],
         key: DomainDesignerTabs.QueryModel,
-        children: <div>敬请期待</div>,
+        children: <DomainEditor model={model.queryEditorModel} />,
       },
       {
         label: DomainDesignerTabsMap[DomainDesignerTabs.DataModel],

@@ -1,10 +1,14 @@
 import { Doc as YDoc } from 'yjs';
 import { WebrtcProvider } from 'y-webrtc';
 import { makeAutoBindThis, mutation } from '@/lib/store';
-
-import { DomainEditorModel } from '../../domain-design';
 import { makeObservable, observable } from 'mobx';
+
+import { DomainEditorModel, createDomainEditorModel } from '../../domain-design';
+import { createQueryEditorModel } from '../../query-design';
+
 import { DomainDesignerTabs } from './constants';
+
+const KEY_ACTIVE_TAB = 'DESIGNER:activeTab';
 
 export class DomainDesignerModel {
   /**
@@ -34,15 +38,37 @@ export class DomainDesignerModel {
 
     new WebrtcProvider(id, doc);
 
-    this.domainEditorModel = new DomainEditorModel({ datasource: domainDatabase, scopeId: 'domain', doc: this.ydoc });
-    this.queryEditorModel = new DomainEditorModel({ datasource: queryDatabase, scopeId: 'query', doc: this.ydoc });
+    this.domainEditorModel = createDomainEditorModel({ datasource: domainDatabase, doc: this.ydoc });
+    this.queryEditorModel = createQueryEditorModel({ datasource: queryDatabase, doc: this.ydoc });
 
     makeAutoBindThis(this);
     makeObservable(this);
+
+    this.initialize();
+  }
+
+  async initialize() {
+    const activeKey = await localStorage.getItem(KEY_ACTIVE_TAB);
+    if (activeKey != null) {
+      this.setActiveTab({ tab: activeKey as DomainDesignerTabs });
+    } else {
+      this.setActiveTab({ tab: DomainDesignerTabs.Product });
+    }
   }
 
   @mutation('DESIGNER:SET_ACTIVE_TAB', false)
   setActiveTab(params: { tab: DomainDesignerTabs }) {
-    this.activeTab = params.tab;
+    const tab = (this.activeTab = params.tab);
+
+    localStorage.setItem(KEY_ACTIVE_TAB, this.activeTab);
+
+    switch (tab) {
+      case DomainDesignerTabs.DomainModel:
+        this.domainEditorModel.active();
+        break;
+      case DomainDesignerTabs.QueryModel:
+        this.domainEditorModel.active();
+        break;
+    }
   }
 }
