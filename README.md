@@ -35,6 +35,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 ## TODO
 
+- graph 多实例并存问题
 - rule 包含 label, 更好的信息提示
 - 引用关系支持可见性控制
 - 告警信息定位

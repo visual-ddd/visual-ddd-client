@@ -26,45 +26,47 @@ const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerPro
     return new DomainDesignerModel({ id });
   }, [id]);
 
-  const items = useMemo(() => {
-    return [
-      {
-        label: DomainDesignerTabsMap[DomainDesignerTabs.Product],
-        key: DomainDesignerTabs.Product,
-        children: <div>敬请期待</div>,
-      },
-      {
-        label: DomainDesignerTabsMap[DomainDesignerTabs.Vision],
-        key: DomainDesignerTabs.Vision,
-        children: <div>敬请期待</div>,
-      },
-      {
-        label: DomainDesignerTabsMap[DomainDesignerTabs.UbiquitousLanguage],
-        key: DomainDesignerTabs.UbiquitousLanguage,
-        children: <div>敬请期待</div>,
-      },
-      {
-        label: DomainDesignerTabsMap[DomainDesignerTabs.DomainModel],
-        key: DomainDesignerTabs.DomainModel,
-        children: <DomainEditor model={model.domainEditorModel} />,
-      },
-      {
-        label: DomainDesignerTabsMap[DomainDesignerTabs.QueryModel],
-        key: DomainDesignerTabs.QueryModel,
-        children: <DomainEditor model={model.queryEditorModel} />,
-      },
-      {
-        label: DomainDesignerTabsMap[DomainDesignerTabs.DataModel],
-        key: DomainDesignerTabs.DataModel,
-        children: <div>敬请期待</div>,
-      },
-      {
-        label: DomainDesignerTabsMap[DomainDesignerTabs.Mapping],
-        key: DomainDesignerTabs.Mapping,
-        children: <div>敬请期待</div>,
-      },
-    ];
-  }, [model]);
+  const items = [
+    {
+      label: DomainDesignerTabsMap[DomainDesignerTabs.Product],
+      key: DomainDesignerTabs.Product,
+      children: <div>敬请期待</div>,
+    },
+    {
+      label: DomainDesignerTabsMap[DomainDesignerTabs.Vision],
+      key: DomainDesignerTabs.Vision,
+      children: <div>敬请期待</div>,
+    },
+    {
+      label: DomainDesignerTabsMap[DomainDesignerTabs.UbiquitousLanguage],
+      key: DomainDesignerTabs.UbiquitousLanguage,
+      children: <div>敬请期待</div>,
+    },
+    {
+      label: DomainDesignerTabsMap[DomainDesignerTabs.DomainModel],
+      key: DomainDesignerTabs.DomainModel,
+      children: (
+        <DomainEditor model={model.domainEditorModel} active={model.activeTab === DomainDesignerTabs.DomainModel} />
+      ),
+    },
+    {
+      label: DomainDesignerTabsMap[DomainDesignerTabs.QueryModel],
+      key: DomainDesignerTabs.QueryModel,
+      children: (
+        <DomainEditor model={model.queryEditorModel} active={model.activeTab === DomainDesignerTabs.QueryModel} />
+      ),
+    },
+    {
+      label: DomainDesignerTabsMap[DomainDesignerTabs.DataModel],
+      key: DomainDesignerTabs.DataModel,
+      children: <div>敬请期待</div>,
+    },
+    {
+      label: DomainDesignerTabsMap[DomainDesignerTabs.Mapping],
+      key: DomainDesignerTabs.Mapping,
+      children: <div>敬请期待</div>,
+    },
+  ];
 
   return (
     <DomainDesignerContextProvider value={model}>

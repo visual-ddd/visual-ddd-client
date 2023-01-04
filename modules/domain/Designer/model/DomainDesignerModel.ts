@@ -67,7 +67,7 @@ export class DomainDesignerModel {
         this.domainEditorModel.active();
         break;
       case DomainDesignerTabs.QueryModel:
-        this.domainEditorModel.active();
+        this.queryEditorModel.active();
         break;
     }
   }

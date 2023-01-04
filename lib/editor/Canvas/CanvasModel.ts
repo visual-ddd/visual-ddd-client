@@ -37,6 +37,15 @@ declare global {
  * 这里主要是为了几种处理画布(View)相关逻辑, 会耦合 UI
  */
 export class CanvasModel {
+  private static indexInstanceByGraph = new WeakMap<Graph, CanvasModel>();
+  static registerModel(graph: Graph, model: CanvasModel) {
+    this.indexInstanceByGraph.set(graph, model);
+  }
+
+  static getModel(graph: Graph) {
+    return this.indexInstanceByGraph.get(graph);
+  }
+
   /**
    * 画布事件
    */
@@ -811,6 +820,8 @@ export class CanvasModel {
   };
 
   handleGraphReady = (graph: Graph) => {
+    CanvasModel.registerModel(graph, this);
+
     this.graph = graph;
 
     this.shapeRegistry.bindGraph(graph);

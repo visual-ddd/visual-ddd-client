@@ -23,6 +23,11 @@ export interface DomainEditorProps {
    * 编辑器模型
    */
   model: DomainEditorModel;
+
+  /**
+   * 是否处于激活状态
+   */
+  active?: boolean;
 }
 
 /**

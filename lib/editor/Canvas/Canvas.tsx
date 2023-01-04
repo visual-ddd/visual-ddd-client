@@ -15,7 +15,7 @@ export interface CanvasProps extends GraphBindingProps {}
  * 画布
  */
 export const Canvas = memo((props: CanvasProps) => {
-  const { options, children, className, style } = props;
+  const { options, children, className, style, ...other } = props;
   const { model: canvasModel } = useCanvasModel();
 
   const finalOptions: GraphBindingOptions = useMemo(() => {
@@ -49,6 +49,7 @@ export const Canvas = memo((props: CanvasProps) => {
       onEdge$Added={evt => console.log('edge added', evt)}
       onEdge$Removed={canvasModel.handleEdgeRemoved}
       onSelection$Changed={canvasModel.handleSelectionChanged}
+      {...other}
     >
       {/* 绑定到 Store 的节点和边 */}
       <Cells />
