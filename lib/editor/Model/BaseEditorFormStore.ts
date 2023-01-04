@@ -24,9 +24,30 @@ export class BaseEditorFormStore {
   private formModels: Map<string, FormModel> = new Map();
 
   @derive
+  get nodesHasIssue() {
+    return Array.from(this.formModels.values()).filter(m => m.hasIssue);
+  }
+
+  @derive
+  get hasIssue() {
+    return this.nodesHasIssue.length;
+  }
+
+  @derive
   get hasError() {
-    for (const model of this.formModels.values()) {
+    for (const model of this.nodesHasIssue) {
       if (model.hasError) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  @derive
+  get hasWarning() {
+    for (const model of this.nodesHasIssue) {
+      if (model.hasWarning) {
         return true;
       }
     }

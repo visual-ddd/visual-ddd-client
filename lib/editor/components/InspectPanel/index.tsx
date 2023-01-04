@@ -16,6 +16,8 @@ export const EditorInspectPanel = observer(function EditorInspectPanel() {
 
   const node = viewStore.focusingNode;
   const formModel = node && formStore.getFormModel(node);
+  const hasIssue = formModel ? formModel.hasIssue : formStore.hasIssue;
+  const hasError = hasIssue && (formModel ? formModel.hasError : formStore.hasError);
 
   return (
     <Tabs
@@ -34,11 +36,8 @@ export const EditorInspectPanel = observer(function EditorInspectPanel() {
           label: (
             <span>
               告警
-              {formModel?.hasIssue && (
-                <ExclamationCircleFilled
-                  className={formModel.hasError ? 'u-danger' : 'u-warning'}
-                  style={{ marginLeft: 4 }}
-                />
+              {!!hasIssue && (
+                <ExclamationCircleFilled className={hasError ? 'u-danger' : 'u-warning'} style={{ marginLeft: 4 }} />
               )}
             </span>
           ),
