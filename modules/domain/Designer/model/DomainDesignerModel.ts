@@ -100,12 +100,13 @@ export class DomainDesignerModel {
       const buf = await response.arrayBuffer();
       const update = new Uint8Array(buf);
 
-      applyUpdate(this.ydoc, update);
+      if (update.length) {
+        applyUpdate(this.ydoc, update);
+      }
 
       this.setError(undefined);
     } catch (err) {
       this.setError(err as Error);
-      throw err;
     } finally {
       this.setLoading(false);
     }
@@ -130,7 +131,10 @@ export class DomainDesignerModel {
         throw new Error(`数据验证错误，请修正后重试`);
       }
 
-      const update = encodeStateAsUpdate(this.ydoc);
+      const vector = await this.getVector();
+
+      const update = encodeStateAsUpdate(this.ydoc, vector);
+
       const response = await fetch(`/api/domain/${this.id}`, { method: 'PUT', body: update });
 
       if (!response.ok) {
@@ -140,7 +144,6 @@ export class DomainDesignerModel {
       this.setError(undefined);
     } catch (err) {
       this.setError(err as Error);
-      throw err;
     } finally {
       this.setSaving(false);
     }
@@ -177,5 +180,17 @@ export class DomainDesignerModel {
     } else {
       this.setActiveTab({ tab: DomainDesignerTabs.Product });
     }
+  }
+
+  protected async getVector() {
+    const res = await fetch(`/api/domain/${this.id}/vector`, { method: 'GET' });
+
+    if (res.status === 200) {
+      const buffer = await res.arrayBuffer();
+
+      return new Uint8Array(buffer);
+    }
+
+    return undefined;
   }
 }
