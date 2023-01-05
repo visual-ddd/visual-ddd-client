@@ -145,6 +145,9 @@ defineShape({
   initialProps: () => {
     return { ...createCommand(), zIndex: 2 };
   },
+  copyFactory({ payload }) {
+    return { uuid: payload.id };
+  },
   component: CommandShapeComponent,
   attributeComponent: CommandAttributeComponent,
 });

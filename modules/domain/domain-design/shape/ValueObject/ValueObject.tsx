@@ -133,6 +133,9 @@ defineShape({
   initialProps: () => {
     return { ...createValueObject(), zIndex: 2 };
   },
+  copyFactory({ payload }) {
+    return { uuid: payload.id };
+  },
   component: ValueObjectShapeComponent,
   attributeComponent: ValueObjectAttributeComponent,
 });

@@ -1,0 +1,182 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Container 1`] = `
+{
+  "aggregates": [
+    {
+      "commands": [
+        {
+          "description": "",
+          "event": {
+            "name": "UntitledEvent",
+            "properties": [],
+            "uuid": "5a2fe372-faa6-42ce-912e-992809a358e9",
+          },
+          "eventSendable": false,
+          "meta": {},
+          "name": "Untitled",
+          "properties": [
+            {
+              "access": "public",
+              "description": "",
+              "meta": {},
+              "name": "untitled",
+              "title": "未命名",
+              "type": "String",
+              "uuid": "dfe5dff7-2035-4363-9839-29ff4fd103cc",
+            },
+          ],
+          "repository": "modify",
+          "return": {
+            "type": "void",
+          },
+          "rules": [
+            {
+              "description": "规则描述",
+              "meta": {},
+              "name": "Untitled1",
+              "title": "未命名",
+              "uuid": "f7905b48-9e01-407c-a41b-8a8bebfab920",
+            },
+            {
+              "description": "规则描述",
+              "meta": {},
+              "name": "Untitled2",
+              "title": "未命名",
+              "uuid": "copy-44a87083-8392-499e-8c01-a7adbdaa9a34",
+            },
+          ],
+          "source": [
+            {
+              "type": "http",
+            },
+            {
+              "type": "rpc",
+            },
+          ],
+          "title": "未命名",
+          "uuid": "5a2fe372-faa6-42ce-912e-992809a358e9",
+        },
+      ],
+      "description": "",
+      "entities": [
+        {
+          "description": "",
+          "id": {
+            "access": "public",
+            "description": "",
+            "meta": {},
+            "name": "untitled",
+            "title": "未命名",
+            "type": "MyEnum",
+            "uuid": "c1df59f2-5d44-41fd-80ff-fabfaab1d255",
+          },
+          "meta": {},
+          "methods": [
+            {
+              "abstract": false,
+              "access": "public",
+              "description": "",
+              "meta": {},
+              "name": "untitled",
+              "signature": {
+                "description": "",
+                "parameters": [],
+                "return": {
+                  "type": "void",
+                },
+              },
+              "title": "",
+              "uuid": "53afcda5-ad8e-45a0-887b-1a23620f2235",
+            },
+          ],
+          "name": "Untitled2",
+          "properties": [],
+          "title": "未命名",
+          "uuid": "copy-db705261-7462-4c77-88e3-ac9c782534d1",
+        },
+      ],
+      "enums": [
+        {
+          "baseType": "number",
+          "description": "",
+          "members": [
+            {
+              "code": 0,
+              "description": "",
+              "meta": {},
+              "name": "UNTITLED",
+              "title": "",
+              "uuid": "39f48e70-09bf-4f53-93b4-04a550a6e286",
+            },
+          ],
+          "meta": {},
+          "name": "MyEnum",
+          "title": "未命名",
+          "uuid": "918dddbf-a695-4760-b4ad-8dfd1b66571f",
+        },
+      ],
+      "meta": {},
+      "name": "Untitled",
+      "root": {
+        "description": "",
+        "id": {
+          "access": "public",
+          "description": "",
+          "meta": {},
+          "name": "untitled",
+          "title": "未命名",
+          "type": "String",
+          "uuid": "0c9ad68c-19de-459e-be69-57d2c07c6dfa",
+        },
+        "meta": {},
+        "methods": [
+          {
+            "abstract": false,
+            "access": "public",
+            "description": "",
+            "meta": {},
+            "name": "untitled",
+            "signature": {
+              "description": "",
+              "parameters": [],
+              "return": {
+                "type": "void",
+              },
+            },
+            "title": "",
+            "uuid": "f1559572-9a47-43a7-8df7-c2a690c1e57b",
+          },
+        ],
+        "name": "Untitled",
+        "properties": [],
+        "title": "未命名",
+        "uuid": "499bfd1e-e43b-4310-af32-c5d95b3f97d6",
+      },
+      "title": "未命名",
+      "uuid": "3cdd4fd4-9f49-4747-b85d-2898759a880d",
+      "valueObjects": [
+        {
+          "description": "",
+          "meta": {},
+          "methods": [],
+          "name": "ValueObject",
+          "properties": [
+            {
+              "access": "public",
+              "description": "",
+              "meta": {},
+              "name": "untitled",
+              "title": "未命名",
+              "type": "String",
+              "uuid": "e6b0f980-ca73-4af9-956e-bec51d1b66cc",
+            },
+          ],
+          "title": "未命名",
+          "uuid": "89772ddd-2140-4ef6-b330-52d465f8cc78",
+        },
+      ],
+    },
+  ],
+}
+`;

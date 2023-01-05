@@ -69,6 +69,9 @@ defineShape({
   initialProps: () => {
     return { ...createRule(), zIndex: 2 };
   },
+  copyFactory({ payload }) {
+    return { uuid: payload.id };
+  },
   component: RuleShapeComponent,
   attributeComponent: RuleAttributesComponent,
 });

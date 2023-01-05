@@ -61,7 +61,7 @@ defineShape({
                 throw new Error('有且只有一个聚合根');
               }
             },
-            reportType: FormRuleReportType.Warning,
+            reportType: FormRuleReportType.Error,
           },
         ],
       },
@@ -81,6 +81,9 @@ defineShape({
   },
   initialProps: () => {
     return { ...createAggregation(), zIndex: 1, size: { width: 500, height: 300 }, __prevent_auto_resize__: true };
+  },
+  copyFactory({ payload }) {
+    return { uuid: payload.id };
   },
   component: AggregationShapeComponent,
   attributeComponent: AggregationEditor,

@@ -625,6 +625,7 @@ export class CanvasModel {
     const insert = (parentNode?: Node) => {
       const parent = parentNode && this.editorIndex.getNodeById(parentNode.id);
       const node = this.editorCommandHandler.createNode({
+        id: properties.uuid,
         name: type,
         type: shapeType,
         properties,

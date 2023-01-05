@@ -153,6 +153,9 @@ defineShape({
   initialProps: () => {
     return { ...createEntity(), zIndex: 2 };
   },
+  copyFactory({ payload }) {
+    return { uuid: payload.id };
+  },
   component: EntityShapeComponent,
   attributeComponent: EntityAttributesComponent,
 });

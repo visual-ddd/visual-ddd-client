@@ -111,6 +111,9 @@ defineShape({
   initialProps: () => {
     return { ...createEnum(), zIndex: 2 };
   },
+  copyFactory({ payload }) {
+    return { uuid: payload.id };
+  },
   component: EnumShapeComponent,
   attributeComponent: EnumAttributeComponent,
 });

@@ -87,7 +87,8 @@ export interface ReturnDSL {
 }
 
 export interface MethodDefineDSL {
-  description: string;
+  description?: string;
+
   parameters: ParameterDSL[];
   return: ReturnDSL;
 }
@@ -185,7 +186,7 @@ export interface EnumDSL extends NameDSL {
   members: EnumMemberDSL[];
 }
 
-type CommandSource =
+export type SourceDSL =
   | {
       type: 'http';
     }
@@ -212,11 +213,11 @@ type DomainEvent = NameDSL & {
   properties: PropertyDSL[];
 };
 
-type RuleDSL = NameDSL & {};
+export type RuleDSL = NameDSL & {};
 
 export interface CommandDSL extends NameDSL {
   // 命令的触发来源，默认为 http, rpc 两种类型， 优先使用query,command 上设定的
-  source?: CommandSource[];
+  source?: SourceDSL[];
   // 绑定的仓储能力
   repository: Repository;
   // 命令属性
@@ -228,7 +229,7 @@ export interface CommandDSL extends NameDSL {
   event?: DomainEvent;
 
   // 事件是否是需要发送  false 不发送，true 发送
-  eventSendable?: false;
+  eventSendable?: boolean;
 
   // 规则， 默认为 []
   rules?: RuleDSL[];

@@ -63,8 +63,6 @@ function serializeToCopyPayload(cells: Cell[]): CopyPayload[] {
       children: json.children,
     };
 
-    console.log(json);
-
     if (cell.isEdge()) {
       payload.push({
         ...item,

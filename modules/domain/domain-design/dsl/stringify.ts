@@ -13,9 +13,10 @@ export function stringifyTypeDSL(type?: TypeDSL, getReferenceTypeName?: (id: str
     case TypeType.Container: {
       switch (type.name) {
         case 'Map':
-          return `Map<${stringifyTypeDSL(type.params.key, getReferenceTypeName)}, ${
-            (stringifyTypeDSL(type.params.value), getReferenceTypeName)
-          }>`;
+          return `Map<${stringifyTypeDSL(type.params.key, getReferenceTypeName)}, ${stringifyTypeDSL(
+            type.params.value,
+            getReferenceTypeName
+          )}>`;
         default:
           return `${type.name}<${stringifyTypeDSL(type.params.item, getReferenceTypeName)}>`;
       }

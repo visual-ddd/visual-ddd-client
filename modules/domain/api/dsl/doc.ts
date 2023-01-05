@@ -1,4 +1,6 @@
 import { Doc as YDoc, applyUpdate } from 'yjs';
+import * as DSL from './interface';
+import { transform as transformToDomainDSL } from './domain-model';
 
 /**
  * 创建文档
@@ -13,13 +15,11 @@ export function createDoc(update: Uint8Array) {
   return doc;
 }
 
-export function transformToDomainDSL(payload: any) {
-  console.log(payload);
-}
-
-export function transformToDSL(doc: YDoc) {
+export function transformToDSL(doc: YDoc): DSL.BusinessDomainDSL {
   const domainMap = doc.getMap('domain');
   // const queryMap = doc.getMap('query');
 
-  transformToDomainDSL(domainMap.toJSON());
+  return {
+    domainModel: transformToDomainDSL(domainMap.toJSON()),
+  };
 }
