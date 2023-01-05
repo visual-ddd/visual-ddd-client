@@ -177,6 +177,7 @@ const TypeSelect = observer(function TypeSelect(props: { value?: TypeDSL; onChan
       value={finalValue}
       placeholder="选择类型"
       onChange={handleChange as any}
+      expandTrigger="hover"
       allowClear={false}
     ></Cascader>
   );

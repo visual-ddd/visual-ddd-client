@@ -308,6 +308,8 @@ export type SourceDSL = {
   };
 };
 
+export type RepositoryDSL = 'create' | 'modify' | 'remove';
+
 /**
  * 命令定义
  */
@@ -316,6 +318,16 @@ export interface CommandDSL extends NameDSL {
    * 命令来源
    */
   source: SourceDSL;
+
+  /**
+   * 绑定的仓储能力
+   */
+  repository: RepositoryDSL;
+
+  /**
+   * 事件是否是需要发送, 默认为 false
+   */
+  eventSendable: boolean;
 
   /**
    * 属性

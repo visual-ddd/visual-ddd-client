@@ -7,7 +7,7 @@ import {
   useEditorModel,
 } from '@/lib/editor';
 import { observer, useLocalObservable } from 'mobx-react';
-import { Select } from 'antd';
+import { Select, Switch } from 'antd';
 import diff from 'lodash/difference';
 
 import type { DomainEditorModel, DomainObjectCommand, DomainObjectRule } from '../../../model';
@@ -86,6 +86,16 @@ export const CommandEditor = () => {
         </EditorFormItem>
         <EditorFormItem path="source" label="触发来源">
           <SourceInput />
+        </EditorFormItem>
+        <EditorFormItem path="eventSendable" label="事件发送" valuePropName="checked">
+          <Switch />
+        </EditorFormItem>
+        <EditorFormItem path="repository" label="仓储绑定">
+          <Select placeholder="绑定仓储能力" className="u-fw">
+            <Select.Option value="create">新增</Select.Option>
+            <Select.Option value="modify">更新</Select.Option>
+            <Select.Option value="remove">删除</Select.Option>
+          </Select>
         </EditorFormItem>
         <EditorFormItem path="result" label="返回值">
           <TypeInput isMethodResult />

@@ -163,6 +163,8 @@ export function createCommand(): CommandDSL {
     source: createSourceDSL(),
     properties: [createProperty()],
     eventProperties: [],
+    repository: 'modify',
+    eventSendable: false,
     aggregation: undefined,
     result: undefined,
   };
