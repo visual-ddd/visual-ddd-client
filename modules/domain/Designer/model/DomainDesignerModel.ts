@@ -1,6 +1,6 @@
-import { Doc as YDoc } from 'yjs';
+import { Doc as YDoc, encodeStateAsUpdate, applyUpdate } from 'yjs';
 import { WebrtcProvider } from 'y-webrtc';
-import { makeAutoBindThis, mutation } from '@/lib/store';
+import { effect, makeAutoBindThis, mutation } from '@/lib/store';
 import { makeObservable, observable } from 'mobx';
 
 import { DomainEditorModel, createDomainEditorModel } from '../../domain-design';
@@ -10,7 +10,19 @@ import { DomainDesignerTabs } from './constants';
 
 const KEY_ACTIVE_TAB = 'DESIGNER:activeTab';
 
+interface TabModel {
+  /**
+   * 激活
+   * @returns
+   */
+  active: () => void;
+
+  validate(): Promise<boolean>;
+}
+
 export class DomainDesignerModel {
+  id: string;
+
   /**
    * 领域模型编辑器模型
    */
@@ -21,16 +33,28 @@ export class DomainDesignerModel {
    */
   queryEditorModel: DomainEditorModel;
 
-  ydoc: YDoc;
-
   /**
    * 当前激活的 Tab
    */
   @observable
   activeTab: DomainDesignerTabs = DomainDesignerTabs.Product;
 
+  @observable
+  saving = false;
+
+  @observable
+  loading = false;
+
+  @observable
+  error?: Error;
+
+  private ydoc: YDoc;
+  private tabs: { key: DomainDesignerTabs; model: TabModel }[];
+
   constructor(options: { id: string }) {
     const { id } = options;
+    this.id = id;
+
     const doc = (this.ydoc = new YDoc());
 
     const domainDatabase = doc.getMap('domain');
@@ -41,18 +65,84 @@ export class DomainDesignerModel {
     this.domainEditorModel = createDomainEditorModel({ datasource: domainDatabase, doc: this.ydoc });
     this.queryEditorModel = createQueryEditorModel({ datasource: queryDatabase, doc: this.ydoc });
 
+    this.tabs = [
+      {
+        key: DomainDesignerTabs.DomainModel,
+        model: this.domainEditorModel,
+      },
+      {
+        key: DomainDesignerTabs.QueryModel,
+        model: this.queryEditorModel,
+      },
+    ];
+
     makeAutoBindThis(this);
     makeObservable(this);
 
     this.initialize();
   }
 
-  async initialize() {
-    const activeKey = await localStorage.getItem(KEY_ACTIVE_TAB);
-    if (activeKey != null) {
-      this.setActiveTab({ tab: activeKey as DomainDesignerTabs });
-    } else {
-      this.setActiveTab({ tab: DomainDesignerTabs.Product });
+  /**
+   * 数据加载
+   */
+  @effect('DESIGNER:LOAD')
+  async load() {
+    try {
+      this.setLoading(true);
+
+      // 数据加载
+      const response = await fetch(`/api/domain/${this.id}`, { method: 'GET' });
+
+      if (!response.ok) {
+        throw new Error(`数据加载失败`);
+      }
+
+      const buf = await response.arrayBuffer();
+      const update = new Uint8Array(buf);
+
+      applyUpdate(this.ydoc, update);
+
+      this.setError(undefined);
+    } catch (err) {
+      this.setError(err as Error);
+      throw err;
+    } finally {
+      this.setLoading(false);
+    }
+  }
+
+  /**
+   * 数据保存
+   */
+  @effect('DESIGNER:SAVE')
+  async save() {
+    if (this.saving) {
+      return;
+    }
+
+    try {
+      this.setSaving(true);
+      const validateResults = await Promise.all(this.tabs.map(i => i.model.validate()));
+
+      const errorIdx = validateResults.findIndex(Boolean);
+      if (errorIdx !== -1) {
+        this.setActiveTab({ tab: this.tabs[errorIdx].key });
+        throw new Error(`数据验证错误，请修正后重试`);
+      }
+
+      const update = encodeStateAsUpdate(this.ydoc);
+      const response = await fetch(`/api/domain/${this.id}`, { method: 'PUT', body: update });
+
+      if (!response.ok) {
+        throw new Error(`保存失败`);
+      }
+
+      this.setError(undefined);
+    } catch (err) {
+      this.setError(err as Error);
+      throw err;
+    } finally {
+      this.setSaving(false);
     }
   }
 
@@ -62,13 +152,30 @@ export class DomainDesignerModel {
 
     localStorage.setItem(KEY_ACTIVE_TAB, this.activeTab);
 
-    switch (tab) {
-      case DomainDesignerTabs.DomainModel:
-        this.domainEditorModel.active();
-        break;
-      case DomainDesignerTabs.QueryModel:
-        this.queryEditorModel.active();
-        break;
+    this.tabs.find(i => i.key === tab)?.model.active();
+  }
+
+  @mutation('DESIGNER:SET_SAVING', false)
+  protected setSaving(saving: boolean) {
+    this.saving = saving;
+  }
+
+  @mutation('DESIGNER:SET_LOADING', false)
+  protected setLoading(loading: boolean) {
+    this.loading = loading;
+  }
+
+  @mutation('DESIGNER:SET_ERROR', false)
+  protected setError(error?: Error) {
+    this.error = error;
+  }
+
+  protected async initialize() {
+    const activeKey = await localStorage.getItem(KEY_ACTIVE_TAB);
+    if (activeKey != null) {
+      this.setActiveTab({ tab: activeKey as DomainDesignerTabs });
+    } else {
+      this.setActiveTab({ tab: DomainDesignerTabs.Product });
     }
   }
 }

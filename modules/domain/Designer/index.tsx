@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
-import { useMemo } from 'react';
-import { Tabs } from 'antd';
+import { useEffect, useMemo } from 'react';
+import { message, Tabs } from 'antd';
 import { DomainDesignerTabs, DomainDesignerTabsMap, DomainDesignerModel } from './model';
 
 import { DomainEditor } from '../domain-design';
@@ -9,6 +9,7 @@ import { DomainEditor } from '../domain-design';
 import s from './index.module.scss';
 import { DomainDesignerContextProvider } from './Context';
 import { DomainDesignerHeader } from './Header';
+import { DomainDesignerLoading } from './Loading';
 
 export interface DomainDesignerProps {
   /**
@@ -23,7 +24,11 @@ export interface DomainDesignerProps {
 const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerProps) {
   const { id } = props;
   const model = useMemo(() => {
-    return new DomainDesignerModel({ id });
+    const instance = new DomainDesignerModel({ id });
+
+    instance.load();
+
+    return instance;
   }, [id]);
 
   const items = [
@@ -68,9 +73,16 @@ const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerPro
     },
   ];
 
+  useEffect(() => {
+    if (model.error) {
+      message.warning(model.error.message);
+    }
+  }, [model.error]);
+
   return (
     <DomainDesignerContextProvider value={model}>
       <div className={classNames('vd-domain', s.root)}>
+        <DomainDesignerLoading></DomainDesignerLoading>
         <DomainDesignerHeader></DomainDesignerHeader>
         <Tabs
           className={classNames('vd-domain-body', s.body)}

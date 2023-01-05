@@ -137,7 +137,18 @@ export class BaseEditorModel {
     }
   }
 
+  /**
+   * 激活作用域
+   */
   active() {
     this.scope.activeScope();
+  }
+
+  /**
+   * 数据验证
+   * @returns
+   */
+  validate() {
+    return this.formStore.validate();
   }
 }

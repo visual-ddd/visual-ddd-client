@@ -77,6 +77,7 @@ export class BaseEditorFormStore {
 
   /**
    * 验证所有模型
+   * 如果验证失败则返回 true
    */
   @effect('FORM_STORE:VALIDATE')
   async validate() {

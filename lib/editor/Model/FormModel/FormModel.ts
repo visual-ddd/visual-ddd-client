@@ -257,20 +257,28 @@ export class FormModel {
 
   /**
    * 验证所有
+   *
+   * @returns 返回是否存在错误
    */
   @effect('VALIDATE_ALL')
   async validateAll(): Promise<boolean> {
     const validate = this.getFormValidator();
 
     const statusMap = await validate(this.node.properties);
+    let hasError = false;
+
     this.statusTree.clearAll();
+
     if (statusMap?.size) {
       for (const [path, status] of statusMap.entries()) {
         this.statusTree.addStatus(path, status);
+        if (status.errors.length) {
+          hasError = true;
+        }
       }
     }
 
-    return !!statusMap?.size;
+    return hasError;
   }
 
   @mutation('FORM_MODEL:SET_TOUCHED')
