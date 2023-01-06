@@ -1,7 +1,16 @@
-import { defineShape, ShapeComponentProps, useShapeModel } from '@/lib/editor';
+import { defineShape, FormRuleReportType, ShapeComponentProps, useShapeModel } from '@/lib/editor';
 import { ReactComponentBinding, ReactComponentProps, registerReactComponent } from '@/lib/g6-binding';
 
-import { DomainObjectName, createQuery, QueryDSL, ClassShape, ClassDSL, QueryEditor } from '../../dsl';
+import {
+  DomainObjectName,
+  createQuery,
+  QueryDSL,
+  ClassShape,
+  ClassDSL,
+  QueryEditor,
+  checkDomainObjectNameConflict,
+  checkPropertyName,
+} from '../../dsl';
 
 import icon from './query.png';
 
@@ -38,6 +47,41 @@ defineShape({
   description: '查询',
   icon: icon,
   shapeType: 'node',
+  rules: {
+    fields: {
+      name: {
+        $self: [
+          { required: true, message: '标识符不能为空' },
+          {
+            async validator(value, context) {
+              // 检查命名是否冲突
+              checkDomainObjectNameConflict(value, context);
+            },
+          },
+        ],
+      },
+      title: { $self: [{ required: true, reportType: FormRuleReportType.Warning, message: '请填写标题' }] },
+
+      properties: {
+        $self: { type: 'array' },
+        '*': {
+          $self: { type: 'object' },
+          fields: {
+            name: {
+              $self: [
+                { required: true, message: '属性名不能为空' },
+                {
+                  async validator(value, context) {
+                    checkPropertyName(value, 'properties', context);
+                  },
+                },
+              ],
+            },
+          },
+        },
+      },
+    },
+  },
   initialProps: () => {
     return { ...createQuery(), zIndex: 2 };
   },

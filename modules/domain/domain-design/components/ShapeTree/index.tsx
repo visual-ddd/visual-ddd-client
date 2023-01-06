@@ -66,6 +66,40 @@ export const ShapeTree = observer(function ShapeTree(props: ShapeTreeProps) {
         };
       });
     },
+    get queries(): TreeDataNode | undefined {
+      if (!model.domainObjectStore.queries.length) {
+        return;
+      }
+
+      return {
+        key: 'QUERY',
+        title: '查询',
+        selectable: false,
+        children: model.domainObjectStore.queries.map(i => {
+          return {
+            key: i.id,
+            title: () => renderTitle(i),
+          };
+        }),
+      };
+    },
+    get dtos(): TreeDataNode | undefined {
+      if (!model.domainObjectStore.dtos.length) {
+        return;
+      }
+
+      return {
+        key: 'DTO',
+        title: 'DTO',
+        selectable: false,
+        children: model.domainObjectStore.dtos.map(i => {
+          return {
+            key: i.id,
+            title: () => renderTitle(i),
+          };
+        }),
+      };
+    },
     get treeData(): TreeDataNode[] {
       const nodes = [];
       if (this.uncontrolled) {
@@ -74,6 +108,14 @@ export const ShapeTree = observer(function ShapeTree(props: ShapeTreeProps) {
 
       if (this.aggregations.length) {
         nodes.push(...this.aggregations);
+      }
+
+      if (this.queries) {
+        nodes.push(this.queries);
+      }
+
+      if (this.dtos) {
+        nodes.push(this.dtos);
       }
 
       return nodes;

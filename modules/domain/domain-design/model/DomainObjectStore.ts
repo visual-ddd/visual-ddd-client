@@ -77,6 +77,14 @@ export class DomainObjectStore {
   }
 
   /**
+   * DTO
+   */
+  @derive
+  get dtos() {
+    return this.referableObjects.filter(DomainObjectFactory.isDTO);
+  }
+
+  /**
    * 规则列表
    */
   @derive
