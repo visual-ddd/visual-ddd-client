@@ -5,7 +5,7 @@ test('useSyncEffect', () => {
   const destructor = jest.fn();
   const effect = jest.fn(() => destructor);
 
-  const { rerender } = renderHook(
+  const { rerender, unmount } = renderHook(
     props => {
       useSyncEffect(effect, [props.count]);
     },
@@ -19,4 +19,8 @@ test('useSyncEffect', () => {
 
   expect(effect).toBeCalledTimes(2);
   expect(destructor).toBeCalledTimes(1);
+
+  unmount();
+
+  expect(destructor).toBeCalledTimes(2);
 });

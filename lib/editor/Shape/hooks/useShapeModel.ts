@@ -1,17 +1,13 @@
 import { Cell } from '@antv/x6';
 import { useMemo } from 'react';
-
-import { CanvasModel } from '../../Canvas';
+import { useEditorModel } from '../../Model';
 
 /**
  * 获取节点模型
  * 只能在 React Shape 组件里面使用
  */
 export function useShapeModel(cell: Cell) {
-  const canvasModel = useMemo(() => {
-    return CanvasModel.getModel(cell.model!.graph)!;
-  }, [cell]);
-  const { index, formStore, commandHandler } = canvasModel.editorModel;
+  const { index, formStore, commandHandler } = useEditorModel();
 
   const [model, formModel] = useMemo(() => {
     const model = index.getNodeById(cell.id)!;

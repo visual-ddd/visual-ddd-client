@@ -6,9 +6,11 @@ import { Dom, NodeView } from '@antv/x6';
 import { ReactShape } from './node';
 import { Portal } from './portal';
 import { Wrap } from './wrap';
+import { Disposer } from '@wakeapp/utils';
 
 export class ReactShapeView extends NodeView<ReactShape> {
   root?: Root;
+  disposer = new Disposer();
 
   getComponentContainer() {
     return this.selectors && (this.selectors.foContent as HTMLDivElement);
@@ -28,9 +30,11 @@ export class ReactShapeView extends NodeView<ReactShape> {
 
     if (container) {
       const elem = React.createElement(Wrap, { node, graph: this.graph });
-      if (Portal.isActive()) {
+      const connection = Portal.getConnection(this.graph);
+
+      if (connection) {
         const portal = createPortal(elem, container) as ReactPortal;
-        Portal.connect(this.cell.id, portal);
+        this.disposer.push(connection(this.cell.id, portal));
       } else {
         this.root = createRoot(container);
         this.root.render(elem);
@@ -60,9 +64,8 @@ export class ReactShapeView extends NodeView<ReactShape> {
   }
 
   override unmount() {
-    if (Portal.isActive()) {
-      Portal.disconnect(this.cell.id);
-    }
+    this.disposer.release();
+
     this.unmountReactComponent();
     super.unmount();
     return this;

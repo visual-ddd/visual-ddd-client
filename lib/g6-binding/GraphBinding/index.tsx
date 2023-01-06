@@ -231,7 +231,8 @@ export const GraphBinding = memo((props: GraphBindingProps) => {
   const minimapRef = useRef<HTMLDivElement>(null);
   const graphRef = useRef<Graph>();
   const ReactPortalProvider = useMemo(() => {
-    return Portal.getProvider();
+    return Portal.getProvider(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const contextValue = useMemo(() => {
     let graphReadyListeners: OnGraphReadyListener[] = [];
@@ -488,6 +489,7 @@ export const GraphBinding = memo((props: GraphBindingProps) => {
 
     // 通知就绪
     {
+      Portal.bindGraph(id, graph);
       onGraphReady?.(graph);
       graphRef.current = graph;
 
