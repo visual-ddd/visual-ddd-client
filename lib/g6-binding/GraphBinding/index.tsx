@@ -356,6 +356,16 @@ export const GraphBinding = memo((props: GraphBindingProps) => {
 
           // 显示
           setCellVisible(id, true);
+
+          const instance = item.instance.instance;
+
+          // 已被移除 model, 这种情况下基本渲染不出来，直接销毁
+          if (instance.model == null) {
+            item.instance.disposer();
+
+            return null;
+          }
+
           return item.instance as any;
         }
 
