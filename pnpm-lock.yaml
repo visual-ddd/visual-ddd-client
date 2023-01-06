@@ -11,7 +11,6 @@ specifiers:
   '@antv/x6-plugin-snapline': ^2.1.6
   '@antv/x6-plugin-transform': ^2.1.4
   '@antv/x6-react-components': ^2.0.4
-  '@antv/x6-react-shape': ^2.1.0
   '@testing-library/jest-dom': ^5.16.5
   '@testing-library/react': ^13.4.0
   '@types/color-string': ^1.5.2
@@ -72,7 +71,6 @@ dependencies:
   '@antv/x6-plugin-snapline': 2.1.6_@antv+x6@2.0.8
   '@antv/x6-plugin-transform': 2.1.4_@antv+x6@2.0.8
   '@antv/x6-react-components': 2.0.4_ldwydepcvygucyj3i72mrpp624
-  '@antv/x6-react-shape': 2.1.0_rsz64eyo6juon5x43jm7vppcke
   '@wakeapp/framework-core': 1.0.2_lodash@4.17.21
   '@wakeapp/hooks': 1.0.2_zrp62gez7omnrwllyfdlincg3a
   '@wakeapp/utils': 1.0.2_lodash@4.17.21
@@ -295,19 +293,6 @@ packages:
       react-dom: 18.2.0_react@18.2.0
       react-resize-detector: 7.1.2_biqbaboplfbrettd7655fr4n2y
       ua-parser-js: 0.7.32
-    dev: false
-
-  /@antv/x6-react-shape/2.1.0_rsz64eyo6juon5x43jm7vppcke:
-    resolution:
-      { integrity: sha512-HY9tPbMU1Z7Tu2lwBenXJe53DzT2MFt9LXRBPyN+r5qu8kP3VMU1vzS+2+LsPFdPL3s71wolGjL1GExUoh77JQ== }
-    peerDependencies:
-      '@antv/x6': ^2.x
-      react: '>=18.0.0'
-      react-dom: '>= 18.0.0'
-    dependencies:
-      '@antv/x6': 2.0.8
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
     dev: false
 
   /@antv/x6/2.0.8:

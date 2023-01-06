@@ -1,7 +1,7 @@
 import React, { memo, FC } from 'react';
-import { register } from '@antv/x6-react-shape';
 import { Graph, Node } from '@antv/x6';
 
+import { register } from '../react-shape';
 import { CellFactory } from '../CellBinding/useCell';
 import { NodeBindingProps } from '../NodeBinding';
 import { useNode } from '../NodeBinding/useNode';

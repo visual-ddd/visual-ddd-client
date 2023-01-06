@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useId, useMemo, useRef } from 'react';
-import cls from 'classnames';
+import classNames from 'classnames';
 import { Graph, Cell, EventArgs } from '@antv/x6';
 import { Selection } from '@antv/x6-plugin-selection';
 import { Keyboard } from '@antv/x6-plugin-keyboard';
@@ -9,7 +9,6 @@ import { Snapline } from '@antv/x6-plugin-snapline';
 import { Scroller } from '@antv/x6-plugin-scroller';
 import { MiniMap } from '@antv/x6-plugin-minimap';
 import type { Options } from '@antv/x6/lib/graph/options';
-import { Portal } from '@antv/x6-react-shape';
 import { Noop, NoopArray } from '@wakeapp/utils';
 import { useDisposer } from '@wakeapp/hooks';
 
@@ -22,7 +21,7 @@ import {
   OnGraphReadyListener,
 } from './GraphBindingContext';
 import { useEventStore } from '../hooks';
-import classNames from 'classnames';
+import { Portal } from '../react-shape';
 
 export type GraphBindingOptions = Partial<Options.Manual> & {
   selection?: Selection.Options;
@@ -520,7 +519,7 @@ export const GraphBinding = memo((props: GraphBindingProps) => {
   return (
     <>
       <div
-        className={cls('vd-graph-binding', className)}
+        className={classNames('vd-graph-binding', className)}
         style={style}
         data-id={id}
         ref={containerRef}

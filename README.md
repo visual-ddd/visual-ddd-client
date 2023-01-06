@@ -35,9 +35,11 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 ## TODO
 
-- graph 多实例并存问题
+- useShapeModel 有一定几率无法正常获取到
 - rule 包含 label, 更好的信息提示
+- edge 一定几率不展示，可能是 target/source 节点不存在，需要重新渲染
 - 引用关系支持可见性控制
+- 引用错误检查
 - 告警信息定位
 - 验证性能优化
 - 保存时验证，并存储验证状态

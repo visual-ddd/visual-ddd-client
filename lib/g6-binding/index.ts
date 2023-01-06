@@ -1,3 +1,5 @@
+import './react-shape';
+
 export * from './GraphBinding';
 export * from './NodeBinding';
 export * from './CellBinding';
