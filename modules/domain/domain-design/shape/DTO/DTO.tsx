@@ -1,13 +1,11 @@
-import { defineShape, FormRuleReportType, ROOT_FIELD, ShapeComponentProps, useShapeModel } from '@/lib/editor';
+import { defineShape, FormRuleReportType, ShapeComponentProps, useShapeModel } from '@/lib/editor';
 import { ReactComponentBinding, ReactComponentProps, registerReactComponent } from '@/lib/g6-binding';
 
 import {
   checkDomainObjectNameConflict,
   checkPropertyName,
-  checkSameAggregationReference,
   ClassShape,
   createDTO,
-  DomainObjectColors,
   DomainObjectName,
   DTODSL,
   DTOEditor,
@@ -18,7 +16,7 @@ import icon from './dto.png';
 const DTOReactShapeComponent = (props: ReactComponentProps) => {
   const properties = useShapeModel(props.node).properties as unknown as DTODSL;
 
-  return <ClassShape dsl={properties} type="DTO" style={{ backgroundColor: DomainObjectColors.dto }} />;
+  return <ClassShape dsl={properties} type="DTO" style={{ backgroundColor: '#f0f0f0' }} />;
 };
 
 registerReactComponent(DomainObjectName.DTO, DTOReactShapeComponent);
@@ -43,16 +41,6 @@ defineShape({
 
   rules: {
     fields: {
-      [ROOT_FIELD]: {
-        $self: [
-          {
-            // 检查引用
-            async validator(value, context) {
-              checkSameAggregationReference(context);
-            },
-          },
-        ],
-      },
       name: {
         $self: [
           { required: true, message: '标识符不能为空' },

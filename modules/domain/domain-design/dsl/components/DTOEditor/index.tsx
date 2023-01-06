@@ -1,5 +1,6 @@
 import { EditorFormCollapse, EditorFormCollapsePanel, EditorFormItem } from '@/lib/editor';
 
+import { DomainObjectFactory } from '../../../model';
 import { NameTooltip } from '../../constants';
 import { PropertiesEditor } from '../PropertiesEditor';
 import { DescriptionInput } from '../DescriptionInput';
@@ -35,7 +36,7 @@ export const DTOEditor = () => {
         </EditorFormItem>
       </EditorFormCollapsePanel>
       <EditorFormCollapsePanel header="属性" key="properties" path="properties">
-        <PropertiesEditor referenceTypeFilter={false} />
+        <PropertiesEditor referenceTypeFilter={DomainObjectFactory.isDTO} />
       </EditorFormCollapsePanel>
     </EditorFormCollapse>
   );
