@@ -20,3 +20,4 @@ export * from './AggregationEditor';
 export * from './CommandEditor';
 export * from './RuleEditor';
 export * from './EnumEditor';
+export * from './DTOEditor';

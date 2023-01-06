@@ -12,6 +12,7 @@ import {
   ClassDSL,
   CommandDSL,
   ContainerType,
+  DTODSL,
   EntityDSL,
   EnumBaseType,
   EnumDSL,
@@ -20,6 +21,7 @@ import {
   NameDSL,
   ParameterDSL,
   PropertyDSL,
+  QueryDSL,
   RuleDSL,
   SourceDSL,
   TypeDSL,
@@ -175,6 +177,20 @@ export function createRule(): RuleDSL {
 }
 
 /**
+ * 查询
+ * @returns
+ */
+export function createQuery(): QueryDSL {
+  return {
+    ...createNameDSL({ wordCase: 'CamelCase', title: true }),
+    source: createSourceDSL(),
+    properties: [createProperty()],
+    result: undefined,
+    pagination: false,
+  };
+}
+
+/**
  * 构造聚合
  * @returns
  */
@@ -183,4 +199,12 @@ export function createAggregation(): AggregationDSL {
     ...createNameDSL({ wordCase: 'CamelCase', title: true }),
     color: '#D9F7BE',
   };
+}
+
+/**
+ * DTO 创建
+ * @returns
+ */
+export function createDTO(): DTODSL {
+  return { ...createClass(), methods: [] };
 }

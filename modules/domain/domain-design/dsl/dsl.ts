@@ -370,3 +370,33 @@ export interface AggregationDSL extends NameDSL {
    */
   color: string;
 }
+
+/**
+ * DTO 定义
+ */
+export interface DTODSL extends ClassDSL {}
+
+/**
+ * 查询定义
+ */
+export interface QueryDSL extends NameDSL {
+  /**
+   * 查询来源
+   */
+  source: SourceDSL;
+
+  /**
+   * 属性
+   */
+  properties: PropertyDSL[];
+
+  /**
+   * 返回值
+   */
+  result?: TypeDSL;
+
+  /**
+   * 是否分页结果
+   */
+  pagination: boolean;
+}

@@ -9,7 +9,7 @@ import { DomainEditorModel } from '../domain-design/model';
  * @returns
  */
 export function createQueryEditorModel(options: Omit<BaseEditorModelOptions, 'shapeList' | 'whitelist' | 'scopeId'>) {
-  const shapeList = [DomainObjectName.Rule, BuiltinShapeName.Activity, BuiltinShapeName.Comment];
+  const shapeList = [DomainObjectName.DTO, DomainObjectName.Rule, BuiltinShapeName.Activity, BuiltinShapeName.Comment];
 
   const whitelist = shapeList.concat([BuiltinShapeName.Edge]);
   return new DomainEditorModel({ ...options, scopeId: 'query', shapeList, whitelist, activeScope: false });
