@@ -69,6 +69,14 @@ export class DomainObjectStore {
   }
 
   /**
+   * 查询
+   */
+  @derive
+  get queries() {
+    return this.unreferableObjects.filter(DomainObjectFactory.isQuery);
+  }
+
+  /**
    * 规则列表
    */
   @derive

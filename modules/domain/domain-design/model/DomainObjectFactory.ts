@@ -9,6 +9,7 @@ import { DomainObjectUnderAggregation, IDomainObjectUnderAggregation } from './D
 import { DomainObjectValueObject } from './DomainObjectValueObject';
 import { DomainObjectEnum } from './DomainObjectEnum';
 import { DomainObjectDTO } from './DomainObjectDTO';
+import { DomainObjectQuery } from './DomainObjectQuery';
 
 export class DomainObjectFactory {
   static getDomainObject(inject: DomainObjectInject): DomainObject<NameDSL> | null {
@@ -28,6 +29,8 @@ export class DomainObjectFactory {
         return new DomainObjectEnum(inject);
       case DomainObjectName.DTO:
         return new DomainObjectDTO(inject);
+      case DomainObjectName.Query:
+        return new DomainObjectQuery(inject);
       default:
         return null;
     }
@@ -92,6 +95,15 @@ export class DomainObjectFactory {
    */
   static isDTO = (object: DomainObject<NameDSL>): object is DomainObjectDTO => {
     return object instanceof DomainObjectDTO;
+  };
+
+  /**
+   * 是否为查询
+   * @param object
+   * @returns
+   */
+  static isQuery = (object: DomainObject<NameDSL>): object is DomainObjectQuery => {
+    return object instanceof DomainObjectQuery;
   };
 
   /**

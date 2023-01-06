@@ -21,3 +21,4 @@ export * from './CommandEditor';
 export * from './RuleEditor';
 export * from './EnumEditor';
 export * from './DTOEditor';
+export * from './QueryEditor';

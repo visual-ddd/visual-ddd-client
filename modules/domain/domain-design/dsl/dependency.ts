@@ -8,6 +8,7 @@ import {
   MethodDSL,
   ParameterDSL,
   PropertyDSL,
+  QueryDSL,
   RelationShipDSL,
   TypeDSL,
   TypeType,
@@ -78,11 +79,13 @@ export function extraDependenciesFromClass(type: ClassDSL): ClassDependencies {
     [RelationShipDSL.Association]: new Set(),
   };
 
-  const properties = extraDependenciesFromProperties(type.properties).concat(
-    extraDependenciesFromProperties(type.classProperties)
+  const properties = extraDependenciesFromProperties(type.properties ?? NoopArray).concat(
+    extraDependenciesFromProperties(type.classProperties ?? NoopArray)
   );
 
-  const methods = extraDependenciesFromMethods(type.methods).concat(extraDependenciesFromMethods(type.classMethods));
+  const methods = extraDependenciesFromMethods(type.methods ?? NoopArray).concat(
+    extraDependenciesFromMethods(type.classMethods ?? NoopArray)
+  );
 
   // 属性依赖为关联关系
   for (const ref of properties) {
@@ -119,4 +122,24 @@ export function extraDependenciesFromCommand(type: CommandDSL): string[] {
   return uniq(
     extraDependenciesFromProperties(type.properties).concat(extraDependenciesFromProperties(type.eventProperties))
   );
+}
+
+/**
+ * 从查询中提取依赖关系
+ * @param type
+ * @returns
+ */
+export function extraDependenciesFromQuery(type: QueryDSL) {
+  const deps = extraDependenciesFromClass(type as unknown as ClassDSL);
+  const results = extraDependenciesFromTypeDSL(type.result);
+
+  for (const r of results) {
+    if (deps[RelationShipDSL.Association].has(r)) {
+      continue;
+    }
+
+    deps[RelationShipDSL.Dependency].add(r);
+  }
+
+  return deps;
 }

@@ -3,18 +3,18 @@ import { Select } from 'antd';
 import { observer } from 'mobx-react';
 import { useMemo } from 'react';
 
-import { DomainEditorModel } from '../../../model';
-import { ReferenceDSL } from '../../dsl';
+import { DomainEditorModel, DomainObject } from '../../../model';
+import { NameDSL, ReferenceDSL } from '../../dsl';
 
 /**
  * 命令选择器
  */
-export interface CommandSelectProps {
+export interface CommandOrQuerySelectProps {
   value?: ReferenceDSL;
   onChange?: (value?: ReferenceDSL) => void;
 }
 
-export const CommandSelect = observer(function CommandSelect(props: CommandSelectProps) {
+export const CommandOrQuerySelect = observer(function CommandOrQuerySelect(props: CommandOrQuerySelectProps) {
   const { value, onChange } = props;
   const { model } = useEditorModel<DomainEditorModel>();
 
@@ -35,17 +35,19 @@ export const CommandSelect = observer(function CommandSelect(props: CommandSelec
     }
   };
 
+  const list: DomainObject<NameDSL>[] = [...model.domainObjectStore.commands, ...model.domainObjectStore.queries];
+
   return (
     <Select
       className="u-fw"
-      placeholder="关联命令"
+      placeholder="关联命令或查询"
       showSearch
       allowClear
       optionFilterProp="children"
       value={finalValue}
       onChange={handleChange}
     >
-      {model.domainObjectStore.commands.map(i => {
+      {list.map(i => {
         return (
           <Select.Option key={i.id} value={i.id}>
             {i.title}({i.name})

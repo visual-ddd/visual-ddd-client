@@ -3,7 +3,7 @@ import { EditorFormContainer, EditorFormItem } from '@/lib/editor';
 import { NameTooltip } from '../../constants';
 import { DescriptionInput } from '../DescriptionInput';
 import { TitleInput } from '../TitleInput';
-import { CommandSelect } from '../CommandSelect';
+import { CommandOrQuerySelect } from '../CommandOrQuerySelect';
 import { ObjectNameInput } from '../ObjectNameInput';
 
 export const RuleEditor = () => {
@@ -18,8 +18,8 @@ export const RuleEditor = () => {
       <EditorFormItem path="description" label="规则描述">
         <DescriptionInput />
       </EditorFormItem>
-      <EditorFormItem path="aggregator" label="关联命令">
-        <CommandSelect />
+      <EditorFormItem path="aggregator" label="关联">
+        <CommandOrQuerySelect />
       </EditorFormItem>
     </EditorFormContainer>
   );

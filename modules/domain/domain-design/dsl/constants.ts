@@ -50,7 +50,6 @@ export enum DomainObjectName {
   Rule = 'rule',
   Enum = 'enum',
   Query = 'query',
-  QueryRule = 'query-rule',
   DTO = 'dto',
 }
 
@@ -62,6 +61,5 @@ export const DomainObjectColors = {
   [DomainObjectName.Rule]: '#303133',
   [DomainObjectName.Enum]: '#CDAEF2',
   [DomainObjectName.Query]: '#C2F3EC',
-  [DomainObjectName.QueryRule]: '#303133',
   [DomainObjectName.DTO]: '#d5d5d5',
 };
