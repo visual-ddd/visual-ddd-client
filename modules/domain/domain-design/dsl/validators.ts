@@ -97,6 +97,14 @@ export function checkDomainObjectNameConflict(value: string, context: FormValida
   }
 }
 
+export function checkReferenceError(context: FormValidatorContext) {
+  const model = getDomainObjectFromValidatorContext(context) as DomainObject<NameDSL>;
+
+  if (model.hasReferencesError) {
+    throw new Error('请修复引用错误');
+  }
+}
+
 /**
  * 检查属性名称是否重复
  * @param value

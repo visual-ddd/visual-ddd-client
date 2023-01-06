@@ -96,6 +96,11 @@ export class DomainObjectCommand extends DomainObject<CommandDSL> implements IDo
   dependencies = NoopArray;
   compositions = NoopArray;
 
+  @derive
+  get hasReferencesError() {
+    return this.rawDependencies.length !== this.associations.length;
+  }
+
   constructor(inject: DomainObjectInject) {
     super(inject);
 

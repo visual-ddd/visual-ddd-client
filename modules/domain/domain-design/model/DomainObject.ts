@@ -136,6 +136,11 @@ export abstract class DomainObject<DSL extends NameDSL> implements IDisposable {
   abstract objectsDependentOnMe: DomainObject<NameDSL>[];
 
   /**
+   * 是否存在引用错误，比如引用的对象已经被移除
+   */
+  abstract hasReferencesError: boolean;
+
+  /**
    * 依赖边
    */
   @derive

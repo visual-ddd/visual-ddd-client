@@ -47,6 +47,17 @@ export abstract class DomainObjectClass<T extends ClassDSL = ClassDSL> extends D
   aggregations = NoopArray;
   compositions = NoopArray;
 
+  /**
+   * 当关联的数据长度不匹配时存在引用错误
+   */
+  @derive
+  get hasReferencesError() {
+    return (
+      this.rawDependencies.dependency.size !== this.dependencies.length ||
+      this.rawDependencies.association.size !== this.associations.length
+    );
+  }
+
   constructor(inject: DomainObjectInject) {
     super(inject);
 

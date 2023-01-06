@@ -17,4 +17,6 @@ export class DomainObjectEnum extends DomainObjectUnderAggregation<EnumDSL> {
   associations = NoopArray;
   aggregations = NoopArray;
   compositions = NoopArray;
+
+  hasReferencesError: boolean = false;
 }

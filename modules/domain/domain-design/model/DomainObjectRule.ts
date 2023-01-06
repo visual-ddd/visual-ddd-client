@@ -43,6 +43,8 @@ export class DomainObjectRule extends DomainObject<RuleDSL> {
   aggregations = NoopArray;
   compositions = NoopArray;
 
+  hasReferencesError = false;
+
   constructor(inject: DomainObjectInject) {
     super(inject);
 

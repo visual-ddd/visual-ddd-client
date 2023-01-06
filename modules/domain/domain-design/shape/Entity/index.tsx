@@ -11,6 +11,7 @@ import {
   checkPropertyName,
   checkUnderPackage,
   checkSameAggregationReference,
+  checkReferenceError,
 } from '../../dsl';
 import { getPrefixPath } from '@/lib/utils';
 
@@ -62,6 +63,7 @@ defineShape({
             // 检查引用
             async validator(value, context) {
               checkSameAggregationReference(context);
+              checkReferenceError(context);
             },
           },
         ],

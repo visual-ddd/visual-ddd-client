@@ -14,6 +14,7 @@ import {
   checkDomainObjectNameConflict,
   checkPropertyName,
   SourceDSL,
+  checkReferenceError,
 } from '../../dsl';
 
 import icon from './command.png';
@@ -66,6 +67,7 @@ defineShape({
             // 检查引用
             async validator(value, context) {
               checkSameAggregationReference(context);
+              checkReferenceError(context);
             },
           },
         ],

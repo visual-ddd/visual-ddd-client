@@ -10,6 +10,7 @@ import {
   QueryEditor,
   checkDomainObjectNameConflict,
   checkPropertyName,
+  checkReferenceError,
 } from '../../dsl';
 
 import icon from './query.png';
@@ -56,6 +57,7 @@ defineShape({
             async validator(value, context) {
               // 检查命名是否冲突
               checkDomainObjectNameConflict(value, context);
+              checkReferenceError(context);
             },
           },
         ],

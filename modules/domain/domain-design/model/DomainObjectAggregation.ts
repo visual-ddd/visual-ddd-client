@@ -41,6 +41,8 @@ export class DomainObjectAggregation extends DomainObject<AggregationDSL> {
 
   objectsDependentOnMe = NoopArray;
 
+  hasReferencesError = false;
+
   /**
    * 当前聚合包含的命令
    */

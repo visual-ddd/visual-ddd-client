@@ -4,6 +4,7 @@ import { ReactComponentBinding, ReactComponentProps, registerReactComponent } fr
 import {
   checkDomainObjectNameConflict,
   checkPropertyName,
+  checkReferenceError,
   ClassShape,
   createDTO,
   DomainObjectName,
@@ -48,6 +49,7 @@ defineShape({
             async validator(value, context) {
               // 检查命名是否冲突
               checkDomainObjectNameConflict(value, context);
+              checkReferenceError(context);
             },
           },
         ],

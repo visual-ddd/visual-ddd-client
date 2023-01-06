@@ -5,6 +5,7 @@ import { getPrefixPath } from '@/lib/utils';
 import {
   checkDomainObjectNameConflict,
   checkPropertyName,
+  checkReferenceError,
   checkSameAggregationReference,
   checkUnderPackage,
   ClassShape,
@@ -57,6 +58,7 @@ defineShape({
             // 检查引用
             async validator(value, context) {
               checkSameAggregationReference(context);
+              checkReferenceError(context);
             },
           },
         ],
