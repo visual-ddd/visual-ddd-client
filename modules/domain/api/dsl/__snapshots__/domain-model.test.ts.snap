@@ -1,5 +1,21 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`BaseContainer 1`] = `
+[
+  "__ROOT__",
+  "3cdd4fd4-9f49-4747-b85d-2898759a880d",
+  "89772ddd-2140-4ef6-b330-52d465f8cc78",
+  "copy-db705261-7462-4c77-88e3-ac9c782534d1",
+  "499bfd1e-e43b-4310-af32-c5d95b3f97d6",
+  "918dddbf-a695-4760-b4ad-8dfd1b66571f",
+  "5a2fe372-faa6-42ce-912e-992809a358e9",
+  "copy-0026add6-8a2a-4e26-bc08-2c5d95443445",
+  "f7905b48-9e01-407c-a41b-8a8bebfab920",
+  "copy-44a87083-8392-499e-8c01-a7adbdaa9a34",
+  "copy-78a9324b-773f-4cd4-9690-db995602e492",
+]
+`;
+
 exports[`Container 1`] = `
 {
   "aggregates": [

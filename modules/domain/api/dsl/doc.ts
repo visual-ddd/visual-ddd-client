@@ -1,6 +1,7 @@
 import { Doc as YDoc, applyUpdate } from 'yjs';
 import * as DSL from './interface';
 import { transform as transformToDomainDSL } from './domain-model';
+import { transform as transformToQueryDSL } from './query-model';
 
 /**
  * 创建文档
@@ -15,11 +16,17 @@ export function createDoc(update: Uint8Array) {
   return doc;
 }
 
+/**
+ * 转换为 DSL
+ * @param doc
+ * @returns
+ */
 export function transformToDSL(doc: YDoc): DSL.BusinessDomainDSL {
   const domainMap = doc.getMap('domain');
-  // const queryMap = doc.getMap('query');
+  const queryMap = doc.getMap('query');
 
   return {
     domainModel: transformToDomainDSL(domainMap.toJSON()),
+    queryModel: transformToQueryDSL(queryMap.toJSON()),
   };
 }

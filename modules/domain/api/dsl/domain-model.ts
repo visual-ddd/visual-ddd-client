@@ -3,18 +3,19 @@ import * as ViewDSL from '@/modules/domain/domain-design/dsl/dsl';
 import { VoidClass, Void } from '@/modules/domain/domain-design/dsl/constants';
 import { stringifyTypeDSL } from '@/modules/domain/domain-design/dsl/stringify';
 
-interface Properties {
+export interface CoreProperties {
   __node_name__: string;
+  uuid?: string;
 }
 
-interface Tree<T extends Properties = any> {
+export interface Tree<T extends CoreProperties = CoreProperties> {
   id: string;
   parent?: string;
   children: Record<string, never>;
   properties: T;
 }
 
-const ROOT = '__ROOT__';
+export const ROOT = '__ROOT__';
 
 export function transformMeta(meta?: ViewDSL.MetaDSL[]): DSL.MetaDSL | undefined {
   if (!meta) {
@@ -170,10 +171,14 @@ export function transformSource(source: ViewDSL.SourceDSL): DSL.SourceDSL[] {
   return list;
 }
 
+export interface IContainer {
+  getNodeById(id: string): Node<any> | undefined;
+}
+
 /**
  * 基础节点信息
  */
-abstract class Node<T extends ViewDSL.NameDSL = ViewDSL.NameDSL> {
+export abstract class Node<T extends ViewDSL.NameDSL = ViewDSL.NameDSL> {
   /**
    * 唯一 id
    */
@@ -184,9 +189,9 @@ abstract class Node<T extends ViewDSL.NameDSL = ViewDSL.NameDSL> {
    */
   properties: T;
 
-  container: Container;
+  container: IContainer;
 
-  constructor(id: string, properties: T, container: Container) {
+  constructor(id: string, properties: T, container: IContainer) {
     this.container = container;
     this.id = id;
 
@@ -194,7 +199,7 @@ abstract class Node<T extends ViewDSL.NameDSL = ViewDSL.NameDSL> {
   }
 
   getReference = (id: string): ViewDSL.NameDSL => {
-    return this.container.nodesIndexByUUID.get(id)!.properties;
+    return this.container.getNodeById(id)!.properties;
   };
 }
 
@@ -254,7 +259,7 @@ class Enum extends Node<ViewDSL.EnumDSL> {
 /**
  * 规则
  */
-class Rule extends Node<ViewDSL.RuleDSL> {
+export class Rule extends Node<ViewDSL.RuleDSL> {
   toDSL(): DSL.RuleDSL {
     return transformRule(this.properties);
   }
@@ -328,146 +333,20 @@ class Aggregation extends Node<ViewDSL.AggregationDSL> {
   }
 }
 
-export class Container {
-  aggregations: Aggregation[] = [];
+export abstract class BaseContainer {
+  private postTraverses: (() => void)[] = [];
 
-  /**
-   * 收集所有有效的节点
-   */
-  nodesIndexByUUID: Map<string, Node> = new Map();
+  constructor() {}
 
-  /**
-   * 深度递归遍历
-   * @param tree
-   */
-  constructor(tree: Record<string, Tree>) {
-    this.traverse(tree);
+  abstract handle(node: Tree, tree: Record<string, Tree>): void;
+
+  protected addPostTraverse(fn: () => void) {
+    this.postTraverses.push(fn);
   }
 
-  /**
-   * 转换为聚合 DSL
-   * @returns
-   */
-  toDSL(): DSL.DomainModelDSL {
-    return {
-      aggregates: this.aggregations.map(i => i.toDSL()),
-    };
-  }
-
-  protected traverse(tree: Record<string, Tree>) {
-    const root = tree[ROOT];
-    // 遍历后执行
-    let postHandles: Function[] = [];
-
-    const getParent = (node: Tree) => {
-      const parentId = node.parent;
-      if (parentId == null || parentId === ROOT) {
-        return null;
-      }
-
-      return tree[parentId];
-    };
-
-    const isAggregation = (node: Tree): node is Tree<ViewDSL.AggregationDSL & Properties> => {
-      return node.properties.__node_name__ === 'aggregation';
-    };
-
-    const handle = (node: Tree) => {
-      const type = node.properties.__node_name__;
-
-      if (node.properties.uuid && node.id !== node.properties.uuid) {
-        throw new Error(`uuid 不匹配: ${node.id} ${JSON.stringify(node.properties)}`);
-      }
-
-      switch (type) {
-        case 'aggregation': {
-          const properties = node.properties as ViewDSL.AggregationDSL;
-          const aggregation = new Aggregation(properties.uuid, properties, this);
-          this.nodesIndexByUUID.set(aggregation.id, aggregation);
-
-          this.aggregations.push(aggregation);
-
-          // 聚合
-          break;
-        }
-        case 'entity': {
-          const properties = node.properties as ViewDSL.EntityDSL;
-          const entity = new Entity(properties.uuid, properties, this);
-          this.nodesIndexByUUID.set(entity.id, entity);
-
-          const parent = getParent(node);
-
-          if (parent && isAggregation(parent)) {
-            const aggregation = this.nodesIndexByUUID.get(parent.properties.uuid) as Aggregation;
-            aggregation.entities.push(entity);
-          }
-
-          break;
-        }
-        case 'value-object': {
-          const properties = node.properties as ViewDSL.ValueObjectDSL;
-          const valueObject = new ValueObject(properties.uuid, properties, this);
-          this.nodesIndexByUUID.set(valueObject.id, valueObject);
-
-          const parent = getParent(node);
-
-          if (parent && isAggregation(parent)) {
-            const aggregation = this.nodesIndexByUUID.get(parent.properties.uuid) as Aggregation;
-            aggregation.valueObjects.push(valueObject);
-          }
-
-          break;
-        }
-        case 'enum': {
-          const properties = node.properties as ViewDSL.EnumDSL;
-          const enumObject = new Enum(properties.uuid, properties, this);
-          this.nodesIndexByUUID.set(enumObject.id, enumObject);
-
-          const parent = getParent(node);
-
-          if (parent && isAggregation(parent)) {
-            const aggregation = this.nodesIndexByUUID.get(parent.properties.uuid) as Aggregation;
-            aggregation.enums.push(enumObject);
-          }
-
-          break;
-        }
-        case 'command': {
-          const properties = node.properties as ViewDSL.CommandDSL;
-          const command = new Command(properties.uuid, properties, this);
-
-          this.nodesIndexByUUID.set(command.id, command);
-
-          postHandles.push(() => {
-            if (properties.aggregation) {
-              const aggregation = this.nodesIndexByUUID.get(properties.aggregation.referenceId) as
-                | Aggregation
-                | undefined;
-              aggregation?.commands.push(command);
-            }
-          });
-          break;
-        }
-        case 'rule': {
-          const properties = node.properties as ViewDSL.RuleDSL;
-          const rule = new Rule(properties.uuid, properties, this);
-
-          this.nodesIndexByUUID.set(rule.id, rule);
-
-          postHandles.push(() => {
-            if (properties.aggregator) {
-              const aggregator = this.nodesIndexByUUID.get(properties.aggregator.referenceId) as Command | undefined;
-              aggregator?.rules.push(rule);
-            }
-          });
-
-          break;
-        }
-      }
-    };
-
+  traverse(tree: Record<string, Tree>) {
     const walk = (node: Tree) => {
-      handle(node);
+      this.handle(node, tree);
 
       const childrenKeys = Object.keys(node.children);
       if (childrenKeys) {
@@ -480,8 +359,156 @@ export class Container {
       }
     };
 
+    const root = tree[ROOT];
     walk(root);
-    postHandles.forEach(i => i());
+
+    if (this.postTraverses.length) {
+      const list = this.postTraverses;
+      this.postTraverses = [];
+      for (const fn of list) {
+        fn();
+      }
+    }
+  }
+}
+
+export class Container extends BaseContainer implements IContainer {
+  aggregations: Aggregation[] = [];
+
+  /**
+   * 收集所有有效的节点
+   */
+  nodesIndexByUUID: Map<string, Node> = new Map();
+
+  /**
+   * 深度递归遍历
+   * @param tree
+   */
+  constructor(tree: Record<string, Tree>) {
+    super();
+
+    this.traverse(tree);
+  }
+
+  getNodeById(id: string): Node<any> | undefined {
+    return this.nodesIndexByUUID.get(id);
+  }
+
+  /**
+   * 转换为聚合 DSL
+   * @returns
+   */
+  toDSL(): DSL.DomainModelDSL {
+    return {
+      aggregates: this.aggregations.map(i => i.toDSL()),
+    };
+  }
+
+  handle(node: Tree, tree: Record<string, Tree>): void {
+    const getParent = (n: Tree) => {
+      const parentId = n.parent;
+      if (parentId == null || parentId === ROOT) {
+        return null;
+      }
+
+      return tree[parentId];
+    };
+
+    const isAggregation = (n: Tree): n is Tree<ViewDSL.AggregationDSL & CoreProperties> => {
+      return n.properties.__node_name__ === 'aggregation';
+    };
+
+    const type = node.properties.__node_name__;
+
+    if (node.properties.uuid && node.id !== node.properties.uuid) {
+      throw new Error(`uuid 不匹配: ${node.id} ${JSON.stringify(node.properties)}`);
+    }
+
+    switch (type) {
+      case 'aggregation': {
+        const properties = node.properties as unknown as ViewDSL.AggregationDSL;
+        const aggregation = new Aggregation(properties.uuid, properties, this);
+        this.nodesIndexByUUID.set(aggregation.id, aggregation);
+
+        this.aggregations.push(aggregation);
+
+        // 聚合
+        break;
+      }
+      case 'entity': {
+        const properties = node.properties as unknown as ViewDSL.EntityDSL;
+        const entity = new Entity(properties.uuid, properties, this);
+        this.nodesIndexByUUID.set(entity.id, entity);
+
+        const parent = getParent(node);
+
+        if (parent && isAggregation(parent)) {
+          const aggregation = this.nodesIndexByUUID.get(parent.properties.uuid) as Aggregation;
+          aggregation.entities.push(entity);
+        }
+
+        break;
+      }
+      case 'value-object': {
+        const properties = node.properties as unknown as ViewDSL.ValueObjectDSL;
+        const valueObject = new ValueObject(properties.uuid, properties, this);
+        this.nodesIndexByUUID.set(valueObject.id, valueObject);
+
+        const parent = getParent(node);
+
+        if (parent && isAggregation(parent)) {
+          const aggregation = this.nodesIndexByUUID.get(parent.properties.uuid) as Aggregation;
+          aggregation.valueObjects.push(valueObject);
+        }
+
+        break;
+      }
+      case 'enum': {
+        const properties = node.properties as unknown as ViewDSL.EnumDSL;
+        const enumObject = new Enum(properties.uuid, properties, this);
+        this.nodesIndexByUUID.set(enumObject.id, enumObject);
+
+        const parent = getParent(node);
+
+        if (parent && isAggregation(parent)) {
+          const aggregation = this.nodesIndexByUUID.get(parent.properties.uuid) as Aggregation;
+          aggregation.enums.push(enumObject);
+        }
+
+        break;
+      }
+      case 'command': {
+        const properties = node.properties as unknown as ViewDSL.CommandDSL;
+        const command = new Command(properties.uuid, properties, this);
+
+        this.nodesIndexByUUID.set(command.id, command);
+
+        this.addPostTraverse(() => {
+          if (properties.aggregation) {
+            const aggregation = this.nodesIndexByUUID.get(properties.aggregation.referenceId) as
+              | Aggregation
+              | undefined;
+            aggregation?.commands.push(command);
+          }
+        });
+        break;
+      }
+      case 'rule': {
+        const properties = node.properties as unknown as ViewDSL.RuleDSL;
+        const rule = new Rule(properties.uuid, properties, this);
+
+        this.nodesIndexByUUID.set(rule.id, rule);
+
+        this.addPostTraverse(() => {
+          if (properties.aggregator) {
+            const aggregator = this.nodesIndexByUUID.get(properties.aggregator.referenceId) as Command | undefined;
+            aggregator?.rules.push(rule);
+          }
+        });
+
+        break;
+      }
+    }
   }
 }
 

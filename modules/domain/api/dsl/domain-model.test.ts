@@ -6,6 +6,8 @@ import {
   transformMethods,
   transformEnum,
   transformRule,
+  BaseContainer,
+  Tree,
 } from './domain-model';
 import * as ViewDSL from '@/modules/domain/domain-design/dsl/dsl';
 
@@ -583,6 +585,21 @@ const DATA = {
     },
   },
 };
+
+test('BaseContainer', () => {
+  class MyContainer extends BaseContainer {
+    ids: string[] = [];
+
+    handle(node: Tree<any>): void {
+      this.ids.push(node.id);
+    }
+  }
+
+  const c = new MyContainer();
+  c.traverse(DATA as any);
+
+  expect(c.ids).toMatchSnapshot();
+});
 
 test('Container', () => {
   const container = new Container(DATA as any);

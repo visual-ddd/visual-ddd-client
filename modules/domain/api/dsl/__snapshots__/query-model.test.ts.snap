@@ -1,0 +1,92 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`query-model 1`] = `
+{
+  "dtos": [
+    {
+      "description": "",
+      "meta": {},
+      "name": "Untitled",
+      "properties": [
+        {
+          "access": "public",
+          "description": "",
+          "meta": {},
+          "name": "untitled",
+          "title": "未命名",
+          "type": "Hello",
+          "uuid": "6087b8e2-a8b9-418d-8f6b-8645a7129b2e",
+        },
+      ],
+      "title": "未命名",
+      "uuid": "5cabbc44-31d2-4e8f-a684-0a375aa6cfac",
+    },
+    {
+      "description": "",
+      "meta": {},
+      "name": "Hello",
+      "properties": [
+        {
+          "access": "public",
+          "description": "",
+          "meta": {},
+          "name": "untitled",
+          "title": "未命名",
+          "type": "String",
+          "uuid": "6087b8e2-a8b9-418d-8f6b-8645a7129b2e",
+        },
+      ],
+      "title": "你好",
+      "uuid": "copy-e4d09acc-a697-4efe-b395-f30dace34efb",
+    },
+  ],
+  "queries": [
+    {
+      "description": "",
+      "meta": {},
+      "name": "Untitled",
+      "pagination": true,
+      "properties": [
+        {
+          "access": "public",
+          "description": "",
+          "meta": {},
+          "name": "untitled",
+          "title": "未命名",
+          "type": "String",
+          "uuid": "ee44580e-21a3-4382-add0-78e73a40c205",
+        },
+      ],
+      "return": {
+        "type": "Untitled",
+      },
+      "rules": [
+        {
+          "description": "规则描述",
+          "meta": {},
+          "name": "Untitled",
+          "title": "未命名",
+          "uuid": "43010e5d-a220-4c8c-a316-89580365b7cf",
+        },
+        {
+          "description": "规则描述",
+          "meta": {},
+          "name": "Untitled2",
+          "title": "未命名",
+          "uuid": "copy-119847fd-8c27-4d68-8460-f4faa058cf68",
+        },
+      ],
+      "source": [
+        {
+          "type": "http",
+        },
+        {
+          "type": "rpc",
+        },
+      ],
+      "title": "未命名",
+      "uuid": "f0934375-2d49-4bc9-bf05-9e81ff44455d",
+    },
+  ],
+}
+`;

@@ -40,7 +40,15 @@ export interface NameDSL extends IDDSL {
 }
 
 export interface BusinessDomainDSL {
+  /**
+   * 领域模型
+   */
   domainModel: DomainModelDSL;
+
+  /**
+   * 查询模型
+   */
+  queryModel: QueryModelDSL;
 }
 
 export interface DomainModelDSL {
@@ -48,6 +56,11 @@ export interface DomainModelDSL {
    * 聚合
    */
   aggregates: AggregateDSL[];
+}
+
+export interface QueryModelDSL {
+  queries: QueryDSL[];
+  dtos: DTODSL[];
 }
 
 /**
@@ -234,6 +247,43 @@ export interface CommandDSL extends NameDSL {
   // 规则， 默认为 []
   rules?: RuleDSL[];
 
-  // 命令返回值，默认为 空。 备注：可能不符合 CQRS 严格定义
+  /**
+   * 命令返回值，默认为 空。 备注：可能不符合 CQRS 严格定义
+   */
   return?: ReturnDSL;
+}
+
+/**
+ * DTO 定义
+ */
+export interface DTODSL extends ClassDSL {}
+
+/**
+ * 查询定义
+ */
+export interface QueryDSL extends NameDSL {
+  /**
+   * 查询触发来源
+   */
+  source: SourceDSL[];
+
+  /**
+   * 查询属性
+   */
+  properties: PropertyDSL[];
+
+  /**
+   * 分页返回
+   */
+  pagination: boolean;
+
+  /**
+   * 规则
+   */
+  rules?: RuleDSL[];
+
+  /**
+   * 查询返回值，默认为 空。
+   */
+  return: ReturnDSL;
 }
