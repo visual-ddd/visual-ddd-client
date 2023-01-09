@@ -1,5 +1,4 @@
 import { Cell } from '@antv/x6';
-import { useMemo } from 'react';
 import { useEditorModel } from '../../Model';
 
 /**
@@ -9,12 +8,8 @@ import { useEditorModel } from '../../Model';
 export function useShapeModel(cell: Cell) {
   const { index, formStore, commandHandler } = useEditorModel();
 
-  const [model, formModel] = useMemo(() => {
-    const model = index.getNodeById(cell.id)!;
-    const formModel = formStore.getFormModel(cell.id)!;
-
-    return [model, formModel];
-  }, [cell.id, index, formStore]);
+  const model = index.getNodeById(cell.id)!;
+  const formModel = formStore.getFormModel(cell.id)!;
 
   return {
     /**

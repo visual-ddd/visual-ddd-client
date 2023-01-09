@@ -1,5 +1,7 @@
-import { command, derive, effect, makeAutoBindThis, mutation, runInCommand } from '@/lib/store';
+import { command, derive, effect, makeAutoBindThis, mutation } from '@/lib/store';
+import { debounce } from '@wakeapp/utils';
 import { makeObservable, observable } from 'mobx';
+
 import { getRules } from '../Shape';
 
 import { BaseEditorEvent } from './BaseEditorEvent';
@@ -7,6 +9,7 @@ import { BaseEditorModel } from './BaseEditorModel';
 import { BaseEditorStore } from './BaseEditorStore';
 import { BaseNode } from './BaseNode';
 import { FormModel, FormRules } from './FormModel';
+import { tryDispose } from './IDisposable';
 
 const DEFAULT_RULES: FormRules = {
   fields: {},
@@ -22,6 +25,9 @@ export class BaseEditorFormStore {
 
   @observable.shallow
   private formModels: Map<string, FormModel> = new Map();
+
+  @observable.shallow
+  private formModelsWillRemove: Map<string, FormModel> = new Map();
 
   @derive
   get nodesHasIssue() {
@@ -72,7 +78,9 @@ export class BaseEditorFormStore {
    * @param id
    */
   getFormModel(id: string | BaseNode): FormModel | undefined {
-    return this.formModels.get(typeof id === 'object' ? id.id : id);
+    const key = typeof id === 'object' ? id.id : id;
+
+    return this.formModels.get(key) || this.formModelsWillRemove.get(key);
   }
 
   /**
@@ -110,17 +118,19 @@ export class BaseEditorFormStore {
       return;
     }
 
-    const model = this.formModels.get(node.id)!;
-    // 删除可以延迟一些
-    requestAnimationFrame(() => {
-      // 有可能重新创建了新的 node
-      const currentModel = this.formModels.get(node.id);
-      if (currentModel === model) {
-        runInCommand(undefined, () => {
-          this.removeFormModel({ node });
-        });
+    const currentModel = this.formModels.get(node.id);
+    if (currentModel) {
+      const willRemove = this.formModelsWillRemove.get(currentModel.id);
+
+      this.formModelsWillRemove.set(currentModel.id, currentModel);
+      this.formModels.delete(currentModel.id);
+
+      if (willRemove) {
+        tryDispose(willRemove);
       }
-    });
+
+      this.gc();
+    }
   }
 
   @mutation('FORM_STORE:ADD_FORM_MODEL')
@@ -133,4 +143,14 @@ export class BaseEditorFormStore {
   protected removeFormModel(params: { node: BaseNode }) {
     this.formModels.delete(params.node.id);
   }
+
+  @mutation('FORM_STORE:GC', false)
+  protected clearWillRemoved() {
+    this.formModelsWillRemove.clear();
+  }
+
+  private gc = debounce(() => {
+    this.formModelsWillRemove.forEach(m => tryDispose(m));
+    this.clearWillRemoved();
+  }, 2000);
 }

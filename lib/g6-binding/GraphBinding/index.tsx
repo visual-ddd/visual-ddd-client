@@ -247,6 +247,7 @@ export const GraphBinding = memo((props: GraphBindingProps) => {
     type EventName = string;
     type CellID = string;
     const eventListeners: Map<EventName, Map<CellID, Function>> = new Map();
+    const KEEP_ALIVE_TIMEOUT = 300;
 
     // 销毁节点回收
     disposer.push(() => {
@@ -266,7 +267,7 @@ export const GraphBinding = memo((props: GraphBindingProps) => {
 
         for (const [key, instance] of recycleBind.entries()) {
           // 10s 过期回收
-          if (now - instance.createDate >= 1000) {
+          if (now - instance.createDate >= KEEP_ALIVE_TIMEOUT) {
             // 回收
             keysToRemove.push(key);
           }
@@ -285,7 +286,7 @@ export const GraphBinding = memo((props: GraphBindingProps) => {
           // 继续调度
           gc();
         }
-      }, 1000);
+      }, KEEP_ALIVE_TIMEOUT);
     };
 
     const setCellVisible = (id: string, visible: boolean) => {
@@ -553,7 +554,6 @@ export const GraphBinding = memo((props: GraphBindingProps) => {
           ref={minimapRef}
         ></div>
       )}
-      <div></div>
     </>
   );
 });

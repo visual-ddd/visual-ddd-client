@@ -1,9 +1,9 @@
 import { BaseEditorEvent, BaseEditorModel, BaseNode, tryDispose } from '@/lib/editor';
-import { command, derive } from '@/lib/store';
-import { booleanPredicate } from '@wakeapp/utils';
-import { makeObservable, observable, runInAction } from 'mobx';
+import { command, derive, mutation } from '@/lib/store';
+import { booleanPredicate, debounce } from '@wakeapp/utils';
+import { makeObservable, observable } from 'mobx';
 
-import { DomainObjectName, NameDSL } from '../dsl';
+import { NameDSL } from '../dsl';
 import { DomainObject } from './DomainObject';
 import { DomainObjectEvent } from './DomainObjectEvent';
 import { DomainObjectFactory } from './DomainObjectFactory';
@@ -22,8 +22,14 @@ export class DomainObjectStore {
   /**
    * 所有对象
    */
-  @observable
-  objects: Map<string, DomainObject<NameDSL>> = new Map();
+  @observable.shallow
+  protected objects: Map<string, DomainObject<NameDSL>> = new Map();
+
+  /**
+   * 即将移除的对象
+   */
+  @observable.shallow
+  protected objectsWillRemoved: Map<string, DomainObject<NameDSL>> = new Map();
 
   /**
    * 对象数组
@@ -154,19 +160,20 @@ export class DomainObjectStore {
     });
 
     this.event.on('NODE_REMOVED', ({ node }) => {
-      const currentBeforeDelete = this.objects.get(node.id);
+      const obj = this.objects.get(node.id);
 
       // 延迟删除, 方便其他地方计算依赖关系
-      requestAnimationFrame(() => {
-        const current = this.objects.get(node.id);
-        // 可能重新添加了
-        if (currentBeforeDelete === current) {
-          runInAction(() => {
-            tryDispose(current);
-            this.objects.delete(node.id);
-          });
+      if (obj) {
+        const willRemove = this.objectsWillRemoved.get(obj.id);
+        this.objectsWillRemoved.set(obj.id, obj);
+        this.objects.delete(obj.id);
+
+        if (willRemove) {
+          tryDispose(willRemove);
         }
-      });
+
+        this.gc();
+      }
     });
 
     this.validateManager = new DomainValidateManager({
@@ -189,29 +196,7 @@ export class DomainObjectStore {
       return undefined;
     }
 
-    return this.objects.get(id);
-  }
-
-  /**
-   * 根据名称获取对象
-   * @param name
-   * @param type
-   */
-  getObjectsByName(name: string, type?: DomainObjectName[]): DomainObject<NameDSL>[] {
-    const result: DomainObject<NameDSL>[] = [];
-    for (const item of this.objectsInArray) {
-      if (item.name !== name) {
-        continue;
-      }
-
-      if (type && !type.includes(item.shapeName)) {
-        continue;
-      }
-
-      result.push(item);
-    }
-
-    return result;
+    return this.objects.get(id) || this.objectsWillRemoved.get(id);
   }
 
   /**
@@ -254,4 +239,14 @@ export class DomainObjectStore {
   emitNameChanged(params: { node: BaseNode; object: DomainObject<NameDSL> }) {
     this.domainObjectEvent.emit('OBJECT_NAME_CHANGED', params);
   }
+
+  @mutation('OBJECT_STORE:GC', false)
+  private removeWillRemoved() {
+    this.objectsWillRemoved.clear();
+  }
+
+  private gc = debounce(() => {
+    this.objectsWillRemoved.forEach(i => tryDispose(i));
+    this.removeWillRemoved();
+  }, 2000);
 }

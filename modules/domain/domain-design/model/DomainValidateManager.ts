@@ -63,6 +63,7 @@ export class DomainValidateManager {
       const { node } = evt;
 
       this.checkFull(node);
+      this.cancelNever(node.id);
     });
 
     /**
@@ -163,6 +164,9 @@ export class DomainValidateManager {
       return;
     }
 
+    // 自身命名检查
+    this.push(object.id, CheckScope.Name);
+
     // 容器检查
     if (object.package) {
       this.push(object.package.id, CheckScope.Root);
@@ -182,6 +186,12 @@ export class DomainValidateManager {
     }
 
     this.validate();
+  }
+
+  private cancelNever(id: string) {
+    if (this.queue.has(id)) {
+      this.queue.get(id)?.delete(CheckScope.Never);
+    }
   }
 
   /**

@@ -1,6 +1,9 @@
 import { observable } from 'mobx';
+import { debounce } from '@wakeapp/utils';
+
 import { BaseEditorEvent } from './BaseEditorEvent';
 import { BaseNode } from './BaseNode';
+import { tryDispose } from './IDisposable';
 
 /**
  * 编辑器索引信息
@@ -8,6 +11,12 @@ import { BaseNode } from './BaseNode';
 export class BaseEditorIndex {
   @observable.shallow
   private nodeIndexById: Map<string, BaseNode> = new Map();
+
+  /**
+   * 即将删除的节点
+   */
+  @observable.shallow
+  private nodeWillBeRemoved: Map<string, BaseNode> = new Map();
 
   private event: BaseEditorEvent;
 
@@ -32,7 +41,7 @@ export class BaseEditorIndex {
    * @returns
    */
   getNodeById(id: string) {
-    return this.nodeIndexById.get(id);
+    return this.nodeIndexById.get(id) || this.nodeWillBeRemoved.get(id);
   }
 
   private addNode = (params: { node: BaseNode }) => {
@@ -42,13 +51,23 @@ export class BaseEditorIndex {
 
   private removeNode = (params: { node: BaseNode }) => {
     const { node } = params;
-    // 删除可以延迟一些
-    requestAnimationFrame(() => {
-      // 有可能重新创建了新的 node
-      const currentNode = this.nodeIndexById.get(node.id);
-      if (currentNode === node) {
-        this.nodeIndexById.delete(node.id);
+    const currentNode = this.nodeIndexById.get(node.id);
+
+    if (currentNode) {
+      const willRemoveNode = this.nodeWillBeRemoved.get(node.id);
+      this.nodeWillBeRemoved.set(node.id, currentNode);
+      this.nodeIndexById.delete(node.id);
+
+      if (willRemoveNode) {
+        tryDispose(willRemoveNode);
       }
-    });
+
+      this.gc();
+    }
   };
+
+  private gc = debounce(() => {
+    this.nodeWillBeRemoved.forEach(m => tryDispose(m));
+    this.nodeWillBeRemoved.clear();
+  }, 2000);
 }
