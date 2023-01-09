@@ -121,6 +121,7 @@ export class BaseEditorDatasource {
   private undoManager: UndoManager;
   private updateQueue: Function[] = [];
   private updatePending: boolean = false;
+  private postPullQueue: Function[] = [];
 
   constructor(inject: {
     store: BaseEditorStore;
@@ -276,6 +277,7 @@ export class BaseEditorDatasource {
     const childModel = this.index.getNodeById(childId);
 
     if (parentModel == null || childModel == null) {
+      console.warn(`addChild parentModel or childModel is null, 出现悬挂节点`, parentId, parentModel, childModel);
       return;
     }
 
@@ -289,6 +291,8 @@ export class BaseEditorDatasource {
     const childModel = this.index.getNodeById(childId);
 
     if (parentModel == null || childModel == null) {
+      console.warn(`removeChild parentModel or childModel is null, 出现悬挂节点`, parentId, parentModel, childModel);
+
       return;
     }
 
@@ -365,7 +369,9 @@ export class BaseEditorDatasource {
 
                 // 已经包含了 parent, 因为是原子操作，parent 变更可能不会触发额外的事件
                 if (node.parent) {
-                  this.handleAddChild({ parentId: node.parent, childId: node.id });
+                  this.postPullQueue.push(() => {
+                    this.handleAddChild({ parentId: node.parent!, childId: node.id });
+                  });
                 }
                 break;
               }
@@ -374,7 +380,9 @@ export class BaseEditorDatasource {
 
                 // removeChild 有一定几率会收不到，这里进行删除，只要确保 removeChild 幂等就行
                 if (node?.parent) {
-                  this.handleRemoveChild({ parentId: node.parent.id, childId: key });
+                  this.postPullQueue.push(() => {
+                    this.handleRemoveChild({ parentId: node.parent!.id, childId: key });
+                  });
                 }
 
                 break;
@@ -401,21 +409,35 @@ export class BaseEditorDatasource {
           for (const [key, action] of evt.keys) {
             switch (action.action) {
               case 'add':
-                this.handleAddChild({
-                  parentId: parentPO.id,
-                  childId: key,
+                this.postPullQueue.push(() => {
+                  this.handleAddChild({
+                    parentId: parentPO.id,
+                    childId: key,
+                  });
                 });
                 break;
               case 'delete':
-                this.handleRemoveChild({
-                  parentId: parentPO.id,
-                  childId: key,
+                this.postPullQueue.push(() => {
+                  this.handleRemoveChild({
+                    parentId: parentPO.id,
+                    childId: key,
+                  });
                 });
                 break;
             }
           }
         }
       }
+
+      // 后更新，这里主要是等待所有任务处理完成，比如可以更靠谱地获取到父节点
+      if (this.postPullQueue) {
+        const q = this.postPullQueue;
+        if (q.length) {
+          this.postPullQueue = [];
+          q.forEach(i => i());
+        }
+      }
+      console.log('datasource change end');
     });
   }
 
