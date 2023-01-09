@@ -1,0 +1,8 @@
+./node_modules
+.swc
+.next/cache
+.next/server
+./lib
+./modules
+./pages
+./scripts
