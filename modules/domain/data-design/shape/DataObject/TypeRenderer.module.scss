@@ -1,0 +1,17 @@
+.root {
+  font-weight: bold;
+
+  &:global(.error) {
+    color: var(--vd-color-danger-400);
+  }
+
+  &:global(.link) {
+    color: var(--vd-color-link);
+    cursor: pointer;
+
+    &:hover {
+      color: var(--vd-color-link-hover);
+      text-decoration: underline;
+    }
+  }
+}

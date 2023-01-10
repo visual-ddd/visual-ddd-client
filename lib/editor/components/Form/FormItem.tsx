@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
-import { reaction } from 'mobx';
+import { reaction, runInAction } from 'mobx';
 import { ReactNode, cloneElement, isValidElement, useMemo, useEffect } from 'react';
 
 import { useEditorFormContext } from './FormContext';
@@ -74,6 +74,13 @@ export interface EditorFormItemProps extends EditorFormItemBaseProps {
    * @returns
    */
   onBeforeChange?: (value: any) => any;
+
+  /**
+   * 监听数据变更
+   * @param value
+   * @returns
+   */
+  onChange?: (value: any) => any;
 }
 
 export function defaultGetValueFromEvent(valuePropName: string, ...args: any[]) {
@@ -117,6 +124,7 @@ export const EditorFormItem = observer(function EditorFormItem(props: EditorForm
     validateTrigger = 'onChange',
     valuePropName = 'value',
     onBeforeChange = identity,
+    onChange,
     aggregated = false,
     dependencies,
     dependenciesTriggerWhenTouched = true,
@@ -158,9 +166,13 @@ export const EditorFormItem = observer(function EditorFormItem(props: EditorForm
         [valuePropName]: formModel.getProperty(path),
         [trigger]: (evt: any) => {
           let value = defaultGetValueFromEvent(valuePropName, evt);
-          value = onBeforeChange(value);
+          runInAction(() => {
+            value = onBeforeChange(value);
 
-          formModel.setProperty(path, value);
+            formModel.setProperty(path, value);
+
+            onChange?.(value);
+          });
         },
       };
 

@@ -145,7 +145,6 @@ export type DataObjectString = {
  */
 export type DataObjectText = {
   type: DataObjectTypeName.Text;
-  defaultValue?: string;
 };
 
 /**
@@ -153,7 +152,6 @@ export type DataObjectText = {
  */
 export type DataObjectLongText = {
   type: DataObjectTypeName.LongText;
-  defaultValue?: string;
 };
 
 export enum DataObjectReferenceCardinality {
@@ -221,12 +219,17 @@ export interface DataObjectPropertyDSL<T extends DataObjectTypeDSL = DataObjectT
    * 是否非空
    */
   notNull?: boolean;
+
+  /**
+   * 是否为主键
+   */
+  primaryKey?: boolean;
 }
 
 export enum DataObjectIndexType {
   Normal = 'Normal',
   Unique = 'Unique',
-  PrimaryKey = 'Primary',
+  // PrimaryKey = 'Primary',
   FullText = 'FullText',
 }
 

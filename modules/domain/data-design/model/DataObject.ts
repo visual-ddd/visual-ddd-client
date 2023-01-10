@@ -1,4 +1,7 @@
 import { BaseNode } from '@/lib/editor';
+import { UntitledInHumanReadable, UntitledInUpperCamelCase } from '../../domain-design/dsl/constants';
+import { derive } from '@/lib/store';
+
 import { DataObjectStore } from './DataObjectStore';
 import {
   DataObjectDSL,
@@ -7,7 +10,6 @@ import {
   DataObjectReferenceCardinality,
   DataObjectTypeName,
 } from '../dsl';
-import { derive } from '@/lib/store';
 
 export interface DataObjectInject {
   node: BaseNode;
@@ -62,6 +64,34 @@ export class DataObject {
    */
   get dsl() {
     return this.node.properties as unknown as DataObjectDSL;
+  }
+
+  get name() {
+    return this.dsl.name || UntitledInUpperCamelCase;
+  }
+
+  get title() {
+    return this.dsl.title || UntitledInHumanReadable;
+  }
+
+  get readableTitle() {
+    return `${this.title}(${this.name})`;
+  }
+
+  /**
+   * 可引用的属性
+   */
+  @derive
+  get referableProperties() {
+    return this.dsl.properties.filter(i => i.type.type !== DataObjectTypeName.Reference);
+  }
+
+  /**
+   * 主键属性
+   */
+  @derive
+  get primaryKeyProperties() {
+    return this.dsl.properties.filter(i => i.primaryKey);
   }
 
   /**
@@ -155,7 +185,15 @@ export class DataObject {
    */
   getPropertyById(id: string) {
     return this.dsl.properties.find(i => {
-      i.uuid === id;
+      return i.uuid === id;
     });
+  }
+
+  /**
+   * 获取主键的顺序
+   * @param id
+   */
+  getPrimaryKeyIndex(id: string) {
+    return this.primaryKeyProperties.findIndex(i => i.uuid === id);
   }
 }

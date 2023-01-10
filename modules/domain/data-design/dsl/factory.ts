@@ -103,14 +103,12 @@ export function createDataObjectString(): DataObjectString {
 export function createDataObjectText(): DataObjectText {
   return {
     type: DataObjectTypeName.Text,
-    defaultValue: undefined,
   };
 }
 
 export function createDataObjectLongText(): DataObjectLongText {
   return {
     type: DataObjectTypeName.LongText,
-    defaultValue: undefined,
   };
 }
 
@@ -166,6 +164,7 @@ export function createDataObjectPropertyDSL(
     ...createNameDSL({ wordCase: 'camelCase', title: false }),
     propertyName: undefined,
     notNull: false,
+    primaryKey: false,
     type: createDataObjectType(type),
   };
 }

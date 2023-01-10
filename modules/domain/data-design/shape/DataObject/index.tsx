@@ -1,6 +1,7 @@
 import { defineShape, ShapeComponentProps, useShapeModel } from '@/lib/editor';
 import { ReactComponentBinding, ReactComponentProps, registerReactComponent } from '@/lib/g6-binding';
 import { createDataObjectDSL, DataObjectDSL, DataObjectName } from '../../dsl';
+import { DataObjectEditor } from './DataObjectEditor';
 
 const DataObjectReactShapeComponent = (props: ReactComponentProps) => {
   // @ts-expect-error
@@ -16,7 +17,7 @@ const DataObjectShapeComponent = (props: ShapeComponentProps) => {
 };
 
 const DataObjectAttributeComponent = () => {
-  return <div>TODO</div>;
+  return <DataObjectEditor />;
 };
 
 defineShape({
