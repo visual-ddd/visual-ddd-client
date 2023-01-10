@@ -1,5 +1,5 @@
 import { BaseEditorEvent, BaseEditorModel, BaseNode, tryDispose } from '@/lib/editor';
-import { command, derive, mutation } from '@/lib/store';
+import { command, derive, makeAutoBindThis, mutation } from '@/lib/store';
 import { booleanPredicate, debounce } from '@wakeapp/utils';
 import { makeObservable, observable } from 'mobx';
 
@@ -184,6 +184,7 @@ export class DomainObjectStore {
     });
 
     makeObservable(this);
+    makeAutoBindThis(this);
   }
 
   /**

@@ -177,7 +177,7 @@ export type DataObjectReference = {
   /**
    * 目标对象字段 ID
    */
-  targetField?: string;
+  targetProperty?: string;
 
   /**
    * 基数关系
@@ -206,7 +206,7 @@ export type DataObjectTypeDSL =
 /**
  * 数据对象字段
  */
-export interface DataObjectPropertyDSL extends NameDSL {
+export interface DataObjectPropertyDSL<T extends DataObjectTypeDSL = DataObjectTypeDSL> extends NameDSL {
   /**
    * 表字段名，默认为 name 的 kebab_case 模式
    */
@@ -215,7 +215,7 @@ export interface DataObjectPropertyDSL extends NameDSL {
   /**
    * 字段类型
    */
-  type: DataObjectTypeDSL;
+  type: T;
 
   /**
    * 是否非空
