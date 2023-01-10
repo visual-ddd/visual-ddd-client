@@ -7,6 +7,7 @@ import { TitleInput } from '@/modules/domain/domain-design/dsl/components/TitleI
 import { NameTooltip, UntitledInUpperCamelCase } from '@/modules/domain/domain-design/dsl/constants';
 import { NameInput } from '@/modules/domain/domain-design/dsl';
 import { PropertiesEditor } from './PropertiesEditor';
+import { IndexesEditor } from './IndexesEditor';
 
 const DEFAULT_ACTIVE = ['base', 'properties', 'indexes'];
 
@@ -63,7 +64,7 @@ export const DataObjectEditor = () => {
         <PropertiesEditor />
       </EditorFormCollapsePanel>
       <EditorFormCollapsePanel header="索引" key="indexes" path="indexes">
-        索引
+        <IndexesEditor />
       </EditorFormCollapsePanel>
     </EditorFormCollapse>
   );

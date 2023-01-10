@@ -1,4 +1,4 @@
-import { DataObjectTypeName } from './dsl';
+import { DataObjectIndexMethod, DataObjectIndexType, DataObjectTypeName } from './dsl';
 
 export enum DataObjectName {
   DataObject = 'dataObject',
@@ -22,6 +22,23 @@ export const DataObjectTypeList: { name: DataObjectTypeName; label: string }[] =
 
 export const DATE_FORMAT = 'YYYY-MM-DD';
 export const DATE_TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
+
+export const DataObjectIndexTypeName: Record<DataObjectIndexType, string> = {
+  [DataObjectIndexType.Normal]: '普通索引',
+  [DataObjectIndexType.Unique]: '唯一索引',
+  [DataObjectIndexType.FullText]: '全文索引',
+};
+
+export const DataObjectIndexListList: { name: DataObjectIndexType; label: string }[] = [
+  { name: DataObjectIndexType.Normal, label: DataObjectIndexTypeName[DataObjectIndexType.Normal] },
+  { name: DataObjectIndexType.Unique, label: DataObjectIndexTypeName[DataObjectIndexType.Unique] },
+  { name: DataObjectIndexType.FullText, label: DataObjectIndexTypeName[DataObjectIndexType.FullText] },
+];
+
+export const DataObjectIndexMethodList: { name: DataObjectIndexMethod; label: string }[] = [
+  { name: DataObjectIndexMethod.BTREE, label: 'BTREE' },
+  { name: DataObjectIndexMethod.HASH, label: 'HASH' },
+];
 
 /**
  * 支持默认值的字段类型
