@@ -72,7 +72,7 @@ export interface NameDSL extends IDDSL {
 /**
  * 标识符命名规则
  */
-export type NameCase = 'CamelCase' | 'camelCase' | 'SNAKE_CASE';
+export type NameCase = 'CamelCase' | 'camelCase' | 'SNAKE_CASE' | 'snake_case';
 
 export type BaseType =
   | 'String'

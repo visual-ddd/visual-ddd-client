@@ -30,7 +30,8 @@ export function allow(c: string, currentValue: string, nameCase: NameCase) {
     }
 
     switch (nameCase) {
-      case 'camelCase': {
+      case 'camelCase':
+      case 'snake_case': {
         if (isLetter && !isLowerCase(c)) {
           return false;
         }
@@ -48,8 +49,14 @@ export function allow(c: string, currentValue: string, nameCase: NameCase) {
 
   const isAllowChar = all.has(lowC);
 
-  if (isAllowChar && nameCase === 'SNAKE_CASE' && isLetter && isLowerCase(c)) {
-    return false;
+  if (isAllowChar) {
+    if (nameCase === 'SNAKE_CASE' && isLetter && isLowerCase(c)) {
+      // 仅支持大写
+      return false;
+    } else if (nameCase === 'snake_case' && isLetter && isUpperCase(c)) {
+      // 仅支持小写
+      return false;
+    }
   }
 
   return isAllowChar;
