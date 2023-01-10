@@ -21,7 +21,7 @@ export function reactifyProperty(object: DataObjectDSL, property: DataObjectProp
   return (
     <div className={classNames('vd-data-property', s.root)}>
       <PrimaryKeyRenderer object={object} property={property} />
-      <span>
+      <span className={classNames('vd-data-property__name', s.name)}>
         {property.name || UntitledInCamelCase}: {reactifyType(property.type)}
       </span>
     </div>

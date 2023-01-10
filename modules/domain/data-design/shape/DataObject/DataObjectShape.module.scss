@@ -1,0 +1,40 @@
+.root {
+  min-width: 200px;
+  max-width: 500px;
+  background-color: #c7e0ff;
+  border: 2px solid var(--vd-color-gray-900);
+  border-radius: 5px;
+}
+
+.header {
+  border-bottom: 1px solid var(--vd-color-gray-800);
+  text-align: center;
+  padding: var(--vd-spacing-sm) 4px;
+  word-break: break-all;
+  font-weight: bold;
+}
+
+.body {
+  min-height: 10px;
+}
+
+.property {
+  padding: 2px 4px;
+  font-size: var(--vd-font-size-h5);
+  display: flex;
+  align-items: center;
+}
+
+.name {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.title {
+  max-width: 8em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--vd-color-font-regular);
+  padding-left: 4px;
+}
