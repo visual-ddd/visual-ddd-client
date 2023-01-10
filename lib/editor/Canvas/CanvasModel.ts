@@ -148,7 +148,7 @@ export class CanvasModel {
           name: 'stroke',
           args: {
             attrs: {
-              'stroke-width': 4,
+              'stroke-width': 6,
               stroke: '#3ba0ffad',
             },
           },
@@ -194,6 +194,7 @@ export class CanvasModel {
       embedding: {
         enabled: true,
         findParent: 'bbox',
+        frontOnly: false,
         // 验证是否支持拖入
         validate(context) {
           return shapeRegistry.isEmbeddable({

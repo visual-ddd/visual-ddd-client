@@ -35,24 +35,25 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 ## TODO
 
+- 子元素 resize，auto 扩展父元素
 - MemberList 支持双击编辑
-- 父级内嵌算法优化
+- MemberList FormItem 支持 dependencies 支持 watch 通配符？但是这里其他 formItem 并不渲染, 扩展一个 notify? 或者自定义触发验证，比如在 onBlur 时触发其他列的验证
+- 数据对象依赖关系计算和渲染
+- 数据对象验证
 - rule 包含 label, 更好的信息提示
 - 引用关系支持可见性控制
-- 告警信息定位
+- 表单告警信息定位
 - 验证性能优化
-- 保存时验证，并存储验证状态
 - NameInput 支持全选
-- node edit
-- label edit
-- 子元素 resize，auto 扩展父元素
 - 只读模式
 - 右键菜单, 画布，节点，组件树
+- MemberList 编辑友好高亮提示
 - layout 支持折叠
 - edge/node selected 状态高亮
 - 被其他成员选中的不能修改
 - 持久化 viewState
 - 边拖入
 - 无连接桩连接交互
-- 支持切换图形类型
 - updateProperty debounce 发布 yjs 事件, 使用合并事件形式
+- node edit
+- label edit
