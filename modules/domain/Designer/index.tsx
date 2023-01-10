@@ -5,6 +5,7 @@ import { message, Tabs } from 'antd';
 import { DomainDesignerTabs, DomainDesignerTabsMap, DomainDesignerModel } from './model';
 
 import { DomainEditor } from '../domain-design';
+import { DataObjectEditor } from '../data-design';
 
 import s from './index.module.scss';
 import { DomainDesignerContextProvider } from './Context';
@@ -64,7 +65,12 @@ const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerPro
     {
       label: DomainDesignerTabsMap[DomainDesignerTabs.DataModel],
       key: DomainDesignerTabs.DataModel,
-      children: <div>敬请期待</div>,
+      children: (
+        <DataObjectEditor
+          model={model.dataObjectEditorModel}
+          active={model.activeTab === DomainDesignerTabs.DataModel}
+        ></DataObjectEditor>
+      ),
     },
     {
       label: DomainDesignerTabsMap[DomainDesignerTabs.Mapping],

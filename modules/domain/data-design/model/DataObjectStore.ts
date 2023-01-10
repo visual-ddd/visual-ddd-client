@@ -2,6 +2,7 @@ import { BaseEditorEvent, BaseEditorModel, tryDispose } from '@/lib/editor';
 import { derive, makeAutoBindThis, mutation } from '@/lib/store';
 import { debounce } from '@wakeapp/utils';
 import { makeObservable, observable } from 'mobx';
+import { DataObjectName } from '../dsl';
 
 import { DataObject } from './DataObject';
 
@@ -35,6 +36,10 @@ export class DataObjectStore {
     this.editorModel = editorModel;
 
     this.event.on('NODE_CREATED', ({ node }) => {
+      if (node.name !== DataObjectName.DataObject) {
+        return;
+      }
+
       const object = new DataObject({ node, store: this });
       const current = this.objects.get(node.id);
 

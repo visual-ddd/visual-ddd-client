@@ -7,6 +7,7 @@ import { DomainEditorModel, createDomainEditorModel } from '../../domain-design'
 import { createQueryEditorModel } from '../../query-design';
 
 import { DomainDesignerTabs } from './constants';
+import { createDataObjectEditorModel, DataObjectEditorModel } from '../../data-design';
 
 const KEY_ACTIVE_TAB = 'DESIGNER:activeTab';
 
@@ -34,6 +35,11 @@ export class DomainDesignerModel {
   queryEditorModel: DomainEditorModel;
 
   /**
+   * 数据对象编辑器
+   */
+  dataObjectEditorModel: DataObjectEditorModel;
+
+  /**
    * 当前激活的 Tab
    */
   @observable
@@ -59,11 +65,14 @@ export class DomainDesignerModel {
 
     const domainDatabase = doc.getMap('domain');
     const queryDatabase = doc.getMap('query');
+    const dataObjectDatabase = doc.getMap('data-object');
 
+    // TODO: 观测加载状态
     new WebrtcProvider(id, doc);
 
     this.domainEditorModel = createDomainEditorModel({ datasource: domainDatabase, doc: this.ydoc });
     this.queryEditorModel = createQueryEditorModel({ datasource: queryDatabase, doc: this.ydoc });
+    this.dataObjectEditorModel = createDataObjectEditorModel({ datasource: dataObjectDatabase, doc: this.ydoc });
 
     this.tabs = [
       {
@@ -73,6 +82,10 @@ export class DomainDesignerModel {
       {
         key: DomainDesignerTabs.QueryModel,
         model: this.queryEditorModel,
+      },
+      {
+        key: DomainDesignerTabs.DataModel,
+        model: this.dataObjectEditorModel,
       },
     ];
 
