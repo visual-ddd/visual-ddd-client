@@ -19,6 +19,7 @@ export class DataObjectStore {
   /**
    * 即将移除的对象
    */
+  @observable.shallow
   protected objectsWillRemoved: Map<string, DataObject> = new Map();
 
   /**
@@ -120,5 +121,5 @@ export class DataObjectStore {
   private gc = debounce(() => {
     this.objectsWillRemoved.forEach(i => tryDispose(i));
     this.removeWillRemoved();
-  }, 2000);
+  });
 }

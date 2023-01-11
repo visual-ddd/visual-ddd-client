@@ -3,6 +3,7 @@ import { ReactComponentBinding, ReactComponentProps, registerReactComponent } fr
 import { createDataObjectDSL, DataObjectDSL, DataObjectName } from '../../dsl';
 import { DataObjectEditor } from './DataObjectEditor';
 import { DataObjectShape } from './DataObjectShape';
+import icon from './data-object.png';
 
 const DataObjectReactShapeComponent = (props: ReactComponentProps) => {
   const properties = useShapeModel(props.node).properties as unknown as DataObjectDSL;
@@ -25,6 +26,7 @@ defineShape({
   title: '数据对象',
   description: '数据对象建模',
   shapeType: 'node',
+  icon,
   initialProps() {
     return {
       ...createDataObjectDSL(),

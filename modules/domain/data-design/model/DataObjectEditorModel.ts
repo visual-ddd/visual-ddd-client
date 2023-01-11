@@ -11,5 +11,8 @@ export class DataObjectEditorModel extends BaseEditorModel {
     super(options);
 
     this.dataObjectStore = new DataObjectStore({ event: this.event, editorModel: this });
+
+    // @ts-expect-error
+    globalThis.__DATA_OBJECT_EDITOR_MODEL__ = this;
   }
 }

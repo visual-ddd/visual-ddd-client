@@ -29,7 +29,15 @@ export const AutoResizeDecorator: ReactDecorator = Input => {
 
       const update = debounce(
         ({ width, height }: { width: number; height: number }) => {
-          props.node.resize(width, height, { autoResize: true });
+          // resize 有一定几率会报 width 和 height 为 0 的错误
+          if (!width && !height) {
+            return;
+          }
+
+          const size = props.node.getSize();
+          if (size.width !== width || size.height !== height) {
+            props.node.resize(width, height, { autoResize: true });
+          }
         },
         100,
         { leading: true }

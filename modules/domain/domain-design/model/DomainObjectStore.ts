@@ -249,5 +249,5 @@ export class DomainObjectStore {
   private gc = debounce(() => {
     this.objectsWillRemoved.forEach(i => tryDispose(i));
     this.removeWillRemoved();
-  }, 2000);
+  });
 }
