@@ -97,7 +97,21 @@ export interface GraphBindingProps {
   onNode$Embedded?: (evt: EventArgs['node:embedded']) => void;
 
   /**
-   * 节点移动后触发
+   * 用户开始拖动节点时触发
+   * @param evt
+   * @returns
+   */
+  onNode$Move?: (evt: EventArgs['node:move']) => void;
+
+  /**
+   * 拖拽节点中触发
+   * @param evt
+   * @returns
+   */
+  onNode$Moving?: (evt: EventArgs['node:moving']) => void;
+
+  /**
+   * 用户拖动节点移动后触发
    * @param evt
    * @returns
    */

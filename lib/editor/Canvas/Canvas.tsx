@@ -34,10 +34,14 @@ export const Canvas = memo((props: CanvasProps) => {
       onMouseEnter={canvasModel.handleMouseEnter}
       onMouseLeave={canvasModel.handleMouseLeave}
       onGraphReady={canvasModel.handleGraphReady}
+      // 通用
       onCell$Change$ZIndex={canvasModel.handleZIndexChange}
       onCell$Change$Parent={canvasModel.handleParentChange}
       onCell$Change$Children={canvasModel.handleChildrenChange}
       onCell$Change$Visible={canvasModel.handleVisibleChange}
+      // 节点
+      onNode$Move={canvasModel.handleNodeMove}
+      onNode$Change$Position={canvasModel.handleNodeChangePosition}
       onNode$Moved={canvasModel.handleNodeMoved}
       onNode$Resize={canvasModel.handleNodeResizeStart}
       onNode$Change$Size={canvasModel.handleNodeSizeChange}
@@ -45,6 +49,7 @@ export const Canvas = memo((props: CanvasProps) => {
       onNode$Rotated={canvasModel.handleNodeRotated}
       onNode$Removed={evt => console.log('node remove', evt)}
       onNode$Embedded={evt => console.log('node embed', evt)}
+      // 边
       onEdge$Connected={canvasModel.handleEdgeConnected}
       onEdge$Added={evt => console.log('edge added', evt)}
       onEdge$Removed={canvasModel.handleEdgeRemoved}

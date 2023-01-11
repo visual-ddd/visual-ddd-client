@@ -104,6 +104,14 @@ export class CanvasModel {
 
   private disposer = new Disposer();
 
+  /**
+   * 节点移动中
+   */
+  private nodeMoving = false;
+
+  /**
+   * 节点调整大小中
+   */
   private resizing = false;
 
   constructor(inject: { editorModel: BaseEditorModel }) {
@@ -514,10 +522,38 @@ export class CanvasModel {
   };
 
   /**
-   * 节点移动结束
+   * 节点开始移动
+   * @param evt
+   */
+  handleNodeMove: GraphBindingProps['onNode$Move'] = evt => {
+    this.nodeMoving = true;
+    console.log('move start', evt.node);
+  };
+
+  /**
+   * 节点位置变更，不管是用户手动拖动还是程序，都会触发这个事件
+   * @param evt
+   */
+  handleNodeChangePosition: GraphBindingProps['onNode$Change$Position'] = evt => {
+    if (this.nodeMoving) {
+      // 用户正在拖拽中，这种情况等到 moved 事件再去处理
+      return;
+    }
+
+    // 更新位置
+    const { node } = evt;
+    const model = this.editorIndex.getNodeById(node.id);
+    if (model) {
+      this.editorCommandHandler.updateNodeProperty({ node: model, path: 'position', value: node.getPosition() });
+    }
+  };
+
+  /**
+   * 节点移动结束, 这个是用户手动触发
    * @param evt
    */
   handleNodeMoved: GraphBindingProps['onNode$Moved'] = evt => {
+    this.nodeMoving = false;
     const { node } = evt;
 
     this.resizeParentGroupIfNeeded(node);
@@ -559,7 +595,7 @@ export class CanvasModel {
   };
 
   /**
-   * 开始拖拽
+   * 开始拖拽, 这个是用户手动拖拽调整大小时触发
    * @param evt
    */
   handleNodeResizeStart: GraphBindingProps['onNode$Resize'] = evt => {
@@ -567,7 +603,7 @@ export class CanvasModel {
   };
 
   /**
-   * 节点变更
+   * 节点变更, 不管是用户手动拖拽还是自动调整大小都会触发
    * @param evt
    */
   handleNodeSizeChange: GraphBindingProps['onNode$Change$Size'] = evt => {
@@ -581,6 +617,10 @@ export class CanvasModel {
     this.setNodeSize(node, options.isAutoResizeGroup);
   };
 
+  /**
+   * 节点尺寸变更，这个是用户手动拖拽触发的
+   * @param evt
+   */
   handleNodeResized: GraphBindingProps['onNode$Resized'] = evt => {
     this.resizing = false;
     const { node } = evt;
@@ -934,22 +974,22 @@ export class CanvasModel {
     const childrenBBoxCorner = childrenBBox.getCorner();
 
     let hasChange = false;
-    if (childrenBBox.x < x) {
+    if (childrenBBox.x !== x) {
       x = childrenBBox.x;
       hasChange = true;
     }
 
-    if (childrenBBox.y < y) {
+    if (childrenBBox.y !== y) {
       y = childrenBBox.y;
       hasChange = true;
     }
 
-    if (childrenBBoxCorner.x > cornerX) {
+    if (childrenBBoxCorner.x !== cornerX) {
       cornerX = childrenBBoxCorner.x;
       hasChange = true;
     }
 
-    if (childrenBBoxCorner.y > cornerY) {
+    if (childrenBBoxCorner.y !== cornerY) {
       cornerY = childrenBBoxCorner.y;
       hasChange = true;
     }
