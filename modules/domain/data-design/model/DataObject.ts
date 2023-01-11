@@ -32,6 +32,8 @@ export interface IDataObjectReference {
 
 export interface DataObjectEdgeDeclaration {
   id: string;
+  reverseId: string;
+
   source: string;
   target: string;
 
@@ -162,6 +164,7 @@ export class DataObject {
     return Array.from(groupByTarget.entries()).map(([target, refs]) => {
       return {
         id: `${this.id}->${target.id}`,
+        reverseId: `${target.id}->${this.id}`,
         source: this.id,
         target: target.id,
         sourceObject: this,

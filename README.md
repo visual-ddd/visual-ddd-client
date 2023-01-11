@@ -35,10 +35,8 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 ## TODO
 
-- MemberList 支持双击编辑
-- MemberList FormItem 支持 dependencies 支持 watch 通配符？但是这里其他 formItem 并不渲染, 扩展一个 notify? 或者自定义触发验证，比如在 onBlur 时触发其他列的验证
-- 数据对象依赖关系计算和渲染
 - 数据对象验证
+- MemberList FormItem 支持 dependencies 支持 watch 通配符？但是这里其他 formItem 并不渲染, 扩展一个 notify? 或者自定义触发验证，比如在 onBlur 时触发其他列的验证
 - rule 包含 label, 更好的信息提示
 - 引用关系支持可见性控制
 - 表单告警信息定位

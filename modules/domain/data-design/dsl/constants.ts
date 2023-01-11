@@ -1,4 +1,4 @@
-import { DataObjectIndexMethod, DataObjectIndexType, DataObjectTypeName } from './dsl';
+import { DataObjectIndexMethod, DataObjectIndexType, DataObjectReferenceCardinality, DataObjectTypeName } from './dsl';
 
 export enum DataObjectName {
   DataObject = 'dataObject',
@@ -59,6 +59,19 @@ export function objectTypeThatSupportDefaultValue(type: DataObjectTypeName) {
     type === DataObjectTypeName.String
   );
 }
+
+/**
+ * 反方向基数
+ */
+export const DataObjectReferenceCardinalityReversed: Record<
+  DataObjectReferenceCardinality,
+  DataObjectReferenceCardinality
+> = {
+  [DataObjectReferenceCardinality.ManyToMany]: DataObjectReferenceCardinality.ManyToMany,
+  [DataObjectReferenceCardinality.OneToOne]: DataObjectReferenceCardinality.OneToOne,
+  [DataObjectReferenceCardinality.OneToMany]: DataObjectReferenceCardinality.ManyToOne,
+  [DataObjectReferenceCardinality.ManyToOne]: DataObjectReferenceCardinality.OneToMany,
+};
 
 /**
  * 支持递增的字段类型

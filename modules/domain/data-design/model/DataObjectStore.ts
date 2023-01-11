@@ -2,9 +2,9 @@ import { BaseEditorEvent, BaseEditorModel, tryDispose } from '@/lib/editor';
 import { derive, makeAutoBindThis, mutation } from '@/lib/store';
 import { debounce } from '@wakeapp/utils';
 import { makeObservable, observable } from 'mobx';
-import { DataObjectName } from '../dsl';
+import { DataObjectName, DataObjectReferenceCardinalityReversed } from '../dsl';
 
-import { DataObject } from './DataObject';
+import { DataObject, DataObjectEdgeDeclaration } from './DataObject';
 
 export class DataObjectStore {
   protected event: BaseEditorEvent;
@@ -27,6 +27,35 @@ export class DataObjectStore {
   @derive
   get objectsInArray() {
     return Array.from(this.objects.values());
+  }
+
+  /**
+   * 关系边
+   */
+  @derive
+  get edges(): DataObjectEdgeDeclaration[] {
+    const map: Map<string, DataObjectEdgeDeclaration> = new Map();
+
+    for (const obj of this.objectsInArray) {
+      const edges = obj.edges;
+      for (const edge of edges) {
+        if (map.has(edge.id)) {
+          continue;
+        }
+
+        if (map.has(edge.reverseId)) {
+          const item = map.get(edge.reverseId)!;
+          if (item.type == null && edge.type != null) {
+            item.type = DataObjectReferenceCardinalityReversed[edge.type];
+          }
+          continue;
+        }
+
+        map.set(edge.id, edge);
+      }
+    }
+
+    return Array.from(map.values());
   }
 
   constructor(inject: { event: BaseEditorEvent; editorModel: BaseEditorModel }) {

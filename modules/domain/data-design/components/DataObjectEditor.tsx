@@ -16,6 +16,8 @@ import {
 import { useMemo } from 'react';
 import { DataObjectEditorModel } from '../model/DataObjectEditorModel';
 
+import { DomainObjectReferenceEdges } from './DataObjectReferenceEdges';
+
 export interface DataObjectEditorProps {
   /**
    * 编辑器模型
@@ -59,7 +61,7 @@ export const DataObjectEditor = observer(function DataObjectEditor(props: DataOb
             >
               <Canvas>
                 {/* 扩展连线 */}
-                {/* <DomainObjectReferenceEdges /> */}
+                <DomainObjectReferenceEdges />
               </Canvas>
             </EditorLayout>
           </EditorConfigurationProvider>

@@ -59,11 +59,11 @@ export const ReferenceEditor = observer(function ReferenceEditor(props: Referenc
       </EditorFormConsumer>
 
       <EditorFormItem path={p('cardinality')} label="引用基数">
-        <Select className="u-fw" placeholder="选择引用基数">
-          <Select value={DataObjectReferenceCardinality.OneToOne}>一对一</Select>
-          <Select value={DataObjectReferenceCardinality.OneToMany}>一对多</Select>
-          <Select value={DataObjectReferenceCardinality.ManyToOne}>多对一</Select>
-          <Select value={DataObjectReferenceCardinality.ManyToMany}>多对多</Select>
+        <Select className="u-fw" placeholder="选择引用基数" allowClear>
+          <Select.Option value={DataObjectReferenceCardinality.OneToOne}>一对一</Select.Option>
+          <Select.Option value={DataObjectReferenceCardinality.OneToMany}>一对多</Select.Option>
+          <Select.Option value={DataObjectReferenceCardinality.ManyToOne}>多对一</Select.Option>
+          <Select.Option value={DataObjectReferenceCardinality.ManyToMany}>多对多</Select.Option>
         </Select>
       </EditorFormItem>
     </>
