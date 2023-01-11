@@ -157,8 +157,15 @@ const Member = observer(function Member<T extends IDDSL>(props: {
   const showError = context.getShowError();
   const pathWithIndex = `${path}[${index}]`;
 
+  const handleEdit = () => {
+    context.handleEdit(value);
+  };
+  const handleRemove = () => {
+    context.handleRemove(value);
+  };
+
   return (
-    <div className={classNames('vd-member-list-item', s.item, { editing })}>
+    <div className={classNames('vd-member-list-item', s.item, { editing })} title="双击编辑" onDoubleClick={handleEdit}>
       <DragHandle className={classNames('vd-member-list-item__handle', s.itemHandle)} />
       <div className={classNames('vd-member-list-item__content', s.itemContent)}>
         {context.handleRenderItem(value, index)}
@@ -173,31 +180,19 @@ const Member = observer(function Member<T extends IDDSL>(props: {
               if (!v) {
                 context.handleEditHided();
               } else {
-                context.handleEdit(value);
+                handleEdit();
               }
             }}
             content={context.handleRenderEditor(pathWithIndex, value)}
             placement="left"
           >
-            <EditTwoTone
-              onClick={() => {
-                context.handleEdit(value);
-              }}
-            />
+            <EditTwoTone onClick={handleEdit} />
           </Popover>
         ) : (
-          <EditTwoTone
-            onClick={() => {
-              context.handleEdit(value);
-            }}
-          />
+          <EditTwoTone onClick={handleEdit} />
         )}
 
-        <MinusCircleTwoTone
-          onClick={() => {
-            context.handleRemove(value);
-          }}
-        />
+        <MinusCircleTwoTone onClick={handleRemove} />
 
         {showError && <EditorFormTooltip path={pathWithIndex} aggregated></EditorFormTooltip>}
       </div>

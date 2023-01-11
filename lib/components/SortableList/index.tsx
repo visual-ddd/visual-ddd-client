@@ -89,8 +89,13 @@ export const SortableList = observer(function SortableList<T = any, C extends {}
   const { value, onChange } = props;
 
   const handleSortEnd: SortEndHandler = sort => {
-    const clone = value.slice(0);
     const { oldIndex, newIndex } = sort;
+
+    if (oldIndex === newIndex) {
+      return;
+    }
+
+    const clone = value.slice(0);
     const [item] = clone.splice(oldIndex, 1);
     if (item) {
       clone.splice(newIndex, 0, item);
