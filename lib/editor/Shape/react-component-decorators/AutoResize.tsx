@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { useEffect, useRef } from 'react';
 import { ReactDecorator } from '@/lib/g6-binding';
-import { wrapPreventListenerOptions } from '@/lib/g6-binding/hooks';
+import { debounce } from '@wakeapp/utils';
 
 const STYLE: React.CSSProperties = {
   position: 'absolute',
@@ -27,17 +27,24 @@ export const AutoResizeDecorator: ReactDecorator = Input => {
         return;
       }
 
+      const update = debounce(
+        ({ width, height }: { width: number; height: number }) => {
+          props.node.resize(width, height, { autoResize: true });
+        },
+        100,
+        { leading: true }
+      );
+
       const observer = new ResizeObserver(entries => {
         for (const entry of entries) {
-          requestAnimationFrame(() => {
-            props.node.resize(entry.contentRect.width, entry.contentRect.height, wrapPreventListenerOptions({}));
-          });
+          update({ width: entry.contentRect.width, height: entry.contentRect.height });
         }
       });
 
       observer.observe(containerRef.current);
 
       return () => {
+        update.cancel();
         observer.disconnect();
       };
     }, []);

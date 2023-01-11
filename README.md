@@ -35,7 +35,6 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 ## TODO
 
-- 子元素 resize，auto 扩展父元素
 - MemberList 支持双击编辑
 - MemberList FormItem 支持 dependencies 支持 watch 通配符？但是这里其他 formItem 并不渲染, 扩展一个 notify? 或者自定义触发验证，比如在 onBlur 时触发其他列的验证
 - 数据对象依赖关系计算和渲染
@@ -50,6 +49,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 - MemberList 编辑友好高亮提示
 - layout 支持折叠
 - edge/node selected 状态高亮
+- 组件树换行优化
 - 被其他成员选中的不能修改
 - 持久化 viewState
 - 边拖入
