@@ -1,14 +1,16 @@
-import { BaseEditorEvent, BaseEditorModel, tryDispose } from '@/lib/editor';
-import { derive, makeAutoBindThis, mutation } from '@/lib/store';
+import { BaseEditorEvent, BaseEditorModel, BaseNode, tryDispose } from '@/lib/editor';
+import { command, derive, makeAutoBindThis, mutation } from '@/lib/store';
 import { debounce } from '@wakeapp/utils';
 import { makeObservable, observable } from 'mobx';
 import { DataObjectName, DataObjectReferenceCardinalityReversed } from '../dsl';
 
 import { DataObject, DataObjectEdgeDeclaration } from './DataObject';
+import { DataObjectEvent } from './DataObjectEvent';
 
 export class DataObjectStore {
   protected event: BaseEditorEvent;
   protected editorModel: BaseEditorModel;
+  protected dataObjectEvent: DataObjectEvent;
 
   /**
    * 所有对象
@@ -59,10 +61,11 @@ export class DataObjectStore {
     return Array.from(map.values());
   }
 
-  constructor(inject: { event: BaseEditorEvent; editorModel: BaseEditorModel }) {
-    const { event, editorModel } = inject;
+  constructor(inject: { event: BaseEditorEvent; dataObjectEvent: DataObjectEvent; editorModel: BaseEditorModel }) {
+    const { event, dataObjectEvent, editorModel } = inject;
 
     this.event = event;
+    this.dataObjectEvent = dataObjectEvent;
     this.editorModel = editorModel;
 
     this.event.on('NODE_CREATED', ({ node }) => {
@@ -111,6 +114,15 @@ export class DataObjectStore {
     }
 
     return this.objects.get(id) || this.objectsWillRemoved.get(id);
+  }
+
+  /**
+   * 触发对象名称变更事件
+   * @param params
+   */
+  @command('DO_STORE:OBJECT_NAME_CHANGED')
+  emitObjectNameChanged(params: { node: BaseNode; object: DataObject }) {
+    this.dataObjectEvent.emit('OBJECT_NAME_CHANGED', params);
   }
 
   @mutation('DO_STORE:GC', false)

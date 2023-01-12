@@ -1,6 +1,6 @@
-import { BaseNode } from '@/lib/editor';
+import { BaseNode, IDisposable } from '@/lib/editor';
 import { UntitledInHumanReadable, UntitledInUpperCamelCase } from '../../domain-design/dsl/constants';
-import { derive } from '@/lib/store';
+import { derive, makeAutoBindThis } from '@/lib/store';
 
 import { DataObjectStore } from './DataObjectStore';
 import {
@@ -10,6 +10,8 @@ import {
   DataObjectReferenceCardinality,
   DataObjectTypeName,
 } from '../dsl';
+import { booleanPredicate, Disposer } from '@wakeapp/utils';
+import { makeObservable, reaction } from 'mobx';
 
 export interface DataObjectInject {
   node: BaseNode;
@@ -49,10 +51,11 @@ export interface DataObjectEdgeDeclaration {
 /**
  * 数据对象
  */
-export class DataObject {
+export class DataObject implements IDisposable {
   readonly node: BaseNode;
 
   protected readonly store: DataObjectStore;
+  private disposer = new Disposer();
 
   /**
    * 唯一 id
@@ -147,6 +150,24 @@ export class DataObject {
   }
 
   /**
+   * 依赖当前对象的对象列表
+   */
+  @derive
+  get objectsDependOnMe(): DataObject[] {
+    return this.store.objectsInArray
+      .map(i => {
+        if (i.id === this.id) {
+          return null;
+        }
+
+        if (i.validReferences.some(j => j.target.id === this.id)) {
+          return i;
+        }
+      })
+      .filter(booleanPredicate);
+  }
+
+  /**
    * 关联的边
    * 在 store 层面还需要进一步合并
    */
@@ -187,6 +208,25 @@ export class DataObject {
 
     this.node = node;
     this.store = store;
+
+    makeObservable(this);
+    makeAutoBindThis(this);
+
+    this.disposer.push(
+      reaction(
+        () => {
+          return [this.dsl.name, this.dsl.tableName];
+        },
+        () => {
+          this.store.emitObjectNameChanged({ node: this.node, object: this });
+        },
+        { delay: 800, name: 'WATCH_DATA_OBJECT_NAME' }
+      )
+    );
+  }
+
+  dispose() {
+    this.disposer.release();
   }
 
   /**
