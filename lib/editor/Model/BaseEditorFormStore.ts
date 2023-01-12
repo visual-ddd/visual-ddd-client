@@ -36,7 +36,7 @@ export class BaseEditorFormStore {
 
   @derive
   get hasIssue() {
-    return this.nodesHasIssue.length;
+    return !!this.nodesHasIssue.length;
   }
 
   @derive

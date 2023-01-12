@@ -104,6 +104,21 @@ export class BaseEditorModel {
     return this.scope.scopeId;
   }
 
+  /**
+   * 是否包含告警信息
+   */
+  get hasIssue() {
+    return this.formStore.hasIssue;
+  }
+
+  get hasError() {
+    return this.formStore.hasError;
+  }
+
+  get hasWarning() {
+    return this.formStore.hasWarning;
+  }
+
   constructor(options: BaseEditorModelOptions) {
     const { datasource, doc, scopeId, activeScope = true, whitelist, shapeList } = options;
 

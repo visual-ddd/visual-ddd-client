@@ -1,0 +1,9 @@
+.root {
+  &:global(.error .anticon) {
+    color: var(--vd-color-danger-300);
+  }
+
+  &:global(.warning .anticon) {
+    color: var(--vd-color-warning-300);
+  }
+}

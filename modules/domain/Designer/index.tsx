@@ -11,6 +11,7 @@ import s from './index.module.scss';
 import { DomainDesignerContextProvider } from './Context';
 import { DomainDesignerHeader } from './Header';
 import { DomainDesignerLoading } from './Loading';
+import { TabLabel } from './TabLabel';
 
 export interface DomainDesignerProps {
   /**
@@ -49,21 +50,25 @@ const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerPro
       children: <div>敬请期待</div>,
     },
     {
-      label: DomainDesignerTabsMap[DomainDesignerTabs.DomainModel],
+      label: (
+        <TabLabel model={model.domainEditorModel}>{DomainDesignerTabsMap[DomainDesignerTabs.DomainModel]}</TabLabel>
+      ),
       key: DomainDesignerTabs.DomainModel,
       children: (
         <DomainEditor model={model.domainEditorModel} active={model.activeTab === DomainDesignerTabs.DomainModel} />
       ),
     },
     {
-      label: DomainDesignerTabsMap[DomainDesignerTabs.QueryModel],
+      label: <TabLabel model={model.queryEditorModel}>{DomainDesignerTabsMap[DomainDesignerTabs.QueryModel]}</TabLabel>,
       key: DomainDesignerTabs.QueryModel,
       children: (
         <DomainEditor model={model.queryEditorModel} active={model.activeTab === DomainDesignerTabs.QueryModel} />
       ),
     },
     {
-      label: DomainDesignerTabsMap[DomainDesignerTabs.DataModel],
+      label: (
+        <TabLabel model={model.dataObjectEditorModel}>{DomainDesignerTabsMap[DomainDesignerTabs.DataModel]}</TabLabel>
+      ),
       key: DomainDesignerTabs.DataModel,
       children: (
         <DataObjectEditor
