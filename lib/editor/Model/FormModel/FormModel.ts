@@ -37,6 +37,11 @@ export class FormModel {
    */
   private updateStatusQueue: [string, FormItemValidateStatus | undefined][] = [];
 
+  /**
+   * 验证子项更新队列
+   */
+  private validateItemQueue: Set<string> = new Set();
+
   get id() {
     return this.node.id;
   }
@@ -215,27 +220,14 @@ export class FormModel {
    * 验证指定字段
    */
   @effect('VALIDATE_FIELD')
-  async validateField(pathMaybeIncludePattern: string) {
-    const validateIt = async (path: string) => {
-      const np = normalizePath(path);
-      const validate = this.getFormItemValidator(np);
-      const value = this.getProperty(np);
-
-      const status = await validate(value);
-
-      // 清理
-      this.statusTree.removeStatus(np);
-      // 添加状态
-      if (status) {
-        this.statusTree.addStatus(np, status);
-      }
-    };
-
+  validateField(pathMaybeIncludePattern: string) {
     if (pathMaybeIncludePattern.includes('*')) {
       const paths = spreadPathPattern(pathMaybeIncludePattern, this.properties);
-      await Promise.all(paths.map(validateIt));
+      for (const p of paths) {
+        this.pushValidateItemQueue(p);
+      }
     } else {
-      await validateIt(pathMaybeIncludePattern);
+      this.pushValidateItemQueue(pathMaybeIncludePattern);
     }
   }
 
@@ -295,6 +287,21 @@ export class FormModel {
     this.touchedMap.set(path, value);
   }
 
+  private async validateFieldInner(path: string) {
+    const np = normalizePath(path);
+    const validate = this.getFormItemValidator(np);
+    const value = this.getProperty(np);
+
+    const status = await validate(value);
+
+    // 清理
+    this.statusTree.removeStatus(np);
+    // 添加状态
+    if (status) {
+      this.statusTree.addStatus(np, status);
+    }
+  }
+
   /**
    * 获取验证规则
    */
@@ -349,9 +356,32 @@ export class FormModel {
   });
 
   /**
+   * 子项更新队列，避免频繁触发验证，另外可以合并重复的验证
+   * @param path
+   */
+  private pushValidateItemQueue = (path: string) => {
+    this.validateItemQueue.add(path);
+
+    this.flushValidateItemQueue();
+  };
+
+  private flushValidateItemQueue = debounce(() => {
+    const queue = this.validateItemQueue;
+    if (!queue.size) {
+      return;
+    }
+
+    this.validateItemQueue = new Set();
+
+    for (const path of queue) {
+      this.validateFieldInner(path);
+    }
+  }, 300);
+
+  /**
    * 状态更新队列
    */
-  protected pushStatusUpdateQueue = (path: string, status?: FormItemValidateStatus) => {
+  private pushStatusUpdateQueue = (path: string, status?: FormItemValidateStatus) => {
     this.updateStatusQueue.push([path, status]);
 
     this.flushStatusQueue();
@@ -360,7 +390,7 @@ export class FormModel {
   /**
    * 状态更新
    */
-  protected flushStatusQueue = debounce(() => {
+  private flushStatusQueue = debounce(() => {
     const queue = this.updateStatusQueue;
 
     if (!queue.length) {
