@@ -12,6 +12,7 @@ import {
   normalizeRules,
   rulesToValidator,
   ruleToValidator,
+  spreadPathPattern,
 } from './utils';
 import { FormRules, FormItemValidateStatus, FormRuleReportType } from './types';
 import { BaseEditorStore } from '../BaseEditorStore';
@@ -207,28 +208,35 @@ export class FormModel {
 
   @effect('VALIDATE_ROOT')
   async validateRoot() {
-    return this.validateField(ROOT_FIELD);
+    this.validateField(ROOT_FIELD);
   }
 
   /**
    * 验证指定字段
    */
   @effect('VALIDATE_FIELD')
-  async validateField(path: string) {
-    const np = normalizePath(path);
-    const validate = this.getFormItemValidator(np);
-    const value = this.getProperty(np);
+  async validateField(pathMaybeIncludePattern: string) {
+    const validateIt = async (path: string) => {
+      const np = normalizePath(path);
+      const validate = this.getFormItemValidator(np);
+      const value = this.getProperty(np);
 
-    const status = await validate(value);
+      const status = await validate(value);
 
-    // 清理
-    this.statusTree.removeStatus(np);
-    // 添加状态
-    if (status) {
-      this.statusTree.addStatus(np, status);
+      // 清理
+      this.statusTree.removeStatus(np);
+      // 添加状态
+      if (status) {
+        this.statusTree.addStatus(np, status);
+      }
+    };
+
+    if (pathMaybeIncludePattern.includes('*')) {
+      const paths = spreadPathPattern(pathMaybeIncludePattern, this.properties);
+      await Promise.all(paths.map(validateIt));
+    } else {
+      await validateIt(pathMaybeIncludePattern);
     }
-
-    return !!status;
   }
 
   /**

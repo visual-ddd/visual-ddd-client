@@ -13,6 +13,7 @@ import s from './index.module.scss';
 import { DescriptionInput } from '../DescriptionInput';
 import { reactifyEnumMember } from '../../reactify';
 import { TitleInput } from '../TitleInput';
+import { replaceLastPathToPattern } from '@/lib/utils';
 
 export interface EnumMembersEditorProps {
   /**
@@ -29,7 +30,12 @@ const renderEditor = (path: string) => {
   const p = (cp: string) => `${path}.${cp}`;
   return (
     <>
-      <EditorFormItem path={p('name')} label="标识符" tooltip={NameTooltip['SNAKE_CASE']}>
+      <EditorFormItem
+        path={p('name')}
+        label="标识符"
+        tooltip={NameTooltip['SNAKE_CASE']}
+        notify={replaceLastPathToPattern(path) + '.name'}
+      >
         <NameInput nameCase="SNAKE_CASE" />
       </EditorFormItem>
       <EditorFormItem path={p('title')} label="标题">

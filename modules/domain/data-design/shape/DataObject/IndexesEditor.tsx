@@ -18,6 +18,7 @@ import {
   DataObjectPropertyDSL,
 } from '../../dsl';
 import { reactifyIndex, reactifyProperty } from './reactify';
+import { replaceLastPathToPattern } from '@/lib/utils';
 
 export interface IndexesEditorProps {
   /**
@@ -44,7 +45,12 @@ const renderEditor = (path: string) => {
 
   return (
     <>
-      <EditorFormItem path={p('name')} label="标识符" tooltip={NameTooltip['camelCase']}>
+      <EditorFormItem
+        path={p('name')}
+        label="标识符"
+        tooltip={NameTooltip['camelCase']}
+        notify={replaceLastPathToPattern(path) + '.name'}
+      >
         <NameInput nameCase="camelCase" />
       </EditorFormItem>
       <EditorFormItem path={p('title')} label="标题">

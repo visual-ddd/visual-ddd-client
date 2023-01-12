@@ -7,7 +7,34 @@ import {
   rulesToAsyncValidatorSchema,
   rulesToValidator,
   ruleToValidator,
+  spreadPathPattern,
 } from './utils';
+
+test('spreadPathPattern', () => {
+  expect(spreadPathPattern('a.b.c', {})).toEqual([]);
+  expect(spreadPathPattern('a.b.c', { a: {} })).toEqual([]);
+  expect(spreadPathPattern('a.b.c', { a: [] })).toEqual([]);
+  expect(spreadPathPattern('a.b.c', { a: { b: {} } })).toEqual(['a.b.c']);
+  expect(spreadPathPattern('a.b.c', { a: { b: { c: 1 } } })).toEqual(['a.b.c']);
+  expect(spreadPathPattern('a.*.c', { a: { b: {}, c: {} } })).toEqual(['a.b.c', 'a.c.c']);
+  expect(spreadPathPattern('a.*.c', { a: { b: { c: 1 }, c: { c: 1 } } })).toEqual(['a.b.c', 'a.c.c']);
+  expect(spreadPathPattern('a.*.*', { a: { b: { c: 1, d: 2 }, c: { c: 1, e: 3 } } })).toEqual([
+    'a.b.c',
+    'a.b.d',
+    'a.c.c',
+    'a.c.e',
+  ]);
+  expect(spreadPathPattern('a.*.c', { a: [] })).toEqual([]);
+  expect(spreadPathPattern('a.*.c', { a: [{}, {}] })).toEqual(['a.0.c', 'a.1.c']);
+  expect(
+    spreadPathPattern('a.*.*', {
+      a: [
+        { a: 1, b: 2 },
+        { c: 3, d: 4 },
+      ],
+    })
+  ).toEqual(['a.0.a', 'a.0.b', 'a.1.c', 'a.1.d']);
+});
 
 test('findRule', () => {
   const rules: FormRules = {

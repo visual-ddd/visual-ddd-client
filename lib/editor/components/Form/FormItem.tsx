@@ -1,12 +1,13 @@
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
 import { reaction, runInAction } from 'mobx';
-import { ReactNode, cloneElement, isValidElement, useMemo, useEffect } from 'react';
+import { ReactNode, cloneElement, isValidElement, useMemo, useEffect, useCallback } from 'react';
 
 import { useEditorFormContext } from './FormContext';
 import s from './FormItem.module.scss';
 import { EditorFormTooltip } from './FormTooltip';
 import identity from 'lodash/identity';
+import { NoopArray } from '@wakeapp/utils';
 
 export type EditorFormItemTrigger = string | string[];
 
@@ -52,6 +53,11 @@ export interface EditorFormItemProps extends EditorFormItemBaseProps {
    * 字段依赖，当指定的字段值发生变化时，将重新验证
    */
   dependencies?: string | string[];
+
+  /**
+   * 当前字段进行验证时，需要通知验证的字段
+   */
+  notify?: string | string[];
 
   /**
    * 是否只在字段touch 之后才允许 dependencies 触发验证, 默认 true
@@ -127,6 +133,7 @@ export const EditorFormItem = observer(function EditorFormItem(props: EditorForm
     onChange,
     aggregated = false,
     dependencies,
+    notify,
     dependenciesTriggerWhenTouched = true,
   } = props;
   const { formModel } = useEditorFormContext()!;
@@ -135,6 +142,25 @@ export const EditorFormItem = observer(function EditorFormItem(props: EditorForm
     return !!(required || formModel.isRequired(path));
   }, [required, formModel, path]);
 
+  const normalizedNotify = notify ? (Array.isArray(notify) ? notify : [notify]) : NoopArray;
+  const normalizedDependencies = dependencies
+    ? Array.isArray(dependencies)
+      ? dependencies
+      : [dependencies]
+    : NoopArray;
+
+  const validate = useCallback(() => {
+    formModel.validateField(path);
+
+    if (normalizedNotify.length) {
+      for (const n of normalizedNotify) {
+        formModel.validateField(n);
+      }
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [...normalizedNotify, path, formModel]);
+
   useEffect(() => {
     if (!dependencies) {
       return;
@@ -142,23 +168,23 @@ export const EditorFormItem = observer(function EditorFormItem(props: EditorForm
 
     return reaction(
       () => {
-        return (Array.isArray(dependencies) ? dependencies : [dependencies]).map(i => {
+        return normalizedDependencies.map(i => {
           formModel.getProperty(i);
         });
       },
       () => {
         if (dependenciesTriggerWhenTouched) {
           if (formModel.isTouched(path)) {
-            formModel.validateField(path);
+            validate();
           }
         } else {
-          formModel.validateField(path);
+          validate();
         }
       },
       { delay: 500, name: 'FormItemDependencies' }
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [...(Array.isArray(dependencies) ? dependencies : [dependencies]), formModel, path]);
+  }, [...normalizedDependencies, validate, formModel, path]);
 
   const injectChildren = (child: ReactNode) => {
     if (isValidElement(child)) {
@@ -185,7 +211,7 @@ export const EditorFormItem = observer(function EditorFormItem(props: EditorForm
           originTrigger?.(...args);
 
           // do validate
-          formModel.validateField(path);
+          validate();
         };
       }
 

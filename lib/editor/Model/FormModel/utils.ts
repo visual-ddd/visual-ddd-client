@@ -1,7 +1,7 @@
 import Schema, { ValidateError, ValidateOption, Rules, RuleItem } from 'async-validator';
 import toPath from 'lodash/toPath';
 import memoize from 'lodash/memoize';
-import { booleanPredicate, cloneDeep } from '@wakeapp/utils';
+import { booleanPredicate, cloneDeep, NoopArray } from '@wakeapp/utils';
 import { catchPromise } from '@/lib/utils';
 
 import {
@@ -410,3 +410,58 @@ const formRuleErrorsToFormItemValidateStatus = (
 
   return status;
 };
+
+/**
+ * 展开路径通配符
+ * @param path
+ * @param object
+ * @returns
+ */
+export function spreadPathPattern(path: string, object: any) {
+  const paths = toPathArray(path);
+
+  if (!paths.length) {
+    return NoopArray;
+  }
+
+  const list: string[] = [];
+  const joinRoute = (route: string, path: string) => {
+    if (route) {
+      return `${route}.${path}`;
+    }
+    return path;
+  };
+
+  const walk = (route: string, paths: string[], object: any) => {
+    const path = paths[0];
+
+    // 遍历完成
+    if (!path) {
+      list.push(route);
+      return;
+    }
+
+    // 对象为空，没有必要继续下去, 无法获取值
+    if (object == null) {
+      return;
+    }
+
+    if (path === '*') {
+      if (Array.isArray(object)) {
+        for (let i = 0; i < object.length; i++) {
+          walk(joinRoute(route, i.toString()), paths.slice(1), object[i]);
+        }
+      } else if (typeof object === 'object') {
+        for (const key in object) {
+          walk(joinRoute(route, key), paths.slice(1), object[key]);
+        }
+      }
+    } else {
+      walk(joinRoute(route, path), paths.slice(1), object[path]);
+    }
+  };
+
+  walk('', paths, object);
+
+  return list;
+}

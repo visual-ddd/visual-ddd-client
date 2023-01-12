@@ -24,6 +24,7 @@ import {
 import { reactifyProperty } from './reactify';
 import { PropertyDefaultValue } from './PropertyDefaultValue';
 import { ReferenceEditor } from './ReferenceEditor';
+import { replaceLastPathToPattern } from '@/lib/utils';
 
 export interface PropertiesEditorProps {
   /**
@@ -60,7 +61,13 @@ const renderEditor = (path: string) => {
 
   return (
     <>
-      <EditorFormItem path={p('name')} label="标识符" tooltip={NameTooltip['camelCase']}>
+      <EditorFormItem
+        path={p('name')}
+        label="标识符"
+        tooltip={NameTooltip['camelCase']}
+        // 通知同一层级的命名检查
+        notify={replaceLastPathToPattern(path) + '.name'}
+      >
         <NameInput nameCase="camelCase" />
       </EditorFormItem>
       <EditorFormItem path={p('title')} label="标题">
@@ -75,6 +82,7 @@ const renderEditor = (path: string) => {
             <EditorFormItem
               path={p('propertyName')}
               label="表字段"
+              notify={replaceLastPathToPattern(path) + '.propertyName'}
               tooltip={
                 <>
                   <div>- {NameTooltip['snake_case']}</div>

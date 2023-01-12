@@ -17,6 +17,7 @@ import { reactifyMethod } from '../../reactify';
 import { ReferenceTypeProvider, TypeInput } from '../TypeInput';
 import { TitleInput } from '../TitleInput';
 import { DomainObject, DomainObjectFactory } from '../../../model';
+import { replaceLastPathToPattern } from '@/lib/utils';
 
 export interface MethodsEditorProps {}
 type Item = MethodDSL;
@@ -38,7 +39,12 @@ const renderEditor = (path: string) => {
   const p = (cp: string) => `${path}.${cp}`;
   return (
     <>
-      <EditorFormItem path={p('name')} label="标识符" tooltip={NameTooltip['camelCase']}>
+      <EditorFormItem
+        path={p('name')}
+        label="标识符"
+        tooltip={NameTooltip['camelCase']}
+        notify={replaceLastPathToPattern(path) + '.name'}
+      >
         <NameInput nameCase="camelCase" />
       </EditorFormItem>
       <EditorFormItem path={p('title')} label="标题">

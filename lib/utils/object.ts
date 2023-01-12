@@ -21,6 +21,16 @@ export const getPaths = memoize(path => {
 });
 
 /**
+ * 将最后一个路径替换为 *
+ */
+export const replaceLastPathToPattern = memoize(path => {
+  const paths = getPaths(path);
+  paths[paths.length - 1] = '*';
+
+  return paths.join('.');
+});
+
+/**
  * 移除指定路径的值
  *
  * @param target
