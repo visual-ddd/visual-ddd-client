@@ -94,6 +94,7 @@ export const EditorFormTooltip = observer(function EditFormTooltip(props: Editor
       {store.hasIssue ? (
         <Popover
           placement="bottomRight"
+          destroyTooltipOnHide
           content={
             <div className={classNames('vd-form-tooltip__content', s.content)}>
               {!!tooltip && <div className={classNames('vd-form-tooltip__tooltip', s.tooltip)}>{tooltip}</div>}

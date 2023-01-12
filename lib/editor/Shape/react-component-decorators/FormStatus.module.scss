@@ -15,6 +15,7 @@
   :global(.anticon) {
     color: var(--color);
     margin: 2px;
-    cursor: pointer;
+    cursor: context-menu;
+    pointer-events: auto;
   }
 }

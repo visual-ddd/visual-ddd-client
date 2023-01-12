@@ -1,7 +1,9 @@
 import { ReactDecorator } from '@/lib/g6-binding';
 import { ExclamationCircleFilled } from '@ant-design/icons';
+import { Popover } from 'antd';
 import classNames from 'classnames';
 import { Observer } from 'mobx-react';
+import { EditorFormIssues } from '../../components/Form/FormIssues';
 import { useShapeModel } from '../hooks';
 
 import s from './FormStatus.module.scss';
@@ -23,7 +25,18 @@ export const FormStatus: ReactDecorator = Input => {
 
             return (
               <div className={classNames('v-form-status-decorator', s.root, { error: formModel.hasError })}>
-                <ExclamationCircleFilled />
+                <Popover
+                  content={
+                    <div>
+                      <EditorFormIssues issues={formModel.errorInArray}></EditorFormIssues>
+                    </div>
+                  }
+                  title="告警"
+                  destroyTooltipOnHide
+                  trigger="hover"
+                >
+                  <ExclamationCircleFilled />
+                </Popover>
               </div>
             );
           }}
