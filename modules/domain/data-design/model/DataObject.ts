@@ -141,19 +141,27 @@ export class DataObject {
     });
   }
 
+  @derive
+  get validReferences(): IDataObjectReference[] {
+    return this.references.filter((i): i is IDataObjectReference => i.target != null && i.targetProperty != null);
+  }
+
   /**
    * 关联的边
    * 在 store 层面还需要进一步合并
    */
   @derive
   get edges(): DataObjectEdgeDeclaration[] {
-    const validReferences = this.references.filter(
-      (i): i is IDataObjectReference => i.target != null && i.targetProperty != null
-    );
+    const validReferences = this.validReferences;
 
     const groupByTarget: Map<DataObject, IDataObjectReference[]> = new Map();
 
     for (const ref of validReferences) {
+      if (ref.target.id == this.id) {
+        // 自我引用去掉
+        continue;
+      }
+
       if (groupByTarget.has(ref.target)) {
         groupByTarget.get(ref.target)?.push(ref);
       } else {

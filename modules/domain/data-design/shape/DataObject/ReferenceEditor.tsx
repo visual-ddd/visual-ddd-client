@@ -22,7 +22,7 @@ export const ReferenceEditor = observer(function ReferenceEditor(props: Referenc
 
   return (
     <>
-      <EditorFormItem path={p('target')} label="引用对象">
+      <EditorFormItem path={p('target')} label="引用对象" required>
         <Select className="u-fw" placeholder="选择引用对象">
           {store.objectsInArray.map(i => {
             return (
@@ -43,7 +43,7 @@ export const ReferenceEditor = observer(function ReferenceEditor(props: Referenc
           }
 
           return (
-            <EditorFormItem path={p('targetProperty')} label="引用字段">
+            <EditorFormItem path={p('targetProperty')} label="引用字段" required>
               <Select className="u-fw" placeholder="选择字段">
                 {object.referableProperties.map(i => {
                   return (
