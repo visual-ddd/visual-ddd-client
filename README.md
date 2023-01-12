@@ -35,15 +35,13 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 ## TODO
 
-- MemberList FormItem 支持 dependencies 支持 watch 通配符？但是这里其他 formItem 并不渲染, 扩展一个 notify? 或者自定义触发验证，比如在 onBlur 时触发其他列的验证, validateItem 合并
-- 数据对象 DSL 转换
 - Tabs 上加上验证状态
+- 数据对象 DSL 转换
 - NameInput 支持全选、撤销
 - 保存快捷键
 - rule 包含 label, 更好的信息提示
 - 引用关系支持可见性控制
 - 表单告警信息定位
-- 验证性能优化
 - 只读模式
 - 右键菜单, 画布，节点，组件树
 - MemberList 高亮修改为蓝色
@@ -53,6 +51,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 - 组件树换行优化
 - 被其他成员选中的不能修改
 - 持久化 viewState
+- 验证性能优化
 - 边拖入
 - 无连接桩连接交互
 - updateProperty debounce 发布 yjs 事件, 使用合并事件形式

@@ -17,6 +17,7 @@ import { useMemo } from 'react';
 import { DataObjectEditorModel } from '../model/DataObjectEditorModel';
 
 import { DomainObjectReferenceEdges } from './DataObjectReferenceEdges';
+import { ShapeTitle } from './ShapeTitle';
 
 export interface DataObjectEditorProps {
   /**
@@ -38,7 +39,7 @@ export const DataObjectEditor = observer(function DataObjectEditor(props: DataOb
   const configuration = useMemo<EditorConfigurationValue>(() => {
     return {
       renderTitle(node) {
-        return <div>TODO: renderTitle</div>;
+        return <ShapeTitle nodeId={node.id} />;
       },
     };
   }, []);
