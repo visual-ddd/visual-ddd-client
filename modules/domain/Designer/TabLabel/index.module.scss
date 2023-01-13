@@ -1,4 +1,13 @@
 .root {
+  padding-right: 0.5em;
+  :global(.anticon) {
+    position: absolute;
+    font-size: 0.8em;
+    top: 50%;
+    transform: translateY(-50%);
+    right: -1.5em;
+  }
+
   &:global(.error .anticon) {
     color: var(--vd-color-danger-300);
   }

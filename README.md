@@ -42,8 +42,6 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 - 引用关系支持可见性控制
 - 表单告警信息定位
 - 右键菜单, 画布，节点，组件树
-- MemberList 高亮修改为蓝色
-- MemberList 编辑友好高亮提示
 - layout 支持折叠
 - edge/node selected 状态高亮
 - 组件树换行优化

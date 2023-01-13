@@ -6,16 +6,19 @@
  * 调色盘
  */
 :root {
-  --vd-color-primary-900: #fa7516;
-  --vd-color-primary-800: #fb931a;
-  --vd-color-primary-700: #fca31d;
-  --vd-color-primary-600: #fcb620;
-  --vd-color-primary-500: #fdc325;
-  --vd-color-primary-400: #fdcc37;
-  --vd-color-primary-300: #fdd758;
-  --vd-color-primary-200: #fee187;
-  --vd-color-primary-100: #feedb6;
-  --vd-color-primary-50: #fff8e2;
+  /**
+   * 通过 https://atool.vip/color/ 生成
+   */
+  --vd-color-primary-900: #1677ff;
+  --vd-color-primary-800: #2881fa;
+  --vd-color-primary-700: #3a8bf5;
+  --vd-color-primary-600: #4c95ef;
+  --vd-color-primary-500: #5e9fea;
+  --vd-color-primary-400: #70a9e5;
+  --vd-color-primary-300: #81b3e0;
+  --vd-color-primary-200: #93bddb;
+  --vd-color-primary-100: #a5c7d6;
+  --vd-color-primary-50: #b7d1d0;
 
   --vd-color-secondary-900: #111c4e;
   --vd-color-secondary-800: #1c2c65;

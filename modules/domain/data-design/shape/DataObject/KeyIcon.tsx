@@ -1,6 +1,4 @@
-import { memo } from 'react';
-
-export const KeyIcon = memo((props: {}) => {
+export const KeyIcon = () => {
   return (
     <svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em">
       <path
@@ -16,6 +14,4 @@ export const KeyIcon = memo((props: {}) => {
       <path d="M490.666667 554.666667h42.666666v405.333333h-42.666666z" fill="#D68600" p-id="2696"></path>
     </svg>
   );
-});
-
-KeyIcon.displayName = 'KeyIcon';
+};

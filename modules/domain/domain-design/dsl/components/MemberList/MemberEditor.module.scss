@@ -1,0 +1,18 @@
+@keyframes flash {
+  0%,
+  50%,
+  to {
+    outline: 2px solid var(--vd-color-primary-500);
+  }
+
+  25%,
+  75% {
+    outline: 2px solid transparent;
+  }
+}
+
+.root {
+  &:global(.entering) {
+    animation: flash 2s ease;
+  }
+}

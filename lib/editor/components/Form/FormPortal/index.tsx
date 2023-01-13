@@ -69,14 +69,14 @@ export const EditorFormPortal = observer(function EditorFormPortal(props: Editor
       position={positionStore}
       onStop={updatePosition}
     >
-      <div className={classNames('vd-form-portal', s.root)}>
+      <div className={classNames('vd-form-portal', s.root, className)} style={style}>
         <div className={classNames('vd-form-portal__header', s.header)}>
           <span className={classNames('vd-form-portal__title', s.title)}>{title}</span>
           <span className={classNames('vd-form-portal__close', s.close)} onClick={handleClose}>
             <CloseOutlined />
           </span>
         </div>
-        <div className={classNames('vd-form-portal__body', className, s.body)} style={style}>
+        <div className={classNames('vd-form-portal__body', s.body)}>
           {/* 按需加载 */}
           {!!value && children}
         </div>

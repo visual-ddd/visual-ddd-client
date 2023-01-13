@@ -1,8 +1,11 @@
 import { EditorFormPortal } from '@/lib/editor';
+import classNames from 'classnames';
 import { observer } from 'mobx-react';
-import React, { forwardRef, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 
 import { IDDSL } from '../../dsl';
+
+import s from './MemberEditor.module.scss';
 
 export interface MemberEditorProps<T extends IDDSL = any> {
   /**
@@ -46,6 +49,7 @@ export const MemberEditor = observer(
     const { path, list, title, children, onHide } = props;
     const [currentEditing, setCurrentEditing] = useState<IDDSL>();
     const [visible, setVisible] = useState(false);
+    const [entering, setEntering] = useState(false);
 
     // 计算当前的索引
     const idx = useMemo(() => {
@@ -82,8 +86,29 @@ export const MemberEditor = observer(
       []
     );
 
+    useEffect(() => {
+      if (currentEditing) {
+        setEntering(true);
+        let timer: any = setTimeout(() => {
+          timer = undefined;
+          setEntering(false);
+        }, 400);
+
+        return () => {
+          if (timer != null) {
+            clearTimeout(timer);
+          }
+        };
+      }
+    }, [currentEditing]);
+
     return (
-      <EditorFormPortal title={title ?? '编辑'} value={finalVisible} onChange={handleVisibleChange}>
+      <EditorFormPortal
+        className={classNames('vd-member-editor', s.root, { entering })}
+        title={title ?? '编辑'}
+        value={finalVisible}
+        onChange={handleVisibleChange}
+      >
         {typeof children === 'function' ? children(basePath, currentEditing) : children}
       </EditorFormPortal>
     );
