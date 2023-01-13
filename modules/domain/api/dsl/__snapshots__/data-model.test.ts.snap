@@ -1,0 +1,194 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`transform 1`] = `
+{
+  "dataObjects": [
+    {
+      "description": "",
+      "indexes": [
+        {
+          "description": "",
+          "meta": {},
+          "method": "BTREE",
+          "name": "untitled0",
+          "properties": [
+            "a",
+            "b",
+          ],
+          "title": "未命名",
+          "type": "Unique",
+          "uuid": "d4d04958-b0a7-4967-bdc0-c4e7444eccb0",
+        },
+        {
+          "name": "primaryKeys",
+          "properties": [
+            "name",
+          ],
+          "type": "Primary",
+          "uuid": "b51bebe2-85ee-4733-b9a0-25926d3d93dc-primary-key",
+        },
+      ],
+      "meta": {},
+      "name": "Untitled",
+      "properties": [
+        {
+          "description": "",
+          "meta": {},
+          "name": "a",
+          "notNull": false,
+          "propertyName": undefined,
+          "title": "",
+          "type": "String",
+          "uuid": "237497a4-0497-4088-b4a6-1fadc7a24987",
+        },
+        {
+          "description": "",
+          "meta": {},
+          "name": "b",
+          "notNull": false,
+          "propertyName": undefined,
+          "title": "",
+          "type": "String",
+          "uuid": "49d8636d-71f9-4e1e-aa34-c68e5bec4be1",
+        },
+        {
+          "description": "",
+          "meta": {},
+          "name": "name",
+          "notNull": true,
+          "propertyName": undefined,
+          "title": "",
+          "type": "String",
+          "uuid": "4cbb88ae-8c97-482f-bfbf-9376201447e7",
+        },
+      ],
+      "tableName": undefined,
+      "title": "未命名",
+      "uuid": "b51bebe2-85ee-4733-b9a0-25926d3d93dc",
+    },
+    {
+      "description": "",
+      "indexes": [
+        {
+          "name": "primaryKeys",
+          "properties": [
+            "untitled1",
+          ],
+          "type": "Primary",
+          "uuid": "28d7cc24-2bef-49fe-a4a1-7e3e11c87796-primary-key",
+        },
+      ],
+      "meta": {},
+      "name": "HelloWorld",
+      "properties": [
+        {
+          "description": "",
+          "meta": {},
+          "name": "untitled",
+          "notNull": true,
+          "propertyName": undefined,
+          "title": "",
+          "type": "String",
+          "uuid": "4338a498-08c1-45a3-b0de-8ba7b2d28a42",
+        },
+        {
+          "description": "",
+          "meta": {},
+          "name": "untitled1",
+          "notNull": true,
+          "propertyName": undefined,
+          "title": "",
+          "type": "String",
+          "uuid": "8ade40eb-c860-42e6-9093-413ffb8972e4",
+        },
+        {
+          "description": "",
+          "meta": {},
+          "name": "untitled2",
+          "notNull": false,
+          "propertyName": undefined,
+          "title": "",
+          "type": "String",
+          "uuid": "e9bbcdbd-15ec-49db-9130-d0069f89f3ef",
+        },
+      ],
+      "tableName": undefined,
+      "title": "你好世界",
+      "uuid": "28d7cc24-2bef-49fe-a4a1-7e3e11c87796",
+    },
+    {
+      "description": "",
+      "indexes": [
+        {
+          "name": "primaryKeys",
+          "properties": [
+            "untitled1",
+          ],
+          "type": "Primary",
+          "uuid": "copy-f2853107-0547-4ade-bf42-90ec5cbfcb24-primary-key",
+        },
+      ],
+      "meta": {},
+      "name": "Just",
+      "properties": [
+        {
+          "defaultValue": "hello",
+          "description": "",
+          "length": 6,
+          "meta": {},
+          "name": "untitled",
+          "notNull": true,
+          "propertyName": undefined,
+          "title": "",
+          "type": "String",
+          "uuid": "4338a498-08c1-45a3-b0de-8ba7b2d28a42",
+        },
+        {
+          "description": "",
+          "meta": {},
+          "name": "untitled1",
+          "notNull": true,
+          "propertyName": undefined,
+          "title": "",
+          "type": "String",
+          "uuid": "8ade40eb-c860-42e6-9093-413ffb8972e4",
+        },
+        {
+          "description": "",
+          "meta": {},
+          "name": "untitled2",
+          "notNull": false,
+          "propertyName": undefined,
+          "title": "",
+          "type": "String",
+          "uuid": "e9bbcdbd-15ec-49db-9130-d0069f89f3ef",
+        },
+      ],
+      "tableName": undefined,
+      "title": "你好世界",
+      "uuid": "copy-f2853107-0547-4ade-bf42-90ec5cbfcb24",
+    },
+  ],
+  "references": [
+    {
+      "source": "Untitled",
+      "targets": [
+        {
+          "cardinality": "OneToMany",
+          "mapper": [
+            {
+              "sourceField": "a",
+              "targetField": "untitled",
+            },
+            {
+              "sourceField": "b",
+              "targetField": "untitled1",
+            },
+          ],
+          "target": "HelloWorld",
+        },
+      ],
+    },
+  ],
+}
+`;

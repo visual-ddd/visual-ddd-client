@@ -17,6 +17,25 @@ export interface Tree<T extends CoreProperties = CoreProperties> {
 
 export const ROOT = '__ROOT__';
 
+/**
+ * 转换字符串，如果为空则返回 undefined
+ * @param str
+ * @returns
+ */
+export function transformString(str?: string): string | undefined {
+  if (!str) {
+    return;
+  }
+
+  const trimmed = str.trim();
+
+  if (trimmed === '') {
+    return;
+  }
+
+  return trimmed;
+}
+
 export function transformMeta(meta?: ViewDSL.MetaDSL[]): DSL.MetaDSL | undefined {
   if (!meta) {
     return;

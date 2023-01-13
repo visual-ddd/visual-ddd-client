@@ -49,6 +49,11 @@ export interface BusinessDomainDSL {
    * 查询模型
    */
   queryModel: QueryModelDSL;
+
+  /**
+   * 数据模型
+   */
+  dataModel: DataModelDSL;
 }
 
 export interface DomainModelDSL {
@@ -296,7 +301,7 @@ export interface QueryDSL extends NameDSL {
  * -----------------------------------------------------------------------------------------
  */
 
-export type DatePropertyType =
+export type DataPropertyType =
   | 'Boolean'
   | 'Text'
   | 'LongText'
@@ -319,7 +324,7 @@ export interface DataPropertyDSL extends NameDSL {
   /**
    * 数据类型
    */
-  type: DataPropertyDSL;
+  type: DataPropertyType;
 
   /**
    * 根据具体数据类型确定, Text, LongText 不支持
@@ -329,12 +334,12 @@ export interface DataPropertyDSL extends NameDSL {
   /**
    * 不为空，默认false, 另外也会受主键影响
    */
-  notNull?: false;
+  notNull?: boolean;
 
   /**
    *  是否自增，默认为 false
    */
-  autoIncrement?: false;
+  autoIncrement?: boolean;
 
   /**
    * 精度, 默认 10, 最大为 65, 仅 Decimal 支持
