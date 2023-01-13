@@ -35,14 +35,13 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 ## TODO
 
-- Tabs 上加上验证状态
 - 数据对象 DSL 转换
-- NameInput 支持全选、撤销
-- 保存快捷键
+- NameInput 支持全选、撤销, 禁止中文输入，自动转换 Case
+- 保存快捷键、保存成功提示
+- 只读模式
 - rule 包含 label, 更好的信息提示
 - 引用关系支持可见性控制
 - 表单告警信息定位
-- 只读模式
 - 右键菜单, 画布，节点，组件树
 - MemberList 高亮修改为蓝色
 - MemberList 编辑友好高亮提示

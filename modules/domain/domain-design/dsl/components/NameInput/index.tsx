@@ -4,7 +4,7 @@ import React, { memo, useRef, useState } from 'react';
 import { NameTooltipSimple } from '../../constants';
 
 import { NameCase } from '../../dsl';
-import { allow } from './utils';
+import { valueTransform } from './utils';
 
 export interface NameInputProps extends AutoCompleteProps {
   /**
@@ -26,20 +26,18 @@ export interface NameInputProps extends AutoCompleteProps {
  * 标识符输入框
  */
 export const NameInput = memo((props: NameInputProps) => {
-  const { className, value, dbclickToEnable, nameCase = 'camelCase', onBlur, ...other } = props;
+  const { className, value, onChange, dbclickToEnable, nameCase = 'camelCase', onBlur, ...other } = props;
   const [disabled, setDisabled] = useState(!!dbclickToEnable);
   const instanceRef = useRef<{ focus: () => void }>(null);
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    e.stopPropagation();
+  /**
+   * 值变动
+   * @param value
+   */
+  const handleChange: AutoCompleteProps['onChange'] = (value: string, options) => {
+    const newValue = valueTransform(value, nameCase);
 
-    if (e.key.length !== 1) {
-      return;
-    }
-
-    if (!allow(e.key, value, nameCase)) {
-      e.preventDefault();
-    }
+    onChange?.(newValue, options);
   };
 
   const handleDbclick = () => {
@@ -63,7 +61,7 @@ export const NameInput = memo((props: NameInputProps) => {
     <AutoComplete
       className={classNames('vd-name-input', 'u-fw')}
       value={value}
-      onKeyDown={handleKeyDown}
+      onChange={handleChange}
       maxLength={256}
       ref={instanceRef as any}
       // 支持继承
