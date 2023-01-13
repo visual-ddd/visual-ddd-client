@@ -287,3 +287,144 @@ export interface QueryDSL extends NameDSL {
    */
   return: ReturnDSL;
 }
+
+/**
+ * -----------------------------------------------------------------------------------------
+ *
+ * 数据对象模型
+ *
+ * -----------------------------------------------------------------------------------------
+ */
+
+export type DatePropertyType =
+  | 'Boolean'
+  | 'Text'
+  | 'LongText'
+  | 'Date'
+  | 'DateTime'
+  | 'Timestamp'
+  | 'Integer'
+  | 'Long'
+  | 'Double'
+  | 'Float'
+  | 'Decimal'
+  | 'String';
+
+export interface DataPropertyDSL extends NameDSL {
+  /**
+   * 表字段名，默认为 name 的 snake_case 模式
+   */
+  propertyName?: string;
+
+  /**
+   * 数据类型
+   */
+  type: DataPropertyDSL;
+
+  /**
+   * 根据具体数据类型确定, Text, LongText 不支持
+   */
+  defaultValue?: any;
+
+  /**
+   * 不为空，默认false, 另外也会受主键影响
+   */
+  notNull?: false;
+
+  /**
+   *  是否自增，默认为 false
+   */
+  autoIncrement?: false;
+
+  /**
+   * 精度, 默认 10, 最大为 65, 仅 Decimal 支持
+   */
+  precision?: number;
+
+  /**
+   * 小数位, 默认 0,仅 Decimal 支持
+   */
+  scale?: number;
+
+  /**
+   * 长度修饰符 默认为 0, 仅 String 类型有效
+   */
+  length?: number;
+}
+
+export type DataIndexType = 'Normal' | 'Unique' | 'Primary' | 'FullText';
+
+export type DataIndexMethod = 'BTREE' | 'HASH';
+
+export interface DataIndexDSL extends NameDSL {
+  /**
+   * 默认为 Normal
+   */
+  type?: DataIndexType;
+
+  /**
+   * 索引栏位，通常以数据对象的属性名称
+   */
+  properties: string[];
+
+  /**
+   * 默认为BTREE
+   */
+  method?: DataIndexMethod;
+}
+
+/**
+ * 数据对象
+ */
+export interface DataObjectDSL extends NameDSL {
+  /**
+   * 表字段名，默认为 name 的 snake_case 模式
+   */
+  tableName?: string;
+
+  /**
+   * 字段
+   */
+  properties: DataPropertyDSL[];
+
+  /**
+   * 索引，默认为 []
+   */
+  indexes?: DataIndexDSL[];
+}
+
+/**
+ * 数据对象引用关系描述
+ */
+export interface DataObjectReferenceDSL {
+  source: string;
+
+  targets: Array<{
+    // 目标表
+    target: string;
+
+    // 关联关系
+    cardinality: 'OneToOne' | 'OneToMany' | 'ManyToMany' | 'ManyToOne';
+
+    // 字段映射
+    mapper: Array<{
+      sourceField: string;
+      targetField: string;
+    }>;
+  }>;
+}
+
+/**
+ * 数据模型
+ */
+export interface DataModelDSL {
+  /**
+   * 数据对象
+   */
+  dataObjects: DataObjectDSL[];
+
+  /**
+   * 引用关系
+   */
+  references: DataObjectReferenceDSL[];
+}
