@@ -28,9 +28,7 @@ export const PrimaryKeyRenderer = observer(function PrimaryKeyRenderer(props: Pr
 
   return (
     <div className={classNames('vd-pk', s.root)}>
-      <Icon>
-        <KeyIcon />
-      </Icon>
+      <Icon component={KeyIcon}></Icon>
       <span className={classNames('vd-pk__index', s.index)}>{index}</span>
     </div>
   );
