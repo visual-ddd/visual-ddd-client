@@ -12,6 +12,7 @@ import {
 import { PrimaryKeyRenderer } from './PrimaryKeyRenderer';
 import { TypeRenderer } from './TypeRenderer';
 import s from './reactify.module.scss';
+import { RequireRenderer } from './RequireRenderer';
 
 export function reactifyType(type: DataObjectTypeDSL) {
   return <TypeRenderer type={type}></TypeRenderer>;
@@ -20,6 +21,7 @@ export function reactifyType(type: DataObjectTypeDSL) {
 export function reactifyProperty(object: DataObjectDSL, property: DataObjectPropertyDSL) {
   return (
     <div className={classNames('vd-data-property', s.root)}>
+      <RequireRenderer property={property} />
       <PrimaryKeyRenderer object={object} property={property} />
       <span className={classNames('vd-data-property__name', s.name)}>
         {property.name || UntitledInCamelCase}: {reactifyType(property.type)}
