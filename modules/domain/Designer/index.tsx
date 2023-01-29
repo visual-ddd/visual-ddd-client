@@ -15,6 +15,7 @@ import { DomainDesignerTabs, DomainDesignerTabsMap, DomainDesignerModel } from '
 import { TabLabel } from './TabLabel';
 import { YJS_FIELD_NAME } from '../constants';
 import { VisionDesign } from '../vision-design';
+import { UbiquitousLanguage } from '../ubiquitous-language-design';
 
 const WYSIWYGEditor = dynamic(() => import('@/lib/wysiwyg-editor'), { ssr: false });
 
@@ -56,7 +57,7 @@ const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerPro
     {
       label: DomainDesignerTabsMap[DomainDesignerTabs.UbiquitousLanguage],
       key: DomainDesignerTabs.UbiquitousLanguage,
-      children: <div>敬请期待</div>,
+      children: <UbiquitousLanguage model={model.ubiquitousLanguageModel} />,
     },
     {
       label: (

@@ -1,0 +1,31 @@
+.root {
+  padding: 37px;
+}
+
+.search {
+  width: 20em;
+}
+
+.table {
+  margin-bottom: var(--vd-spacing-xs);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--vd-spacing-sm);
+}
+
+.editable {
+  border: 1px solid transparent;
+  min-height: 24px;
+  padding: 0 7px;
+  width: 100%;
+  border-radius: 4px;
+  cursor: text;
+
+  &:hover {
+    border: 1px solid var(--vd-color-gray-500);
+  }
+}

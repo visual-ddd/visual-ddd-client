@@ -6,6 +6,8 @@ export enum YJS_FIELD_NAME {
   PRODUCT = 'product',
   // 产品愿景
   VISION = 'vision',
+  // 统一语言
+  UBIQUITOUS_LANGUAGE = 'ubiquitous-language',
   // 领域模型
   DOMAIN = 'domain',
   // 查询模型

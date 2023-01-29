@@ -6,9 +6,10 @@ import { makeObservable, observable } from 'mobx';
 import { DomainEditorModel, createDomainEditorModel } from '../../domain-design';
 import { createQueryEditorModel } from '../../query-design';
 import { YJS_FIELD_NAME } from '../../constants';
+import { createDataObjectEditorModel, DataObjectEditorModel } from '../../data-design';
+import { UbiquitousLanguageModel } from '../../ubiquitous-language-design';
 
 import { DomainDesignerTabs } from './constants';
-import { createDataObjectEditorModel, DataObjectEditorModel } from '../../data-design';
 
 const KEY_ACTIVE_TAB = 'DESIGNER:activeTab';
 
@@ -24,6 +25,11 @@ interface TabModel {
 
 export class DomainDesignerModel {
   id: string;
+
+  /**
+   * 统一语言模型
+   */
+  ubiquitousLanguageModel: UbiquitousLanguageModel;
 
   /**
    * 领域模型编辑器模型
@@ -67,6 +73,7 @@ export class DomainDesignerModel {
     const domainDatabase = doc.getMap(YJS_FIELD_NAME.DOMAIN);
     const queryDatabase = doc.getMap(YJS_FIELD_NAME.QUERY);
     const dataObjectDatabase = doc.getMap(YJS_FIELD_NAME.DATA_OBJECT);
+    const ubiquitousLanguageDatabase = doc.getArray<any>(YJS_FIELD_NAME.UBIQUITOUS_LANGUAGE);
 
     // TODO: 观测加载状态
     new WebrtcProvider(id, doc);
@@ -74,6 +81,10 @@ export class DomainDesignerModel {
     this.domainEditorModel = createDomainEditorModel({ datasource: domainDatabase, doc: this.ydoc });
     this.queryEditorModel = createQueryEditorModel({ datasource: queryDatabase, doc: this.ydoc });
     this.dataObjectEditorModel = createDataObjectEditorModel({ datasource: dataObjectDatabase, doc: this.ydoc });
+    this.ubiquitousLanguageModel = new UbiquitousLanguageModel({
+      doc: this.ydoc,
+      datasource: ubiquitousLanguageDatabase,
+    });
 
     this.tabs = [
       {
