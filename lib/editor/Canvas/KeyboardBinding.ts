@@ -1,6 +1,8 @@
 import { Graph } from '@antv/x6';
 import memoize from 'lodash/memoize';
 
+import { OTHER_KEY_MAP, MAC_OS_KEY_MAP } from '@/lib/contants';
+
 export interface KeyboardBindingDescriptor {
   /**
    * 功能名称
@@ -27,19 +29,6 @@ export interface KeyboardBindingDescriptor {
    */
   handler: () => void;
 }
-
-const OTHER_KEY_MAP: Record<string, string> = {
-  plus: '+',
-};
-
-const MAC_OS_KEY_MAP: Record<string, string> = {
-  command: '⌘',
-  alt: '⌥',
-  plus: '+',
-  option: '⌥',
-  ctrl: '⌃',
-  shift: '⇧',
-};
 
 /**
  * 快捷键处理器

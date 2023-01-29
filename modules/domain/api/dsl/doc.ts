@@ -1,4 +1,7 @@
 import { Doc as YDoc, applyUpdate } from 'yjs';
+
+import { YJS_FIELD_NAME } from '../../constants';
+
 import * as DSL from './interface';
 import { transform as transformToDomainDSL } from './domain-model';
 import { transform as transformToQueryDSL } from './query-model';
@@ -23,9 +26,9 @@ export function createDoc(update: Uint8Array) {
  * @returns
  */
 export function transformToDSL(doc: YDoc): DSL.BusinessDomainDSL {
-  const domainMap = doc.getMap('domain');
-  const queryMap = doc.getMap('query');
-  const dataObjectMap = doc.getMap('data-object');
+  const domainMap = doc.getMap(YJS_FIELD_NAME.DOMAIN);
+  const queryMap = doc.getMap(YJS_FIELD_NAME.QUERY);
+  const dataObjectMap = doc.getMap(YJS_FIELD_NAME.DATA_OBJECT);
 
   return {
     domainModel: transformToDomainDSL(domainMap.toJSON()),

@@ -5,6 +5,7 @@ import { makeObservable, observable } from 'mobx';
 
 import { DomainEditorModel, createDomainEditorModel } from '../../domain-design';
 import { createQueryEditorModel } from '../../query-design';
+import { YJS_FIELD_NAME } from '../../constants';
 
 import { DomainDesignerTabs } from './constants';
 import { createDataObjectEditorModel, DataObjectEditorModel } from '../../data-design';
@@ -54,7 +55,7 @@ export class DomainDesignerModel {
   @observable
   error?: Error;
 
-  private ydoc: YDoc;
+  readonly ydoc: YDoc;
   private tabs: { key: DomainDesignerTabs; model: TabModel }[];
 
   constructor(options: { id: string }) {
@@ -63,9 +64,9 @@ export class DomainDesignerModel {
 
     const doc = (this.ydoc = new YDoc());
 
-    const domainDatabase = doc.getMap('domain');
-    const queryDatabase = doc.getMap('query');
-    const dataObjectDatabase = doc.getMap('data-object');
+    const domainDatabase = doc.getMap(YJS_FIELD_NAME.DOMAIN);
+    const queryDatabase = doc.getMap(YJS_FIELD_NAME.QUERY);
+    const dataObjectDatabase = doc.getMap(YJS_FIELD_NAME.DATA_OBJECT);
 
     // TODO: 观测加载状态
     new WebrtcProvider(id, doc);

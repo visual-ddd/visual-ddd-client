@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { observer } from 'mobx-react';
 import { useEffect, useMemo } from 'react';
 import { message, Tabs } from 'antd';
-import { DomainDesignerTabs, DomainDesignerTabsMap, DomainDesignerModel } from './model';
+import dynamic from 'next/dynamic';
 
 import { DomainEditor } from '../domain-design';
 import { DataObjectEditor } from '../data-design';
@@ -11,7 +11,11 @@ import s from './index.module.scss';
 import { DomainDesignerContextProvider } from './Context';
 import { DomainDesignerHeader } from './Header';
 import { DomainDesignerLoading } from './Loading';
+import { DomainDesignerTabs, DomainDesignerTabsMap, DomainDesignerModel } from './model';
 import { TabLabel } from './TabLabel';
+import { YJS_FIELD_NAME } from '../constants';
+
+const WYSIWYGEditor = dynamic(() => import('@/lib/wysiwyg-editor'), { ssr: false });
 
 export interface DomainDesignerProps {
   /**
@@ -37,7 +41,11 @@ const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerPro
     {
       label: DomainDesignerTabsMap[DomainDesignerTabs.Product],
       key: DomainDesignerTabs.Product,
-      children: <div>敬请期待</div>,
+      children: (
+        <div>
+          <WYSIWYGEditor doc={model.ydoc} field={YJS_FIELD_NAME.PRODUCT} />
+        </div>
+      ),
     },
     {
       label: DomainDesignerTabsMap[DomainDesignerTabs.Vision],
