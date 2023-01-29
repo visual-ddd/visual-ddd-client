@@ -14,6 +14,7 @@ import { DomainDesignerLoading } from './Loading';
 import { DomainDesignerTabs, DomainDesignerTabsMap, DomainDesignerModel } from './model';
 import { TabLabel } from './TabLabel';
 import { YJS_FIELD_NAME } from '../constants';
+import { VisionDesign } from '../vision-design';
 
 const WYSIWYGEditor = dynamic(() => import('@/lib/wysiwyg-editor'), { ssr: false });
 
@@ -50,7 +51,7 @@ const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerPro
     {
       label: DomainDesignerTabsMap[DomainDesignerTabs.Vision],
       key: DomainDesignerTabs.Vision,
-      children: <div>敬请期待</div>,
+      children: <VisionDesign doc={model.ydoc} field={YJS_FIELD_NAME.VISION} />,
     },
     {
       label: DomainDesignerTabsMap[DomainDesignerTabs.UbiquitousLanguage],

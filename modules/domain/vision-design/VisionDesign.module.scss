@@ -1,0 +1,29 @@
+.root {
+  padding: 37px;
+}
+
+.header {
+  font-weight: bold;
+}
+
+.body {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 37px;
+  margin-top: var(--vd-spacing-sm);
+}
+
+.example,
+.content {
+  flex: 1;
+}
+
+.example {
+  display: flex;
+  flex-direction: column;
+}
+
+.img {
+  width: 100%;
+  height: auto;
+}
