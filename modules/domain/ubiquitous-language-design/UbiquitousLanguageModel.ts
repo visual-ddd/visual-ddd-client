@@ -58,6 +58,12 @@ export class UbiquitousLanguageModel implements IUbiquitousLanguageModel {
   protected editing: Map<string, Set<string>> = new Map();
 
   /**
+   * 当前选中
+   */
+  @observable
+  selecting: string[] = [];
+
+  /**
    * antd table 只能识别不可变数组，如果直接使用 innerList, 会导致表格无法更新
    */
   @computed
@@ -137,6 +143,11 @@ export class UbiquitousLanguageModel implements IUbiquitousLanguageModel {
     }
   }
 
+  @mutation('UBL_SET_SELECTING', false)
+  setSelecting(ids: string[]) {
+    this.selecting = ids;
+  }
+
   @mutation('UBL_UPDATE_ITEM', false)
   updateItem(params: { uuid: string; key: keyof UbiquitousLanguageItem; value: string }) {
     const { uuid, key, value } = params;
@@ -161,6 +172,13 @@ export class UbiquitousLanguageModel implements IUbiquitousLanguageModel {
     if (index !== -1) {
       this.innerList.splice(index, 1);
       this.datasource.delete(index, 1);
+    }
+  }
+
+  @mutation('UBL_REMOVE_SELECTING', false)
+  removeSelecting(): void {
+    for (const id of this.selecting) {
+      this.removeItem(id);
     }
   }
 

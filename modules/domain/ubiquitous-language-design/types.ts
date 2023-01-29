@@ -32,14 +32,19 @@ export interface UbiquitousLanguageItem {
 
 export interface IUbiquitousLanguageModel {
   readonly list: UbiquitousLanguageItem[];
+  readonly selecting: string[];
 
   isEditing(id: string, key: keyof UbiquitousLanguageItem): boolean;
 
   setEditing(params: { id: string; key: keyof UbiquitousLanguageItem; editing: boolean }): void;
+
+  setSelecting(ids: string[]): void;
 
   updateItem(params: { uuid: string; key: keyof UbiquitousLanguageItem; value: string }): void;
 
   addItem(order?: 'push' | 'unshift'): void;
 
   removeItem(id: string): void;
+
+  removeSelecting(): void;
 }

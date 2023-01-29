@@ -116,7 +116,9 @@ export const UbiquitousLanguage = observer(function UbiquitousLanguage(props: Ub
           <Button size="small" onClick={() => model.addItem('unshift')}>
             新增一行
           </Button>
-          <Button size="small">批量删除</Button>
+          <Button size="small" disabled={!model.selecting.length} onClick={model.removeSelecting}>
+            批量删除
+          </Button>
           <Button size="small">自动翻译</Button>
         </Space>
         <Space>
@@ -126,14 +128,23 @@ export const UbiquitousLanguage = observer(function UbiquitousLanguage(props: Ub
         </Space>
       </div>
       <div className={classNames('vd-ul__table', s.table)}>
-        <Table rowKey="uuid" columns={columns} size="small" dataSource={model.list} pagination={false}></Table>
+        <Table
+          rowKey="uuid"
+          rowSelection={{ selectedRowKeys: model.selecting, onChange: e => model.setSelecting(e as string[]) }}
+          columns={columns}
+          size="small"
+          dataSource={model.list}
+          pagination={false}
+        ></Table>
       </div>
       <div className={classNames('vd-ul__actions', s.actions)}>
         <Space>
           <Button size="small" onClick={() => model.addItem('push')}>
             新增一行
           </Button>
-          <Button size="small">批量删除</Button>
+          <Button size="small" disabled={!model.selecting.length} onClick={model.removeSelecting}>
+            批量删除
+          </Button>
         </Space>
       </div>
     </div>
