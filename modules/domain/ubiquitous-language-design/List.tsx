@@ -91,7 +91,7 @@ export const UbiquitousLanguage = observer(function UbiquitousLanguage(props: Ub
         render(_, record) {
           return (
             <Space>
-              <Button type="link" onClick={() => model.removeItem(record.uuid)}>
+              <Button type="link" onClick={() => model.removeItem({ uuid: record.uuid })}>
                 删除
               </Button>
             </Space>
@@ -109,6 +109,7 @@ export const UbiquitousLanguage = observer(function UbiquitousLanguage(props: Ub
           enterButton
           className={classNames('vd-ul__search', s.search)}
           placeholder="关键字搜索"
+          onSearch={e => model.setFilter({ value: e })}
         />
       </div>
       <div className={classNames('vd-ul__actions', s.actions)}>

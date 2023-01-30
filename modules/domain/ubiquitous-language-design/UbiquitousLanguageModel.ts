@@ -1,11 +1,13 @@
 import { makeAutoBindThis, mutation } from '@/lib/store';
-import { makeObservable, observable, computed, runInAction } from 'mobx';
+import { makeObservable, observable, runInAction, reaction } from 'mobx';
 import { Doc as YDoc, Array as YArray, Map as YMap } from 'yjs';
 import { v4 } from 'uuid';
+import Fuse from 'fuse.js';
 
 import { IUbiquitousLanguageModel, UbiquitousLanguageItem } from './types';
+import { UbiquitousLanguageEvent } from './UbiquitousLanguageEvents';
 
-export class ItemWrapper {
+class ItemWrapper {
   static from(item: UbiquitousLanguageItem) {
     const instance = new ItemWrapper(new YMap());
     const keys = Object.keys(item) as (keyof UbiquitousLanguageItem)[];
@@ -44,6 +46,31 @@ export class ItemWrapper {
   }
 }
 
+class FuseStore {
+  private fuse = new Fuse<UbiquitousLanguageItem>([], { keys: ['conception', 'englishName'] });
+
+  add(item: UbiquitousLanguageItem) {
+    this.fuse.add(item);
+  }
+
+  remove(item: UbiquitousLanguageItem) {
+    this.fuse.remove(i => {
+      return i.uuid === item.uuid;
+    });
+  }
+
+  update(item: UbiquitousLanguageItem, key: keyof UbiquitousLanguageItem, value: string) {
+    if (key === 'conception' || key === 'englishName') {
+      this.remove(item);
+      this.add(item);
+    }
+  }
+
+  search(filter: string) {
+    return this.fuse.search(filter);
+  }
+}
+
 /**
  * 统一语言列表模型
  */
@@ -54,8 +81,17 @@ export class UbiquitousLanguageModel implements IUbiquitousLanguageModel {
   @observable
   protected innerList: UbiquitousLanguageItem[] = [];
 
+  /**
+   * 当前正在编辑
+   */
   @observable
   protected editing: Map<string, Set<string>> = new Map();
+
+  /**
+   * 当前筛选
+   */
+  @observable
+  filter: string = '';
 
   /**
    * 当前选中
@@ -66,12 +102,16 @@ export class UbiquitousLanguageModel implements IUbiquitousLanguageModel {
   /**
    * antd table 只能识别不可变数组，如果直接使用 innerList, 会导致表格无法更新
    */
-  @computed
-  get list() {
-    return [...this.innerList];
-  }
+  @observable
+  list: UbiquitousLanguageItem[] = [];
 
   private datasource: YArray<YMap<string>>;
+  /**
+   * 正在拉取远程更新, 主要用于避免循环
+   */
+  private datasourcePulling: boolean = false;
+  private event: UbiquitousLanguageEvent = new UbiquitousLanguageEvent();
+  private fuseStore = new FuseStore();
 
   constructor(inject: { doc: YDoc; datasource: YArray<YMap<string>> }) {
     const { datasource } = inject;
@@ -81,6 +121,22 @@ export class UbiquitousLanguageModel implements IUbiquitousLanguageModel {
     makeObservable(this);
     makeAutoBindThis(this);
 
+    reaction(
+      () => ({
+        filter: this.filter,
+        list: [...this.innerList],
+      }),
+      ({ filter, list }) => {
+        if (!filter.trim()) {
+          this.list = list;
+        } else {
+          const result = this.fuseStore.search(filter);
+          this.list = result.map(i => i.item);
+        }
+      },
+      { name: 'UbiquitousLanguageFilter', delay: 100, fireImmediately: true }
+    );
+
     // 监听 yjs 数据变化
     datasource.observeDeep((events, transaction) => {
       // 本地触发，跳过
@@ -89,42 +145,96 @@ export class UbiquitousLanguageModel implements IUbiquitousLanguageModel {
       }
 
       runInAction(() => {
-        for (const evt of events) {
-          console.log('统一语言更新', evt);
+        try {
+          this.datasourcePulling = true;
+          for (const evt of events) {
+            console.log('统一语言更新', evt);
 
-          if (evt.target instanceof YArray) {
-            // 列表更新
-            let currentIndex = 0;
-            for (const delta of evt.delta) {
-              if (delta.retain != null) {
-                currentIndex = delta.retain;
-              } else if ((delta.insert as YMap<string>[] | undefined)?.length) {
-                this.innerList.splice(
-                  currentIndex,
-                  0,
-                  ...(delta.insert as YMap<string>[]).map(item => ItemWrapper.fromMap(item).toJSON())
-                );
-              } else if (delta.delete != null) {
-                this.innerList.splice(currentIndex, delta.delete);
+            if (evt.target instanceof YArray) {
+              // 列表更新
+              let currentIndex = 0;
+              for (const delta of evt.delta) {
+                if (delta.retain != null) {
+                  // 定位
+                  currentIndex = delta.retain;
+                } else if ((delta.insert as [] | undefined)?.length) {
+                  const insert = delta.insert as YMap<string>[];
+                  // 新增
+                  for (let i = currentIndex; i < currentIndex + insert.length; i++) {
+                    const itemMap = insert[i - currentIndex];
+                    this.insertItem({ index: i, item: ItemWrapper.fromMap(itemMap).toJSON() });
+                  }
+                } else if (delta.delete != null) {
+                  // 移除
+                  const clone = [...this.innerList];
+                  const deleted = clone.splice(currentIndex, delta.delete);
+                  for (const item of deleted) {
+                    this.removeItem({ uuid: item.uuid });
+                  }
+                }
               }
-            }
-          } else if (evt.target instanceof YMap) {
-            // 属性更新
-            const wrapper = ItemWrapper.fromMap(evt.target);
-            const item = this.innerList.find(item => item.uuid === wrapper.uuid);
-            if (item != null) {
-              for (const key of evt.keys.keys() as IterableIterator<keyof UbiquitousLanguageItem>) {
-                item[key] = wrapper.getField(key);
+            } else if (evt.target instanceof YMap) {
+              // 属性更新
+              const wrapper = ItemWrapper.fromMap(evt.target);
+              const item = this.innerList.find(item => item.uuid === wrapper.uuid);
+              if (item != null) {
+                for (const key of evt.keys.keys() as IterableIterator<keyof UbiquitousLanguageItem>) {
+                  const value = wrapper.getField(key);
+                  if (value !== item[key]) {
+                    this.updateItem({ uuid: item.uuid, key, value });
+                  }
+                }
               }
             }
           }
+        } finally {
+          this.datasourcePulling = false;
         }
       });
+    });
+
+    // 条项新增
+    this.event.on('ITEM_ADDED', ({ item, index }) => {
+      if (!this.datasourcePulling) {
+        const inst = ItemWrapper.from(item);
+
+        this.datasource.insert(index, [inst.map]);
+      }
+      this.fuseStore.add(item);
+    });
+
+    // 条项移除
+    this.event.on('ITEM_REMOVED', ({ item, index }) => {
+      if (!this.datasourcePulling) {
+        this.datasource.delete(index, 1);
+      }
+
+      this.fuseStore.remove(item);
+    });
+
+    // 条项更新
+    this.event.on('ITEM_UPDATED', ({ item, key, value }) => {
+      if (!this.datasourcePulling) {
+        const uuid = item.uuid;
+        this.datasource.forEach(i => {
+          const wrapper = ItemWrapper.fromMap(i);
+          if (wrapper.uuid === uuid) {
+            wrapper.setField(key, value);
+          }
+        });
+      }
+
+      this.fuseStore.update(item, key, value);
     });
   }
 
   isEditing(id: string, key: keyof UbiquitousLanguageItem): boolean {
     return !!this.editing.get(id)?.has(key);
+  }
+
+  @mutation('UBL_SET_FILTER', false)
+  setFilter(params: { value: string }) {
+    this.filter = params.value;
   }
 
   @mutation('UBL_SET_EDITING', false)
@@ -157,28 +267,25 @@ export class UbiquitousLanguageModel implements IUbiquitousLanguageModel {
     }
 
     item[key] = value;
-    this.datasource.forEach(i => {
-      const wrapper = ItemWrapper.fromMap(i);
-      if (wrapper.uuid === uuid) {
-        wrapper.setField(key, value);
-      }
-    });
+    this.event.emit('ITEM_UPDATED', { item, key, value });
   }
 
   @mutation('UBL_REMOVE_ITEM', false)
-  removeItem(id: string) {
+  removeItem(params: { uuid: string }) {
+    const { uuid: id } = params;
     const index = this.innerList.findIndex(item => item.uuid === id);
 
     if (index !== -1) {
+      const item = this.innerList[index];
       this.innerList.splice(index, 1);
-      this.datasource.delete(index, 1);
+      this.event.emit('ITEM_REMOVED', { item, index });
     }
   }
 
   @mutation('UBL_REMOVE_SELECTING', false)
   removeSelecting(): void {
     for (const id of this.selecting) {
-      this.removeItem(id);
+      this.removeItem({ uuid: id });
     }
   }
 
@@ -193,14 +300,19 @@ export class UbiquitousLanguageModel implements IUbiquitousLanguageModel {
       example: '',
     };
 
-    const inst = ItemWrapper.from(item);
-
     if (order === 'push') {
       this.innerList.push(item);
-      this.datasource.push([inst.map]);
+      this.event.emit('ITEM_ADDED', { item, index: this.innerList.length - 1 });
     } else {
       this.innerList.unshift(item);
-      this.datasource.unshift([inst.map]);
+      this.event.emit('ITEM_ADDED', { item, index: 0 });
     }
+  }
+
+  @mutation('UBL_INSERT_ITEM', false)
+  insertItem(params: { index: number; item: UbiquitousLanguageItem }) {
+    const { index, item } = params;
+    this.innerList.splice(index, 0, item);
+    this.event.emit('ITEM_ADDED', { item, index });
   }
 }

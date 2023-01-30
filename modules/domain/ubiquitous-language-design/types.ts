@@ -34,6 +34,8 @@ export interface IUbiquitousLanguageModel {
   readonly list: UbiquitousLanguageItem[];
   readonly selecting: string[];
 
+  setFilter(params: { value: string }): void;
+
   isEditing(id: string, key: keyof UbiquitousLanguageItem): boolean;
 
   setEditing(params: { id: string; key: keyof UbiquitousLanguageItem; editing: boolean }): void;
@@ -44,7 +46,7 @@ export interface IUbiquitousLanguageModel {
 
   addItem(order?: 'push' | 'unshift'): void;
 
-  removeItem(id: string): void;
+  removeItem(params: { uuid: string }): void;
 
   removeSelecting(): void;
 }
