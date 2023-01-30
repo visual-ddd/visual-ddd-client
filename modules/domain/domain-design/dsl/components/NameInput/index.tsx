@@ -1,3 +1,5 @@
+import { useIdentifierCompletion } from '@/lib/components';
+import { NoopArray } from '@wakeapp/utils';
 import { AutoCompleteProps, AutoComplete } from 'antd';
 import classNames from 'classnames';
 import React, { memo, useRef, useState } from 'react';
@@ -19,16 +21,15 @@ export interface NameInputProps extends AutoCompleteProps {
   dbclickToEnable?: boolean;
 }
 
-// TODO: 统一语言推断和转换
-// const words: string[] = ['you', 'are', 'hello', 'word'];
-
 /**
  * 标识符输入框
  */
 export const NameInput = memo((props: NameInputProps) => {
   const { className, value, onChange, dbclickToEnable, nameCase = 'camelCase', onBlur, ...other } = props;
   const [disabled, setDisabled] = useState(!!dbclickToEnable);
+  const [options, setOptions] = useState<{ value: string; label: string }[]>(NoopArray);
   const instanceRef = useRef<{ focus: () => void }>(null);
+  const search = useIdentifierCompletion(nameCase);
 
   /**
    * 值变动
@@ -57,12 +58,20 @@ export const NameInput = memo((props: NameInputProps) => {
     }
   };
 
+  const handleSearch = (value: string) => {
+    const result = search(value);
+    setOptions(result.map(i => ({ label: i, value: i })));
+  };
+
   return (
     <AutoComplete
       className={classNames('vd-name-input', 'u-fw')}
       value={value}
       onChange={handleChange}
+      onSearch={handleSearch}
+      options={options}
       maxLength={256}
+      backfill
       ref={instanceRef as any}
       // 支持继承
       disabled={disabled ? true : undefined}

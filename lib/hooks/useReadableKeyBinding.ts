@@ -1,4 +1,4 @@
-import { memoize } from 'lodash';
+import memoize from 'lodash/memoize';
 import { useMemo } from 'react';
 
 import { OTHER_KEY_MAP, MAC_OS_KEY_MAP } from '@/lib/contants';

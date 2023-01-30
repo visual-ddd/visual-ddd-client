@@ -1,5 +1,5 @@
 import { makeAutoBindThis, mutation } from '@/lib/store';
-import { makeObservable, observable, runInAction, reaction } from 'mobx';
+import { makeObservable, observable, runInAction, computed, reaction } from 'mobx';
 import { Doc as YDoc, Array as YArray, Map as YMap } from 'yjs';
 import { v4 } from 'uuid';
 import Fuse from 'fuse.js';
@@ -104,6 +104,28 @@ export class UbiquitousLanguageModel implements IUbiquitousLanguageModel {
    */
   @observable
   list: UbiquitousLanguageItem[] = [];
+
+  /**
+   * 所有单词
+   */
+  @computed
+  get words(): string[] {
+    const list: Set<string> = new Set();
+
+    const push = (value: string) => {
+      value = value.trim();
+      if (value) {
+        list.add(value);
+      }
+    };
+
+    for (const item of this.innerList) {
+      push(item.conception);
+      push(item.englishName);
+    }
+
+    return Array.from(list);
+  }
 
   private datasource: YArray<YMap<string>>;
   /**

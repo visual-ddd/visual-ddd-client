@@ -16,6 +16,7 @@ import { TabLabel } from './TabLabel';
 import { YJS_FIELD_NAME } from '../constants';
 import { VisionDesign } from '../vision-design';
 import { UbiquitousLanguage } from '../ubiquitous-language-design';
+import { CompletionContextProvider } from '@/lib/components';
 
 const WYSIWYGEditor = dynamic(() => import('@/lib/wysiwyg-editor'), { ssr: false });
 
@@ -102,19 +103,21 @@ const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerPro
 
   return (
     <DomainDesignerContextProvider value={model}>
-      <div className={classNames('vd-domain', s.root)}>
-        <DomainDesignerLoading></DomainDesignerLoading>
-        <DomainDesignerHeader></DomainDesignerHeader>
-        <Tabs
-          className={classNames('vd-domain-body', s.body)}
-          items={items}
-          tabPosition="bottom"
-          activeKey={model.activeTab}
-          onChange={tab => model.setActiveTab({ tab: tab as DomainDesignerTabs })}
-          tabBarGutter={20}
-          size="small"
-        ></Tabs>
-      </div>
+      <CompletionContextProvider words={model.ubiquitousLanguageModel.words}>
+        <div className={classNames('vd-domain', s.root)}>
+          <DomainDesignerLoading></DomainDesignerLoading>
+          <DomainDesignerHeader></DomainDesignerHeader>
+          <Tabs
+            className={classNames('vd-domain-body', s.body)}
+            items={items}
+            tabPosition="bottom"
+            activeKey={model.activeTab}
+            onChange={tab => model.setActiveTab({ tab: tab as DomainDesignerTabs })}
+            tabBarGutter={20}
+            size="small"
+          ></Tabs>
+        </div>
+      </CompletionContextProvider>
     </DomainDesignerContextProvider>
   );
 });
