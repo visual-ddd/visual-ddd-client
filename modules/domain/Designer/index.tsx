@@ -2,7 +2,6 @@ import classNames from 'classnames';
 import { observer } from 'mobx-react';
 import { useEffect, useMemo } from 'react';
 import { message, Tabs } from 'antd';
-import dynamic from 'next/dynamic';
 
 import { DomainEditor } from '../domain-design';
 import { DataObjectEditor } from '../data-design';
@@ -17,8 +16,7 @@ import { YJS_FIELD_NAME } from '../constants';
 import { VisionDesign } from '../vision-design';
 import { UbiquitousLanguage } from '../ubiquitous-language-design';
 import { CompletionContextProvider } from '@/lib/components';
-
-const WYSIWYGEditor = dynamic(() => import('@/lib/wysiwyg-editor'), { ssr: false });
+import { ProductDesign } from '../product-design';
 
 export interface DomainDesignerProps {
   /**
@@ -49,11 +47,7 @@ const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerPro
     {
       label: DomainDesignerTabsMap[DomainDesignerTabs.Product],
       key: DomainDesignerTabs.Product,
-      children: (
-        <div>
-          <WYSIWYGEditor doc={model.ydoc} field={YJS_FIELD_NAME.PRODUCT} />
-        </div>
-      ),
+      children: <ProductDesign doc={model.ydoc} field={YJS_FIELD_NAME.PRODUCT} readonly={model.readonly} />,
     },
     {
       label: DomainDesignerTabsMap[DomainDesignerTabs.Vision],

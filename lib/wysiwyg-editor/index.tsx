@@ -20,13 +20,19 @@ export interface WYSIWYGEditorProps {
    */
   field: string;
 
+  /**
+   * 只读模式
+   */
+  readonly?: boolean;
+
   // TODO: 光标展示
   // https://tiptap.dev/guide/collaborative-editing
 }
 
 export const WYSIWYGEditor = (props: WYSIWYGEditorProps) => {
-  const { doc, field } = props;
+  const { doc, field, readonly } = props;
   const editor = useEditor({
+    editable: !readonly,
     extensions: [
       StarterKit.configure({
         // 使用 yjs
