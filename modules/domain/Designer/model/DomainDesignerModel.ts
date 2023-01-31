@@ -25,6 +25,7 @@ interface TabModel {
 
 export class DomainDesignerModel {
   id: string;
+  readonly readonly: boolean;
 
   /**
    * 统一语言模型
@@ -64,9 +65,10 @@ export class DomainDesignerModel {
   readonly ydoc: YDoc;
   private tabs: { key: DomainDesignerTabs; model: TabModel }[];
 
-  constructor(options: { id: string }) {
-    const { id } = options;
+  constructor(options: { id: string; readonly?: boolean }) {
+    const { id, readonly = false } = options;
     this.id = id;
+    this.readonly = readonly;
 
     const doc = (this.ydoc = new YDoc());
 
@@ -78,9 +80,13 @@ export class DomainDesignerModel {
     // TODO: 观测加载状态
     new WebrtcProvider(id, doc);
 
-    this.domainEditorModel = createDomainEditorModel({ datasource: domainDatabase, doc: this.ydoc });
-    this.queryEditorModel = createQueryEditorModel({ datasource: queryDatabase, doc: this.ydoc });
-    this.dataObjectEditorModel = createDataObjectEditorModel({ datasource: dataObjectDatabase, doc: this.ydoc });
+    this.domainEditorModel = createDomainEditorModel({ datasource: domainDatabase, doc: this.ydoc, readonly });
+    this.queryEditorModel = createQueryEditorModel({ datasource: queryDatabase, doc: this.ydoc, readonly });
+    this.dataObjectEditorModel = createDataObjectEditorModel({
+      datasource: dataObjectDatabase,
+      doc: this.ydoc,
+      readonly,
+    });
     this.ubiquitousLanguageModel = new UbiquitousLanguageModel({
       doc: this.ydoc,
       datasource: ubiquitousLanguageDatabase,

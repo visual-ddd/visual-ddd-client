@@ -24,6 +24,10 @@ a {
   color: var(--vd-color-warning);
 }
 
+.u-gray-500 {
+  color: var(--vd-color-gray-500);
+}
+
 .u-ml-xs {
   margin-left: var(--vd-spacing-xs);
 }

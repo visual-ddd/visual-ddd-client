@@ -17,13 +17,18 @@ export const DomainDesignerHeader = observer(function DesignerHeader(props: {}) 
       </div>
       <div className={classNames('vd-domain-header__aside', s.aside)}></div>
       <div className={classNames('vd-domain-header__center', s.center)}>
-        <span className={classNames('vd-domain-header__title', s.title)}>{DomainDesignerTabsMap[model.activeTab]}</span>
+        <span className={classNames('vd-domain-header__title', s.title)}>
+          {DomainDesignerTabsMap[model.activeTab]}
+          {model.readonly && <span className="u-gray-500">(只读)</span>}
+        </span>
       </div>
-      <div className={classNames('vd-domain-header__aside', s.aside)}>
-        <Button type="primary" size="small" loading={model.saving} onClick={model.save}>
-          保存
-        </Button>
-      </div>
+      {!model.readonly && (
+        <div className={classNames('vd-domain-header__aside', s.aside)}>
+          <Button type="primary" size="small" loading={model.saving} onClick={model.save}>
+            保存
+          </Button>
+        </div>
+      )}
     </div>
   );
 });

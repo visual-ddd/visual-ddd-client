@@ -143,6 +143,8 @@ interface MemberListContext<T extends IDDSL> {
   getEditorTitle: () => React.ReactNode;
 
   getShowError: () => boolean;
+
+  readonly: boolean;
 }
 
 const Member = observer(function Member<T extends IDDSL>(props: {
@@ -151,6 +153,7 @@ const Member = observer(function Member<T extends IDDSL>(props: {
   index: number;
 }) {
   const { value, context, index } = props;
+  const readonly = context.readonly;
   const popoverEdit = context.getEditorDisplayType() === 'popover';
   const path = context.getPath();
   const editing = value.uuid === context.editing;
@@ -192,7 +195,7 @@ const Member = observer(function Member<T extends IDDSL>(props: {
           <EditTwoTone onClick={handleEdit} />
         )}
 
-        <MinusCircleTwoTone onClick={handleRemove} />
+        {!readonly && <MinusCircleTwoTone onClick={handleRemove} />}
 
         {showError && <EditorFormTooltip path={pathWithIndex} aggregated></EditorFormTooltip>}
       </div>
@@ -217,7 +220,7 @@ export const MemberList = observer(function MemberList<T extends IDDSL>(props: M
     editorTitle,
     editorDisplayType,
   } = props;
-  const { formModel } = useEditorFormContext()!;
+  const { formModel, readonly } = useEditorFormContext()!;
   const propsRef = useRefValue(props);
   const editorRef = useMemberEditorRef<T>();
 
@@ -231,6 +234,7 @@ export const MemberList = observer(function MemberList<T extends IDDSL>(props: M
       get editing() {
         return store.editing;
       },
+      readonly,
       getShowError() {
         return showError;
       },

@@ -25,20 +25,25 @@ export interface DomainDesignerProps {
    * 模型 id
    */
   id: string;
+
+  /**
+   * 是否为只读模式
+   */
+  readonly?: boolean;
 }
 
 /**
  * 领域模型设计器
  */
 const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerProps) {
-  const { id } = props;
+  const { id, readonly } = props;
   const model = useMemo(() => {
-    const instance = new DomainDesignerModel({ id });
+    const instance = new DomainDesignerModel({ id, readonly });
 
     instance.load();
 
     return instance;
-  }, [id]);
+  }, [id, readonly]);
 
   const items = [
     {

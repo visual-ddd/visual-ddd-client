@@ -32,6 +32,8 @@ declare global {
   }
 }
 
+type Resizing = GraphBindingOptions['resizing'];
+
 /**
  * 这个模型是无状态的，核心状态保存在 EditorModel
  * 这里主要是为了几种处理画布(View)相关逻辑, 会耦合 UI
@@ -65,6 +67,13 @@ export class CanvasModel {
    * 编辑器模型
    */
   editorModel: BaseEditorModel;
+
+  /**
+   * 是否为只读模式
+   */
+  get readonly() {
+    return this.editorModel.readonly;
+  }
 
   get editorIndex() {
     return this.editorModel.index;
@@ -118,25 +127,29 @@ export class CanvasModel {
     this.editorModel = inject.editorModel;
     const shapeRegistry = (this.shapeRegistry = new ShapeRegistry({ editorModel: inject.editorModel }));
     this.editorModel.scope.registerScopeMember('canvasModel', this);
+    const readonly = this.readonly;
+
+    let resizing: Resizing = false;
 
     // 尺寸变换配置
-    type Resizing = GraphBindingOptions['resizing'];
-    const resizing: Resizing = {
-      enabled(node) {
-        return !!shapeRegistry.isResizable({ graph: this, node });
-      },
-    };
-
-    for (const [key, defaultValue] of ResizingOptionsWithDefault) {
-      resizing[key] = function (node) {
-        const result = shapeRegistry.isResizable({ graph: this, node });
-
-        if (typeof result === 'object') {
-          return result[key] ?? defaultValue;
-        }
-
-        return defaultValue;
+    if (!readonly) {
+      resizing = {
+        enabled(node) {
+          return !!shapeRegistry.isResizable({ graph: this, node });
+        },
       };
+
+      for (const [key, defaultValue] of ResizingOptionsWithDefault) {
+        resizing[key] = function (node) {
+          const result = shapeRegistry.isResizable({ graph: this, node });
+
+          if (typeof result === 'object') {
+            return result[key] ?? defaultValue;
+          }
+
+          return defaultValue;
+        };
+      }
     }
 
     // 默认配置
@@ -185,7 +198,7 @@ export class CanvasModel {
 
       // 支持对齐线
       snapline: {
-        enabled: true,
+        enabled: !readonly,
       },
 
       // 画布滚动
@@ -200,7 +213,7 @@ export class CanvasModel {
       // 分组嵌入
       // FIXME: X6 目前不支持批量
       embedding: {
-        enabled: true,
+        enabled: !readonly,
         findParent: 'bbox',
         frontOnly: false,
         // 验证是否支持拖入
@@ -236,11 +249,11 @@ export class CanvasModel {
 
       // 交互行为
       interacting: {
-        nodeMovable: true,
-        edgeMovable: true,
-        edgeLabelMovable: true,
-        arrowheadMovable: true,
-        magnetConnectable: true,
+        nodeMovable: !readonly,
+        edgeMovable: !readonly,
+        edgeLabelMovable: !readonly,
+        arrowheadMovable: !readonly,
+        magnetConnectable: !readonly,
       },
 
       // 自动根据容器调整大小
@@ -278,15 +291,17 @@ export class CanvasModel {
 
       // 剪切板
       clipboard: {
-        enabled: true,
+        enabled: !readonly,
         useLocalStorage: false,
       },
 
       resizing,
       rotating: {
-        enabled(node) {
-          return !!shapeRegistry.isRotatable({ node, graph: this });
-        },
+        enabled: readonly
+          ? false
+          : function (node) {
+              return !!shapeRegistry.isRotatable({ node, graph: this });
+            },
         grid(node) {
           const s = shapeRegistry.isRotatable({ node, graph: this });
           if (typeof s === 'object') {
@@ -301,39 +316,43 @@ export class CanvasModel {
     // 快捷键绑定
     this.keyboardBinding = new KeyboardBinding();
 
+    if (!readonly) {
+      this.keyboardBinding
+        .bindKey({
+          name: 'delete',
+          title: '删除',
+          description: '删除选中图形',
+          key: 'backspace',
+          handler: this.handleRemoveSelected,
+        })
+        .bindKey({
+          name: 'copy',
+          title: '拷贝',
+          description: '拷贝选中图形',
+          key: { macos: 'command+c', other: 'ctrl+c' },
+          handler: this.handleCopy,
+        })
+        .bindKey({
+          name: 'paste',
+          title: '粘贴',
+          key: { macos: 'command+v', other: 'ctrl+v' },
+          handler: this.handlePaste,
+        })
+        .bindKey({
+          name: 'undo',
+          title: '撤销',
+          key: { macos: 'command+z', other: 'ctrl+z' },
+          handler: this.handleUndo,
+        })
+        .bindKey({
+          name: 'redo',
+          title: '重做',
+          key: { macos: 'shift+command+z', other: 'ctrl+y' },
+          handler: this.handleRedo,
+        });
+    }
+
     this.keyboardBinding
-      .bindKey({
-        name: 'delete',
-        title: '删除',
-        description: '删除选中图形',
-        key: 'backspace',
-        handler: this.handleRemoveSelected,
-      })
-      .bindKey({
-        name: 'copy',
-        title: '拷贝',
-        description: '拷贝选中图形',
-        key: { macos: 'command+c', other: 'ctrl+c' },
-        handler: this.handleCopy,
-      })
-      .bindKey({
-        name: 'paste',
-        title: '粘贴',
-        key: { macos: 'command+v', other: 'ctrl+v' },
-        handler: this.handlePaste,
-      })
-      .bindKey({
-        name: 'undo',
-        title: '撤销',
-        key: { macos: 'command+z', other: 'ctrl+z' },
-        handler: this.handleUndo,
-      })
-      .bindKey({
-        name: 'redo',
-        title: '重做',
-        key: { macos: 'shift+command+z', other: 'ctrl+y' },
-        handler: this.handleRedo,
-      })
       .bindKey({
         name: 'mouseSelectMode',
         title: '框选',

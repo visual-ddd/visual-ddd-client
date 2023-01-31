@@ -35,6 +35,7 @@ export interface DomainEditorProps {
  */
 export const DomainEditor = observer(function DomainEditor(props: DomainEditorProps) {
   const { model } = props;
+  const readonly = model.readonly;
   const configuration = useMemo<EditorConfigurationValue>(() => {
     return {
       renderTitle(node) {
@@ -50,9 +51,13 @@ export const DomainEditor = observer(function DomainEditor(props: DomainEditorPr
           <EditorConfigurationProvider value={configuration}>
             <EditorLayout
               left={
-                <EditorPanelLayout bottom={<ShapeTree />}>
-                  <EditorShapeLibrary shapes={model.shapeList} />
-                </EditorPanelLayout>
+                readonly ? (
+                  <ShapeTree />
+                ) : (
+                  <EditorPanelLayout bottom={<ShapeTree />}>
+                    <EditorShapeLibrary shapes={model.shapeList} />
+                  </EditorPanelLayout>
+                )
               }
               right={<EditorInspectPanel />}
               toolbar={<EditorToolbar />}

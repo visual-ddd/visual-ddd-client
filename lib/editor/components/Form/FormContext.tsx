@@ -2,9 +2,15 @@ import { createContext, useContext } from 'react';
 import { FormModel } from '../../Model';
 
 export interface EditorFormContext {
+  /**
+   * 表单模型
+   */
   formModel: FormModel;
-  // TODO: 只读状态
-  // disabled: boolean;
+
+  /**
+   * 只读状态
+   */
+  readonly: boolean;
 }
 
 const Context = createContext<EditorFormContext | null>(null);

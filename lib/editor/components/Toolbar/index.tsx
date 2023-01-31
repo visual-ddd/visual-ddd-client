@@ -33,6 +33,7 @@ const ZOOM_FACTOR_STYLE: React.CSSProperties = {
 export const EditorToolbar = observer(function EditorToolbar() {
   const { model } = useCanvasModel();
   const editorViewStore = model.editorViewStore;
+  const readonly = model.readonly;
 
   const getDesc = useMemo(() => {
     return memoize((name: string) => {
@@ -91,44 +92,49 @@ export const EditorToolbar = observer(function EditorToolbar() {
           icon={<ExpandOutlined />}
         ></Item>
       </Group>
-      <Group>
-        <Item
-          name="undo"
-          tooltip={getDesc('undo').tooltip}
-          onClick={getDesc('undo').handler}
-          icon={<UndoOutlined />}
-          disabled={!editorViewStore.canUndo}
-        />
-        <Item
-          name="redo"
-          tooltip={getDesc('redo').tooltip}
-          onClick={getDesc('redo').handler}
-          icon={<RedoOutlined />}
-          disabled={!editorViewStore.canRedo}
-        />
-      </Group>
-      <Group>
-        <Item
-          name="copy"
-          tooltip={getDesc('copy').tooltip}
-          onClick={getDesc('copy').handler}
-          icon={<CopyOutlined />}
-          disabled={!editorViewStore.canRemove}
-        />
-        <Item
-          name="paste"
-          tooltip={getDesc('paste').tooltip}
-          icon={<SnippetsOutlined />}
-          onClick={getDesc('paste').handler}
-        />
-        <Item
-          name="delete"
-          tooltip={getDesc('delete').tooltip}
-          onClick={getDesc('delete').handler}
-          icon={<DeleteOutlined />}
-          disabled={!editorViewStore.canRemove}
-        />
-      </Group>
+      {!readonly && (
+        <>
+          <Group>
+            <Item
+              name="undo"
+              tooltip={getDesc('undo').tooltip}
+              onClick={getDesc('undo').handler}
+              icon={<UndoOutlined />}
+              disabled={!editorViewStore.canUndo}
+            />
+            <Item
+              name="redo"
+              tooltip={getDesc('redo').tooltip}
+              onClick={getDesc('redo').handler}
+              icon={<RedoOutlined />}
+              disabled={!editorViewStore.canRedo}
+            />
+          </Group>
+          <Group>
+            <Item
+              name="copy"
+              tooltip={getDesc('copy').tooltip}
+              onClick={getDesc('copy').handler}
+              icon={<CopyOutlined />}
+              disabled={!editorViewStore.canRemove}
+            />
+            <Item
+              name="paste"
+              tooltip={getDesc('paste').tooltip}
+              icon={<SnippetsOutlined />}
+              onClick={getDesc('paste').handler}
+            />
+            <Item
+              name="delete"
+              tooltip={getDesc('delete').tooltip}
+              onClick={getDesc('delete').handler}
+              icon={<DeleteOutlined />}
+              disabled={!editorViewStore.canRemove}
+            />
+          </Group>
+        </>
+      )}
+
       <Group>
         <Item
           name="mousePanningMode"

@@ -28,7 +28,7 @@ export const EditorAttributes = observer(function EditorAttributes() {
   const formModel = formStore.getFormModel(node)!;
 
   return (
-    <EditorForm node={node}>
+    <EditorForm node={node} readonly={model.readonly}>
       {createElement(config.attributeComponent, {
         model: model.editorModel,
         node,

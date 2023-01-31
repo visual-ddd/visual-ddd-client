@@ -18,6 +18,7 @@ import { DataObjectEditorModel } from '../model/DataObjectEditorModel';
 
 import { DomainObjectReferenceEdges } from './DataObjectReferenceEdges';
 import { ShapeTitle } from './ShapeTitle';
+import { ShapeTree } from './ShapeTree';
 
 export interface DataObjectEditorProps {
   /**
@@ -36,6 +37,7 @@ export interface DataObjectEditorProps {
  */
 export const DataObjectEditor = observer(function DataObjectEditor(props: DataObjectEditorProps) {
   const { model } = props;
+  const readonly = model.readonly;
   const configuration = useMemo<EditorConfigurationValue>(() => {
     return {
       renderTitle(node) {
@@ -51,11 +53,13 @@ export const DataObjectEditor = observer(function DataObjectEditor(props: DataOb
           <EditorConfigurationProvider value={configuration}>
             <EditorLayout
               left={
-                <EditorPanelLayout
-                // bottom={<ShapeTree />}
-                >
-                  <EditorShapeLibrary shapes={model.shapeList} />
-                </EditorPanelLayout>
+                readonly ? (
+                  <ShapeTree />
+                ) : (
+                  <EditorPanelLayout bottom={<ShapeTree />}>
+                    <EditorShapeLibrary shapes={model.shapeList} />
+                  </EditorPanelLayout>
+                )
               }
               right={<EditorInspectPanel />}
               toolbar={<EditorToolbar />}

@@ -35,7 +35,6 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 ## TODO
 
-- 数据对象 DSL 转换
 - 保存快捷键、保存成功提示
 - 只读模式
 - rule 包含 label, 更好的信息提示

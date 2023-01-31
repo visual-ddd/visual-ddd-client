@@ -10,6 +10,11 @@ import { BaseEditorScope } from './BaseEditorScope';
 
 export interface BaseEditorModelOptions {
   /**
+   * 是否为只读模式, 默认 false
+   */
+  readonly?: boolean;
+
+  /**
    * 作用域 id, 因为全局可能并存多个编辑器，我们通过 scopeId 来划分命名空间
    */
   scopeId: string;
@@ -50,6 +55,7 @@ declare global {
  * 编辑器模型入口
  */
 export class BaseEditorModel {
+  readonly readonly: boolean;
   readonly whitelist: string[];
   readonly shapeList: string[];
 
@@ -120,8 +126,9 @@ export class BaseEditorModel {
   }
 
   constructor(options: BaseEditorModelOptions) {
-    const { datasource, doc, scopeId, activeScope = true, whitelist, shapeList } = options;
+    const { datasource, doc, scopeId, activeScope = true, whitelist, shapeList, readonly = false } = options;
 
+    this.readonly = readonly;
     this.shapeList = shapeList;
     this.whitelist = whitelist;
     this.scope = new BaseEditorScope({ scopeId });

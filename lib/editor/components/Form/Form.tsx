@@ -7,25 +7,26 @@ import { ConfigProvider } from 'antd';
 export interface EditorFormProps {
   node: BaseNode;
 
+  /**
+   * 是否为只读模式
+   */
+  readonly?: boolean;
+
   children?: ReactNode;
 }
 
 export const EditorForm = observer(function EditorForm(props: EditorFormProps) {
-  const { node, children } = props;
-  const { formStore } = useEditorModel();
+  const { node, readonly, children } = props;
+  const { formStore, model } = useEditorModel();
 
   const formModel = formStore.getFormModel(node)!;
   const context = useMemo<EditorFormContext>(() => {
-    return { formModel };
-  }, [formModel]);
+    return { formModel, readonly: model.readonly };
+  }, [formModel, model]);
 
   return (
     <EditorFormContextProvider value={context}>
-      <ConfigProvider
-        // TODO: 只读模式
-        // componentDisabled={}
-        componentSize="small"
-      >
+      <ConfigProvider componentDisabled={readonly} componentSize="small">
         {children}
       </ConfigProvider>
     </EditorFormContextProvider>
