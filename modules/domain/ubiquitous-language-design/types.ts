@@ -31,6 +31,10 @@ export interface UbiquitousLanguageItem {
 }
 
 export interface IUbiquitousLanguageModel {
+  /**
+   * 只读模式
+   */
+  readonly readonly: boolean;
   readonly list: UbiquitousLanguageItem[];
   readonly selecting: string[];
 

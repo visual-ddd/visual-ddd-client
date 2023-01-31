@@ -75,6 +75,7 @@ class FuseStore {
  * 统一语言列表模型
  */
 export class UbiquitousLanguageModel implements IUbiquitousLanguageModel {
+  readonly readonly: boolean;
   /**
    * 列表
    */
@@ -135,9 +136,10 @@ export class UbiquitousLanguageModel implements IUbiquitousLanguageModel {
   private event: UbiquitousLanguageEvent = new UbiquitousLanguageEvent();
   private fuseStore = new FuseStore();
 
-  constructor(inject: { doc: YDoc; datasource: YArray<YMap<string>> }) {
-    const { datasource } = inject;
+  constructor(inject: { doc: YDoc; datasource: YArray<YMap<string>>; readonly?: boolean }) {
+    const { datasource, readonly = false } = inject;
 
+    this.readonly = readonly;
     this.datasource = datasource;
 
     makeObservable(this);

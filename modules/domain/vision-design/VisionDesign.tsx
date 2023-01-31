@@ -14,12 +14,13 @@ import { useForceUpdate } from '@wakeapp/hooks';
 export interface VisionDesignProps {
   doc: YDoc;
   field: string;
+  readonly?: boolean;
 }
 
 const EXAMPLES = [{ label: '在线请假考勤系统 - 欧创新', img: ExampleOu }];
 
 export const VisionDesign = (props: VisionDesignProps) => {
-  const { doc, field } = props;
+  const { doc, field, readonly } = props;
   const [selected, setSelected] = useState(0);
   const update = useForceUpdate();
   const text = useMemo(() => {
@@ -75,6 +76,7 @@ export const VisionDesign = (props: VisionDesignProps) => {
           <Form layout="vertical">
             <Form.Item label="描述你的产品愿景/目标">
               <Input.TextArea
+                disabled={readonly}
                 placeholder="尽可能使用一句话描述清楚， 让每个人都记得住"
                 rows={6}
                 value={value}

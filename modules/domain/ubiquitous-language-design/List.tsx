@@ -22,6 +22,7 @@ const Item = observer(function Item({
   const value = item[name];
   const editing = model.isEditing(item.uuid, name);
   const elementRef = useRef<HTMLDivElement>(null);
+  const readonly = model.readonly;
 
   useEffect(() => {
     if (editing) {
@@ -32,18 +33,26 @@ const Item = observer(function Item({
   return (
     <div
       ref={elementRef}
-      className={classNames('vd-ul-editable', s.editable)}
+      className={classNames('vd-ul-editable', s.item, { editable: !readonly })}
       contentEditable={editing}
-      onClick={() => {
-        model.setEditing({ id: item.uuid, key: name, editing: true });
-      }}
-      onBlur={() => {
-        model.setEditing({ id: item.uuid, key: name, editing: false });
-        const newValue = elementRef.current?.innerText;
-        if (newValue != null && newValue !== value) {
-          model.updateItem({ uuid: item.uuid, key: name, value: newValue });
-        }
-      }}
+      onClick={
+        readonly
+          ? undefined
+          : () => {
+              model.setEditing({ id: item.uuid, key: name, editing: true });
+            }
+      }
+      onBlur={
+        readonly
+          ? undefined
+          : () => {
+              model.setEditing({ id: item.uuid, key: name, editing: false });
+              const newValue = elementRef.current?.innerText;
+              if (newValue != null && newValue !== value) {
+                model.updateItem({ uuid: item.uuid, key: name, value: newValue });
+              }
+            }
+      }
       dangerouslySetInnerHTML={{ __html: value }}
     />
   );
@@ -54,6 +63,7 @@ const Item = observer(function Item({
  */
 export const UbiquitousLanguage = observer(function UbiquitousLanguage(props: UbiquitousLanguageProps) {
   const { model } = props;
+  const readonly = model.readonly;
 
   const columns = useMemo<TableColumnType<UbiquitousLanguageItem>[]>(() => {
     const editable = (key: keyof UbiquitousLanguageItem, title: string): TableColumnType<UbiquitousLanguageItem> => {
@@ -66,8 +76,7 @@ export const UbiquitousLanguage = observer(function UbiquitousLanguage(props: Ub
         },
       };
     };
-
-    return [
+    const list: TableColumnType<UbiquitousLanguageItem>[] = [
       {
         width: 150,
         ...editable('conception', '概念'),
@@ -85,7 +94,10 @@ export const UbiquitousLanguage = observer(function UbiquitousLanguage(props: Ub
       {
         ...editable('example', '举例'),
       },
-      {
+    ];
+
+    if (!model.readonly) {
+      list.push({
         title: '操作',
         width: 100,
         render(_, record) {
@@ -97,8 +109,10 @@ export const UbiquitousLanguage = observer(function UbiquitousLanguage(props: Ub
             </Space>
           );
         },
-      },
-    ];
+      });
+    }
+
+    return list;
   }, [model]);
 
   return (
@@ -114,17 +128,23 @@ export const UbiquitousLanguage = observer(function UbiquitousLanguage(props: Ub
       </div>
       <div className={classNames('vd-ul__actions', s.actions)}>
         <Space>
-          <Button size="small" onClick={() => model.addItem('unshift')}>
+          <Button size="small" onClick={() => model.addItem('unshift')} disabled={readonly}>
             新增一行
           </Button>
-          <Button size="small" disabled={!model.selecting.length} onClick={model.removeSelecting}>
+          <Button size="small" disabled={!model.selecting.length || readonly} onClick={model.removeSelecting}>
             批量删除
           </Button>
-          <Button size="small">自动翻译</Button>
+          <Button size="small" disabled={readonly}>
+            自动翻译
+          </Button>
         </Space>
         <Space>
-          <Button size="small">导入 Word</Button>
-          <Button size="small">导入 Excel</Button>
+          <Button size="small" disabled={readonly}>
+            导入 Word
+          </Button>
+          <Button size="small" disabled={readonly}>
+            导入 Excel
+          </Button>
           <Button size="small">导出</Button>
         </Space>
       </div>
@@ -140,10 +160,10 @@ export const UbiquitousLanguage = observer(function UbiquitousLanguage(props: Ub
       </div>
       <div className={classNames('vd-ul__actions', s.actions)}>
         <Space>
-          <Button size="small" onClick={() => model.addItem('push')}>
+          <Button size="small" onClick={() => model.addItem('push')} disabled={readonly}>
             新增一行
           </Button>
-          <Button size="small" disabled={!model.selecting.length} onClick={model.removeSelecting}>
+          <Button size="small" disabled={!model.selecting.length || readonly} onClick={model.removeSelecting}>
             批量删除
           </Button>
         </Space>

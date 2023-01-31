@@ -17,7 +17,7 @@
   margin-bottom: var(--vd-spacing-sm);
 }
 
-.editable {
+.item {
   border: 1px solid transparent;
   min-height: 24px;
   padding: 0 7px;
@@ -25,7 +25,7 @@
   border-radius: 4px;
   cursor: text;
 
-  &:hover {
+  &:global(.editable):hover {
     border: 1px solid var(--vd-color-gray-500);
   }
 }

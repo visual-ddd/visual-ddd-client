@@ -90,6 +90,7 @@ export class DomainDesignerModel {
     this.ubiquitousLanguageModel = new UbiquitousLanguageModel({
       doc: this.ydoc,
       datasource: ubiquitousLanguageDatabase,
+      readonly,
     });
 
     this.tabs = [
