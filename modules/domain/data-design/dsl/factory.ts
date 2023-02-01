@@ -12,6 +12,7 @@ import {
   DataObjectIndexMethod,
   DataObjectIndexType,
   DataObjectInteger,
+  DataObjectJSON,
   DataObjectLong,
   DataObjectLongText,
   DataObjectPropertyDSL,
@@ -121,6 +122,12 @@ export function createDataObjectReference(): DataObjectReference {
   };
 }
 
+export function createDataObjectJSON(): DataObjectJSON {
+  return {
+    type: DataObjectTypeName.JSON,
+  };
+}
+
 export function createDataObjectType(type: DataObjectTypeName): DataObjectTypeDSL {
   switch (type) {
     case DataObjectTypeName.Boolean:
@@ -147,6 +154,8 @@ export function createDataObjectType(type: DataObjectTypeName): DataObjectTypeDS
       return createDataObjectText();
     case DataObjectTypeName.LongText:
       return createDataObjectLongText();
+    case DataObjectTypeName.JSON:
+      return createDataObjectJSON();
     case DataObjectTypeName.Reference:
       return createDataObjectReference();
   }

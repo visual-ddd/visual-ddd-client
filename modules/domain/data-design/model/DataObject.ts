@@ -9,6 +9,7 @@ import {
   DataObjectReference,
   DataObjectReferenceCardinality,
   DataObjectTypeName,
+  objectTypeThatReferable,
 } from '../dsl';
 import { booleanPredicate, Disposer } from '@wakeapp/utils';
 import { makeObservable, reaction } from 'mobx';
@@ -88,7 +89,7 @@ export class DataObject implements IDisposable {
    */
   @derive
   get referableProperties() {
-    return this.dsl.properties.filter(i => i.type.type !== DataObjectTypeName.Reference);
+    return this.dsl.properties.filter(i => objectTypeThatReferable(i.type.type));
   }
 
   /**

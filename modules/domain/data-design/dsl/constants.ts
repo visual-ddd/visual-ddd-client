@@ -17,6 +17,7 @@ export const DataObjectTypeList: { name: DataObjectTypeName; label: string }[] =
   { name: DataObjectTypeName.String, label: '字符串' },
   { name: DataObjectTypeName.Text, label: '文本型' },
   { name: DataObjectTypeName.LongText, label: '长文本型' },
+  { name: DataObjectTypeName.JSON, label: 'JSON型' },
   { name: DataObjectTypeName.Reference, label: '引用型' },
 ];
 
@@ -39,6 +40,15 @@ export const DataObjectIndexMethodList: { name: DataObjectIndexMethod; label: st
   { name: DataObjectIndexMethod.BTREE, label: 'BTREE' },
   { name: DataObjectIndexMethod.HASH, label: 'HASH' },
 ];
+
+/**
+ * 支持主键的字段类型
+ * @param type
+ * @returns
+ */
+export function objectTypeThatSupportPrimaryKey(type: DataObjectTypeName) {
+  return type !== DataObjectTypeName.JSON;
+}
 
 /**
  * 支持默认值的字段类型
@@ -72,6 +82,15 @@ export const DataObjectReferenceCardinalityReversed: Record<
   [DataObjectReferenceCardinality.OneToMany]: DataObjectReferenceCardinality.ManyToOne,
   [DataObjectReferenceCardinality.ManyToOne]: DataObjectReferenceCardinality.OneToMany,
 };
+
+/**
+ * 可被引用的字段类型
+ * @param type
+ * @returns
+ */
+export function objectTypeThatReferable(type: DataObjectTypeName) {
+  return type !== DataObjectTypeName.Reference && type !== DataObjectTypeName.JSON;
+}
 
 /**
  * 支持递增的字段类型

@@ -31,8 +31,10 @@ export const BaseTypeCompatibleMap: Record<BaseType, DataObjectTypeName[]> = {
 export function isCompatible(source: SourceFieldType, target: TargetFieldType): boolean {
   if (source.type === 'base') {
     return BaseTypeCompatibleMap[source.name].includes(target.type);
+  } else if (target.type === DataObjectTypeName.JSON) {
+    // 对象类型、集合类型支持转换为 JSON
+    return true;
   }
 
-  // TODO: 支持 json
   return false;
 }

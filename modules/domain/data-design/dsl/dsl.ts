@@ -2,7 +2,6 @@ import { NameDSL } from '@/modules/domain/domain-design/dsl/dsl';
 
 /**
  * 类型
- * TODO: json
  */
 export enum DataObjectTypeName {
   Boolean = 'Boolean',
@@ -17,6 +16,7 @@ export enum DataObjectTypeName {
   String = 'String',
   Text = 'Text',
   LongText = 'LongText',
+  JSON = 'JSON',
   Reference = 'Reference',
 }
 
@@ -183,6 +183,10 @@ export type DataObjectReference = {
   cardinality?: DataObjectReferenceCardinality;
 };
 
+export type DataObjectJSON = {
+  type: DataObjectTypeName.JSON;
+};
+
 /**
  * 所有支持的数据类型
  */
@@ -199,6 +203,7 @@ export type DataObjectTypeDSL =
   | DataObjectString
   | DataObjectText
   | DataObjectLongText
+  | DataObjectJSON
   | DataObjectReference;
 
 /**

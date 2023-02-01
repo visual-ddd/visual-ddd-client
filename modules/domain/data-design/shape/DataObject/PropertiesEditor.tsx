@@ -20,6 +20,7 @@ import {
   objectTypeThatSupportAutoIncrement,
   objectTypeThatSupportDefaultValue,
   objectTypeThatSupportLength,
+  objectTypeThatSupportPrimaryKey,
 } from '../../dsl';
 import { reactifyProperty } from './reactify';
 import { PropertyDefaultValue } from './PropertyDefaultValue';
@@ -99,32 +100,43 @@ const renderEditor = (path: string) => {
         }}
       </EditorFormConsumer>
 
-      <EditorFormItem
-        path={p('primaryKey')}
-        label="主键"
-        tooltip="标记为主键，如果存在多个主键，属性的顺序就是主键的顺序"
-        valuePropName="checked"
-      >
-        <Switch></Switch>
-      </EditorFormItem>
+      <EditorFormConsumer<DataObjectTypeName> path={p('type.type')}>
+        {({ value }) => {
+          if (!objectTypeThatSupportPrimaryKey(value)) {
+            return <></>;
+          }
 
-      <EditorFormConsumer<boolean> path={p('primaryKey')}>
-        {({ value }) =>
-          value ? (
-            <EditorFormItemStatic label="非空" tooltip="如果是主键，将默认强制开启">
-              <Switch disabled={value} checked></Switch>
-            </EditorFormItemStatic>
-          ) : (
-            <EditorFormItem
-              path={p('notNull')}
-              label="非空"
-              tooltip="如果是主键，将默认强制开启"
-              valuePropName="checked"
-            >
-              <Switch disabled={value}></Switch>
-            </EditorFormItem>
-          )
-        }
+          return (
+            <>
+              <EditorFormItem
+                path={p('primaryKey')}
+                label="主键"
+                tooltip="标记为主键，如果存在多个主键，属性的顺序就是主键的顺序"
+                valuePropName="checked"
+              >
+                <Switch></Switch>
+              </EditorFormItem>
+              <EditorFormConsumer<boolean> path={p('primaryKey')}>
+                {({ value }) =>
+                  value ? (
+                    <EditorFormItemStatic label="非空" tooltip="如果是主键，将默认强制开启">
+                      <Switch disabled={value} checked></Switch>
+                    </EditorFormItemStatic>
+                  ) : (
+                    <EditorFormItem
+                      path={p('notNull')}
+                      label="非空"
+                      tooltip="如果是主键，将默认强制开启"
+                      valuePropName="checked"
+                    >
+                      <Switch disabled={value}></Switch>
+                    </EditorFormItem>
+                  )
+                }
+              </EditorFormConsumer>
+            </>
+          );
+        }}
       </EditorFormConsumer>
 
       <EditorFormItem path={p('type.type')} label="类型" onChange={handleTypeChange}>

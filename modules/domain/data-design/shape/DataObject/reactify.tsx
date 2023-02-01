@@ -7,6 +7,7 @@ import {
   DataObjectIndexTypeName,
   DataObjectPropertyDSL,
   DataObjectTypeDSL,
+  objectTypeThatSupportPrimaryKey,
 } from '../../dsl';
 
 import { PrimaryKeyRenderer } from './PrimaryKeyRenderer';
@@ -19,10 +20,16 @@ export function reactifyType(type: DataObjectTypeDSL) {
 }
 
 export function reactifyProperty(object: DataObjectDSL, property: DataObjectPropertyDSL) {
+  const isSupportPrimaryKey = objectTypeThatSupportPrimaryKey(property.type.type);
+
   return (
     <div className={classNames('vd-data-property', s.root)}>
-      <RequireRenderer property={property} />
-      <PrimaryKeyRenderer object={object} property={property} />
+      {isSupportPrimaryKey && (
+        <>
+          <RequireRenderer property={property} />
+          <PrimaryKeyRenderer object={object} property={property} />
+        </>
+      )}
       <span className={classNames('vd-data-property__name', s.name)}>
         {property.name || UntitledInCamelCase}: {reactifyType(property.type)}
       </span>
