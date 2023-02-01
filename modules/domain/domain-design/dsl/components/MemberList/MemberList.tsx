@@ -17,6 +17,7 @@ import s from './MemberList.module.scss';
 
 export interface MemberListProps<T extends IDDSL> {
   className?: string;
+
   style?: React.CSSProperties;
 
   /**
@@ -79,6 +80,11 @@ export interface MemberListProps<T extends IDDSL> {
    * 添加按钮文本，默认为 添加属性
    */
   addText?: React.ReactNode;
+
+  /**
+   * 禁用状态
+   */
+  disabled?: boolean;
 }
 
 interface MemberListContext<T extends IDDSL> {
@@ -216,6 +222,7 @@ export const MemberList = observer(function MemberList<T extends IDDSL>(props: M
     addText,
     path,
     renderEditor,
+    disabled,
     showError = false,
     editorTitle,
     editorDisplayType,
@@ -314,7 +321,7 @@ export const MemberList = observer(function MemberList<T extends IDDSL>(props: M
         Item={Member}
         context={context}
       ></SortableList>
-      <Button className={classNames('vd-member-list__add', s.add)} onClick={context.handleCreate}>
+      <Button className={classNames('vd-member-list__add', s.add)} onClick={context.handleCreate} disabled={disabled}>
         {addText ?? '添加属性'}
       </Button>
       {editorDisplayType === 'portal' && (

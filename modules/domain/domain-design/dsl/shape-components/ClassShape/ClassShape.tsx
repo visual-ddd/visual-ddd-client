@@ -122,6 +122,7 @@ export interface ClassShapeBaseProps {
   methods?: MethodDSL[];
   classMethods?: MethodDSL[];
 
+  header?: React.ReactNode;
   children?: React.ReactNode;
 }
 
@@ -142,6 +143,7 @@ export const ClassShapeBase: FC<ClassShapeBaseProps> = observer(function ClassSh
     methods,
     classMethods,
     children,
+    header,
   } = props;
   const hasProperties = !!(properties?.length || classProperties?.length);
   const hasMethods = !!(methods?.length || classMethods?.length);
@@ -155,6 +157,7 @@ export const ClassShapeBase: FC<ClassShapeBaseProps> = observer(function ClassSh
             {title || UntitledInHumanReadable}({name || UntitledInUpperCamelCase})
           </div>
         )}
+        {header}
       </div>
       {hasProperties && (
         <div className={classNames('shape-class__cells', s.cells)}>

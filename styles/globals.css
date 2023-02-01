@@ -28,6 +28,14 @@ a {
   color: var(--vd-color-gray-500);
 }
 
+.u-tc {
+  text-align: center;
+}
+
+.u-fs-5 {
+  font-size: var(--vd-font-size-h5);
+}
+
 .u-ml-xs {
   margin-left: var(--vd-spacing-xs);
 }

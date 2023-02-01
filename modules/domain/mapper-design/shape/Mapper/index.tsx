@@ -3,13 +3,14 @@ import { ReactComponentBinding, ReactComponentProps, registerReactComponent } fr
 
 import { createObjectMapperDSL, MapperObjectDSL, MapperObjectName } from '../../dsl';
 
+import { MapperObjectEditor } from './Editor';
+import { MapperShape } from './Shape';
 import icon from './mapper.png';
 
 const MapperReactShapeComponent = (props: ReactComponentProps) => {
-  // @ts-expect-error
-  const properties = useShapeModel(props.node).properties as unknown as MapperObjectDSL;
+  const { properties, model } = useShapeModel(props.node);
 
-  return <div>TODO: 图形</div>;
+  return <MapperShape model={model} dsl={properties as unknown as MapperObjectDSL} />;
 };
 
 registerReactComponent(MapperObjectName.MapperObject, MapperReactShapeComponent);
@@ -19,7 +20,7 @@ const MapperShapeComponent = (props: ShapeComponentProps) => {
 };
 
 const MapperAttributeComponent = () => {
-  return <div>TODO: editor</div>;
+  return <MapperObjectEditor />;
 };
 
 defineShape({

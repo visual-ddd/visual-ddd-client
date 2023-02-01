@@ -1,7 +1,8 @@
 import { BaseNode } from '@/lib/editor';
 import { NoopArray } from '@wakeapp/utils';
 import { computed, makeObservable } from 'mobx';
-import { MapperObjectDSL } from '../dsl';
+
+import { isCompatible, MapperObjectDSL } from '../dsl';
 import { IFieldMapper } from './IFieldMapper';
 import { MapperStore } from './MapperStore';
 
@@ -42,6 +43,16 @@ export class Mapper {
     return this.mapperStore.getTargetObjectById(this.dsl.target.referenceId);
   }
 
+  @computed
+  get sourceFields() {
+    return this.sourceObject?.properties ?? NoopArray;
+  }
+
+  @computed
+  get targetFields() {
+    return this.targetObject?.properties ?? NoopArray;
+  }
+
   /**
    * 映射字段
    */
@@ -54,12 +65,8 @@ export class Mapper {
     return this.dsl.mappers.map(i => {
       return {
         ...i,
-        sourceProperty: i.source
-          ? this.sourceObject?.properties.find(j => j.uuid === i.source!.referenceId)
-          : undefined,
-        targetProperty: i.target
-          ? this.targetObject?.properties.find(j => j.uuid === i.target!.referenceId)
-          : undefined,
+        sourceProperty: i.source ? this.sourceObject?.properties.find(j => j.uuid === i.source) : undefined,
+        targetProperty: i.target ? this.targetObject?.properties.find(j => j.uuid === i.target) : undefined,
       };
     });
   }
@@ -69,5 +76,40 @@ export class Mapper {
     this.node = inject.node;
 
     makeObservable(this);
+  }
+
+  getSourceObjectById(id: string) {
+    return this.mapperStore.getSourceObjectById(id);
+  }
+
+  getSourceFieldById(id?: string) {
+    if (id == null) {
+      return;
+    }
+
+    return this.sourceFields.find(i => i.uuid === id);
+  }
+
+  getTargetFieldById(id?: string) {
+    if (id == null) {
+      return;
+    }
+
+    return this.targetFields.find(i => i.uuid === id);
+  }
+
+  /**
+   * 获取兼容来源字段的目标字段列表
+   * @param sourceId
+   */
+  getCompatibleTargetField(sourceId?: string) {
+    const sourceField = this.getSourceFieldById(sourceId);
+    const targetFields = this.targetFields;
+
+    if (sourceField == null || sourceField.type == null) {
+      return NoopArray;
+    }
+
+    return targetFields.filter(i => isCompatible(sourceField.type!, i.type));
   }
 }

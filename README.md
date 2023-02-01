@@ -35,8 +35,11 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 ## TODO
 
+- 对象映射验证
+- 业务域内类名唯一
+- 自动匹配映射
+- 对象定位
 - 保存快捷键、保存成功提示
-- 只读模式
 - rule 包含 label, 更好的信息提示
 - 引用关系支持可见性控制
 - 表单告警信息定位
