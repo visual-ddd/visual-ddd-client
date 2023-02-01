@@ -3,13 +3,15 @@ import { WebrtcProvider } from 'y-webrtc';
 import { effect, makeAutoBindThis, mutation } from '@/lib/store';
 import { makeObservable, observable } from 'mobx';
 
+import { YJS_FIELD_NAME } from '../../constants';
 import { DomainEditorModel, createDomainEditorModel } from '../../domain-design';
 import { createQueryEditorModel } from '../../query-design';
-import { YJS_FIELD_NAME } from '../../constants';
 import { createDataObjectEditorModel, DataObjectEditorModel } from '../../data-design';
 import { UbiquitousLanguageModel } from '../../ubiquitous-language-design';
+import { createMapperEditorModel, MapperEditorModel } from '../../mapper-design';
 
 import { DomainDesignerTabs } from './constants';
+import { ObjectStore } from './ObjectStore';
 
 const KEY_ACTIVE_TAB = 'DESIGNER:activeTab';
 
@@ -48,6 +50,11 @@ export class DomainDesignerModel {
   dataObjectEditorModel: DataObjectEditorModel;
 
   /**
+   * 对象映射编辑器
+   */
+  mapperObjectEditorModel: MapperEditorModel;
+
+  /**
    * 当前激活的 Tab
    */
   @observable
@@ -75,6 +82,7 @@ export class DomainDesignerModel {
     const domainDatabase = doc.getMap(YJS_FIELD_NAME.DOMAIN);
     const queryDatabase = doc.getMap(YJS_FIELD_NAME.QUERY);
     const dataObjectDatabase = doc.getMap(YJS_FIELD_NAME.DATA_OBJECT);
+    const mapperDatabase = doc.getMap(YJS_FIELD_NAME.MAPPER);
     const ubiquitousLanguageDatabase = doc.getArray<any>(YJS_FIELD_NAME.UBIQUITOUS_LANGUAGE);
 
     // TODO: 观测加载状态
@@ -86,6 +94,17 @@ export class DomainDesignerModel {
       datasource: dataObjectDatabase,
       doc: this.ydoc,
       readonly,
+    });
+    const objectStore = new ObjectStore({
+      domainEditorModel: this.domainEditorModel,
+      queryEditorModel: this.queryEditorModel,
+      dataObjectEditorModel: this.dataObjectEditorModel,
+    });
+    this.mapperObjectEditorModel = createMapperEditorModel({
+      datasource: mapperDatabase,
+      doc: this.ydoc,
+      readonly,
+      objectStore,
     });
     this.ubiquitousLanguageModel = new UbiquitousLanguageModel({
       doc: this.ydoc,
@@ -105,6 +124,10 @@ export class DomainDesignerModel {
       {
         key: DomainDesignerTabs.DataModel,
         model: this.dataObjectEditorModel,
+      },
+      {
+        key: DomainDesignerTabs.Mapper,
+        model: this.mapperObjectEditorModel,
       },
     ];
 

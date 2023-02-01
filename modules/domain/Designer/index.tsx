@@ -17,6 +17,7 @@ import { VisionDesign } from '../vision-design';
 import { UbiquitousLanguage } from '../ubiquitous-language-design';
 import { CompletionContextProvider } from '@/lib/components';
 import { ProductDesign } from '../product-design';
+import { MapperEditor } from '../mapper-design';
 
 export interface DomainDesignerProps {
   /**
@@ -88,9 +89,13 @@ const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerPro
       ),
     },
     {
-      label: DomainDesignerTabsMap[DomainDesignerTabs.Mapping],
-      key: DomainDesignerTabs.Mapping,
-      children: <div>敬请期待</div>,
+      label: (
+        <TabLabel model={model.mapperObjectEditorModel}>{DomainDesignerTabsMap[DomainDesignerTabs.Mapper]}</TabLabel>
+      ),
+      key: DomainDesignerTabs.Mapper,
+      children: (
+        <MapperEditor model={model.mapperObjectEditorModel} active={model.activeTab === DomainDesignerTabs.Mapper} />
+      ),
     },
   ];
 

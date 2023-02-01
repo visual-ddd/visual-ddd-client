@@ -2,7 +2,7 @@ import { NameDSL } from '@/modules/domain/domain-design/dsl/dsl';
 
 /**
  * 类型
- * TODO: 嵌套 DTO
+ * TODO: json
  */
 export enum DataObjectTypeName {
   Boolean = 'Boolean',

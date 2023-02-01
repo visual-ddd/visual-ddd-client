@@ -24,7 +24,9 @@ export class BaseNode {
    */
   readonly name: string;
 
-  /** */
+  /**
+   * 图形的类型
+   */
   readonly type: ShapeType;
 
   /**

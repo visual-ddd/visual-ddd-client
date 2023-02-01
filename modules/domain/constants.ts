@@ -14,4 +14,6 @@ export enum YJS_FIELD_NAME {
   QUERY = 'query',
   // 数据对象
   DATA_OBJECT = 'data-object',
+  // 对象映射
+  MAPPER = 'mapper',
 }

@@ -57,6 +57,22 @@ export class DomainObjectStore {
   }
 
   /**
+   * 所有实体
+   */
+  @derive
+  get entities() {
+    return this.referableObjects.filter(DomainObjectFactory.isEntity);
+  }
+
+  /**
+   * 所有值对象
+   */
+  @derive
+  get valueObjects() {
+    return this.referableObjects.filter(DomainObjectFactory.isValueObject);
+  }
+
+  /**
    * 聚合
    */
   @derive
