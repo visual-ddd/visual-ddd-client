@@ -397,6 +397,9 @@ export class CanvasModel {
       this.editorModel.event.on('NODE_REMOVED', params => {
         console.log('node removed', params.node);
         this.graph?.unselect(params.node.id);
+      }),
+      this.editorModel.event.on('CMD_FOCUS_NODE', params => {
+        this.handleSelect({ cellIds: [params.node.id] });
       })
     );
   }

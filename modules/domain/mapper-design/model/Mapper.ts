@@ -98,6 +98,10 @@ export class Mapper {
     return this.targetFields.find(i => i.uuid === id);
   }
 
+  focusObject(id: string) {
+    this.mapperStore.focusObject(id);
+  }
+
   /**
    * 获取兼容来源字段的目标字段列表
    * @param sourceId

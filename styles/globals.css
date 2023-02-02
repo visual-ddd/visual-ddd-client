@@ -47,3 +47,13 @@ a {
 .u-fw {
   width: 100%;
 }
+
+.u-link {
+  color: var(--vd-color-link);
+  cursor: pointer;
+}
+
+.u-link:hover {
+  color: var(--vd-color-link-hover);
+  text-decoration: underline;
+}

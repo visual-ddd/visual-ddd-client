@@ -1,4 +1,4 @@
-import { makeAutoBindThis, command } from '@/lib/store';
+import { makeAutoBindThis, command, effect } from '@/lib/store';
 import { debounce, booleanPredicate } from '@wakeapp/utils';
 import type { Edge } from '@antv/x6';
 
@@ -160,6 +160,15 @@ export class BaseEditorCommandHandler {
   @command('DELETE_NODE_PROPERTY')
   deleteNodeProperty(params: { node: BaseNode; path: string }) {
     this.store.deleteNodeProperty(params);
+  }
+
+  /**
+   * 聚焦节点
+   * @param params
+   */
+  @effect('FOCUS_NODE')
+  focusNode(params: { node: BaseNode }) {
+    this.event.emit('CMD_FOCUS_NODE', params);
   }
 
   /**

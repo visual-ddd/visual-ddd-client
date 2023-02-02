@@ -96,6 +96,7 @@ export class DomainDesignerModel {
       readonly,
     });
     const objectStore = new ObjectStore({
+      domainDesignerModel: this,
       domainEditorModel: this.domainEditorModel,
       queryEditorModel: this.queryEditorModel,
       dataObjectEditorModel: this.dataObjectEditorModel,

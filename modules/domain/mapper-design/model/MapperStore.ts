@@ -29,6 +29,12 @@ export interface IObjectStore {
    * @param id
    */
   getTargetObjectById(id: string): ITargetObject | undefined;
+
+  /**
+   * 聚焦节点
+   * @param id
+   */
+  focusObject(id: string): void;
 }
 
 export class MapperStore {
@@ -68,6 +74,14 @@ export class MapperStore {
    */
   getTargetObjectById(id: string): ITargetObject | undefined {
     return this.objectStore.getTargetObjectById(id);
+  }
+
+  /**
+   * 聚焦对象
+   * @param id
+   */
+  focusObject(id: string): void {
+    this.objectStore.focusObject(id);
   }
 
   /**

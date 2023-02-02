@@ -3,15 +3,14 @@ import {
   ClassShapeBase,
   ClassShapeCells,
   ClassShapePropertyBase,
-  NameDSL,
   UntitledInCamelCase,
 } from '@/modules/domain/domain-design/dsl';
-import { ArrowRightOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
 
-import { MapperObjectDSL, ObjectReferenceDSL } from '../../dsl';
-import { Mapper, MapperEditorModel } from '../../model';
+import { MapperObjectDSL } from '../../dsl';
+import { MapperEditorModel } from '../../model';
+import { ObjectMapperDisplay } from './ObjectMapperDisplay';
 import { reactifyMapper } from './reactify';
 
 import s from './Shape.module.scss';
@@ -20,20 +19,6 @@ export interface MapperShapeProps {
   dsl: MapperObjectDSL;
   model: BaseNode;
 }
-
-const stringifyObject = (id: ObjectReferenceDSL | undefined, object: NameDSL | undefined) => {
-  return (id ? object?.name : <span className="u-danger">未选择</span>) || <span className="u-danger">未定义</span>;
-};
-
-const ObjectMapperDisplay = observer(function ObjectMapperDisplay({ mapper }: { mapper: Mapper }) {
-  return (
-    <span className={classNames('vd-object-mapper', s.objectMapper)}>
-      {stringifyObject(mapper.dsl.source, mapper.sourceObject)}
-      <ArrowRightOutlined />
-      {stringifyObject(mapper.dsl.target, mapper.targetObject)}
-    </span>
-  );
-});
 
 export const MapperShape = observer(function MapperShape(props: MapperShapeProps) {
   const { dsl, model } = props;
