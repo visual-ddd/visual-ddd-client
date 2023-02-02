@@ -51,8 +51,20 @@ export class BaseEditorValidateManager {
     this.validate();
   }
 
+  /**
+   * 全量检查
+   * @param id
+   */
   protected checkFull(id: string) {
     this.push(id, CheckScope.Full);
+  }
+
+  /**
+   * 检查名称
+   * @param id
+   */
+  protected checkName(id: string) {
+    this.push(id, CheckScope.Name);
   }
 
   protected checkNever(id: string) {

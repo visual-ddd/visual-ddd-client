@@ -27,13 +27,19 @@ const renderEditor = (path: string) => {
 
   return (
     <>
-      <EditorFormItem path={p('source')} label="来源字段">
+      <EditorFormItem path={p('source')} label="来源字段" required>
         <SourceFieldSelect></SourceFieldSelect>
       </EditorFormItem>
       <EditorFormConsumer<string | undefined> path={p('source')}>
         {({ value }) => {
           return (
-            <EditorFormItem path={p('target')} label="目标字段">
+            <EditorFormItem
+              path={p('target')}
+              label="目标字段"
+              required
+              dependencies={p('source')}
+              dependenciesTriggerWhenTouched={false}
+            >
               <TargetFieldSelect sourceField={value} />
             </EditorFormItem>
           );
