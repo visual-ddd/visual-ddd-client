@@ -186,7 +186,7 @@ export class DataObject extends Node<ViewDSL.DataObjectDSL> {
 /**
  * 数据对象容器
  */
-export class Container extends BaseContainer implements IContainer {
+export class DataModelContainer extends BaseContainer implements IContainer {
   dataObjects: DataObject[] = [];
 
   /**
@@ -223,15 +223,4 @@ export class Container extends BaseContainer implements IContainer {
     this.dataObjects.push(object);
     this.nodesIndexByUUID.set(object.id, object);
   }
-}
-
-/**
- * DSL 转换
- * @param tree
- * @returns
- */
-export function transform(tree: Record<string, Tree>): DSL.DataModelDSL {
-  const container = new Container(tree);
-
-  return container.toDSL();
 }

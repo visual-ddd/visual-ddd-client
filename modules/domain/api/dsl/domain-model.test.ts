@@ -1,5 +1,5 @@
 import {
-  Container,
+  DomainModelContainer,
   transformMeta,
   transformType,
   transformProperty,
@@ -602,7 +602,7 @@ test('BaseContainer', () => {
 });
 
 test('Container', () => {
-  const container = new Container(DATA as any);
+  const container = new DomainModelContainer(DATA as any);
 
   expect(container.toDSL()).toMatchSnapshot();
 });

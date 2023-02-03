@@ -210,6 +210,10 @@ export abstract class Node<T extends ViewDSL.NameDSL = ViewDSL.NameDSL> {
 
   container: IContainer;
 
+  get name() {
+    return this.properties.name;
+  }
+
   constructor(id: string, properties: T, container: IContainer) {
     this.container = container;
     this.id = id;
@@ -225,7 +229,12 @@ export abstract class Node<T extends ViewDSL.NameDSL = ViewDSL.NameDSL> {
 /**
  * 实体
  */
-class Entity extends Node<ViewDSL.EntityDSL> {
+export class Entity extends Node<ViewDSL.EntityDSL> {
+  /**
+   * 所属聚合
+   */
+  aggregation!: Aggregation;
+
   toDSL(): DSL.EntityDSL {
     const { uuid, title, name, description, meta, properties, methods, id } = this.properties;
 
@@ -249,7 +258,12 @@ class Entity extends Node<ViewDSL.EntityDSL> {
 /**
  * 值对象
  */
-class ValueObject extends Node<ViewDSL.ValueObjectDSL> {
+export class ValueObject extends Node<ViewDSL.ValueObjectDSL> {
+  /**
+   * 所属聚合
+   */
+  aggregation!: Aggregation;
+
   toDSL(): DSL.ValueObjectDSL {
     const { uuid, title, name, description, meta, properties, methods } = this.properties;
 
@@ -270,6 +284,11 @@ class ValueObject extends Node<ViewDSL.ValueObjectDSL> {
 }
 
 class Enum extends Node<ViewDSL.EnumDSL> {
+  /**
+   * 所属聚合
+   */
+  aggregation!: Aggregation;
+
   toDSL(): DSL.EnumDSL {
     return transformEnum(this.properties);
   }
@@ -286,6 +305,11 @@ export class Rule extends Node<ViewDSL.RuleDSL> {
 
 class Command extends Node<ViewDSL.CommandDSL> {
   rules: Rule[] = [];
+
+  /**
+   * 所属聚合
+   */
+  aggregation!: Aggregation;
 
   toDSL(): DSL.CommandDSL {
     const {
@@ -328,10 +352,32 @@ class Command extends Node<ViewDSL.CommandDSL> {
 }
 
 class Aggregation extends Node<ViewDSL.AggregationDSL> {
-  entities: Entity[] = [];
-  valueObjects: ValueObject[] = [];
-  enums: Enum[] = [];
-  commands: Command[] = [];
+  private entities: Entity[] = [];
+  private valueObjects: ValueObject[] = [];
+  private enums: Enum[] = [];
+  private commands: Command[] = [];
+
+  addEntity(entity: Entity) {
+    this.entities.push(entity);
+
+    entity.aggregation = this;
+  }
+
+  addValueObject(valueObject: ValueObject) {
+    this.valueObjects.push(valueObject);
+
+    valueObject.aggregation = this;
+  }
+
+  addEnum(enumObject: Enum) {
+    this.enums.push(enumObject);
+    enumObject.aggregation = this;
+  }
+
+  addCommand(command: Command) {
+    this.commands.push(command);
+    command.aggregation = this;
+  }
 
   /**
    * 转换为 dsl
@@ -393,7 +439,7 @@ export abstract class BaseContainer {
   }
 }
 
-export class Container extends BaseContainer implements IContainer {
+export class DomainModelContainer extends BaseContainer implements IContainer {
   aggregations: Aggregation[] = [];
 
   /**
@@ -465,7 +511,7 @@ export class Container extends BaseContainer implements IContainer {
 
         if (parent && isAggregation(parent)) {
           const aggregation = this.nodesIndexByUUID.get(parent.properties.uuid) as Aggregation;
-          aggregation.entities.push(entity);
+          aggregation.addEntity(entity);
         }
 
         break;
@@ -479,7 +525,7 @@ export class Container extends BaseContainer implements IContainer {
 
         if (parent && isAggregation(parent)) {
           const aggregation = this.nodesIndexByUUID.get(parent.properties.uuid) as Aggregation;
-          aggregation.valueObjects.push(valueObject);
+          aggregation.addValueObject(valueObject);
         }
 
         break;
@@ -493,7 +539,7 @@ export class Container extends BaseContainer implements IContainer {
 
         if (parent && isAggregation(parent)) {
           const aggregation = this.nodesIndexByUUID.get(parent.properties.uuid) as Aggregation;
-          aggregation.enums.push(enumObject);
+          aggregation.addEnum(enumObject);
         }
 
         break;
@@ -509,7 +555,7 @@ export class Container extends BaseContainer implements IContainer {
             const aggregation = this.nodesIndexByUUID.get(properties.aggregation.referenceId) as
               | Aggregation
               | undefined;
-            aggregation?.commands.push(command);
+            aggregation?.addCommand(command);
           }
         });
         break;
@@ -531,13 +577,4 @@ export class Container extends BaseContainer implements IContainer {
       }
     }
   }
-}
-
-/**
- * DSL 转换
- */
-export function transform(tree: Record<string, Tree>): DSL.DomainModelDSL {
-  const container = new Container(tree);
-
-  return container.toDSL();
 }

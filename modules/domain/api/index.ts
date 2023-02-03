@@ -22,6 +22,22 @@ export async function handleGet(req: NextApiRequest, res: NextApiResponse) {
 }
 
 /**
+ * 获取完整载荷，base64
+ * @param req
+ * @param res
+ */
+export async function handleGetBase64(req: NextApiRequest, res: NextApiResponse) {
+  const { id } = req.query;
+  const f = getFilePath(id as string);
+  if (!(await fs.pathExists(f))) {
+    res.status(204).end();
+  } else {
+    res.status(200);
+    fs.createReadStream(f, 'base64').pipe(res);
+  }
+}
+
+/**
  * 获取偏移值
  * @param req
  * @param res

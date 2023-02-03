@@ -39,23 +39,6 @@ export interface NameDSL extends IDDSL {
   meta?: MetaDSL;
 }
 
-export interface BusinessDomainDSL {
-  /**
-   * 领域模型
-   */
-  domainModel: DomainModelDSL;
-
-  /**
-   * 查询模型
-   */
-  queryModel: QueryModelDSL;
-
-  /**
-   * 数据模型
-   */
-  dataModel: DataModelDSL;
-}
-
 export interface DomainModelDSL {
   /**
    * 聚合
@@ -423,6 +406,14 @@ export interface DataObjectReferenceDSL {
 }
 
 /**
+ * -----------------------------------------------------------------------------------------
+ *
+ * 数据对象模型
+ *
+ * -----------------------------------------------------------------------------------------
+ */
+
+/**
  * 数据模型
  */
 export interface DataModelDSL {
@@ -435,4 +426,89 @@ export interface DataModelDSL {
    * 引用关系
    */
   references: DataObjectReferenceDSL[];
+}
+
+/**
+ * 对象映射
+ */
+export namespace ObjectMapper {
+  export enum ObjectType {
+    Entity = 'entity',
+    ValueObject = 'valueObject',
+    DTO = 'dto',
+    DataObject = 'dataObject',
+  }
+
+  export interface ObjectReference {
+    /**
+     * 类名
+     */
+    name: string;
+
+    /**
+     * 对象类型
+     */
+    type: ObjectType;
+
+    /**
+     * 对于实体、值对象等领域对象 parent 为聚合的标识符
+     * dto、dataObject 则为空
+     */
+    parent?: string;
+  }
+  export type ObjectFieldMapper = {
+    sourceField: string;
+    targetField: string;
+  };
+
+  /**
+   * 结构对象映射
+   */
+  export interface ObjectMapperDSL extends NameDSL {
+    /**
+     * 来源对象, 通常为实体或值对象、DTO
+     */
+    source: ObjectReference;
+
+    /**
+     * 目标对象, 通常为数据对象
+     */
+    target: ObjectReference;
+
+    /**
+     * 字段映射
+     */
+    mapper: ObjectFieldMapper[];
+  }
+
+  export interface ObjectMapperModel {
+    mappers: ObjectMapperDSL[];
+  }
+}
+
+export interface BusinessDomainDSL {
+  /**
+   * 领域模型
+   */
+  domainModel: DomainModelDSL;
+
+  /**
+   * 查询模型
+   */
+  queryModel: QueryModelDSL;
+
+  /**
+   * 数据模型
+   */
+  dataModel: DataModelDSL;
+
+  /**
+   * 对象映射
+   */
+  objectMapper: ObjectMapper.ObjectMapperModel;
+
+  /**
+   * 产品愿景
+   */
+  vision?: string;
 }

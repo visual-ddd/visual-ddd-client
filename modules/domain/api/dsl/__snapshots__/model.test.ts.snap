@@ -1,0 +1,312 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`领域模型 DSL 转换集成测试 1`] = `
+{
+  "dataModel": {
+    "dataObjects": [
+      {
+        "description": "",
+        "indexes": [],
+        "meta": {},
+        "name": "MyEntity",
+        "properties": [
+          {
+            "defaultValue": undefined,
+            "description": "",
+            "length": undefined,
+            "meta": {},
+            "name": "untitled",
+            "notNull": false,
+            "propertyName": undefined,
+            "title": "",
+            "type": "String",
+            "uuid": "ed3eab3e-e699-4c3f-9e6d-bc8e76c6dcbd",
+          },
+          {
+            "autoIncrement": false,
+            "defaultValue": undefined,
+            "description": "",
+            "meta": {},
+            "name": "number",
+            "notNull": false,
+            "propertyName": undefined,
+            "title": "",
+            "type": "Long",
+            "uuid": "e857cfcf-3657-4ebf-bc78-8f53a51d3b6f",
+          },
+          {
+            "description": "",
+            "meta": {},
+            "name": "shit",
+            "notNull": false,
+            "propertyName": undefined,
+            "title": "",
+            "type": "JSON",
+            "uuid": "e5d5a533-445d-40d1-98b7-b877990cd699",
+          },
+        ],
+        "tableName": undefined,
+        "title": "我的实体",
+        "uuid": "c3028b39-8300-46b1-9085-aa3087c0b752",
+      },
+      {
+        "description": "",
+        "indexes": [],
+        "meta": {},
+        "name": "MyValueObject",
+        "properties": [
+          {
+            "defaultValue": undefined,
+            "description": "",
+            "length": undefined,
+            "meta": {},
+            "name": "untitled0",
+            "notNull": false,
+            "propertyName": undefined,
+            "title": "",
+            "type": "String",
+            "uuid": "17ad0d35-427c-4e99-951b-1949e79b5eca",
+          },
+          {
+            "autoIncrement": false,
+            "defaultValue": undefined,
+            "description": "",
+            "meta": {},
+            "name": "untitled1",
+            "notNull": false,
+            "propertyName": undefined,
+            "title": "",
+            "type": "Integer",
+            "uuid": "95837329-f0e6-4022-9162-ee4b81da0ff6",
+          },
+        ],
+        "tableName": undefined,
+        "title": "我的值对象",
+        "uuid": "copy-d12d9df4-f325-44e0-bb97-30cf2938d700",
+      },
+    ],
+    "references": [],
+  },
+  "domainModel": {
+    "aggregates": [
+      {
+        "commands": [],
+        "description": "",
+        "entities": [],
+        "enums": [],
+        "meta": {},
+        "name": "MyAggregation",
+        "root": {
+          "description": "",
+          "id": {
+            "access": "public",
+            "description": "",
+            "meta": {},
+            "name": "str",
+            "title": "未命名",
+            "type": "String",
+            "uuid": "0f38005e-fb2b-43cc-baf8-47fa21b89575",
+          },
+          "meta": {},
+          "methods": [
+            {
+              "abstract": false,
+              "access": "public",
+              "description": "",
+              "meta": {},
+              "name": "untitled",
+              "signature": {
+                "description": "",
+                "parameters": [],
+                "return": {
+                  "type": "void",
+                },
+              },
+              "title": "",
+              "uuid": "3b5ce6af-a875-4e94-b687-425f282ea21d",
+            },
+          ],
+          "name": "MyEntity",
+          "properties": [
+            {
+              "access": "public",
+              "description": "",
+              "meta": {},
+              "name": "list",
+              "title": "未命名",
+              "type": "List<String>",
+              "uuid": "c3a4a0e6-6652-4810-8fca-e03b55a2fc69",
+            },
+            {
+              "access": "public",
+              "description": "",
+              "meta": {},
+              "name": "integer",
+              "title": "未命名",
+              "type": "Integer",
+              "uuid": "45542315-da18-4fe1-a480-5daf7c59ff49",
+            },
+          ],
+          "title": "我的聚合",
+          "uuid": "43c68add-5848-4249-b125-6c4d17244c08",
+        },
+        "title": "我的聚合",
+        "uuid": "064cf6f4-8b97-497f-b4f9-44429f795456",
+        "valueObjects": [
+          {
+            "description": "",
+            "meta": {},
+            "methods": [],
+            "name": "MyValueObject",
+            "properties": [
+              {
+                "access": "public",
+                "description": "",
+                "meta": {},
+                "name": "untitled",
+                "title": "未命名",
+                "type": "String",
+                "uuid": "59b0e443-9f0b-40c5-b1ce-fb0b2e88aa8a",
+              },
+              {
+                "access": "public",
+                "description": "",
+                "meta": {},
+                "name": "untitled1",
+                "title": "未命名",
+                "type": "Integer",
+                "uuid": "3fa04cab-fa02-4204-a952-d224951a1e6d",
+              },
+            ],
+            "title": "我的值对象",
+            "uuid": "d32afad8-66af-42ec-b733-2832672eb4d8",
+          },
+        ],
+      },
+    ],
+  },
+  "objectMapper": {
+    "mappers": [
+      {
+        "description": "",
+        "mapper": [
+          {
+            "sourceField": "untitled",
+            "targetField": "untitled0",
+          },
+          {
+            "sourceField": "untitled1",
+            "targetField": "untitled1",
+          },
+        ],
+        "meta": {},
+        "name": "Mapper1",
+        "source": {
+          "name": "MyValueObject",
+          "parent": "MyAggregation",
+          "type": "valueObject",
+        },
+        "target": {
+          "name": "MyValueObject",
+          "parent": undefined,
+          "type": "dataObject",
+        },
+        "title": "",
+        "uuid": "copy-23f90453-8e07-4f87-b17c-ff4f9c678d15",
+      },
+      {
+        "description": "",
+        "mapper": [
+          {
+            "sourceField": "str",
+            "targetField": "untitled0",
+          },
+          {
+            "sourceField": "integer",
+            "targetField": "untitled1",
+          },
+        ],
+        "meta": {},
+        "name": "Mapper2",
+        "source": {
+          "name": "MyEntity",
+          "parent": "MyAggregation",
+          "type": "entity",
+        },
+        "target": {
+          "name": "MyValueObject",
+          "parent": undefined,
+          "type": "dataObject",
+        },
+        "title": "",
+        "uuid": "ae0168af-9874-4fdb-9b0e-d55eb2bc3a13",
+      },
+    ],
+  },
+  "queryModel": {
+    "dtos": [
+      {
+        "description": "",
+        "meta": {},
+        "name": "Untitled",
+        "properties": [
+          {
+            "access": "public",
+            "description": "",
+            "meta": {},
+            "name": "untitled",
+            "title": "未命名",
+            "type": "String",
+            "uuid": "9c228d3e-6f63-45ea-9523-80697de22254",
+          },
+        ],
+        "title": "未命名",
+        "uuid": "12865564-fce7-46c7-b9b6-cef6e9b19e7b",
+      },
+    ],
+    "queries": [
+      {
+        "description": "",
+        "meta": {},
+        "name": "Untitled",
+        "pagination": false,
+        "properties": [
+          {
+            "access": "public",
+            "description": "",
+            "meta": {},
+            "name": "untitled",
+            "title": "未命名",
+            "type": "String",
+            "uuid": "43cabc0d-a623-4967-b090-9e8d4748f152",
+          },
+          {
+            "access": "public",
+            "description": "",
+            "meta": {},
+            "name": "dto",
+            "title": "未命名",
+            "type": "String",
+            "uuid": "f1ce351d-faa4-4f9a-902f-02a012c5464b",
+          },
+        ],
+        "return": {
+          "type": "Untitled",
+        },
+        "rules": [],
+        "source": [
+          {
+            "type": "http",
+          },
+          {
+            "type": "rpc",
+          },
+        ],
+        "title": "未命名",
+        "uuid": "bf051e70-552d-4fbe-801d-7faf4a649ae9",
+      },
+    ],
+  },
+  "vision": "",
+}
+`;
