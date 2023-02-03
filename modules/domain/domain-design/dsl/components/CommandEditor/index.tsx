@@ -21,6 +21,7 @@ import { SourceInput } from '../SourceInput';
 import { TypeInput } from '../TypeInput';
 import { AggregationSelect } from '../AggregationSelect';
 import { ObjectNameInput } from '../ObjectNameInput';
+import { NameInput } from '../NameInput';
 
 const DEFAULT_ACTIVE = ['base', 'properties', 'eventProperties'];
 
@@ -84,6 +85,18 @@ export const CommandEditor = () => {
         <EditorFormItem path="aggregation" label="所属聚合">
           <AggregationSelect />
         </EditorFormItem>
+        <EditorFormItem
+          path="category"
+          label="分类"
+          tooltip={
+            <>
+              <div>命令分类，会影响命令的包文件组织，默认为命令标识符，建议使用精简的单词描述</div>
+              <i>双击编辑</i>
+            </>
+          }
+        >
+          <NameInput nameCase="camelCase" dbclickToEnable />
+        </EditorFormItem>
         <EditorFormItem path="source" label="触发来源">
           <SourceInput />
         </EditorFormItem>
@@ -107,7 +120,12 @@ export const CommandEditor = () => {
       <EditorFormCollapsePanel header="属性" key="properties" path="properties">
         <PropertiesEditor />
       </EditorFormCollapsePanel>
-      <EditorFormCollapsePanel header="事件属性" key="eventProperties" path="eventProperties">
+      <EditorFormCollapsePanel
+        header="事件属性"
+        key="eventProperties"
+        path="eventProperties"
+        tooltip="事件默认会继承命令的属性"
+      >
         <PropertiesEditor path="eventProperties" />
       </EditorFormCollapsePanel>
     </EditorFormCollapse>

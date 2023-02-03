@@ -241,6 +241,9 @@ export interface CommandDSL extends NameDSL {
   // 命令属性
   properties: PropertyDSL[];
 
+  // 命令分类，小写，可选，会影响 java 包结构，如果未提供，则为 name
+  category?: string;
+
   // 执行器, 默认 Handler 为 ·命令名称 + Handler· 连接起来的类， 有固定的实现逻辑
 
   // 事件, 即命令执行完成之后的触发的领域事件，默认为 []
