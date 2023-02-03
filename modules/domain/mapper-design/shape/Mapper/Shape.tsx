@@ -1,10 +1,5 @@
 import { BaseNode, useEditorModel } from '@/lib/editor';
-import {
-  ClassShapeBase,
-  ClassShapeCells,
-  ClassShapePropertyBase,
-  UntitledInCamelCase,
-} from '@/modules/domain/domain-design/dsl';
+import { ClassShapeBase, ClassShapeCells, ClassShapePropertyBase } from '@/modules/domain/domain-design/dsl';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
 
@@ -21,7 +16,7 @@ export interface MapperShapeProps {
 }
 
 export const MapperShape = observer(function MapperShape(props: MapperShapeProps) {
-  const { dsl, model } = props;
+  const { model } = props;
   const { model: editorModel } = useEditorModel<MapperEditorModel>();
   const mapper = editorModel.mapperStore.getMapperById(model.id)!;
 
@@ -32,9 +27,7 @@ export const MapperShape = observer(function MapperShape(props: MapperShapeProps
       showName={false}
       header={
         <>
-          <div className="u-bold">{`${
-            dsl.title ? `${dsl.title}(${dsl.name})` : `${dsl.name || UntitledInCamelCase}`
-          }`}</div>
+          <div className="u-bold">{mapper.readableTitle}</div>
           <div>
             <ObjectMapperDisplay mapper={mapper} />
           </div>
@@ -46,6 +39,7 @@ export const MapperShape = observer(function MapperShape(props: MapperShapeProps
           {mapper.mappers.map(i => {
             return (
               <ClassShapePropertyBase
+                className={s.property}
                 key={i.uuid}
                 name={reactifyMapper(i.source, i.target, mapper)}
               ></ClassShapePropertyBase>

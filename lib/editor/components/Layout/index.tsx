@@ -35,22 +35,29 @@ const MAX_SIDE_WIDTH = SIDE_WIDTH * 1.5;
 // TODO: 记忆
 export const EditorLayout = (props: EditorLayoutProps) => {
   const { left, children, toolbar, right } = props;
+  const content = (
+    <SplitBox primary="second" defaultSize={SIDE_WIDTH} minSize={MIN_SIDE_WIDTH} maxSize={MAX_SIDE_WIDTH}>
+      <div className={classNames('vd-editor-layout__body', s.body)}>
+        {toolbar && <div className={classNames('vd-editor-layout__toolbar', s.toolbar)}>{toolbar}</div>}
+        <div className={classNames('vd-editor-layout__canvas', s.canvas)}>{children}</div>
+      </div>
+      <div className={classNames('vd-editor-layout__right-side', s.right)}>{right}</div>
+    </SplitBox>
+  );
 
   return (
     <EditorFormPortalContextProvider
       className={classNames('vd-editor-layout', s.root)}
       target=".vd-editor-layout__canvas"
     >
-      <SplitBox split="vertical" defaultSize={SIDE_WIDTH} minSize={MIN_SIDE_WIDTH} maxSize={MAX_SIDE_WIDTH}>
-        <div className={classNames('vd-editor-layout__left-side', s.left)}>{left}</div>
-        <SplitBox primary="second" defaultSize={SIDE_WIDTH} minSize={MIN_SIDE_WIDTH} maxSize={MAX_SIDE_WIDTH}>
-          <div className={classNames('vd-editor-layout__body', s.body)}>
-            {toolbar && <div className={classNames('vd-editor-layout__toolbar', s.toolbar)}>{toolbar}</div>}
-            <div className={classNames('vd-editor-layout__canvas', s.canvas)}>{children}</div>
-          </div>
-          <div className={classNames('vd-editor-layout__right-side', s.right)}>{right}</div>
+      {left ? (
+        <SplitBox split="vertical" defaultSize={SIDE_WIDTH} minSize={MIN_SIDE_WIDTH} maxSize={MAX_SIDE_WIDTH}>
+          <div className={classNames('vd-editor-layout__left-side', s.left)}>{left}</div>
+          {content}
         </SplitBox>
-      </SplitBox>
+      ) : (
+        content
+      )}
     </EditorFormPortalContextProvider>
   );
 };

@@ -4,12 +4,12 @@ import { Observer, observer, useLocalObservable } from 'mobx-react';
 import { EditorPanel, useCanvasModel, useEditorModel } from '@/lib/editor';
 import s from '@/modules/domain/domain-design/components/ShapeTree/index.module.scss';
 
-import { DataObject, DataObjectEditorModel } from '../model';
+import { Mapper, MapperEditorModel } from '../model';
 import { NoopArray } from '@wakeapp/utils';
 
 export interface ShapeTreeProps {}
 
-const renderTitle = (item: DataObject) => {
+const renderTitle = (item: Mapper) => {
   return (
     <Observer>
       {() => (
@@ -24,12 +24,12 @@ const renderTitle = (item: DataObject) => {
 };
 
 export const ShapeTree = observer(function ShapeTree(props: ShapeTreeProps) {
-  const { model } = useEditorModel<DataObjectEditorModel>();
+  const { model } = useEditorModel<MapperEditorModel>();
   const { model: canvasModel } = useCanvasModel();
 
   const store = useLocalObservable(() => ({
     get treeData(): TreeDataNode[] {
-      return model.dataObjectStore.objectsInArray.map(i => {
+      return model.mapperStore.mappersInArray.map(i => {
         return {
           key: i.id,
           title: () => renderTitle(i),

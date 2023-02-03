@@ -15,6 +15,9 @@ import { useMemo } from 'react';
 
 import { MapperEditorModel } from '../model';
 
+import { ShapeTitle } from './ShapeTitle';
+import { ShapeTree } from './ShapeTree';
+
 export interface MapperEditorProps {
   /**
    * 编辑器模型
@@ -29,8 +32,7 @@ export const MapperEditor = observer(function MapperEditor(props: MapperEditorPr
   const configuration = useMemo<EditorConfigurationValue>(() => {
     return {
       renderTitle(node) {
-        return node.name;
-        // return <ShapeTitle nodeId={node.id} />;
+        return <ShapeTitle nodeId={node.id} />;
       },
     };
   }, []);
@@ -42,8 +44,10 @@ export const MapperEditor = observer(function MapperEditor(props: MapperEditorPr
           <EditorConfigurationProvider value={configuration}>
             <EditorLayout
               left={
-                readonly ? undefined : (
-                  <EditorPanelLayout>
+                readonly ? (
+                  <ShapeTree />
+                ) : (
+                  <EditorPanelLayout bottom={<ShapeTree />}>
                     <EditorShapeLibrary shapes={model.shapeList} />
                   </EditorPanelLayout>
                 )

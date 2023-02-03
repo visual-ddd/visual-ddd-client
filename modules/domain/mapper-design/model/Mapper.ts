@@ -1,6 +1,7 @@
 import { BaseNode } from '@/lib/editor';
 import { NoopArray } from '@wakeapp/utils';
 import { computed, makeObservable } from 'mobx';
+import { UntitledInCamelCase } from '../../domain-design/dsl/constants';
 
 import { isCompatible, MapperObjectDSL } from '../dsl';
 import { IFieldMapper } from './IFieldMapper';
@@ -69,6 +70,12 @@ export class Mapper {
         targetProperty: i.target ? this.targetObject?.properties.find(j => j.uuid === i.target) : undefined,
       };
     });
+  }
+
+  @computed
+  get readableTitle() {
+    const dsl = this.dsl;
+    return dsl.title ? `${dsl.title}(${dsl.name})` : `${dsl.name || UntitledInCamelCase}`;
   }
 
   constructor(inject: { mapperStore: MapperStore; node: BaseNode }) {
