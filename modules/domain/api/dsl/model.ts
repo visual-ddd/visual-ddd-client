@@ -3,7 +3,8 @@ import { Doc as YDoc } from 'yjs';
 import { YJS_FIELD_NAME } from '../../constants';
 
 import * as DSL from './interface';
-import { DomainModelContainer, Entity, ValueObject, Node } from './domain-model';
+import { Node } from './shared';
+import { DomainModelContainer, Entity, ValueObject } from './domain-model';
 import { DTO, QueryModelContainer } from './query-model';
 import { DataModelContainer, DataObject } from './data-model';
 import { MapperModelContainer } from './mapper-model';

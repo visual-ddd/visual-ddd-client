@@ -2,7 +2,8 @@ import * as ViewDSL from '@/modules/domain/mapper-design/dsl/dsl';
 import { MapperObjectName } from '@/modules/domain/mapper-design/dsl/constants';
 
 import * as DSL from './interface';
-import { BaseContainer, Entity, IContainer, Node, transformMeta, Tree, ValueObject } from './domain-model';
+import { Tree, BaseContainer, IContainer, Node } from './shared';
+import { Entity, transformMeta, ValueObject } from './domain-model';
 import { DTO } from './query-model';
 import { DataObject } from './data-model';
 import { IObjectStore } from './IObjectStore';

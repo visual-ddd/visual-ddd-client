@@ -26,7 +26,6 @@ export class BaseEditorFormStore {
   @observable.shallow
   private formModels: Map<string, FormModel> = new Map();
 
-  @observable.shallow
   private formModelsWillRemove: Map<string, FormModel> = new Map();
 
   @derive
@@ -144,13 +143,8 @@ export class BaseEditorFormStore {
     this.formModels.delete(params.node.id);
   }
 
-  @mutation('FORM_STORE:GC', false)
-  protected clearWillRemoved() {
-    this.formModelsWillRemove.clear();
-  }
-
   private gc = debounce(() => {
     this.formModelsWillRemove.forEach(m => tryDispose(m));
-    this.clearWillRemoved();
+    this.formModelsWillRemove.clear();
   }, 2000);
 }

@@ -1,5 +1,5 @@
 import { BaseEditorEvent, BaseEditorModel, BaseNode, tryDispose } from '@/lib/editor';
-import { command, derive, makeAutoBindThis, mutation } from '@/lib/store';
+import { command, derive, makeAutoBindThis } from '@/lib/store';
 import { booleanPredicate, debounce } from '@wakeapp/utils';
 import { makeObservable, observable } from 'mobx';
 
@@ -28,7 +28,6 @@ export class DomainObjectStore {
   /**
    * 即将移除的对象
    */
-  @observable.shallow
   protected objectsWillRemoved: Map<string, DomainObject<NameDSL>> = new Map();
 
   /**
@@ -257,13 +256,8 @@ export class DomainObjectStore {
     this.domainObjectEvent.emit('OBJECT_NAME_CHANGED', params);
   }
 
-  @mutation('OBJECT_STORE:GC', false)
-  private removeWillRemoved() {
-    this.objectsWillRemoved.clear();
-  }
-
   private gc = debounce(() => {
     this.objectsWillRemoved.forEach(i => tryDispose(i));
-    this.removeWillRemoved();
+    this.objectsWillRemoved.clear();
   });
 }

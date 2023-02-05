@@ -15,7 +15,6 @@ export class BaseEditorIndex {
   /**
    * 即将删除的节点
    */
-  @observable.shallow
   private nodeWillBeRemoved: Map<string, BaseNode> = new Map();
 
   private event: BaseEditorEvent;

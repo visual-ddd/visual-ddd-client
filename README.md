@@ -35,11 +35,13 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 ## TODO
 
-- 对象映射 DSL 生成
 - 对象字段定位
 - 自动匹配映射
 - 聚合最小限制
--
+- 对象映射过滤掉未绑定聚合的对象
+- tiptap 快捷键冲突，按需激活
+- Model 销毁
+- NodeYMap 单元测试
 - 命令模块，命令事件字段提示
 - 保存快捷键、保存成功提示
 - rule 包含 label, 更好的信息提示

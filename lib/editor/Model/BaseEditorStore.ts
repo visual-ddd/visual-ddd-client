@@ -35,6 +35,8 @@ export class BaseEditorStore {
     this.event = inject.event;
 
     runInCommand('INITIAL_STORE', () => {
+      // 这里必须使用 createNode, 因为 根节点 也需要通知 index 进行缓存
+      // 注意：这里的 create 事件不会被 datasource 监听到，因为它在当前类之后初始化
       // @ts-expect-error
       this.root = this.createNode({ name: ROOT_ID, type: 'node', id: ROOT_ID, properties: {} });
     });
@@ -70,6 +72,11 @@ export class BaseEditorStore {
 
   @mutation('CREATE_NODE')
   createNode(params: { name: string; type: ShapeType; id?: string; properties: Properties }) {
+    // 忽略根节点, 根节点默认创建
+    if (params.id === ROOT_ID && this.root) {
+      return this.root;
+    }
+
     const node = this.nodeFactory(params.name, params.id, params.type);
 
     Object.assign(node.properties, params.properties);

@@ -25,6 +25,9 @@ interface TabModel {
   validate(): Promise<boolean>;
 }
 
+/**
+ * TODO: 销毁
+ */
 export class DomainDesignerModel {
   id: string;
   readonly readonly: boolean;
@@ -70,6 +73,7 @@ export class DomainDesignerModel {
   error?: Error;
 
   readonly ydoc: YDoc;
+  private webrtcProvider?: WebrtcProvider;
   private tabs: { key: DomainDesignerTabs; model: TabModel }[];
 
   constructor(options: { id: string; readonly?: boolean }) {
@@ -84,9 +88,6 @@ export class DomainDesignerModel {
     const dataObjectDatabase = doc.getMap(YJS_FIELD_NAME.DATA_OBJECT);
     const mapperDatabase = doc.getMap(YJS_FIELD_NAME.MAPPER);
     const ubiquitousLanguageDatabase = doc.getArray<any>(YJS_FIELD_NAME.UBIQUITOUS_LANGUAGE);
-
-    // TODO: 观测加载状态
-    new WebrtcProvider(id, doc);
 
     this.domainEditorModel = createDomainEditorModel({ datasource: domainDatabase, doc: this.ydoc, readonly });
     this.queryEditorModel = createQueryEditorModel({ datasource: queryDatabase, doc: this.ydoc, readonly });
@@ -140,11 +141,18 @@ export class DomainDesignerModel {
 
   /**
    * 数据加载
+   * TODO: 可重试
    */
   @effect('DESIGNER:LOAD')
   async load() {
     try {
       this.setLoading(true);
+
+      // 销毁旧的链接
+      if (this.webrtcProvider) {
+        this.webrtcProvider.destroy();
+        this.webrtcProvider = undefined;
+      }
 
       // 数据加载
       const response = await fetch(`/api/domain/${this.id}`, { method: 'GET' });
@@ -158,6 +166,11 @@ export class DomainDesignerModel {
 
       if (update.length) {
         applyUpdate(this.ydoc, update);
+      }
+
+      // 多人协作
+      if (!this.readonly) {
+        this.webrtcProvider = new WebrtcProvider(this.id, this.ydoc);
       }
 
       this.setError(undefined);

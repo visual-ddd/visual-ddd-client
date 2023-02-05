@@ -1,21 +1,9 @@
-import * as DSL from './interface';
 import * as ViewDSL from '@/modules/domain/domain-design/dsl/dsl';
 import { VoidClass, Void } from '@/modules/domain/domain-design/dsl/constants';
 import { stringifyTypeDSL } from '@/modules/domain/domain-design/dsl/stringify';
 
-export interface CoreProperties {
-  __node_name__: string;
-  uuid?: string;
-}
-
-export interface Tree<T extends CoreProperties = CoreProperties> {
-  id: string;
-  parent?: string;
-  children: Record<string, never>;
-  properties: T;
-}
-
-export const ROOT = '__ROOT__';
+import * as DSL from './interface';
+import { ROOT, Tree, CoreProperties, BaseContainer, Node, IContainer } from './shared';
 
 /**
  * 转换字符串，如果为空则返回 undefined
@@ -190,42 +178,6 @@ export function transformSource(source: ViewDSL.SourceDSL): DSL.SourceDSL[] {
   return list;
 }
 
-export interface IContainer {
-  getNodeById(id: string): Node<any> | undefined;
-}
-
-/**
- * 基础节点信息
- */
-export abstract class Node<T extends ViewDSL.NameDSL = ViewDSL.NameDSL> {
-  /**
-   * 唯一 id
-   */
-  id: string;
-
-  /**
-   * 属性
-   */
-  properties: T;
-
-  container: IContainer;
-
-  get name() {
-    return this.properties.name;
-  }
-
-  constructor(id: string, properties: T, container: IContainer) {
-    this.container = container;
-    this.id = id;
-
-    this.properties = properties;
-  }
-
-  getReference = (id: string): ViewDSL.NameDSL => {
-    return this.container.getNodeById(id)!.properties;
-  };
-}
-
 /**
  * 实体
  */
@@ -283,7 +235,7 @@ export class ValueObject extends Node<ViewDSL.ValueObjectDSL> {
   }
 }
 
-class Enum extends Node<ViewDSL.EnumDSL> {
+export class Enum extends Node<ViewDSL.EnumDSL> {
   /**
    * 所属聚合
    */
@@ -303,7 +255,7 @@ export class Rule extends Node<ViewDSL.RuleDSL> {
   }
 }
 
-class Command extends Node<ViewDSL.CommandDSL> {
+export class Command extends Node<ViewDSL.CommandDSL> {
   rules: Rule[] = [];
 
   /**
@@ -351,7 +303,7 @@ class Command extends Node<ViewDSL.CommandDSL> {
   }
 }
 
-class Aggregation extends Node<ViewDSL.AggregationDSL> {
+export class Aggregation extends Node<ViewDSL.AggregationDSL> {
   private entities: Entity[] = [];
   private valueObjects: ValueObject[] = [];
   private enums: Enum[] = [];
@@ -397,45 +349,6 @@ class Aggregation extends Node<ViewDSL.AggregationDSL> {
       enums: this.enums.map(i => i.toDSL()),
       commands: this.commands.map(i => i.toDSL()),
     };
-  }
-}
-
-export abstract class BaseContainer {
-  private postTraverses: (() => void)[] = [];
-
-  constructor() {}
-
-  abstract handle(node: Tree, tree: Record<string, Tree>): void;
-
-  protected addPostTraverse(fn: () => void) {
-    this.postTraverses.push(fn);
-  }
-
-  traverse(tree: Record<string, Tree>) {
-    const walk = (node: Tree) => {
-      this.handle(node, tree);
-
-      const childrenKeys = Object.keys(node.children);
-      if (childrenKeys) {
-        for (const childKey of childrenKeys) {
-          node = tree[childKey];
-          if (node) {
-            walk(node);
-          }
-        }
-      }
-    };
-
-    const root = tree[ROOT];
-    walk(root);
-
-    if (this.postTraverses.length) {
-      const list = this.postTraverses;
-      this.postTraverses = [];
-      for (const fn of list) {
-        fn();
-      }
-    }
   }
 }
 

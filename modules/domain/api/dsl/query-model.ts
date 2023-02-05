@@ -2,17 +2,8 @@ import * as DSL from './interface';
 import * as ViewDSL from '@/modules/domain/domain-design/dsl/dsl';
 import { Void } from '@/modules/domain/domain-design/dsl/constants';
 
-import {
-  BaseContainer,
-  IContainer,
-  Node,
-  Tree,
-  transformMeta,
-  transformProperty,
-  transformSource,
-  transformType,
-  Rule,
-} from './domain-model';
+import { transformMeta, transformProperty, transformSource, transformType, Rule } from './domain-model';
+import { Tree, BaseContainer, IContainer, Node } from './shared';
 
 export class Query extends Node<ViewDSL.QueryDSL> {
   rules: Rule[] = [];

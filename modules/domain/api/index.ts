@@ -1,8 +1,8 @@
-import { encodeStateVectorFromUpdate, mergeUpdates } from 'yjs';
+import { encodeStateVectorFromUpdate, encodeStateAsUpdate, mergeUpdates } from 'yjs';
 import { NextApiRequest, NextApiResponse } from 'next';
 import fs from 'fs-extra';
 import { getFilePath, readBuffer } from './utils';
-import { createDoc, transformToDSL } from './dsl/doc';
+import { createDocFromUpdate, transformToDSL, createDoc } from './dsl/doc';
 
 /**
  * 获取完整载荷
@@ -14,7 +14,12 @@ export async function handleGet(req: NextApiRequest, res: NextApiResponse) {
   const f = getFilePath(id as string);
 
   if (!(await fs.pathExists(f))) {
-    res.status(204).end();
+    // 创建模板
+    const doc = createDoc();
+    const update = encodeStateAsUpdate(doc);
+    const buf = Buffer.from(update);
+    await fs.writeFile(f, buf);
+    res.status(201).send(buf);
   } else {
     res.status(200);
     fs.createReadStream(f).pipe(res);
@@ -75,7 +80,7 @@ export async function handleSave(req: NextApiRequest, res: NextApiResponse) {
     await fs.writeFile(fpath, Buffer.from(update));
   }
 
-  const doc = createDoc(update);
+  const doc = createDocFromUpdate(update);
 
   const dsl = transformToDSL(doc);
 

@@ -5,7 +5,8 @@ import * as DSL from './interface';
 import * as ViewDSL from '@/modules/domain/data-design/dsl/dsl';
 import { DataObjectName } from '@/modules/domain/data-design/dsl/constants';
 
-import { BaseContainer, IContainer, Node, Tree, transformMeta, transformString } from './domain-model';
+import { transformMeta, transformString } from './domain-model';
+import { Tree, BaseContainer, IContainer, Node } from './shared';
 
 const DataObjectTypeName = ViewDSL.DataObjectTypeName;
 

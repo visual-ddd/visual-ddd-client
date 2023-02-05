@@ -1,3 +1,4 @@
+import * as ViewDSL from '@/modules/domain/domain-design/dsl/dsl';
 import {
   DomainModelContainer,
   transformMeta,
@@ -6,10 +7,8 @@ import {
   transformMethods,
   transformEnum,
   transformRule,
-  BaseContainer,
-  Tree,
 } from './domain-model';
-import * as ViewDSL from '@/modules/domain/domain-design/dsl/dsl';
+import { Tree, BaseContainer } from './shared';
 
 test('transformMeta', () => {
   expect(transformMeta([])).toEqual({});
