@@ -2,6 +2,8 @@ import { Doc as YDoc, encodeStateAsUpdate, applyUpdate } from 'yjs';
 import { WebrtcProvider } from 'y-webrtc';
 import { effect, makeAutoBindThis, mutation } from '@/lib/store';
 import { makeObservable, observable } from 'mobx';
+import { IDisposable, tryDispose } from '@/lib/utils';
+import { message } from 'antd';
 
 import { YJS_FIELD_NAME } from '../../constants';
 import { DomainEditorModel, createDomainEditorModel } from '../../domain-design';
@@ -12,7 +14,7 @@ import { createMapperEditorModel, MapperEditorModel } from '../../mapper-design'
 
 import { DomainDesignerTabs } from './constants';
 import { ObjectStore } from './ObjectStore';
-import { IDisposable, tryDispose } from '@/lib/utils';
+import { DomainDesignerKeyboardBinding } from './KeyboardBinding';
 
 const KEY_ACTIVE_TAB = 'DESIGNER:activeTab';
 
@@ -27,11 +29,12 @@ interface TabModel {
 }
 
 /**
- * TODO: 销毁
+ * 业务域设计器模型
  */
 export class DomainDesignerModel implements IDisposable {
   id: string;
   readonly readonly: boolean;
+  readonly keyboardBinding: DomainDesignerKeyboardBinding;
 
   /**
    * 统一语言模型
@@ -134,6 +137,8 @@ export class DomainDesignerModel implements IDisposable {
       },
     ];
 
+    this.keyboardBinding = new DomainDesignerKeyboardBinding({ model: this });
+
     makeAutoBindThis(this);
     makeObservable(this);
 
@@ -230,6 +235,7 @@ export class DomainDesignerModel implements IDisposable {
       }
 
       this.setError(undefined);
+      message.success('保存成功');
     } catch (err) {
       this.setError(err as Error);
     } finally {

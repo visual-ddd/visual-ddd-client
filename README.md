@@ -37,7 +37,6 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 - 对象字段定位
 - NodeYMap 单元测试
-- 保存快捷键、保存成功提示
 - rule 包含 label, 更好的信息提示
 - 引用关系支持可见性控制
 - 表单告警信息定位

@@ -12,7 +12,7 @@ import { BaseEditorModel, BaseNodeProperties, BaseNode } from '../Model';
 import { NormalizedAutoResizeGroup, ShapeRegistry } from '../Shape';
 import { assertShapeInfo } from '../Shape';
 import { copy, paste } from './ClipboardUtils';
-import { KeyboardBinding } from './KeyboardBinding';
+import { CanvasKeyboardBinding } from './KeyboardBinding';
 
 const ResizingOptionsWithDefault: [keyof Transform.ResizingRaw, any][] = [
   ['minWidth', 0],
@@ -61,7 +61,7 @@ export class CanvasModel {
   /**
    * 快捷键管理器
    */
-  keyboardBinding: KeyboardBinding;
+  keyboardBinding: CanvasKeyboardBinding;
 
   /**
    * 编辑器模型
@@ -314,7 +314,7 @@ export class CanvasModel {
     };
 
     // 快捷键绑定
-    this.keyboardBinding = new KeyboardBinding();
+    this.keyboardBinding = new CanvasKeyboardBinding();
 
     if (!readonly) {
       this.keyboardBinding

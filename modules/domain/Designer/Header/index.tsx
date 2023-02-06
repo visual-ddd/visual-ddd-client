@@ -1,7 +1,8 @@
 import { LeftOutlined } from '@ant-design/icons';
-import { Button } from 'antd';
+import { Button, Tooltip } from 'antd';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
+import { useMemo } from 'react';
 import { useDomainDesignerContext } from '../Context';
 import { DomainDesignerTabsMap } from '../model';
 
@@ -9,6 +10,10 @@ import s from './index.module.scss';
 
 export const DomainDesignerHeader = observer(function DesignerHeader(props: {}) {
   const model = useDomainDesignerContext()!;
+  const saveTitle = useMemo(() => {
+    const desc = model.keyboardBinding.getReadableKeyBinding('save');
+    return `${desc.description}(${desc.key})`;
+  }, [model]);
 
   return (
     <div className={classNames('vd-domain-header', s.root)}>
@@ -24,9 +29,18 @@ export const DomainDesignerHeader = observer(function DesignerHeader(props: {}) 
       </div>
       {!model.readonly && (
         <div className={classNames('vd-domain-header__aside', s.aside)}>
-          <Button type="primary" size="small" loading={model.saving} onClick={model.save}>
-            保存
-          </Button>
+          <Tooltip title={saveTitle} placement="bottomRight">
+            <Button
+              type="primary"
+              size="small"
+              loading={model.saving}
+              onClick={() => {
+                model.keyboardBinding.trigger('save');
+              }}
+            >
+              保存
+            </Button>
+          </Tooltip>
         </div>
       )}
     </div>

@@ -47,6 +47,7 @@
     "lodash": "^4.17.21",
     "mobx": "^6.7.0",
     "mobx-react": "^7.6.0",
+    "mousetrap": "^1.6.5",
     "next": "13.0.6",
     "prosemirror-commands": "^1.5.0",
     "prosemirror-dropcursor": "^1.6.1",
@@ -69,6 +70,7 @@
     "uuid": "^9.0.0",
     "y-indexeddb": "^9.0.9",
     "y-prosemirror": "^1.2.0",
+    "y-protocols": "^1.0.5",
     "y-webrtc": "^10.2.3",
     "yjs": "^13.5.43"
   },
@@ -79,6 +81,7 @@
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^29.2.4",
     "@types/lodash": "^4.14.191",
+    "@types/mousetrap": "^1.6.11",
     "@types/node": "18.11.12",
     "@types/react": "18.0.26",
     "@types/react-color": "^3.0.6",

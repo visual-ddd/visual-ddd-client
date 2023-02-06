@@ -22,6 +22,7 @@ specifiers:
   '@types/fs-extra': ^9.0.13
   '@types/jest': ^29.2.4
   '@types/lodash': ^4.14.191
+  '@types/mousetrap': ^1.6.11
   '@types/node': 18.11.12
   '@types/react': 18.0.26
   '@types/react-color': ^3.0.6
@@ -50,6 +51,7 @@ specifiers:
   lodash: ^4.17.21
   mobx: ^6.7.0
   mobx-react: ^7.6.0
+  mousetrap: ^1.6.5
   next: 13.0.6
   prettier: ^2.8.1
   prettier-config-wk: ^0.2.4
@@ -77,6 +79,7 @@ specifiers:
   wkstd: ^0.2.4
   y-indexeddb: ^9.0.9
   y-prosemirror: ^1.2.0
+  y-protocols: ^1.0.5
   y-webrtc: ^10.2.3
   yjs: ^13.5.43
 
@@ -113,6 +116,7 @@ dependencies:
   lodash: 4.17.21
   mobx: 6.7.0
   mobx-react: 7.6.0_jofyzmwkboewm6mjrhi25mngky
+  mousetrap: 1.6.5
   next: 13.0.6_iburw4xngv4nuxezlam7kbvdc4
   prosemirror-commands: 1.5.0
   prosemirror-dropcursor: 1.6.1
@@ -134,7 +138,8 @@ dependencies:
   sharp: 0.31.3
   uuid: 9.0.0
   y-indexeddb: 9.0.9_yjs@13.5.43
-  y-prosemirror: 1.2.0_2mionndvganhuow6cs7g5z4rlm
+  y-prosemirror: 1.2.0_eisrfd3omzogqszxo3ewg72fyq
+  y-protocols: 1.0.5
   y-webrtc: 10.2.3
   yjs: 13.5.43
 
@@ -145,6 +150,7 @@ devDependencies:
   '@types/fs-extra': 9.0.13
   '@types/jest': 29.2.4
   '@types/lodash': 4.14.191
+  '@types/mousetrap': 1.6.11
   '@types/node': 18.11.12
   '@types/react': 18.0.26
   '@types/react-color': 3.0.6
@@ -1518,7 +1524,7 @@ packages:
     dependencies:
       '@tiptap/core': 2.0.0-beta.209_4nuxvpohlb3jeygmbr7vfoeqbe
       prosemirror-state: 1.4.2
-      y-prosemirror: 1.2.0_2mionndvganhuow6cs7g5z4rlm
+      y-prosemirror: 1.2.0_eisrfd3omzogqszxo3ewg72fyq
     dev: false
 
   /@tiptap/extension-document/2.0.0-beta.209_f4ffqkgz5d3wev7su7t7l2rrua:
@@ -1840,6 +1846,11 @@ packages:
   /@types/minimatch/3.0.5:
     resolution:
       { integrity: sha512-Klz949h02Gz2uZCMGwDUSDS1YBlTdDDgbWHi+81l29tQALUtvz4rAYi5uoVhE5Lagoq6DeqAUlbrHvW/mXDgdQ== }
+    dev: true
+
+  /@types/mousetrap/1.6.11:
+    resolution:
+      { integrity: sha512-F0oAily9Q9QQpv9JKxKn0zMKfOo36KHCW7myYsmUyf2t0g+sBTbG3UleTPoguHdE1z3GLFr3p7/wiOio52QFjQ== }
     dev: true
 
   /@types/node/18.11.12:
@@ -7787,7 +7798,7 @@ packages:
       yjs: 13.5.43
     dev: false
 
-  /y-prosemirror/1.2.0_2mionndvganhuow6cs7g5z4rlm:
+  /y-prosemirror/1.2.0_eisrfd3omzogqszxo3ewg72fyq:
     resolution:
       { integrity: sha512-t3uxuX4HIkb1GNt8jV+dplRbNH2OmQD/BNeCCbjLD3Mq0o6JEXxHedv58ZIPFDE6ma24jljlL+u8pGvN6B37XQ== }
     peerDependencies:
@@ -7802,6 +7813,7 @@ packages:
       prosemirror-state: 1.4.2
       prosemirror-view: 1.30.0
       typescript: 4.9.4
+      y-protocols: 1.0.5
       yjs: 13.5.43
     dev: false
 
