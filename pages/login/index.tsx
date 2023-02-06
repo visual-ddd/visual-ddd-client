@@ -3,11 +3,15 @@ import { Logo } from '@/modules/user';
 import Link from 'next/link';
 
 import s from './index.module.scss';
+import { useRouter } from 'next/router';
 
 export default function Login() {
+  const router = useRouter();
+
   // 登录
   const handleLogin = (values: any) => {
     console.log('登录', values);
+    router.push('/login/launch');
   };
 
   return (
