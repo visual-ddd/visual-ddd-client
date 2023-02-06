@@ -38,7 +38,6 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 - 对象字段定位
 - 自动匹配映射
 - 聚合最小限制
-- 对象映射过滤掉未绑定聚合的对象
 - tiptap 快捷键冲突，按需激活
 - Model 销毁
 - NodeYMap 单元测试
