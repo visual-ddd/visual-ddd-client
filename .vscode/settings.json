@@ -20,7 +20,8 @@
     "unembed",
     "Unhighlight",
     "unreferable",
-    "wakeapp"
+    "wakeapp",
+    "webrtc"
   ],
   "typescript.tsserver.experimental.enableProjectDiagnostics": true
 }

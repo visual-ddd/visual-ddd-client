@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import { observer } from 'mobx-react';
 import { useEffect, useMemo } from 'react';
 import { message, Tabs } from 'antd';
+import { tryDispose } from '@/lib/utils';
 
 import { DomainEditor } from '../domain-design';
 import { DataObjectEditor } from '../data-design';
@@ -104,6 +105,12 @@ const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerPro
       message.warning(model.error.message);
     }
   }, [model.error]);
+
+  useEffect(() => {
+    return () => {
+      tryDispose(model);
+    };
+  }, [model]);
 
   return (
     <DomainDesignerContextProvider value={model}>

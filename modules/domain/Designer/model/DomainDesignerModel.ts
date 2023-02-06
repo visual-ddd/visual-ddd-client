@@ -12,6 +12,7 @@ import { createMapperEditorModel, MapperEditorModel } from '../../mapper-design'
 
 import { DomainDesignerTabs } from './constants';
 import { ObjectStore } from './ObjectStore';
+import { IDisposable, tryDispose } from '@/lib/utils';
 
 const KEY_ACTIVE_TAB = 'DESIGNER:activeTab';
 
@@ -28,7 +29,7 @@ interface TabModel {
 /**
  * TODO: 销毁
  */
-export class DomainDesignerModel {
+export class DomainDesignerModel implements IDisposable {
   id: string;
   readonly readonly: boolean;
 
@@ -137,6 +138,24 @@ export class DomainDesignerModel {
     makeObservable(this);
 
     this.initialize();
+  }
+
+  /**
+   * 销毁
+   */
+  dispose() {
+    if (this.webrtcProvider) {
+      this.webrtcProvider.destroy();
+      this.webrtcProvider = undefined;
+    }
+
+    tryDispose(this.ubiquitousLanguageModel);
+    tryDispose(this.domainEditorModel);
+    tryDispose(this.queryEditorModel);
+    tryDispose(this.dataObjectEditorModel);
+    tryDispose(this.mapperObjectEditorModel);
+
+    this.ydoc.destroy();
   }
 
   /**

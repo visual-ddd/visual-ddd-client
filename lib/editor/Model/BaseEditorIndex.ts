@@ -1,9 +1,9 @@
 import { observable } from 'mobx';
 import { debounce } from '@wakeapp/utils';
+import { tryDispose } from '@/lib/utils';
 
 import { BaseEditorEvent } from './BaseEditorEvent';
 import { BaseNode } from './BaseNode';
-import { tryDispose } from './IDisposable';
 
 /**
  * 编辑器索引信息

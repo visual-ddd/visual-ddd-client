@@ -1,6 +1,7 @@
-import { BaseNode, IDisposable } from '@/lib/editor';
+import { BaseNode } from '@/lib/editor';
 import { UntitledInHumanReadable, UntitledInUpperCamelCase } from '../../domain-design/dsl/constants';
 import { derive, makeAutoBindThis } from '@/lib/store';
+import { IDisposable } from '@/lib/utils';
 
 import { DataObjectStore } from './DataObjectStore';
 import {

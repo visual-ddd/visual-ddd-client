@@ -1,5 +1,6 @@
-import { BaseEditorEvent, BaseEditorModel, BaseNode, tryDispose } from '@/lib/editor';
+import { BaseEditorEvent, BaseEditorModel, BaseNode } from '@/lib/editor';
 import { command, derive, makeAutoBindThis } from '@/lib/store';
+import { tryDispose } from '@/lib/utils';
 import { booleanPredicate, debounce } from '@wakeapp/utils';
 import { makeObservable, observable } from 'mobx';
 

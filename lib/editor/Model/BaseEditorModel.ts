@@ -53,6 +53,7 @@ declare global {
 
 /**
  * 编辑器模型入口
+ * TODO: 销毁
  */
 export class BaseEditorModel {
   readonly readonly: boolean;
