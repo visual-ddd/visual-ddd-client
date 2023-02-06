@@ -37,8 +37,6 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 - 对象字段定位
 - 自动匹配映射
-- 聚合最小限制
-- tiptap 快捷键冲突，按需激活
 - Model 销毁
 - NodeYMap 单元测试
 - 命令模块，命令事件字段提示

@@ -38,7 +38,7 @@ defineShape({
   icon: icon,
   shapeType: 'node',
   group: true,
-  autoResizeGroup: 60,
+  autoResizeGroup: { padding: 60, minHeight: 500, minWidth: 500 },
   embeddable(ctx) {
     const { childModel } = ctx;
     return !!(childModel && ALLOWED_CHILD.has(childModel.name));

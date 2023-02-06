@@ -9,7 +9,7 @@ import { GraphBindingOptions, GraphBindingProps } from '@/lib/g6-binding';
 
 import { CanvasEvent } from './CanvasEvent';
 import { BaseEditorModel, BaseNodeProperties, BaseNode } from '../Model';
-import { ShapeRegistry } from '../Shape';
+import { NormalizedAutoResizeGroup, ShapeRegistry } from '../Shape';
 import { assertShapeInfo } from '../Shape';
 import { copy, paste } from './ClipboardUtils';
 import { KeyboardBinding } from './KeyboardBinding';
@@ -964,16 +964,17 @@ export class CanvasModel {
       return;
     }
 
-    const autoResize = this.shapeRegistry.isAutoResizeGroup({ node, graph: this.graph! });
+    const autoResize = this.shapeRegistry.getAutoResizeGroupConfig({ node, graph: this.graph! });
 
     if (!autoResize) {
       return;
     }
 
-    this.resizeGroup(node, this.shapeRegistry.getAutoResizeGroupPadding({ node, graph: this.graph! }));
+    this.resizeGroup(node, autoResize);
   }
 
-  protected resizeGroup = debounce((node: Node, padding: number) => {
+  protected resizeGroup = debounce((node: Node, config: NormalizedAutoResizeGroup) => {
+    const { padding, minHeight, minWidth } = config;
     const nodeChildren = node.getChildren()?.filter(c => c.isNode());
     if (!nodeChildren?.length) {
       return;
@@ -1016,8 +1017,8 @@ export class CanvasModel {
       hasChange = true;
     }
 
-    let nextWidth = cornerX - x;
-    let nextHeight = cornerY - y;
+    let nextWidth = Math.max(cornerX - x, minWidth);
+    let nextHeight = Math.max(cornerY - y, minHeight);
 
     if (nextWidth !== realSize.width || nextHeight !== realSize.height) {
       hasChange = true;
