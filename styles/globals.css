@@ -40,6 +40,10 @@ a {
   margin-left: var(--vd-spacing-xs);
 }
 
+.u-mt-xs {
+  margin-top: var(--vd-spacing-xs);
+}
+
 .u-bold {
   font-weight: bold;
 }

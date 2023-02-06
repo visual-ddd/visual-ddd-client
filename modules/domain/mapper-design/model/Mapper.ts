@@ -1,15 +1,19 @@
-import { BaseNode } from '@/lib/editor';
+import { BaseEditorCommandHandler, BaseNode } from '@/lib/editor';
 import { NoopArray } from '@wakeapp/utils';
 import { computed, makeObservable } from 'mobx';
+import { v4 } from 'uuid';
+
 import { UntitledInCamelCase } from '../../domain-design/dsl/constants';
 
-import { isCompatible, MapperObjectDSL } from '../dsl';
+import { FieldMapperDSL, isCompatible, MapperObjectDSL } from '../dsl';
+import { autoMapper } from './auto-mapper';
 import { IFieldMapper } from './IFieldMapper';
 import { MapperStore } from './MapperStore';
 
 export class Mapper {
   private node: BaseNode;
   private mapperStore: MapperStore;
+  private commandHandler: BaseEditorCommandHandler;
 
   get id() {
     return this.node.id;
@@ -78,8 +82,9 @@ export class Mapper {
     return dsl.title ? `${dsl.title}(${dsl.name})` : `${dsl.name || UntitledInCamelCase}`;
   }
 
-  constructor(inject: { mapperStore: MapperStore; node: BaseNode }) {
+  constructor(inject: { mapperStore: MapperStore; node: BaseNode; commandHandler: BaseEditorCommandHandler }) {
     this.mapperStore = inject.mapperStore;
+    this.commandHandler = inject.commandHandler;
     this.node = inject.node;
 
     makeObservable(this);
@@ -122,5 +127,32 @@ export class Mapper {
     }
 
     return targetFields.filter(i => isCompatible(sourceField.type!, i.type));
+  }
+
+  /**
+   * 自动生成字段映射
+   */
+  autoGenerateMappers() {
+    if (this.sourceObject == null || this.targetObject == null) {
+      return;
+    }
+
+    const mappers = autoMapper(this.sourceObject, this.targetObject);
+
+    const list: FieldMapperDSL[] = [];
+
+    for (const sourceKey in mappers) {
+      // 已经声明的跳过
+      if (this.dsl.mappers.some(i => i.source === sourceKey)) {
+        continue;
+      } else {
+        list.push({ uuid: v4(), source: sourceKey, target: mappers[sourceKey] });
+      }
+    }
+
+    if (list.length) {
+      const newMapper = this.dsl.mappers.concat(list);
+      this.commandHandler.updateNodeProperty({ node: this.node, path: 'mappers', value: newMapper });
+    }
   }
 }

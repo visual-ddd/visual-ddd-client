@@ -20,6 +20,8 @@ export interface MemberListProps<T extends IDDSL> {
 
   style?: React.CSSProperties;
 
+  children?: React.ReactNode;
+
   /**
    * 列表字段路径
    */
@@ -226,6 +228,7 @@ export const MemberList = observer(function MemberList<T extends IDDSL>(props: M
     showError = false,
     editorTitle,
     editorDisplayType,
+    children,
   } = props;
   const { formModel, readonly } = useEditorFormContext()!;
   const propsRef = useRefValue(props);
@@ -324,6 +327,7 @@ export const MemberList = observer(function MemberList<T extends IDDSL>(props: M
       <Button className={classNames('vd-member-list__add', s.add)} onClick={context.handleCreate} disabled={disabled}>
         {addText ?? '添加属性'}
       </Button>
+      {children}
       {editorDisplayType === 'portal' && (
         <MemberEditor list={value} path={path} ref={editorRef} title={editorTitle} onHide={context.handleEditHided}>
           {renderEditor}

@@ -1,5 +1,5 @@
 import { DataObjectTypeDSL, DataObjectTypeName } from '../../data-design/dsl';
-import { BaseType, TypeDSL } from '../../domain-design/dsl';
+import type { BaseType, TypeDSL } from '../../domain-design/dsl/dsl';
 
 /**
  * 兼容性声明

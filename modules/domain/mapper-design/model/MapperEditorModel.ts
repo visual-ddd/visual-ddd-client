@@ -13,7 +13,11 @@ export class MapperEditorModel extends BaseEditorModel {
   constructor(options: MapperEditorModelOptions) {
     super(options);
 
-    this.mapperStore = new MapperStore({ event: this.event, objectStore: options.objectStore });
+    this.mapperStore = new MapperStore({
+      event: this.event,
+      objectStore: options.objectStore,
+      commandHandler: this.commandHandler,
+    });
     this.validateManager = new MapperValidateManager({
       editorModel: this,
       event: this.event,
