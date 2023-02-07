@@ -8,13 +8,13 @@ import { ORG_TYPE } from '@/modules/user/constants';
 export default function Launch() {
   const router = useRouter();
 
-  const handleGo = (type: ORG_TYPE) => {
+  const handleGo = (type: ORG_TYPE, id?: number) => {
     if (type === ORG_TYPE.SYSTEM) {
-      router.push(`/system-manage`);
+      router.push(`/system`);
     } else if (type === ORG_TYPE.ORGANIZATION) {
-      router.push(`/organization-manage`);
+      router.push(`/organization/${id}`);
     } else if (type === ORG_TYPE.TEAM) {
-      router.push(`/team-manage`);
+      router.push(`/team/${id}`);
     }
   };
 
@@ -30,21 +30,21 @@ export default function Launch() {
         <div className={s.orgTitle}>组织管理</div>
         <div className={s.orgChild}>
           组织1
-          <ArrowRightOutlined onClick={() => handleGo(ORG_TYPE.ORGANIZATION)} />
+          <ArrowRightOutlined onClick={() => handleGo(ORG_TYPE.ORGANIZATION, 1)} />
         </div>
         <div className={s.orgChild}>
           组织2
-          <ArrowRightOutlined onClick={() => handleGo(ORG_TYPE.ORGANIZATION)} />
+          <ArrowRightOutlined onClick={() => handleGo(ORG_TYPE.ORGANIZATION, 2)} />
         </div>
 
         <div className={s.orgTitle}>团队管理</div>
         <div className={s.orgChild}>
           团队1（组织1）
-          <ArrowRightOutlined onClick={() => handleGo(ORG_TYPE.TEAM)} />
+          <ArrowRightOutlined onClick={() => handleGo(ORG_TYPE.TEAM, 1)} />
         </div>
         <div className={s.orgChild}>
           团队2（组织1）
-          <ArrowRightOutlined onClick={() => handleGo(ORG_TYPE.TEAM)} />
+          <ArrowRightOutlined onClick={() => handleGo(ORG_TYPE.TEAM, 2)} />
         </div>
       </div>
     </div>

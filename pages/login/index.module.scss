@@ -22,24 +22,3 @@
 .codeBtn {
   width: 100px;
 }
-
-.org {
-  margin: var(--vd-spacing-md) 0;
-  line-height: var(--vd-font-line-height-h1);
-  .orgTitle,
-  .orgChild {
-    display: flex;
-    justify-content: space-between;
-  }
-  .orgTitle {
-    background: var(--vd-color-gray-300);
-    padding-left: var(--vd-spacing-base);
-    padding-right: var(--vd-spacing-sm);
-    margin-bottom: 1px;
-  }
-  .orgChild {
-    background: var(--vd-color-gray-200);
-    padding-left: var(--vd-spacing-lg);
-    padding-right: var(--vd-spacing-sm);
-  }
-}

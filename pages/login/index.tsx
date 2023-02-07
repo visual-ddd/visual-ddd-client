@@ -11,7 +11,7 @@ export default function Login() {
   // 登录
   const handleLogin = (values: any) => {
     console.log('登录', values);
-    router.push('/login/launch');
+    router.push('/launch');
   };
 
   return (
