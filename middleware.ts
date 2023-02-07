@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { MiddlewareRunner } from './lib/middleware';
 
-import { proxyMiddleware } from './modules/backend';
+import { proxyMiddleware } from './modules/backend-node';
 
 const runner = new MiddlewareRunner();
 runner.register(proxyMiddleware);

@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Middleware } from '@/lib/middleware';
 
-/**
- * 后端服务
- */
-const BACKEND = new URL(process.env.BACKEND ?? 'http://172.26.57.49:8080');
+import { BACKEND } from './constants';
 
 /**
  * 接口代理

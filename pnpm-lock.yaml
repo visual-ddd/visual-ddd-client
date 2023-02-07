@@ -20,6 +20,7 @@ specifiers:
   '@tiptap/react': 2.0.0-beta.212
   '@tiptap/starter-kit': 2.0.0-beta.212
   '@types/color-string': ^1.5.2
+  '@types/cookie': ^0.5.1
   '@types/fs-extra': ^11.0.1
   '@types/jest': ^29.4.0
   '@types/lodash': ^4.14.191
@@ -38,6 +39,7 @@ specifiers:
   async-validator: ^4.2.5
   classnames: ^2.3.2
   color-string: ^1.9.1
+  cookie: ^0.5.0
   cron-parser: ^4.7.1
   dayjs: ^1.11.7
   eslint: 8.33.0
@@ -112,6 +114,7 @@ dependencies:
   async-validator: 4.2.5
   classnames: 2.3.2
   color-string: 1.9.1
+  cookie: 0.5.0
   cron-parser: 4.7.1
   dayjs: 1.11.7
   fs-extra: 11.1.0
@@ -155,6 +158,7 @@ devDependencies:
   '@testing-library/jest-dom': 5.16.5
   '@testing-library/react': 13.4.0_biqbaboplfbrettd7655fr4n2y
   '@types/color-string': 1.5.2
+  '@types/cookie': 0.5.1
   '@types/fs-extra': 11.0.1
   '@types/jest': 29.4.0
   '@types/lodash': 4.14.191
@@ -1882,7 +1886,6 @@ packages:
   /@types/cookie/0.5.1:
     resolution:
       { integrity: sha512-COUnqfB2+ckwXXSFInsFdOAWQzCCx+a5hq2ruyj+Vjund94RJQd4LG2u9hnvJrTgunKAaax7ancBYlDrNYxA0g== }
-    dev: false
 
   /@types/cookies/0.7.7:
     resolution:

@@ -21,6 +21,7 @@
     "Unhighlight",
     "unreferable",
     "wakeapp",
+    "wakedata",
     "webrtc"
   ],
   "typescript.tsserver.experimental.enableProjectDiagnostics": true
