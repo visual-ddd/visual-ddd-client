@@ -1,5 +1,4 @@
 import { Middleware } from '@/lib/middleware';
-import memoize from 'lodash/memoize';
 import { NextRequest, NextResponse } from 'next/server';
 import { getIronSession } from 'iron-session/edge';
 
@@ -10,7 +9,7 @@ import {
   RESTFUL_API_PREFIX,
   UNAUTH_CODE,
 } from './config';
-import { createFailResponse } from '../backend-node';
+import { VDSessionCore } from './types';
 
 /**
  * Restful API
@@ -24,8 +23,7 @@ const isRestfulAPI = (path: string) => {
 /**
  * 不需要进行鉴权的 API
  */
-const inApiAuthWhitelist = memoize((path: string) => {
-  path = path.startsWith('/api') ? path.slice(4) : path;
+const inApiAuthWhitelist = (path: string) => {
   for (const i of API_AUTH_WHITE_LIST) {
     if (path.startsWith(i)) {
       return true;
@@ -33,12 +31,12 @@ const inApiAuthWhitelist = memoize((path: string) => {
   }
 
   return false;
-});
+};
 
 /**
  * 需要进行鉴权的页面
  */
-const inPageAuthBlacklist = memoize((path: string) => {
+const inPageAuthBlacklist = (path: string) => {
   for (const i of PAGE_AUTH_BLACK_LIST) {
     if (path.startsWith(i)) {
       return true;
@@ -46,12 +44,17 @@ const inPageAuthBlacklist = memoize((path: string) => {
   }
 
   return false;
-});
+};
 
-async function isAuth(req: NextRequest, res: NextResponse): Promise<boolean> {
-  const session = await getIronSession(req, res, IRON_SESSION_OPTIONS);
+export async function getSessionInMiddleware(req: NextRequest): Promise<VDSessionCore | undefined> {
+  // response 不是必须的，入口你不打算修改 session 的话
+  const session = await getIronSession(req, {} as any, IRON_SESSION_OPTIONS);
 
-  return !!session.content;
+  return session.content;
+}
+
+export async function checkAuthInMiddleware(req: NextRequest): Promise<boolean> {
+  return !!(await getSessionInMiddleware(req));
 }
 
 /**
@@ -68,12 +71,15 @@ export const apiAuthMiddleware: Middleware = async (req, next) => {
     return next();
   }
 
-  const response = NextResponse.json(createFailResponse(UNAUTH_CODE, '请登录后重试'), {
-    // RESTful 接口使用状态码来标记请求状态
-    status: isRestfulAPI(pathname) ? 401 : 200,
-  });
+  const response = NextResponse.json(
+    { data: null, success: false, errorCode: UNAUTH_CODE, errorMessage: '请登录后重试' },
+    {
+      // RESTful 接口使用状态码来标记请求状态
+      status: isRestfulAPI(pathname) ? 401 : 200,
+    }
+  );
 
-  if (await isAuth(req, response)) {
+  if (await checkAuthInMiddleware(req)) {
     return next();
   }
 
@@ -99,7 +105,7 @@ export const pageAuthMiddleware: Middleware = async (req, next) => {
 
   const redirect = NextResponse.redirect(url);
 
-  if (await isAuth(req, redirect)) {
+  if (await checkAuthInMiddleware(req)) {
     return next();
   }
 

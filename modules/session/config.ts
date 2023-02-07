@@ -12,7 +12,7 @@ export const IRON_SESSION_OPTIONS: IronSessionOptions = {
 
 export const RESTFUL_API_PREFIX = '/api/rest';
 
-export const API_AUTH_WHITE_LIST = ['/login', '/logout', '/register'];
+export const API_AUTH_WHITE_LIST = ['/login', '/logout', '/register'].map(i => `/api${i}`);
 
 export const PAGE_AUTH_BLACK_LIST = [
   // 启动页

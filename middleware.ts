@@ -11,6 +11,7 @@ runner.register(pageAuthMiddleware);
 
 /**
  * 所有请求都会经过中间件，包括静态资源，API 接口
+ * Next.js 限制 middleware 只能在 edge runtime 运行，会有比较多限制
  * @param req
  * @returns
  */

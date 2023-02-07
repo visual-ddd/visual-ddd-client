@@ -3,20 +3,17 @@ import { createSuccessResponse } from '@/modules/backend-node';
 import { withIronSessionApiRoute } from 'iron-session/next';
 
 import { IRON_SESSION_OPTIONS } from '../config';
-import { VDSessionState } from '../types';
 
 /**
- * 更新会话状态
+ * 获取会话状态
  */
-export const updateSessionState = allowMethod(
-  'POST',
+export const session = allowMethod(
+  'GET',
   withIronSessionApiRoute(async (req, res) => {
-    const state = req.body as VDSessionState;
+    const sessionCore = req.session.content;
 
-    req.session.content!.state = state;
+    // TODO: 获取会话信息
 
-    await req.session.save();
-
-    res.status(200).json(createSuccessResponse(null));
+    res.status(200).json(createSuccessResponse(sessionCore));
   }, IRON_SESSION_OPTIONS)
 );
