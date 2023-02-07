@@ -1,3 +1,3 @@
-import { login } from '@/modules/session/api';
+import { login } from '@/modules/session/server';
 
 export default login;
