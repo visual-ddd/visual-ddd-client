@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Middleware } from '@/lib/middleware';
 
-import { BACKEND } from './constants';
+import { API_PREFIX, BACKEND } from './constants';
 
 /**
  * 接口代理
@@ -13,7 +13,7 @@ export const proxyMiddleware: Middleware = async (req, next) => {
    * 后端接口代理
    * TODO: cookie 注入
    */
-  if (url.pathname.startsWith('/wd')) {
+  if (url.pathname.startsWith(API_PREFIX)) {
     const url = new URL(req.url);
     url.protocol = BACKEND.protocol;
     url.host = BACKEND.host;

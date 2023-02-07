@@ -179,7 +179,7 @@ export class DomainDesignerModel implements IDisposable {
       }
 
       // 数据加载
-      const response = await fetch(`/api/domain/${this.id}`, { method: 'GET' });
+      const response = await fetch(`/api/rest/domain/${this.id}`, { method: 'GET' });
 
       if (!response.ok) {
         throw new Error(`数据加载失败`);
@@ -228,7 +228,7 @@ export class DomainDesignerModel implements IDisposable {
 
       const update = encodeStateAsUpdate(this.ydoc, vector);
 
-      const response = await fetch(`/api/domain/${this.id}`, { method: 'PUT', body: update });
+      const response = await fetch(`/api/rest/domain/${this.id}`, { method: 'PUT', body: update });
 
       if (!response.ok) {
         throw new Error(`保存失败`);
@@ -277,7 +277,7 @@ export class DomainDesignerModel implements IDisposable {
   }
 
   protected async getVector() {
-    const res = await fetch(`/api/domain/${this.id}/vector`, { method: 'GET' });
+    const res = await fetch(`/api/rest/domain/${this.id}/vector`, { method: 'GET' });
 
     if (res.status === 200) {
       const buffer = await res.arrayBuffer();
