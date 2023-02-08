@@ -1,0 +1,18 @@
+.logo {
+  text-align: center;
+}
+.title {
+  font-weight: var(--vd-font-weight);
+  line-height: var(--vd-font-line-height-h2);
+}
+.horizontal {
+  &.logo {
+    white-space: nowrap;
+    overflow: hidden;
+    text-align: left;
+  }
+  .title {
+    display: inline-block;
+    margin-left: var(--vd-spacing-sm);
+  }
+}

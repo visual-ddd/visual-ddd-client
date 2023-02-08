@@ -2,6 +2,8 @@ import type { AppProps } from 'next/app';
 import { ConfigProvider } from 'antd';
 import { configure } from 'mobx';
 import { useRouter } from 'next/router';
+import { NextPage } from 'next';
+import type { ReactElement, ReactNode } from 'react';
 // 由于 antd 组件的默认文案是英文，所以需要修改为中文
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
@@ -20,7 +22,16 @@ configure({
 
 dayjs.locale('zh-cn');
 
-export default function App({ Component, pageProps }: AppProps) {
+type NextPageWithLayout = NextPage & {
+  getLayout?: (page: ReactElement, pageTitle?: string) => ReactNode;
+  pageTitle?: string;
+};
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout;
+};
+
+export default function App({ Component, pageProps }: AppPropsWithLayout) {
   const router = useRouter();
 
   // 注册页面级别的依赖注入 scope
@@ -31,9 +42,8 @@ export default function App({ Component, pageProps }: AppProps) {
     return createPageScope();
   }, [router.route]);
 
-  return (
-    <ConfigProvider locale={zhCN}>
-      <Component {...pageProps} />
-    </ConfigProvider>
-  );
+  const getLayout = Component.getLayout || (page => page);
+  const { pageTitle } = Component;
+
+  return <ConfigProvider locale={zhCN}>{getLayout(<Component {...pageProps} />, pageTitle)}</ConfigProvider>;
 }

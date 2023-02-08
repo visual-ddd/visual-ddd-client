@@ -1,0 +1,24 @@
+.login {
+  position: absolute;
+  left: 50%;
+  top: 100px;
+  transform: translateX(-50%);
+  background: var(--vd-color-bg);
+  width: 400px;
+  padding: var(--vd-spacing-sm);
+  border-radius: var(--vd-border-radius-md);
+}
+
+.forgot {
+  text-align: right;
+}
+.submit {
+  margin-bottom: var(--vd-spacing-xs);
+}
+.code {
+  width: 250px;
+  margin-right: var(--vd-spacing-sm);
+}
+.codeBtn {
+  width: 100px;
+}
