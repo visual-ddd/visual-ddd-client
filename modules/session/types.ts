@@ -42,7 +42,12 @@ export interface VDSessionState {
   /**
    * 入口的 id, 只有组织管理和团队管理有
    */
-  entryId?: string;
+  entryId?: string | number;
+
+  /**
+   * 是否为管理员
+   */
+  isManager: boolean;
 }
 
 /**

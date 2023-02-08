@@ -11,6 +11,7 @@ import { VDSessionState } from '../types';
 export const updateEntry = allowMethod(
   'POST',
   withIronSessionApiRoute(async (req, res) => {
+    // TODO: 参数验证
     const state = req.body as VDSessionState;
 
     req.session.content!.state = state;

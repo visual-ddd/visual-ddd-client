@@ -1,18 +1,23 @@
 import { allowMethod } from '@/lib/api';
 import { createSuccessResponse } from '@/modules/backend-node';
-import { withWakedataRequest } from '../api-helper';
+import { withWakedataRequestApiRoute } from '../api-helper';
+import { VDSessionDetail, VDUser } from '../types';
 
 /**
  * 获取会话状态
  */
 export const session = allowMethod(
   'GET',
-  withWakedataRequest(async (req, res) => {
-    // @ts-expect-error
-    const sessionCore = req.session.content;
+  withWakedataRequestApiRoute(async (req, res) => {
+    const sessionCore = req.session.content!;
 
-    // TODO: 获取会话信息
-    const result = await req.request('/wd/visual/web/account/account-page-query', {}, { method: 'GET' });
+    // 获取会话信息
+    const user = await req.request<VDUser>('/wd/visual/web/account/login/get-account-info', {});
+
+    const result: VDSessionDetail = {
+      ...sessionCore,
+      user,
+    };
 
     res.status(200).json(createSuccessResponse(result));
   })

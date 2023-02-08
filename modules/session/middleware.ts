@@ -96,7 +96,7 @@ export const apiAuthMiddleware: Middleware = async (req, next) => {
 export const pageAuthMiddleware: Middleware = async (req, next) => {
   const pathname = req.nextUrl.pathname;
 
-  if (!inPageAuthBlacklist(pathname)) {
+  if (pathname.startsWith('/_') || !inPageAuthBlacklist(pathname)) {
     return next();
   }
 

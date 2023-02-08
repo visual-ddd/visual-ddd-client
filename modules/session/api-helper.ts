@@ -2,7 +2,7 @@ import { withIronSessionApiRoute } from 'iron-session/next';
 import { NextApiHandler } from 'next';
 import { createFailResponse, isResponseError, request } from '@/modules/backend-node';
 
-import { IRON_SESSION_OPTIONS } from './config';
+import { IRON_SESSION_OPTIONS, WAKEDATA_CODE_MAP } from './config';
 
 /**
  * 注入 session 到 api 处理器
@@ -22,16 +22,12 @@ declare module 'http' {
   }
 }
 
-const WAKEDATA_CODE_MAP: Record<string, number> = {
-  401: 401,
-};
-
 /**
  * 注入 wakedata 请求方法
  * @param handler
  * @returns
  */
-export function withWakedataRequest(handler: NextApiHandler, rest?: boolean): NextApiHandler {
+export function withWakedataRequestApiRoute(handler: NextApiHandler, rest?: boolean): NextApiHandler {
   return withSessionApiRoute(async (req, res) => {
     const session = req.session.content;
     req.request = (url, body, config) => {
