@@ -3,7 +3,7 @@ import { Avatar, Dropdown, MenuProps } from 'antd';
 import { Layout } from 'antd';
 import { useRouter } from 'next/router';
 import { CaretDownOutlined, LeftOutlined, RightOutlined, UserOutlined } from '@ant-design/icons';
-import { Logo } from '../user';
+import { Logo } from '@/modules/user';
 import s from './index.module.scss';
 import { PageMenu } from './components';
 

@@ -2,6 +2,9 @@ import { Menu, MenuProps } from 'antd';
 import { useRouter } from 'next/router';
 import { ApartmentOutlined, DesktopOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
 import { ParsedUrlQueryInput } from 'querystring';
+import { useEffect, useState } from 'react';
+import { getLaunchConfig } from '@/modules/user/utils';
+import { ORG_TYPE } from '@/modules/user/constants';
 
 export interface PageMenuProps {
   className?: string | undefined;
@@ -20,24 +23,42 @@ export function PageMenu({ className }: PageMenuProps) {
     } as MenuItem;
   }
 
-  const items: MenuItem[] = [
-    getItem('系统管理', '/system', <DesktopOutlined />),
-    getItem('用户管理', '/system/user', <UserOutlined />),
-    getItem('组织管理', '/organization/[id]/list', <ApartmentOutlined />),
-    getItem('团队管理', '/team/[id]', <TeamOutlined />, [
-      getItem('domain业务域', '/team/[id]/domain'),
-      getItem('app业务域', '/team/[id]/app'),
-    ]),
-  ];
+  const [items, setItem] = useState<MenuItem[]>();
+
+  useEffect(() => {
+    const launchConfig = getLaunchConfig();
+    const menu: MenuItem[] = [
+      getItem('系统管理', '/system', <DesktopOutlined />),
+      getItem('用户管理', '/system/user', <UserOutlined />),
+    ];
+
+    if (launchConfig?.type === ORG_TYPE.ORGANIZATION || launchConfig?.type === ORG_TYPE.TEAM) {
+      menu.push(getItem('组织管理', '/organization/[id]/list', <ApartmentOutlined />));
+    }
+    if (launchConfig?.type === ORG_TYPE.TEAM) {
+      menu.push(
+        getItem('团队管理', '/team/[id]', <TeamOutlined />, [
+          getItem('domain业务域', '/team/[id]/domain'),
+          getItem('app业务域', '/team/[id]/app'),
+        ])
+      );
+    }
+    setItem(menu);
+  }, []);
 
   const onMenu: MenuProps['onClick'] = e => {
     const query: string | ParsedUrlQueryInput | null | undefined = {};
-    // TODO:id从启动页获取,路由逻辑后续优化
+    const launchConfig = getLaunchConfig();
+    if (!launchConfig) {
+      router.push('/login');
+      return;
+    }
+    // TODO：实际的跳转逻辑后续优化
     if (e.key.indexOf('/organization/[id]') === 0) {
-      query.id = '1';
+      query.id = launchConfig.organizationId;
     }
     if (e.key.indexOf('/team/[id]') === 0) {
-      query.id = '2';
+      query.id = launchConfig.organizationId;
     }
 
     router.push({

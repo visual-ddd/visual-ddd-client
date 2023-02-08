@@ -4,17 +4,21 @@ import s from './index.module.scss';
 import { ArrowRightOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import { ORG_TYPE } from '@/modules/user/constants';
+import { setLaunchConfig } from '@/modules/user/utils';
 
 export default function Launch() {
   const router = useRouter();
 
-  const handleGo = (type: ORG_TYPE, id?: number) => {
+  const handleGo = (type: ORG_TYPE, organizationId?: number) => {
+    // 缓存启动配置
+    setLaunchConfig({ type, organizationId });
+
     if (type === ORG_TYPE.SYSTEM) {
       router.push(`/system`);
     } else if (type === ORG_TYPE.ORGANIZATION) {
-      router.push(`/organization/${id}`);
+      router.push(`/organization/${organizationId}/list`);
     } else if (type === ORG_TYPE.TEAM) {
-      router.push(`/team/${id}`);
+      router.push(`/team/${organizationId}`);
     }
   };
 
