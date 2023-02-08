@@ -1,9 +1,8 @@
-import { withIronSessionApiRoute } from 'iron-session/next';
 import { getRequestURL, parseResponse, parseSetCookie } from '@/modules/backend-node';
 
-import { IRON_SESSION_OPTIONS } from '../config';
 import { VDSessionCore } from '../types';
 import { allowMethod } from '@/lib/api';
+import { withSessionApiRoute } from '../api-helper';
 
 /**
  * 登录
@@ -12,7 +11,7 @@ import { allowMethod } from '@/lib/api';
  */
 export const login = allowMethod(
   'POST',
-  withIronSessionApiRoute(async (req, res) => {
+  withSessionApiRoute(async (req, res) => {
     const loginPayload = req.body as {
       accountNo: string;
     };
@@ -44,5 +43,5 @@ export const login = allowMethod(
     }
 
     res.status(200).json(result);
-  }, IRON_SESSION_OPTIONS)
+  })
 );

@@ -3,6 +3,7 @@ import { Middleware } from '@/lib/middleware';
 import { getSessionInMiddleware } from '@/modules/session/middleware';
 
 import { API_PREFIX, BACKEND } from './constants';
+import { mergeCookie } from './merge-cookie';
 
 /**
  * 接口代理
@@ -26,9 +27,8 @@ export const proxyMiddleware: Middleware = async (req, next) => {
     const session = await getSessionInMiddleware(req);
 
     if (session) {
-      let cookie = Object.keys(session.cookies)
-        .map(key => `${key}=${session.cookies[key]}`)
-        .join('; ');
+      const old = proxyRequest.headers.get('cookie');
+      const cookie = mergeCookie(old, session.cookies);
       proxyRequest.headers.set('Cookie', cookie);
     }
 

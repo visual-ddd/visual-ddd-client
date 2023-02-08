@@ -1,4 +1,4 @@
-import { IronSessionOptions } from 'iron-session';
+import type { IronSessionOptions } from 'iron-session';
 import { VDSessionEntry } from './types';
 
 export const IRON_SESSION_OPTIONS: IronSessionOptions = {

@@ -35,10 +35,16 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 ## TODO
 
-- 接口代理
-- useSWR
+- 接口代理 -> 完成
+- node request session 注入, withWakedataRequest, 异常捕获
+- client request session 注入
+- client request 接口拦截
 - 用户鉴权体系设计
+  - 认证 -> 完成
+  - 授权
 - fetch 拦截
+- useSWR
+
 - 对象字段定位
 - NodeYMap 单元测试
 - rule 包含 label, 更好的信息提示

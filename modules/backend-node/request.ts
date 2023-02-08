@@ -1,10 +1,36 @@
 import * as request from '@wakeapp/wakedata-backend';
 import { Response } from '@wakeapp/wakedata-backend';
 import { BACKEND } from './constants';
+import { serializeCookie } from './serialize-cookie';
+import type { VDSessionCore } from '@/modules/session';
+
+declare global {
+  interface WakedataRequestMeta {
+    /**
+     * 注入的会话信息
+     */
+    session?: VDSessionCore;
+  }
+}
 
 request.initial({
   baseURL: BACKEND.origin,
   fetch: fetch.bind(globalThis),
+  interceptor: request.compose(
+    (request, next) => {
+      request.headers['Accept-Language'] = 'zh-cn';
+      return next();
+    },
+    (request, next) => {
+      if (request.meta.session) {
+        // 注入会话信息
+        const cookie = serializeCookie(request.meta.session.cookies);
+        request.headers['Cookie'] = cookie;
+      }
+
+      return next();
+    }
+  ),
 });
 
 export type WakedataResponse<T> = Omit<Response<T>, '__raw__'>;
