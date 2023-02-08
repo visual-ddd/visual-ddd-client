@@ -31,10 +31,10 @@ specifiers:
   '@types/react-dom': 18.0.10
   '@types/uuid': ^9.0.0
   '@wakeadmin/docker-build': ^0.1.8
-  '@wakeapp/framework-core': ^1.0.4
-  '@wakeapp/hooks': ^1.0.4
-  '@wakeapp/utils': ^1.0.4
-  '@wakeapp/wakedata-backend': ^1.0.4
+  '@wakeapp/framework-core': ^1.0.5
+  '@wakeapp/hooks': ^1.0.5
+  '@wakeapp/utils': ^1.0.5
+  '@wakeapp/wakedata-backend': ^1.0.5
   antd: ^5.1.7
   async-validator: ^4.2.5
   classnames: ^2.3.2
@@ -106,10 +106,10 @@ dependencies:
   '@tiptap/pm': 2.0.0-beta.212_fpm27c2ijcgoxttu7rbz5hnmva
   '@tiptap/react': 2.0.0-beta.212_5n3ejm7jnz75jiyjltlzi6qjle
   '@tiptap/starter-kit': 2.0.0-beta.212_@tiptap+pm@2.0.0-beta.212
-  '@wakeapp/framework-core': 1.0.4_lodash@4.17.21
-  '@wakeapp/hooks': 1.0.4_zrp62gez7omnrwllyfdlincg3a
-  '@wakeapp/utils': 1.0.4_lodash@4.17.21
-  '@wakeapp/wakedata-backend': 1.0.4_lodash@4.17.21
+  '@wakeapp/framework-core': 1.0.5_lodash@4.17.21
+  '@wakeapp/hooks': 1.0.5_zrp62gez7omnrwllyfdlincg3a
+  '@wakeapp/utils': 1.0.5_lodash@4.17.21
+  '@wakeapp/wakedata-backend': 1.0.5_lodash@4.17.21
   antd: 5.1.7_biqbaboplfbrettd7655fr4n2y
   async-validator: 4.2.5
   classnames: 2.3.2
@@ -2231,30 +2231,30 @@ packages:
       lodash: 4.17.21
     dev: true
 
-  /@wakeapp/events/1.0.4:
+  /@wakeapp/events/1.0.5:
     resolution:
-      { integrity: sha512-uDnRHQgSgiCz7KdGz3VY3z9bKCCzENHXMap3Fj9VwFrw6l+7gFWEBq3aVl+IFx3AwZgS7+4R7Q1peil+vcvqTg== }
+      { integrity: sha512-8AI6m8K/QeegeqdN3QJXrri/0vJnv+OTt1+flz7wk7uJBOtD2bAtOL7wDKLAgDUcklpMz3vh4RxecBd1tfcfxQ== }
     dev: false
 
-  /@wakeapp/framework-core/1.0.4_lodash@4.17.21:
+  /@wakeapp/framework-core/1.0.5_lodash@4.17.21:
     resolution:
-      { integrity: sha512-Wu3NI29X7ZSqMbBPBBNFClHNcaLSArmTiQ1EfaQ6T7sGWZwDpSUL9HieegtYSs7TsdQr6QYq58S6sP+CpZfaag== }
+      { integrity: sha512-kwK2X0u83SkRB6PIsxZpQ+9FMzzH4gINaHuUzdTVtoVi8UF9uGQPH6HRypw9kZjBZGtjlqhRNA2sGkdKB5kScA== }
     dependencies:
       '@wakeapp/inversify': 6.1.0_tslib@2.5.0
-      '@wakeapp/utils': 1.0.4_lodash@4.17.21
+      '@wakeapp/utils': 1.0.5_lodash@4.17.21
       reflect-metadata: 0.1.13
       tslib: 2.5.0
     transitivePeerDependencies:
       - lodash
     dev: false
 
-  /@wakeapp/hooks/1.0.4_zrp62gez7omnrwllyfdlincg3a:
+  /@wakeapp/hooks/1.0.5_zrp62gez7omnrwllyfdlincg3a:
     resolution:
-      { integrity: sha512-LSiwePCQTG5iVxFVJfhxmhuNSRC2hA22Kjh0NUmRjLjCAGDLes3T2g13y8Lv3jNal5LueY3bGbm3oqrZRK177w== }
+      { integrity: sha512-h8eL8Mx9hn9Kr28aW5IR80ZRVwyEXkf3C2kcn7Vuug1TXY09HITUBAwGyL2V3OGwMuHQ7QDBoMfVnU60fmV0UQ== }
     peerDependencies:
       react: '>=17'
     dependencies:
-      '@wakeapp/utils': 1.0.4_lodash@4.17.21
+      '@wakeapp/utils': 1.0.5_lodash@4.17.21
       react: 18.2.0
     transitivePeerDependencies:
       - lodash
@@ -2269,14 +2269,14 @@ packages:
       tslib: 2.5.0
     dev: false
 
-  /@wakeapp/utils/1.0.4_lodash@4.17.21:
+  /@wakeapp/utils/1.0.5_lodash@4.17.21:
     resolution:
-      { integrity: sha512-x0LW2NFfD6L2OWfkku2ciMkSTs9SNUJpxPIItVyWBqPS0+TZLwjawzn0zm5GhtWvAtYyjx+sH5yf63RVBHK8NQ== }
+      { integrity: sha512-AHldVbR0HuchjbJ688LO2BWdSuApivjGirCN5QzgS1oaF0uRJaJXhxj9PkbChICL09rVFnDwA49Qwg5JKkXteA== }
     peerDependencies:
       lodash: 4.*
     dependencies:
       '@types/big.js': 6.1.6
-      '@wakeapp/events': 1.0.4
+      '@wakeapp/events': 1.0.5
       big.js: 6.2.1
       dayjs: 1.11.7
       lodash: 4.17.21
@@ -2285,11 +2285,11 @@ packages:
       query-string: 7.1.3
     dev: false
 
-  /@wakeapp/wakedata-backend/1.0.4_lodash@4.17.21:
+  /@wakeapp/wakedata-backend/1.0.5_lodash@4.17.21:
     resolution:
-      { integrity: sha512-kERKvtLkV50Za7kLVZhFc5W9UBXEz5ZP05WxYkcVNbZpPqxEq7w7s3g2xu5+uYUwSvoGlKgrdchWBYajrRc0kw== }
+      { integrity: sha512-cwNtBvSjEAjCJmWL3M8tvfHBQDg+kDbOMSD4K6WGZ9AMqT3hfoxXSeHYA2mnLs+1mw7etdMYKynJ+FsKZMN3Hg== }
     dependencies:
-      '@wakeapp/utils': 1.0.4_lodash@4.17.21
+      '@wakeapp/utils': 1.0.5_lodash@4.17.21
     transitivePeerDependencies:
       - lodash
     dev: false

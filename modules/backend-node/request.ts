@@ -1,5 +1,4 @@
-import * as request from '@wakeapp/wakedata-backend';
-import { Response } from '@wakeapp/wakedata-backend';
+import { createBackend, compose, FuckResponse, Response } from '@wakeapp/wakedata-backend';
 import { BACKEND } from './constants';
 import { serializeCookie } from './serialize-cookie';
 import type { VDSessionCore } from '@/modules/session';
@@ -13,10 +12,12 @@ declare global {
   }
 }
 
+const request = createBackend();
+
 request.initial({
   baseURL: BACKEND.origin,
   fetch: fetch.bind(globalThis),
-  interceptor: request.compose(
+  interceptor: compose(
     (request, next) => {
       request.headers['Accept-Language'] = 'zh-cn';
       return next();
@@ -41,8 +42,24 @@ export function getRequestURL(path: string) {
   return url;
 }
 
+/**
+ * 规范化响应
+ * @param response
+ * @returns
+ */
+export function normalizeResponse<T>(response: FuckResponse<T>): Response<T> {
+  const { data, success, errorCode, errorMessage, msg, code, ...other } = response;
+  return {
+    ...other,
+    data,
+    success,
+    errorCode: errorCode ?? code,
+    errorMessage: errorMessage ?? msg,
+  };
+}
+
 export function parseResponse(json: any) {
-  const res = request.normalizeResponse(json);
+  const res = normalizeResponse(json);
   return request.parseResponse(res);
 }
 

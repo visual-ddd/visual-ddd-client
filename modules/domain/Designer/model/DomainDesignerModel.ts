@@ -15,6 +15,7 @@ import { createMapperEditorModel, MapperEditorModel } from '../../mapper-design'
 import { DomainDesignerTabs } from './constants';
 import { ObjectStore } from './ObjectStore';
 import { DomainDesignerKeyboardBinding } from './KeyboardBinding';
+import { extraRestErrorMessage } from '@/modules/backend-client';
 
 const KEY_ACTIVE_TAB = 'DESIGNER:activeTab';
 
@@ -182,7 +183,8 @@ export class DomainDesignerModel implements IDisposable {
       const response = await fetch(`/api/rest/domain/${this.id}`, { method: 'GET' });
 
       if (!response.ok) {
-        throw new Error(`数据加载失败`);
+        const message = await extraRestErrorMessage(response);
+        throw new Error(message || '数据加载失败');
       }
 
       const buf = await response.arrayBuffer();
@@ -231,7 +233,8 @@ export class DomainDesignerModel implements IDisposable {
       const response = await fetch(`/api/rest/domain/${this.id}`, { method: 'PUT', body: update });
 
       if (!response.ok) {
-        throw new Error(`保存失败`);
+        const message = await extraRestErrorMessage(response);
+        throw new Error(message || '保存失败');
       }
 
       this.setError(undefined);
@@ -279,7 +282,7 @@ export class DomainDesignerModel implements IDisposable {
   protected async getVector() {
     const res = await fetch(`/api/rest/domain/${this.id}/vector`, { method: 'GET' });
 
-    if (res.status === 200) {
+    if (res.ok) {
       const buffer = await res.arrayBuffer();
 
       return new Uint8Array(buffer);
