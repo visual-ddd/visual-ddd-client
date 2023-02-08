@@ -14,6 +14,9 @@ export const RESTFUL_API_PREFIX = '/api/rest';
 
 export const API_AUTH_WHITE_LIST = ['/login', '/logout', '/register'].map(i => `/api${i}`);
 
+/**
+ * 需要鉴权的页面
+ */
 export const PAGE_AUTH_BLACK_LIST = [
   // 启动页
   '/launch',

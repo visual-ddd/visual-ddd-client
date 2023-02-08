@@ -1,18 +1,18 @@
 import { Button, Form, Input, message } from 'antd';
+import { useEffect, useState } from 'react';
 import { request } from '@/modules/backend-client';
-import { Logo } from '@/modules/user';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
+import { Logo } from '../Logo';
 import s from './index.module.scss';
-import { useEffect, useState } from 'react';
 
 interface LoginPayload {
   accountNo: string;
   password: string;
 }
 
-export default function Login() {
+export function Login() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const from = router.query.from as string | undefined;
@@ -73,7 +73,7 @@ export default function Login() {
       </Form.Item>
 
       <Form.Item className={s.forgot}>
-        <Link href="/login/forgot">
+        <Link href="/forgot">
           <Button type="link">忘记密码？</Button>
         </Link>
       </Form.Item>
@@ -82,7 +82,7 @@ export default function Login() {
         <Button type="primary" htmlType="submit" className={s.submit} block loading={loading}>
           登录
         </Button>
-        <Link href="/login/register">
+        <Link href="/register">
           <Button type="link" block>
             注册
           </Button>
