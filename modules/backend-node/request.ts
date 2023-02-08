@@ -1,4 +1,4 @@
-import { createBackend, compose, FuckResponse, Response } from '@wakeapp/wakedata-backend';
+import { createBackend, compose, FuckResponse, Response, isResponseError } from '@wakeapp/wakedata-backend';
 import { BACKEND } from './constants';
 import { serializeCookie } from './serialize-cookie';
 import type { VDSessionCore } from '@/modules/session';
@@ -78,4 +78,4 @@ export function createFailResponse(code: number, message: string, data?: unknown
   return { data: data, success: false, errorCode: code, errorMessage: message };
 }
 
-export { request };
+export { request, isResponseError };
