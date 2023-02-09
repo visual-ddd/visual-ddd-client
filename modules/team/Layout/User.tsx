@@ -3,10 +3,12 @@ import { observer } from 'mobx-react';
 import { Avatar, Dropdown, MenuProps } from 'antd';
 import { useMemo } from 'react';
 import classNames from 'classnames';
+import { request } from '@/modules/backend-client';
 import type { MenuItemType, ItemType } from 'antd/es/menu/hooks/useItems';
 
 import { LayoutAction } from './types';
 import s from './User.module.scss';
+import { useRouter } from 'next/router';
 
 export interface UserProps {
   actions: LayoutAction[];
@@ -14,6 +16,7 @@ export interface UserProps {
 
 export const User = observer(function User(props: UserProps) {
   const { actions } = props;
+  const router = useRouter();
   const { session } = useSession();
 
   const menus = useMemo<MenuProps>(() => {
@@ -44,11 +47,23 @@ export const User = observer(function User(props: UserProps) {
     }
 
     // 内置
-    items.push({
-      key: 'logout',
-      label: '退出登录',
-      onClick: () => {},
-    });
+    items.push(
+      {
+        key: 'launch',
+        label: '前往启动页',
+        onClick: async () => {
+          router.push('/launch');
+        },
+      },
+      {
+        key: 'logout',
+        label: '退出登录',
+        onClick: async () => {
+          await request.requestByPost('/api/logout');
+          router.push('/login');
+        },
+      }
+    );
 
     return { items: items };
   }, [actions, session?.user]);
@@ -61,3 +76,5 @@ export const User = observer(function User(props: UserProps) {
     </Dropdown>
   );
 });
+
+export default User;

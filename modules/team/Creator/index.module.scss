@@ -1,0 +1,10 @@
+.root {
+  font-size: 20px;
+  color: var(--vd-color-gray-600);
+  margin-top: var(--vd-spacing-xs);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--vd-color-gray-800);
+  }
+}

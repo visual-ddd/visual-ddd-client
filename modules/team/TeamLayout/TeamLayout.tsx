@@ -10,10 +10,14 @@ import { AppIcon } from './AppIcon';
 import { useMemo } from 'react';
 import { TeamLayoutModel } from './TeamLayoutModel';
 import { TeamLayoutProvider } from './Context';
+import { NoopArray } from '@wakeapp/utils';
+import dynamic from 'next/dynamic';
 
 export interface TeamLayoutProps {
   children: React.ReactNode;
 }
+
+const Creator = dynamic(() => import('../Creator'), { ssr: false });
 
 export const TeamLayout = observer(function TeamLayout(props: TeamLayoutProps) {
   const { children } = props;
@@ -56,7 +60,8 @@ export const TeamLayout = observer(function TeamLayout(props: TeamLayoutProps) {
           { icon: <FlowIcon />, name: '业务场景', route: `/team/${teamId}/scenario` },
           { icon: <AppIcon />, name: '应用', route: `/team/${teamId}/app` },
         ]}
-        actions={[]}
+        actions={NoopArray}
+        primarySidebarSlot={<Creator />}
       >
         {children}
       </Layout>

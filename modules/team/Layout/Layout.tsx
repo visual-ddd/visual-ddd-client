@@ -21,6 +21,8 @@ export interface LayoutProps {
    */
   actions: LayoutAction[];
 
+  primarySidebarSlot?: React.ReactNode;
+
   /**
    * 主体内容
    */
@@ -28,7 +30,7 @@ export interface LayoutProps {
 }
 
 export const Layout = observer(function Layout(props: LayoutProps) {
-  const { menu, actions, children } = props;
+  const { menu, actions, children, primarySidebarSlot } = props;
   const [title, setTitle] = useState<React.ReactNode>();
 
   const context = useMemo<LayoutContextValue>(() => {
@@ -46,7 +48,9 @@ export const Layout = observer(function Layout(props: LayoutProps) {
       <div className={classNames('vd-layout', s.root)}>
         <Header className={s.header} title={title}></Header>
         <div className={classNames('vd-layout-body', s.body)}>
-          <Sidebar menu={menu} actions={actions} className={classNames(s.sidebar)} />
+          <Sidebar menu={menu} actions={actions} className={classNames(s.sidebar)}>
+            {primarySidebarSlot}
+          </Sidebar>
           <Content className={s.content}>{children}</Content>
         </div>
       </div>

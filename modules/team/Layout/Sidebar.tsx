@@ -2,11 +2,11 @@ import { Tooltip } from 'antd';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
 import { useRouter } from 'next/router';
+import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useState } from 'react';
 import { NoopArray } from '@wakeapp/utils';
 
 import type { LayoutAction, LayoutMenu, LayoutMenuItem } from './types';
-import { User } from './User';
 import s from './Sidebar.module.scss';
 
 export interface SidebarProps {
@@ -22,10 +22,13 @@ export interface SidebarProps {
 
   className?: string;
   style?: React.CSSProperties;
+  children?: React.ReactNode;
 }
 
+const User = dynamic(() => import('./User'), { ssr: false });
+
 export const Sidebar = observer(function Sidebar(props: SidebarProps) {
-  const { menu, actions, className, ...other } = props;
+  const { menu, actions, className, children, ...other } = props;
   const [subMenu, setSubMenu] = useState<LayoutMenuItem[]>(NoopArray);
   const router = useRouter();
   const pathname = router.asPath;
@@ -97,6 +100,7 @@ export const Sidebar = observer(function Sidebar(props: SidebarProps) {
             </Tooltip>
           );
         })}
+        {children}
         <div className={classNames('vd-layout-sidebar__user', s.user)}>
           <User actions={actions} />
         </div>
