@@ -1,4 +1,4 @@
-import { createNameDSL } from '@/modules/domain/domain-design/dsl';
+import { createNameDSL } from '@/modules/domain/domain-design/dsl/factory';
 import { v4 } from 'uuid';
 
 import { FieldMapperDSL, MapperObjectDSL } from './dsl';

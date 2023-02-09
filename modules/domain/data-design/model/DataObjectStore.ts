@@ -1,5 +1,6 @@
-import { BaseEditorEvent, BaseEditorModel, BaseNode, tryDispose } from '@/lib/editor';
-import { command, derive, makeAutoBindThis, mutation } from '@/lib/store';
+import { BaseEditorEvent, BaseEditorModel, BaseNode } from '@/lib/editor';
+import { command, derive, makeAutoBindThis } from '@/lib/store';
+import { tryDispose } from '@/lib/utils';
 import { debounce } from '@wakeapp/utils';
 import { makeObservable, observable } from 'mobx';
 import { DataObjectName, DataObjectReferenceCardinalityReversed } from '../dsl';
@@ -21,7 +22,6 @@ export class DataObjectStore {
   /**
    * 即将移除的对象
    */
-  @observable.shallow
   protected objectsWillRemoved: Map<string, DataObject> = new Map();
 
   /**
@@ -125,13 +125,8 @@ export class DataObjectStore {
     this.dataObjectEvent.emit('OBJECT_NAME_CHANGED', params);
   }
 
-  @mutation('DO_STORE:GC', false)
-  private removeWillRemoved() {
-    this.objectsWillRemoved.clear();
-  }
-
   private gc = debounce(() => {
     this.objectsWillRemoved.forEach(i => tryDispose(i));
-    this.removeWillRemoved();
+    this.objectsWillRemoved.clear();
   });
 }

@@ -47,6 +47,12 @@ export interface ShapeAttributesComponentProps {
   formModel: FormModel;
 }
 
+export interface NormalizedAutoResizeGroup {
+  padding: number;
+  minWidth: number;
+  minHeight: number;
+}
+
 export interface ShapeConfiguration {
   /**
    * 图形名称，需要全局唯一
@@ -105,7 +111,7 @@ export interface ShapeConfiguration {
    *
    * @note 只有在 group 开始后有效
    */
-  autoResizeGroup?: boolean | number;
+  autoResizeGroup?: boolean | number | Partial<NormalizedAutoResizeGroup>;
 
   /**
    * 是否支持内嵌节点

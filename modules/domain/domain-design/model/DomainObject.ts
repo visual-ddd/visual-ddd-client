@@ -1,5 +1,6 @@
-import { BaseEditorModel, BaseNode, IDisposable } from '@/lib/editor';
+import { BaseEditorModel, BaseNode } from '@/lib/editor';
 import { derive } from '@/lib/store';
+import { IDisposable } from '@/lib/utils';
 import { booleanPredicate, Disposer } from '@wakeapp/utils';
 import { makeObservable, reaction } from 'mobx';
 import { DomainObjectName, NameDSL, RelationShipDSL, UntitledInHumanReadable, UntitledInUpperCamelCase } from '../dsl';

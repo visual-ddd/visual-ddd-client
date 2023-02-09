@@ -3,15 +3,37 @@ const nextConfig = {
   reactStrictMode: false, // 暂时关闭，打开 react 会模拟 useEffect 多次执行
   swcMinify: true,
   output: 'standalone',
-  experimental: {
-    transpilePackages: [
-      '@wakeapp/inversify',
-      '@wakeapp/framework-core',
-      '@wakeapp/utils',
-      '@wakeapp/hooks',
-      'lodash-es',
-    ],
-  },
+  transpilePackages: [
+    '@wakeapp/inversify',
+    '@wakeapp/framework-core',
+    '@wakeapp/wakedata-backend',
+    '@wakeapp/utils',
+    '@wakeapp/hooks',
+    '@ant-design/pro-components',
+    'lodash-es',
+    // https://github.com/ant-design/pro-components/issues/4852
+    'antd',
+    '@ant-design/plots',
+    '@ant-design/icons',
+    '@ant-design/icons-svg',
+    '@ant-design/pro-components',
+    '@ant-design/pro-layout',
+    '@ant-design/pro-list',
+    '@ant-design/pro-descriptions',
+    '@ant-design/pro-form',
+    '@ant-design/pro-skeleton',
+    '@ant-design/pro-field',
+    '@ant-design/pro-utils',
+    '@ant-design/pro-provider',
+    '@ant-design/pro-card',
+    '@ant-design/pro-table',
+    'rc-pagination',
+    'rc-picker',
+    'rc-util',
+    'rc-tree',
+    'rc-tooltip',
+  ],
+  experimental: {},
 };
 
 module.exports = nextConfig;

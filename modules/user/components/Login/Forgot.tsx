@@ -1,9 +1,9 @@
 import { Button, Form, Input } from 'antd';
-import { Logo } from '@/modules/user';
 
+import { Logo } from '../Logo';
 import s from './index.module.scss';
 
-export default function Forgot() {
+export function Forgot() {
   // 重置密码
   const handleReset = (values: any) => {
     console.log('重置密码', values);

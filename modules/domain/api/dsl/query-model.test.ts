@@ -1,4 +1,4 @@
-import { Container } from './query-model';
+import { QueryModelContainer } from './query-model';
 
 const DATA = {
   __ROOT__: {
@@ -161,7 +161,7 @@ const DATA = {
 };
 
 test('query-model', () => {
-  const container = new Container(DATA as any);
+  const container = new QueryModelContainer(DATA as any);
 
   expect(container.toDSL()).toMatchSnapshot();
 });

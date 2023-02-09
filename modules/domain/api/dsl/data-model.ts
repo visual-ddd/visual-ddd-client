@@ -5,7 +5,8 @@ import * as DSL from './interface';
 import * as ViewDSL from '@/modules/domain/data-design/dsl/dsl';
 import { DataObjectName } from '@/modules/domain/data-design/dsl/constants';
 
-import { BaseContainer, IContainer, Node, Tree, transformMeta, transformString } from './domain-model';
+import { transformMeta, transformString } from './domain-model';
+import { Tree, BaseContainer, IContainer, Node } from './shared';
 
 const DataObjectTypeName = ViewDSL.DataObjectTypeName;
 
@@ -186,7 +187,7 @@ export class DataObject extends Node<ViewDSL.DataObjectDSL> {
 /**
  * 数据对象容器
  */
-export class Container extends BaseContainer implements IContainer {
+export class DataModelContainer extends BaseContainer implements IContainer {
   dataObjects: DataObject[] = [];
 
   /**
@@ -223,15 +224,4 @@ export class Container extends BaseContainer implements IContainer {
     this.dataObjects.push(object);
     this.nodesIndexByUUID.set(object.id, object);
   }
-}
-
-/**
- * DSL 转换
- * @param tree
- * @returns
- */
-export function transform(tree: Record<string, Tree>): DSL.DataModelDSL {
-  const container = new Container(tree);
-
-  return container.toDSL();
 }

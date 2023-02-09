@@ -35,13 +35,18 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 ## TODO
 
-- 对象映射验证
-- 对象映射 DSL 生成
-- 业务域内类名唯一
-- 对象定位
+- 接口代理 -> 完成
+- node request session 注入, withWakedataRequest, 异常捕获 -> 完成
+- client request session 注入
+- client request 接口拦截 -> 完成
+- 用户鉴权体系设计
+  - 认证 -> 完成
+  - 授权
+- fetch 拦截 -> 完成
+- useSWR
+
 - 对象字段定位
-- 自动匹配映射
-- 保存快捷键、保存成功提示
+- NodeYMap 单元测试
 - rule 包含 label, 更好的信息提示
 - 引用关系支持可见性控制
 - 表单告警信息定位

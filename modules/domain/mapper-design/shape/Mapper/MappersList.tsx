@@ -1,5 +1,6 @@
 import { EditorFormConsumer, EditorFormItem, useEditorFormContext } from '@/lib/editor';
 import { MemberList } from '@/modules/domain/domain-design/dsl/components/MemberList';
+import { Button } from 'antd';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
 import { FieldMapperDSL, createFieldMapperDSL } from '../../dsl';
@@ -80,6 +81,10 @@ export const MappersList = observer(function Mappers(props: MappersListProps) {
       editorTitle="映射编辑"
       renderItem={renderItem}
       renderEditor={renderEditor}
-    ></MemberList>
+    >
+      <Button className="u-fw u-mt-xs" type="link" onClick={() => mapper.autoGenerateMappers()}>
+        自动生成
+      </Button>
+    </MemberList>
   );
 });

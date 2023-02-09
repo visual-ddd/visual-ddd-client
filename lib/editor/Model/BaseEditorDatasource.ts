@@ -1,104 +1,17 @@
 import { makeAutoBindThis, push, pull } from '@/lib/store';
 import { Map as YMap, Doc as YDoc, AbstractType, UndoManager } from 'yjs';
 import { observable, action, makeObservable } from 'mobx';
-import toPairs from 'lodash/toPairs';
-import fromPairs from 'lodash/fromPairs';
-import cloneDeep from 'lodash/cloneDeep';
+
 import { getPaths } from '@/lib/utils';
 
 import { BaseEditorStore } from './BaseEditorStore';
 import { BaseNode } from './BaseNode';
 
-import { ROOT_ID } from './constants';
 import { toNodePO } from './mapper';
-import { BaseNodeProperties, NodePO } from './types';
+import { NodePO } from './types';
+import { NodeYMap, MapTypeNode, MapTypeRoot, MapTypeProperties } from './NodeYMap';
 import { BaseEditorEvent } from './BaseEditorEvent';
 import { BaseEditorIndex } from './BaseEditorIndex';
-
-const MapTypeNode = '__NODE__';
-const MapTypeRoot = ROOT_ID;
-const MapTypeProperties = '__PROPERTY__';
-
-/**
- * 封装对 Node 类型 YMap 的操作
- */
-class NodeYMap {
-  static fromNodePO(node: NodePO) {
-    const map = new YMap<any>();
-    //
-    map.set(MapTypeNode, true);
-    map.set('id', node.id);
-    map.set('parent', node.parent);
-
-    const children = new YMap<never>(node.children.map(c => [c, 1]));
-    map.set('children', children);
-
-    const properties = new YMap<any>(toPairs(node.properties));
-    properties.set(MapTypeProperties, true);
-    map.set('properties', properties);
-
-    return new NodeYMap(map);
-  }
-
-  static fromYMap(map?: YMap<any>): NodeYMap | undefined {
-    return map && new NodeYMap(map);
-  }
-
-  private constructor(private map: YMap<any>) {}
-
-  get id() {
-    return this.map.get('id');
-  }
-
-  get parent() {
-    return this.map.get('parent');
-  }
-
-  set parent(value: string) {
-    this.map.set('parent', value);
-  }
-
-  get children(): YMap<never> {
-    return this.map.get('children');
-  }
-
-  get properties(): YMap<any> {
-    return this.map.get('properties');
-  }
-
-  addChild(child: string) {
-    if (!this.children.has(child)) {
-      this.children.set(child, 1 as never);
-    }
-  }
-
-  removeChild(child: string) {
-    if (this.children.has(child)) {
-      this.children.delete(child);
-    }
-  }
-
-  updateProperty(key: string, value: any) {
-    this.properties.set(key, cloneDeep(value));
-  }
-
-  deleteProperty(key: string) {
-    this.properties.delete(key);
-  }
-
-  toYMap() {
-    return this.map;
-  }
-
-  toNodePO(): NodePO {
-    return {
-      id: this.id,
-      parent: this.parent,
-      children: Array.from(this.children.keys()),
-      properties: fromPairs(Array.from(this.properties.entries())) as BaseNodeProperties,
-    };
-  }
-}
 
 /**
  * yjs 数据库
@@ -143,7 +56,6 @@ export class BaseEditorDatasource {
     makeAutoBindThis(this);
     makeObservable(this);
 
-    this.initialDataSource();
     this.watchStore();
     this.watchDatasource();
     this.watchUndoManager();
@@ -188,10 +100,22 @@ export class BaseEditorDatasource {
   protected addChild(params: { parent: BaseNode; child: BaseNode }) {
     this.doUpdate(() => {
       const { parent, child } = params;
-      const parentValue = NodeYMap.fromYMap(this.datasource.get(parent.id));
+      let parentValue = NodeYMap.fromYMap(this.datasource.get(parent.id));
       const childValue = NodeYMap.fromYMap(this.datasource.get(child.id));
 
-      if (parentValue == null || childValue == null) {
+      if (parentValue == null) {
+        if (parent.id === this.store.root.id) {
+          // 服务端会初始化模板，通常不会到这一步
+          // 按需初始化根节点
+          parentValue = this.createRoot();
+        } else {
+          console.warn('BaseEditorDatasource.addChild: parent is null');
+          return;
+        }
+      }
+
+      if (childValue == null) {
+        console.warn('BaseEditorDatasource.addChild: child is null');
         return;
       }
 
@@ -206,10 +130,21 @@ export class BaseEditorDatasource {
       const { parent, child } = params;
       const parentValue = NodeYMap.fromYMap(this.datasource.get(parent.id));
       if (parentValue == null) {
+        console.warn('BaseEditorDatasource.removeChild: parent is null');
         return;
       }
 
       parentValue.removeChild(child.id);
+
+      const childValue = NodeYMap.fromYMap(this.datasource.get(child.id));
+      if (childValue == null) {
+        console.warn('BaseEditorDatasource.removeChild: child is null');
+        return;
+      }
+
+      if (childValue.parent === parentValue.id) {
+        childValue.parent = undefined;
+      }
     });
   }
 
@@ -277,7 +212,12 @@ export class BaseEditorDatasource {
     const childModel = this.index.getNodeById(childId);
 
     if (parentModel == null || childModel == null) {
-      console.warn(`addChild parentModel or childModel is null, 出现悬挂节点`, parentId, parentModel, childModel);
+      console.warn(
+        `BaseEditorDatasource addChild parentModel or childModel is null, 出现悬挂节点`,
+        parentId,
+        parentModel,
+        childModel
+      );
       return;
     }
 
@@ -317,9 +257,17 @@ export class BaseEditorDatasource {
     }
   }
 
-  private initialDataSource() {
+  /**
+   * 创建根节点
+   * @returns
+   */
+  private createRoot() {
+    const rootId = this.store.root.id;
     const root = toNodePO(this.store.root);
-    this.datasource.set(root.id, NodeYMap.fromNodePO(root).toYMap());
+    const wrapper = NodeYMap.fromNodePO(root);
+    this.datasource.set(rootId, wrapper.toYMap());
+
+    return wrapper;
   }
 
   /**
@@ -349,6 +297,7 @@ export class BaseEditorDatasource {
    */
   private async watchDatasource() {
     console.log('isLoaded', this.doc.isLoaded);
+
     this.datasource.observeDeep((evts, transact) => {
       console.log('datasource change', evts);
       // 本地触发, 并且不是 UndoManager 触发的, 跳过

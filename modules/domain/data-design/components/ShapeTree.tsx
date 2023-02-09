@@ -46,7 +46,7 @@ export const ShapeTree = observer(function ShapeTree(props: ShapeTreeProps) {
   }));
 
   return (
-    <EditorPanel title="组件描述" className={classNames('vd-shape-tree', s.root)}>
+    <EditorPanel title="组件树" className={classNames('vd-shape-tree', s.root)}>
       <div className={classNames('vd-shape-tree__body', s.body)}>
         {!store.treeData.length ? (
           <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="拖拽组件到画布试试"></Empty>

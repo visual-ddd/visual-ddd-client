@@ -3,6 +3,7 @@
     "antd",
     "anticon",
     "antv",
+    "bbox",
     "Cascader",
     "dbclick",
     "dtos",
@@ -16,10 +17,13 @@
     "Scroller",
     "Snapline",
     "UNACTIVE",
+    "UNAUTH",
     "unembed",
     "Unhighlight",
     "unreferable",
-    "wakeapp"
+    "wakeapp",
+    "wakedata",
+    "webrtc"
   ],
   "typescript.tsserver.experimental.enableProjectDiagnostics": true
 }

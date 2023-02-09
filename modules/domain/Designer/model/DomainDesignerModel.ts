@@ -2,6 +2,8 @@ import { Doc as YDoc, encodeStateAsUpdate, applyUpdate } from 'yjs';
 import { WebrtcProvider } from 'y-webrtc';
 import { effect, makeAutoBindThis, mutation } from '@/lib/store';
 import { makeObservable, observable } from 'mobx';
+import { IDisposable, tryDispose } from '@/lib/utils';
+import { message } from 'antd';
 
 import { YJS_FIELD_NAME } from '../../constants';
 import { DomainEditorModel, createDomainEditorModel } from '../../domain-design';
@@ -12,6 +14,8 @@ import { createMapperEditorModel, MapperEditorModel } from '../../mapper-design'
 
 import { DomainDesignerTabs } from './constants';
 import { ObjectStore } from './ObjectStore';
+import { DomainDesignerKeyboardBinding } from './KeyboardBinding';
+import { extraRestErrorMessage } from '@/modules/backend-client';
 
 const KEY_ACTIVE_TAB = 'DESIGNER:activeTab';
 
@@ -25,9 +29,13 @@ interface TabModel {
   validate(): Promise<boolean>;
 }
 
-export class DomainDesignerModel {
+/**
+ * 业务域设计器模型
+ */
+export class DomainDesignerModel implements IDisposable {
   id: string;
   readonly readonly: boolean;
+  readonly keyboardBinding: DomainDesignerKeyboardBinding;
 
   /**
    * 统一语言模型
@@ -70,6 +78,7 @@ export class DomainDesignerModel {
   error?: Error;
 
   readonly ydoc: YDoc;
+  private webrtcProvider?: WebrtcProvider;
   private tabs: { key: DomainDesignerTabs; model: TabModel }[];
 
   constructor(options: { id: string; readonly?: boolean }) {
@@ -84,9 +93,6 @@ export class DomainDesignerModel {
     const dataObjectDatabase = doc.getMap(YJS_FIELD_NAME.DATA_OBJECT);
     const mapperDatabase = doc.getMap(YJS_FIELD_NAME.MAPPER);
     const ubiquitousLanguageDatabase = doc.getArray<any>(YJS_FIELD_NAME.UBIQUITOUS_LANGUAGE);
-
-    // TODO: 观测加载状态
-    new WebrtcProvider(id, doc);
 
     this.domainEditorModel = createDomainEditorModel({ datasource: domainDatabase, doc: this.ydoc, readonly });
     this.queryEditorModel = createQueryEditorModel({ datasource: queryDatabase, doc: this.ydoc, readonly });
@@ -132,6 +138,8 @@ export class DomainDesignerModel {
       },
     ];
 
+    this.keyboardBinding = new DomainDesignerKeyboardBinding({ model: this });
+
     makeAutoBindThis(this);
     makeObservable(this);
 
@@ -139,18 +147,44 @@ export class DomainDesignerModel {
   }
 
   /**
+   * 销毁
+   */
+  dispose() {
+    if (this.webrtcProvider) {
+      this.webrtcProvider.destroy();
+      this.webrtcProvider = undefined;
+    }
+
+    tryDispose(this.ubiquitousLanguageModel);
+    tryDispose(this.domainEditorModel);
+    tryDispose(this.queryEditorModel);
+    tryDispose(this.dataObjectEditorModel);
+    tryDispose(this.mapperObjectEditorModel);
+
+    this.ydoc.destroy();
+  }
+
+  /**
    * 数据加载
+   * TODO: 可重试
    */
   @effect('DESIGNER:LOAD')
   async load() {
     try {
       this.setLoading(true);
 
+      // 销毁旧的链接
+      if (this.webrtcProvider) {
+        this.webrtcProvider.destroy();
+        this.webrtcProvider = undefined;
+      }
+
       // 数据加载
-      const response = await fetch(`/api/domain/${this.id}`, { method: 'GET' });
+      const response = await fetch(`/api/rest/domain/${this.id}`, { method: 'GET' });
 
       if (!response.ok) {
-        throw new Error(`数据加载失败`);
+        const message = await extraRestErrorMessage(response);
+        throw new Error(message || '数据加载失败');
       }
 
       const buf = await response.arrayBuffer();
@@ -158,6 +192,11 @@ export class DomainDesignerModel {
 
       if (update.length) {
         applyUpdate(this.ydoc, update);
+      }
+
+      // 多人协作
+      if (!this.readonly) {
+        this.webrtcProvider = new WebrtcProvider(this.id, this.ydoc);
       }
 
       this.setError(undefined);
@@ -191,13 +230,15 @@ export class DomainDesignerModel {
 
       const update = encodeStateAsUpdate(this.ydoc, vector);
 
-      const response = await fetch(`/api/domain/${this.id}`, { method: 'PUT', body: update });
+      const response = await fetch(`/api/rest/domain/${this.id}`, { method: 'PUT', body: update });
 
       if (!response.ok) {
-        throw new Error(`保存失败`);
+        const message = await extraRestErrorMessage(response);
+        throw new Error(message || '保存失败');
       }
 
       this.setError(undefined);
+      message.success('保存成功');
     } catch (err) {
       this.setError(err as Error);
     } finally {
@@ -239,9 +280,9 @@ export class DomainDesignerModel {
   }
 
   protected async getVector() {
-    const res = await fetch(`/api/domain/${this.id}/vector`, { method: 'GET' });
+    const res = await fetch(`/api/rest/domain/${this.id}/vector`, { method: 'GET' });
 
-    if (res.status === 200) {
+    if (res.ok) {
       const buffer = await res.arrayBuffer();
 
       return new Uint8Array(buffer);

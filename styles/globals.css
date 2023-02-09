@@ -16,6 +16,10 @@ a {
   box-sizing: border-box;
 }
 
+.u-pointer {
+  cursor: pointer;
+}
+
 .u-danger {
   color: var(--vd-color-danger);
 }
@@ -38,6 +42,10 @@ a {
 
 .u-ml-xs {
   margin-left: var(--vd-spacing-xs);
+}
+
+.u-mt-xs {
+  margin-top: var(--vd-spacing-xs);
 }
 
 .u-bold {

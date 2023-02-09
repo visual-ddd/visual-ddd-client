@@ -1,11 +1,9 @@
-import { getLayout } from '@/modules/layout';
+import { TeamLayout } from '@/modules/team';
 
-export default function TeamManage() {
-  return (
-    <div>
-      <div>我是团队主页</div>
-    </div>
-  );
+/**
+ * 团队首页
+ * @returns
+ */
+export default function Team() {
+  return <TeamLayout />;
 }
-
-TeamManage.getLayout = getLayout;

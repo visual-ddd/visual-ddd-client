@@ -2,17 +2,8 @@ import * as DSL from './interface';
 import * as ViewDSL from '@/modules/domain/domain-design/dsl/dsl';
 import { Void } from '@/modules/domain/domain-design/dsl/constants';
 
-import {
-  BaseContainer,
-  IContainer,
-  Node,
-  Tree,
-  transformMeta,
-  transformProperty,
-  transformSource,
-  transformType,
-  Rule,
-} from './domain-model';
+import { transformMeta, transformProperty, transformSource, transformType, Rule } from './domain-model';
+import { Tree, BaseContainer, IContainer, Node } from './shared';
 
 export class Query extends Node<ViewDSL.QueryDSL> {
   rules: Rule[] = [];
@@ -52,7 +43,7 @@ export class DTO extends Node<ViewDSL.DTODSL> {
   }
 }
 
-export class Container extends BaseContainer implements IContainer {
+export class QueryModelContainer extends BaseContainer implements IContainer {
   queries: Query[] = [];
   dtos: DTO[] = [];
 
@@ -117,13 +108,4 @@ export class Container extends BaseContainer implements IContainer {
       }
     }
   }
-}
-
-/**
- * DSL 转换
- */
-export function transform(tree: Record<string, Tree>): DSL.QueryModelDSL {
-  const container = new Container(tree);
-
-  return container.toDSL();
 }

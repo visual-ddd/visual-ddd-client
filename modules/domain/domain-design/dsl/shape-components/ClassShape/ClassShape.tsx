@@ -11,15 +11,17 @@ import s from './ClassShape.module.scss';
 export interface ClassShapePropertyBaseProps {
   name?: React.ReactNode;
   comment?: string;
+  className?: string;
+  style?: React.CSSProperties;
 }
 
 /**
  * 基础列表项
  */
 export const ClassShapePropertyBase = memo((props: ClassShapePropertyBaseProps) => {
-  const { name, comment } = props;
+  const { name, comment, className, ...other } = props;
   return (
-    <div className={classNames('shape-class-property', s.property)}>
+    <div className={classNames('shape-class-property', s.property, className)} {...other}>
       <span className={classNames('shape-class-property__name', s.propertyName)}>{name}</span>
       <span className={classNames('shape-class-property__comment', s.propertyComment)} title={comment}>
         {comment}

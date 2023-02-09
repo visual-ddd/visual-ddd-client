@@ -28,6 +28,12 @@ export interface EditorFormCollapsePanelProps {
   style?: React.CSSProperties;
   children?: React.ReactNode;
   header: React.ReactNode;
+
+  /**
+   * 文案提示
+   */
+  tooltip?: React.ReactNode;
+
   key: string;
 
   /**
@@ -37,13 +43,13 @@ export interface EditorFormCollapsePanelProps {
 }
 
 export const EditorFormCollapsePanel = (props: EditorFormCollapsePanelProps) => {
-  let { path, header, ...other } = props;
+  let { path, header, tooltip, ...other } = props;
 
   if (path) {
     header = (
       <>
         {header}
-        <EditorFormTooltip path={path} aggregated className="u-ml-xs" />
+        <EditorFormTooltip path={path} aggregated className="u-ml-xs" tooltip={tooltip} />
       </>
     );
   }

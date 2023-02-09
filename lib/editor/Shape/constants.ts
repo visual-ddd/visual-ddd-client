@@ -1,0 +1,1 @@
+export const DEFAULT_AUTO_RESIZE_GROUP_PADDING = 30;

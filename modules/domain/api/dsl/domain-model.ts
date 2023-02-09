@@ -1,21 +1,9 @@
-import * as DSL from './interface';
 import * as ViewDSL from '@/modules/domain/domain-design/dsl/dsl';
 import { VoidClass, Void } from '@/modules/domain/domain-design/dsl/constants';
 import { stringifyTypeDSL } from '@/modules/domain/domain-design/dsl/stringify';
 
-export interface CoreProperties {
-  __node_name__: string;
-  uuid?: string;
-}
-
-export interface Tree<T extends CoreProperties = CoreProperties> {
-  id: string;
-  parent?: string;
-  children: Record<string, never>;
-  properties: T;
-}
-
-export const ROOT = '__ROOT__';
+import * as DSL from './interface';
+import { ROOT, Tree, CoreProperties, BaseContainer, Node, IContainer } from './shared';
 
 /**
  * 转换字符串，如果为空则返回 undefined
@@ -190,42 +178,15 @@ export function transformSource(source: ViewDSL.SourceDSL): DSL.SourceDSL[] {
   return list;
 }
 
-export interface IContainer {
-  getNodeById(id: string): Node<any> | undefined;
-}
-
-/**
- * 基础节点信息
- */
-export abstract class Node<T extends ViewDSL.NameDSL = ViewDSL.NameDSL> {
-  /**
-   * 唯一 id
-   */
-  id: string;
-
-  /**
-   * 属性
-   */
-  properties: T;
-
-  container: IContainer;
-
-  constructor(id: string, properties: T, container: IContainer) {
-    this.container = container;
-    this.id = id;
-
-    this.properties = properties;
-  }
-
-  getReference = (id: string): ViewDSL.NameDSL => {
-    return this.container.getNodeById(id)!.properties;
-  };
-}
-
 /**
  * 实体
  */
-class Entity extends Node<ViewDSL.EntityDSL> {
+export class Entity extends Node<ViewDSL.EntityDSL> {
+  /**
+   * 所属聚合
+   */
+  aggregation!: Aggregation;
+
   toDSL(): DSL.EntityDSL {
     const { uuid, title, name, description, meta, properties, methods, id } = this.properties;
 
@@ -249,7 +210,12 @@ class Entity extends Node<ViewDSL.EntityDSL> {
 /**
  * 值对象
  */
-class ValueObject extends Node<ViewDSL.ValueObjectDSL> {
+export class ValueObject extends Node<ViewDSL.ValueObjectDSL> {
+  /**
+   * 所属聚合
+   */
+  aggregation!: Aggregation;
+
   toDSL(): DSL.ValueObjectDSL {
     const { uuid, title, name, description, meta, properties, methods } = this.properties;
 
@@ -269,7 +235,12 @@ class ValueObject extends Node<ViewDSL.ValueObjectDSL> {
   }
 }
 
-class Enum extends Node<ViewDSL.EnumDSL> {
+export class Enum extends Node<ViewDSL.EnumDSL> {
+  /**
+   * 所属聚合
+   */
+  aggregation!: Aggregation;
+
   toDSL(): DSL.EnumDSL {
     return transformEnum(this.properties);
   }
@@ -284,8 +255,13 @@ export class Rule extends Node<ViewDSL.RuleDSL> {
   }
 }
 
-class Command extends Node<ViewDSL.CommandDSL> {
+export class Command extends Node<ViewDSL.CommandDSL> {
   rules: Rule[] = [];
+
+  /**
+   * 所属聚合
+   */
+  aggregation!: Aggregation;
 
   toDSL(): DSL.CommandDSL {
     const {
@@ -296,6 +272,7 @@ class Command extends Node<ViewDSL.CommandDSL> {
       meta,
       repository,
       eventSendable,
+      category,
       result,
       properties,
       source,
@@ -309,6 +286,7 @@ class Command extends Node<ViewDSL.CommandDSL> {
       description,
       meta: transformMeta(meta),
       rules: this.rules.map(i => i.toDSL()),
+      category: transformString(category),
       repository,
       eventSendable,
       source: transformSource(source),
@@ -325,11 +303,33 @@ class Command extends Node<ViewDSL.CommandDSL> {
   }
 }
 
-class Aggregation extends Node<ViewDSL.AggregationDSL> {
-  entities: Entity[] = [];
-  valueObjects: ValueObject[] = [];
-  enums: Enum[] = [];
-  commands: Command[] = [];
+export class Aggregation extends Node<ViewDSL.AggregationDSL> {
+  private entities: Entity[] = [];
+  private valueObjects: ValueObject[] = [];
+  private enums: Enum[] = [];
+  private commands: Command[] = [];
+
+  addEntity(entity: Entity) {
+    this.entities.push(entity);
+
+    entity.aggregation = this;
+  }
+
+  addValueObject(valueObject: ValueObject) {
+    this.valueObjects.push(valueObject);
+
+    valueObject.aggregation = this;
+  }
+
+  addEnum(enumObject: Enum) {
+    this.enums.push(enumObject);
+    enumObject.aggregation = this;
+  }
+
+  addCommand(command: Command) {
+    this.commands.push(command);
+    command.aggregation = this;
+  }
 
   /**
    * 转换为 dsl
@@ -352,46 +352,7 @@ class Aggregation extends Node<ViewDSL.AggregationDSL> {
   }
 }
 
-export abstract class BaseContainer {
-  private postTraverses: (() => void)[] = [];
-
-  constructor() {}
-
-  abstract handle(node: Tree, tree: Record<string, Tree>): void;
-
-  protected addPostTraverse(fn: () => void) {
-    this.postTraverses.push(fn);
-  }
-
-  traverse(tree: Record<string, Tree>) {
-    const walk = (node: Tree) => {
-      this.handle(node, tree);
-
-      const childrenKeys = Object.keys(node.children);
-      if (childrenKeys) {
-        for (const childKey of childrenKeys) {
-          node = tree[childKey];
-          if (node) {
-            walk(node);
-          }
-        }
-      }
-    };
-
-    const root = tree[ROOT];
-    walk(root);
-
-    if (this.postTraverses.length) {
-      const list = this.postTraverses;
-      this.postTraverses = [];
-      for (const fn of list) {
-        fn();
-      }
-    }
-  }
-}
-
-export class Container extends BaseContainer implements IContainer {
+export class DomainModelContainer extends BaseContainer implements IContainer {
   aggregations: Aggregation[] = [];
 
   /**
@@ -463,7 +424,7 @@ export class Container extends BaseContainer implements IContainer {
 
         if (parent && isAggregation(parent)) {
           const aggregation = this.nodesIndexByUUID.get(parent.properties.uuid) as Aggregation;
-          aggregation.entities.push(entity);
+          aggregation.addEntity(entity);
         }
 
         break;
@@ -477,7 +438,7 @@ export class Container extends BaseContainer implements IContainer {
 
         if (parent && isAggregation(parent)) {
           const aggregation = this.nodesIndexByUUID.get(parent.properties.uuid) as Aggregation;
-          aggregation.valueObjects.push(valueObject);
+          aggregation.addValueObject(valueObject);
         }
 
         break;
@@ -491,7 +452,7 @@ export class Container extends BaseContainer implements IContainer {
 
         if (parent && isAggregation(parent)) {
           const aggregation = this.nodesIndexByUUID.get(parent.properties.uuid) as Aggregation;
-          aggregation.enums.push(enumObject);
+          aggregation.addEnum(enumObject);
         }
 
         break;
@@ -507,7 +468,7 @@ export class Container extends BaseContainer implements IContainer {
             const aggregation = this.nodesIndexByUUID.get(properties.aggregation.referenceId) as
               | Aggregation
               | undefined;
-            aggregation?.commands.push(command);
+            aggregation?.addCommand(command);
           }
         });
         break;
@@ -529,13 +490,4 @@ export class Container extends BaseContainer implements IContainer {
       }
     }
   }
-}
-
-/**
- * DSL 转换
- */
-export function transform(tree: Record<string, Tree>): DSL.DomainModelDSL {
-  const container = new Container(tree);
-
-  return container.toDSL();
 }

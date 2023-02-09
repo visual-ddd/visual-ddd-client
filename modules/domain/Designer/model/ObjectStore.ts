@@ -18,14 +18,30 @@ export class ObjectStore implements IObjectStore {
   protected dataObjectEditorModel: DataObjectEditorModel;
   protected queryEditorModel: DomainEditorModel;
 
+  /**
+   * 可引用实体列表
+   * 过滤掉没有关联聚合实体
+   */
   @derive
   protected get entities() {
-    return this.domainEditorModel.domainObjectStore.entities.map(i => i.dsl) as ISourceObject[];
+    return this.domainEditorModel.domainObjectStore.entities
+      .filter(i => {
+        return !!i.aggregation;
+      })
+      .map(i => i.dsl) as ISourceObject[];
   }
 
+  /**
+   * 可引用值对象列表
+   * 过滤掉没有关联聚合实体
+   */
   @derive
   protected get valueObjects() {
-    return this.domainEditorModel.domainObjectStore.valueObjects.map(i => i.dsl) as ISourceObject[];
+    return this.domainEditorModel.domainObjectStore.valueObjects
+      .filter(i => {
+        return !!i.aggregation;
+      })
+      .map(i => i.dsl) as ISourceObject[];
   }
 
   @derive
@@ -82,10 +98,19 @@ export class ObjectStore implements IObjectStore {
   }
 
   getSourceObjectById(id: string): ISourceObject | undefined {
-    return (
-      this.domainEditorModel.domainObjectStore.getObjectById(id) ||
-      this.queryEditorModel.domainObjectStore.getObjectById(id)
-    )?.dsl as ISourceObject;
+    // 查询对象
+    let object = this.queryEditorModel.domainObjectStore.getObjectById(id);
+
+    if (object != null) {
+      return object.dsl as ISourceObject;
+    }
+
+    // 领域对象，需要关联聚合
+    object = this.domainEditorModel.domainObjectStore.getObjectById(id);
+
+    if (object != null && object.package != null) {
+      return object.dsl as ISourceObject;
+    }
   }
 
   getTargetObjectById(id: string): ITargetObject | undefined {

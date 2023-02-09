@@ -3,7 +3,7 @@ import {
   transformType,
   transformIndex,
   transformDataObjectReference,
-  transform,
+  DataModelContainer,
 } from './data-model';
 import * as ViewDSL from '@/modules/domain/data-design/dsl/dsl';
 
@@ -385,5 +385,6 @@ test('transform', () => {
     },
   };
 
-  expect(transform(data as any)).toMatchSnapshot();
+  const container = new DataModelContainer(data as any);
+  expect(container.toDSL()).toMatchSnapshot();
 });

@@ -1,15 +1,14 @@
+import * as ViewDSL from '@/modules/domain/domain-design/dsl/dsl';
 import {
-  Container,
+  DomainModelContainer,
   transformMeta,
   transformType,
   transformProperty,
   transformMethods,
   transformEnum,
   transformRule,
-  BaseContainer,
-  Tree,
 } from './domain-model';
-import * as ViewDSL from '@/modules/domain/domain-design/dsl/dsl';
+import { Tree, BaseContainer } from './shared';
 
 test('transformMeta', () => {
   expect(transformMeta([])).toEqual({});
@@ -602,7 +601,7 @@ test('BaseContainer', () => {
 });
 
 test('Container', () => {
-  const container = new Container(DATA as any);
+  const container = new DomainModelContainer(DATA as any);
 
   expect(container.toDSL()).toMatchSnapshot();
 });

@@ -1,10 +1,14 @@
 import { Button, Form, Input } from 'antd';
-import { Logo } from '@/modules/user';
-
-import s from './index.module.scss';
 import Link from 'next/link';
 
-export default function Register() {
+import { Logo } from '../Logo';
+import s from './index.module.scss';
+
+/**
+ * 注册
+ * @returns
+ */
+export function Register() {
   // 注册
   const handleRegister = (values: any) => {
     console.log('Received values of form: ', values);

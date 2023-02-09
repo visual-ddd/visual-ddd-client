@@ -145,6 +145,10 @@ export class BaseNode {
     const idx = this.getNodeIdx(node);
     if (idx !== -1) {
       this.children.splice(idx, 1);
+      if (node.parent === this) {
+        node.parent = undefined;
+      }
+
       return true;
     }
 

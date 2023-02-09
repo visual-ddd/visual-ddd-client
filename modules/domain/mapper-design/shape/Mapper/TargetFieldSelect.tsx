@@ -22,7 +22,7 @@ export const TargetFieldSelect = observer(function TargetFieldSelect(props: Targ
       value: i.uuid,
     };
   });
-  const disabled = source == null || options.length === 0;
+  const disabled = source == null || options.length === 0 ? true : undefined;
 
   return <Select className="u-fw" disabled={disabled} options={options} placeholder="选择字段" {...other}></Select>;
 });

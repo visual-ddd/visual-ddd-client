@@ -1,5 +1,7 @@
 import { IDDSL, NameDSL, ReferenceDSL } from '@/modules/domain/domain-design/dsl/dsl';
 
+export type { NameDSL };
+
 export interface ObjectReferenceDSL extends ReferenceDSL {
   source?: string;
 }

@@ -1,6 +1,7 @@
 import { command, derive, effect, makeAutoBindThis, mutation } from '@/lib/store';
 import { debounce } from '@wakeapp/utils';
 import { makeObservable, observable } from 'mobx';
+import { tryDispose } from '@/lib/utils';
 
 import { getRules } from '../Shape';
 
@@ -9,7 +10,6 @@ import { BaseEditorModel } from './BaseEditorModel';
 import { BaseEditorStore } from './BaseEditorStore';
 import { BaseNode } from './BaseNode';
 import { FormModel, FormRules } from './FormModel';
-import { tryDispose } from './IDisposable';
 
 const DEFAULT_RULES: FormRules = {
   fields: {},
@@ -26,7 +26,6 @@ export class BaseEditorFormStore {
   @observable.shallow
   private formModels: Map<string, FormModel> = new Map();
 
-  @observable.shallow
   private formModelsWillRemove: Map<string, FormModel> = new Map();
 
   @derive
@@ -144,13 +143,8 @@ export class BaseEditorFormStore {
     this.formModels.delete(params.node.id);
   }
 
-  @mutation('FORM_STORE:GC', false)
-  protected clearWillRemoved() {
-    this.formModelsWillRemove.clear();
-  }
-
   private gc = debounce(() => {
     this.formModelsWillRemove.forEach(m => tryDispose(m));
-    this.clearWillRemoved();
+    this.formModelsWillRemove.clear();
   }, 2000);
 }

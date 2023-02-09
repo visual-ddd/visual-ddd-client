@@ -7,6 +7,8 @@ import { CopyPayload } from '../Canvas/ClipboardUtils';
 import type { BaseEditorModel, BaseNode, BaseNodeProperties, Properties } from '../Model';
 
 import { shapes } from './store';
+import { DEFAULT_AUTO_RESIZE_GROUP_PADDING } from './constants';
+import { NormalizedAutoResizeGroup } from './types';
 
 export class ShapeRegistry {
   private editorModel: BaseEditorModel;
@@ -94,21 +96,7 @@ export class ShapeRegistry {
   isAutoResizeGroup = (context: { graph: Graph; node: Node }): boolean => {
     const conf = this.getAutoResizeGroupConfig(context);
 
-    if (typeof conf === 'number') {
-      return true;
-    }
-
     return !!conf;
-  };
-
-  getAutoResizeGroupPadding = (context: { graph: Graph; node: Node }): number => {
-    const conf = this.getAutoResizeGroupConfig(context);
-
-    if (typeof conf === 'number') {
-      return conf;
-    }
-
-    return 20;
   };
 
   /**
@@ -370,7 +358,7 @@ export class ShapeRegistry {
     return shapes.get(name);
   }
 
-  private getAutoResizeGroupConfig(context: { graph: Graph; node: Node }) {
+  getAutoResizeGroupConfig(context: { graph: Graph; node: Node }): NormalizedAutoResizeGroup | false {
     const { graph, node } = context;
     this.bindGraphIfNeed(graph);
 
@@ -380,7 +368,21 @@ export class ShapeRegistry {
       return false;
     }
 
-    return conf?.autoResizeGroup ?? false;
+    if (conf.autoResizeGroup) {
+      if (typeof conf.autoResizeGroup === 'boolean') {
+        return { padding: DEFAULT_AUTO_RESIZE_GROUP_PADDING, minHeight: 0, minWidth: 0 };
+      } else if (typeof conf.autoResizeGroup === 'number') {
+        return { padding: conf.autoResizeGroup, minHeight: 0, minWidth: 0 };
+      } else {
+        return {
+          padding: conf.autoResizeGroup.padding ?? DEFAULT_AUTO_RESIZE_GROUP_PADDING,
+          minWidth: conf.autoResizeGroup.minWidth ?? 0,
+          minHeight: conf.autoResizeGroup.minHeight ?? 0,
+        };
+      }
+    }
+
+    return false;
   }
 
   private bindGraphIfNeed(graph: Graph) {

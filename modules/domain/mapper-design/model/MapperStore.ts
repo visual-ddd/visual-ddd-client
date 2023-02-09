@@ -1,5 +1,7 @@
-import { BaseEditorEvent } from '@/lib/editor';
+import { BaseEditorCommandHandler, BaseEditorEvent } from '@/lib/editor';
 import { derive, makeAutoBindThis } from '@/lib/store';
+import { tryDispose } from '@/lib/utils';
+import { debounce } from '@wakeapp/utils';
 import { makeObservable, observable } from 'mobx';
 import { MapperObjectName } from '../dsl';
 
@@ -43,6 +45,11 @@ export class MapperStore {
 
   @observable.shallow
   protected mappers: Map<string, Mapper> = new Map();
+
+  /**
+   * 即将移除的映射
+   */
+  protected mappersWillRemoved: Map<string, Mapper> = new Map();
 
   /**
    * 映射列表
@@ -89,12 +96,16 @@ export class MapperStore {
    * @param id
    * @returns
    */
-  getMapperById(id: string) {
-    return this.mappers.get(id);
+  getMapperById(id?: string) {
+    if (id == null) {
+      return undefined;
+    }
+
+    return this.mappers.get(id) || this.mappersWillRemoved.get(id);
   }
 
-  constructor(inject: { event: BaseEditorEvent; objectStore: IObjectStore }) {
-    const { event, objectStore } = inject;
+  constructor(inject: { event: BaseEditorEvent; objectStore: IObjectStore; commandHandler: BaseEditorCommandHandler }) {
+    const { event, objectStore, commandHandler } = inject;
     this.event = event;
     this.objectStore = objectStore;
 
@@ -103,15 +114,31 @@ export class MapperStore {
         return;
       }
 
-      const object = new Mapper({ mapperStore: this, node });
+      const object = new Mapper({ mapperStore: this, node, commandHandler });
       this.mappers.set(object.id, object);
     });
 
     this.event.on('NODE_REMOVED', ({ node }) => {
-      this.mappers.delete(node.id);
+      const old = this.mappers.get(node.id);
+      if (old) {
+        const willRemove = this.mappersWillRemoved.get(old.id);
+        this.mappersWillRemoved.set(old.id, old);
+        this.mappers.delete(node.id);
+
+        if (willRemove) {
+          tryDispose(willRemove);
+        }
+
+        this.gc();
+      }
     });
 
     makeObservable(this);
     makeAutoBindThis(this);
   }
+
+  private gc = debounce(() => {
+    this.mappersWillRemoved.forEach(i => tryDispose(i));
+    this.mappersWillRemoved.clear();
+  }, 100);
 }

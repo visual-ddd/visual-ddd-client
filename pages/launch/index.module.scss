@@ -1,4 +1,4 @@
-.login {
+.root {
   position: absolute;
   left: 50%;
   top: 100px;
@@ -9,23 +9,28 @@
   border-radius: var(--vd-border-radius-md);
 }
 
-.org {
+.groups {
   margin: var(--vd-spacing-md) 0;
   line-height: var(--vd-font-line-height-h1);
-  .orgTitle,
-  .orgChild {
-    display: flex;
-    justify-content: space-between;
-  }
-  .orgTitle {
-    background: var(--vd-color-gray-300);
-    padding-left: var(--vd-spacing-base);
-    padding-right: var(--vd-spacing-sm);
-    margin-bottom: 1px;
-  }
-  .orgChild {
-    background: var(--vd-color-gray-200);
-    padding-left: var(--vd-spacing-lg);
-    padding-right: var(--vd-spacing-sm);
-  }
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+.head,
+.item {
+  display: flex;
+  justify-content: space-between;
+}
+.head {
+  background: var(--vd-color-gray-300);
+  padding-left: var(--vd-spacing-base);
+  padding-right: var(--vd-spacing-sm);
+  margin-bottom: 1px;
+}
+
+.item {
+  background: var(--vd-color-gray-200);
+  padding-left: var(--vd-spacing-lg);
+  padding-right: var(--vd-spacing-sm);
+  cursor: pointer;
 }
