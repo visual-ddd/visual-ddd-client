@@ -81,7 +81,7 @@ export const DomainReversion = (props: DomainReversionProps) => {
                 {status === DomainVersionStatus.PUBLISHED ? '查看' : '编辑'}
               </Button>
               <Button size="small" type="primary">
-                打开自动文档
+                打开文档
               </Button>
             </Space>
           </Card>

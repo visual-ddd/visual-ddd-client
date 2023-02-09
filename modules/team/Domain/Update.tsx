@@ -52,6 +52,26 @@ export const UpdateDomain = forwardRef<UpdateDomainRef, UpdateDomainProps>((prop
     }
   };
 
+  const handleDelete = async () => {
+    const val = window.prompt(
+      '确定删除业务域？删除业务域可能导致严重后果，如果确定要删除，请输入当前业务域的 **标识符** '
+    );
+
+    if (val !== detail.identity) {
+      return;
+    }
+
+    try {
+      await request.requestByPost('/wd/visual/web/domain-design/domain-design-remove', { id: detail.id });
+
+      message.success('已删除');
+
+      router.replace(`/team/${detail.teamId}/domain`);
+    } catch (err) {
+      message.error((err as Error).message);
+    }
+  };
+
   return (
     <ModalForm<DomainDetail>
       open={visible}
@@ -65,7 +85,7 @@ export const UpdateDomain = forwardRef<UpdateDomainRef, UpdateDomainProps>((prop
       submitter={{
         render(props, dom) {
           return [
-            <Button danger key="delete">
+            <Button danger key="delete" onClick={handleDelete}>
               删除业务域
             </Button>,
             ...dom,
