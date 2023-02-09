@@ -2,9 +2,10 @@ import { Tooltip } from 'antd';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
 import { useRouter } from 'next/router';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { NoopArray } from '@wakeapp/utils';
 
-import type { LayoutAction, LayoutMenu } from './types';
+import type { LayoutAction, LayoutMenu, LayoutMenuItem } from './types';
 import { User } from './User';
 import s from './Sidebar.module.scss';
 
@@ -25,6 +26,7 @@ export interface SidebarProps {
 
 export const Sidebar = observer(function Sidebar(props: SidebarProps) {
   const { menu, actions, className, ...other } = props;
+  const [subMenu, setSubMenu] = useState<LayoutMenuItem[]>(NoopArray);
   const router = useRouter();
   const pathname = router.asPath;
 
@@ -46,6 +48,36 @@ export const Sidebar = observer(function Sidebar(props: SidebarProps) {
     return matched;
   }, [pathname, menu]);
 
+  useEffect(() => {
+    if (activeMenuItem) {
+      if (Array.isArray(activeMenuItem.children)) {
+        setSubMenu(activeMenuItem.children);
+      } else if (typeof activeMenuItem.children === 'function') {
+        setSubMenu(NoopArray);
+        let cancelled = false;
+
+        activeMenuItem
+          .children()
+          .then(children => {
+            if (!cancelled) {
+              setSubMenu(children);
+            }
+          })
+          .catch(err => {
+            console.error(`加载菜单失败`, err);
+          });
+
+        return () => {
+          cancelled = true;
+        };
+      } else {
+        setSubMenu(NoopArray);
+      }
+    } else {
+      setSubMenu(NoopArray);
+    }
+  }, [activeMenuItem]);
+
   return (
     <div className={classNames('vd-layout-sidebar', className, s.root)} {...other}>
       <div className={classNames('vd-layout-sidebar__primary', s.primary)}>
@@ -54,7 +86,14 @@ export const Sidebar = observer(function Sidebar(props: SidebarProps) {
 
           return (
             <Tooltip key={i.route} title={i.name} placement="right">
-              <div className={classNames('vd-layout-sidebar__primary-item', s.primaryItem, { active })}>{i.icon}</div>
+              <div
+                className={classNames('vd-layout-sidebar__primary-item', s.primaryItem, { active })}
+                onClick={() => {
+                  router.push(i.route);
+                }}
+              >
+                {i.icon}
+              </div>
             </Tooltip>
           );
         })}
@@ -62,14 +101,17 @@ export const Sidebar = observer(function Sidebar(props: SidebarProps) {
           <User actions={actions} />
         </div>
       </div>
-      {!!activeMenuItem?.children?.length && (
+      {!!subMenu.length && (
         <div className={classNames('vd-layout-sidebar__secondary', s.secondary)}>
-          {activeMenuItem.children.map(i => {
-            const active = pathname.startsWith(i.route);
+          {subMenu.map(i => {
+            const active = i.exact ? pathname === i.route : pathname.startsWith(i.route);
             return (
               <div
                 className={classNames('vd-layout-sidebar__secondary-item', s.secondaryItem, { active })}
                 key={i.route}
+                onClick={() => {
+                  router.push(i.route);
+                }}
               >
                 {i.name}
               </div>

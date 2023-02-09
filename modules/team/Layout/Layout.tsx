@@ -34,7 +34,9 @@ export const Layout = observer(function Layout(props: LayoutProps) {
   const context = useMemo<LayoutContextValue>(() => {
     return {
       setTitle(t) {
-        setTitle(t);
+        setTimeout(() => {
+          setTitle(t);
+        });
       },
     };
   }, []);

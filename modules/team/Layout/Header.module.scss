@@ -1,6 +1,8 @@
 .root {
   border-bottom: 1px solid var(--vd-color-border-light);
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
 }
 
 .logo {
@@ -9,5 +11,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 30px;
+  font-size: 45px;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title {
+  font-weight: 500;
 }

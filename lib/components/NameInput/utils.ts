@@ -1,4 +1,4 @@
-import { NameCase } from '../../dsl';
+import type { NameCase } from '@/lib/core';
 
 export function makeSet(chars: string) {
   return new Set<string>(Array.from(chars));
