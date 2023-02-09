@@ -13,6 +13,11 @@ export interface VDUser {
    * 描述
    */
   description: string;
+
+  /**
+   * 图标
+   */
+  icon?: string;
 }
 
 export enum VDSessionEntry {
