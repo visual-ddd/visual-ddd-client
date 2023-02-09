@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^4.8.0",
+    "@ant-design/pro-components": "^2.3.52",
     "@antv/x6": "^2.0.8",
     "@antv/x6-plugin-clipboard": "^2.1.3",
     "@antv/x6-plugin-keyboard": "^2.1.4",
