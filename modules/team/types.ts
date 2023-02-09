@@ -1,14 +1,19 @@
+export enum DomainVersionStatus {
+  UNPUBLISHED = 1,
+  PUBLISHED = 2,
+}
+
 export interface DomainVersion {
   createBy: string;
   createTime: string;
   currentVersion: string;
   description: string;
-  domainDesignDsl: string;
   domainDesignId: number;
-  graphDsl: string;
+  graphDsl?: string;
+  domainDesignDsl?: string;
   id: number;
   startVersion: string;
-  state: number;
+  state: DomainVersionStatus;
   updateBy: string;
   updateTime: string;
 }
@@ -19,6 +24,12 @@ export interface DomainCreatePayload {
   teamId: number;
   description?: string;
   startVersion: string;
+}
+
+export interface DomainUpdatePayload {
+  id: number;
+  name: string;
+  description?: string;
 }
 
 export interface DomainSimple {

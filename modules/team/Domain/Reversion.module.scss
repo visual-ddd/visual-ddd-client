@@ -1,0 +1,34 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vd-spacing-sm);
+  padding: var(--vd-spacing-sm) var(--vd-spacing-base);
+}
+
+.meta {
+  font-size: var(--vd-font-size-h5);
+}
+
+.version {
+  margin-right: var(--vd-spacing-sm);
+  color: var(--vd-color-gray-700);
+}
+
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--vd-spacing-xs);
+
+  :global(.ant-card) {
+    min-width: 110px;
+  }
+}
+
+.detail {
+  display: flex;
+  gap: var(--vd-spacing-xs);
+}
+
+.col {
+  flex: 1;
+}
