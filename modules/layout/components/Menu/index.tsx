@@ -38,6 +38,7 @@ export function PageMenu({ className }: PageMenuProps) {
     if (launchConfig?.type === ORG_TYPE.TEAM) {
       menu.push(
         getItem('团队管理', '/team/[id]', <TeamOutlined />, [
+          getItem('团队管理', '/team/[id]/list'),
           getItem('domain业务域', '/team/[id]/domain'),
           getItem('app业务域', '/team/[id]/app'),
         ])
