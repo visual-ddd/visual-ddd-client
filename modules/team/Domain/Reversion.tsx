@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import { VersionBadge } from '@/lib/components/VersionBadge';
 import { useRouter } from 'next/router';
 import {
   useVersionListRef,
@@ -13,13 +12,13 @@ import {
   VersionPublishProps,
 } from '@/lib/components/VersionControl';
 import type { BusinessDomainDSL } from '@/modules/domain/api/dsl/interface';
+import { PreviewPageLayout, PreviewPageSection, PreviewPageVersion } from '@/lib/components/PreviewPageLayout';
 import { Button, Card, Space, Statistic } from 'antd';
 import classNames from 'classnames';
 import { request } from '@/modules/backend-client';
 
 import { useLayoutTitle } from '../Layout';
 import { DomainDetail, VersionStatus } from '../types';
-import s from './Reversion.module.scss';
 import { UpdateDomain, useUpdateDomain } from './Update';
 
 export interface DomainReversionProps {
@@ -99,12 +98,14 @@ export const DomainReversion = (props: DomainReversionProps) => {
   };
 
   return (
-    <div className={classNames('vd-domain-rv', s.root)}>
-      <div className={classNames('vd-domain-rv__meta', s.meta)}>
+    <PreviewPageLayout
+      className={classNames('vd-domain-rv')}
+      meta={
         <Space>
-          <span className={classNames('vd-domain-rv__version', s.version)}>
-            当前版本: <VersionBadge version={detail.version.currentVersion} status={detail.version.state} />
-          </span>
+          <PreviewPageVersion
+            version={detail.version.currentVersion}
+            status={detail.version.state}
+          ></PreviewPageVersion>
           <Button
             size="small"
             onClick={() => {
@@ -127,50 +128,45 @@ export const DomainReversion = (props: DomainReversionProps) => {
             </Button>
           )}
         </Space>
-      </div>
-      <div className={classNames('vd-domain-rv__stats', s.stats)}>
-        <Card bordered size="small">
-          <Statistic value={10} title="领域模型"></Statistic>
-        </Card>
-        <Card bordered size="small">
-          <Statistic value={6} title="数据模型"></Statistic>
-        </Card>
-        <Card bordered size="small">
-          <Statistic value={6} title="统一语言"></Statistic>
-        </Card>
-        <Card bordered size="small">
-          <Statistic value={6} title="能力"></Statistic>
-        </Card>
-        <Card bordered size="small">
-          <Statistic value={6} title="版本"></Statistic>
-        </Card>
-        <Card bordered size="small">
-          <Statistic value={6} title="关联应用"></Statistic>
-        </Card>
-        <Card bordered size="small">
-          <Statistic value={6} title="关联业务场景"></Statistic>
-        </Card>
-      </div>
-      <div className={classNames('vd-domain-rv__detail', s.detail)}>
-        <div className={classNames('vd-domain-rv__col', s.col)}>
-          <Card size="small" title="简介">
-            <div className={classNames('vd-domain-rv-section', s.section)}>
-              <div className={classNames('vd-domain-rv-section__name', s.sectionName)}>描述</div>
-              {detail.description || '未配置描述'}
-            </div>
-            <div className={classNames('vd-domain-rv__section', s.section)}>
-              <div className={classNames('vd-domain-rv-section__name', s.sectionName)}>
-                版本描述({detail.version.currentVersion})
-              </div>
-              {detail.version.description}
-            </div>
-            <div className={classNames('vd-domain-rv__section', s.section)}>
-              <div className={classNames('vd-domain-rv-section__name', s.sectionName)}>愿景/目标</div>
-              {dsl?.vision || '未配置愿景/目标'}
-            </div>
+      }
+      stats={
+        <>
+          <Card bordered size="small">
+            <Statistic value={10} title="领域模型"></Statistic>
           </Card>
-        </div>
-        <div className={classNames('vd-domain-rv__col', s.col)}>
+          <Card bordered size="small">
+            <Statistic value={6} title="数据模型"></Statistic>
+          </Card>
+          <Card bordered size="small">
+            <Statistic value={6} title="统一语言"></Statistic>
+          </Card>
+          <Card bordered size="small">
+            <Statistic value={6} title="能力"></Statistic>
+          </Card>
+          <Card bordered size="small">
+            <Statistic value={6} title="版本"></Statistic>
+          </Card>
+          <Card bordered size="small">
+            <Statistic value={6} title="关联应用"></Statistic>
+          </Card>
+          <Card bordered size="small">
+            <Statistic value={6} title="关联业务场景"></Statistic>
+          </Card>
+        </>
+      }
+      left={
+        <>
+          <Card size="small" title="简介">
+            <PreviewPageSection name="描述">{detail.description || '未配置描述'}</PreviewPageSection>
+            <PreviewPageSection name={`版本描述(${detail.version.currentVersion})`}>
+              {detail.version.description || '未配置版本描述'}
+            </PreviewPageSection>
+            <PreviewPageSection name="愿景/目标">{dsl?.vision || '未配置愿景/目标'}</PreviewPageSection>
+          </Card>
+        </>
+      }
+      right={
+        <>
           <Card size="small" title="操作">
             <Space>
               <Button size="small" type="primary" onClick={() => updateRef.current?.open()}>
@@ -201,8 +197,9 @@ export const DomainReversion = (props: DomainReversionProps) => {
               </Button>
             </Space>
           </Card>
-        </div>
-      </div>
+        </>
+      }
+    >
       <UpdateDomain ref={updateRef} detail={detail} />
       <VersionList
         onRequest={requestVersionList}
@@ -222,7 +219,7 @@ export const DomainReversion = (props: DomainReversionProps) => {
       />
       <VersionCreate ref={versionCreateRef} onSubmit={handleCreateVersion} />
       <VersionPublish ref={versionPublishRef} onSubmit={handlePublish} />
-    </div>
+    </PreviewPageLayout>
   );
 };
 
