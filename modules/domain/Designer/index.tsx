@@ -19,12 +19,51 @@ import { UbiquitousLanguage } from '../ubiquitous-language-design';
 import { CompletionContextProvider } from '@/lib/components/Completion';
 import { ProductDesign } from '../product-design';
 import { MapperEditor } from '../mapper-design';
+import { VersionStatus } from '@/lib/core';
+
+export interface DomainDescription {
+  id: string | number;
+
+  /**
+   * 模型名称
+   */
+  name: string;
+
+  /**
+   * 版本 id
+   */
+  versionId: string | number;
+
+  /**
+   * 版本号
+   */
+  version: string;
+
+  /**
+   * 版本状态
+   */
+  versionStatus: VersionStatus;
+
+  /**
+   * 当前用户
+   */
+  user?: {
+    id: string;
+    name: string;
+    avatar?: string;
+  };
+}
 
 export interface DomainDesignerProps {
   /**
    * 模型 id
    */
   id: string;
+
+  /**
+   * 模型信息
+   */
+  description?: DomainDescription;
 
   /**
    * 是否为只读模式

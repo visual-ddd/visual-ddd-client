@@ -60,6 +60,10 @@ export const DomainReversion = (props: DomainReversionProps) => {
     router.push(`/team/${detail.teamId}/domain/${detail.id}/reversion/${id}`);
   };
 
+  const navigateToAction = (id: number, action: 'view' | 'edit') => {
+    router.push(`/team/${detail.teamId}/domain/${detail.id}/reversion/${id}/${action}`);
+  };
+
   const handleCreateVersion: VersionCreateProps['onSubmit'] = async values => {
     const id = await request.requestByPost<number>(
       '/wd/visual/web/domain-design-version/domain-design-version-create',
@@ -160,9 +164,26 @@ export const DomainReversion = (props: DomainReversionProps) => {
               <Button size="small" type="primary" onClick={() => updateRef.current?.open()}>
                 设置
               </Button>
-              <Button size="small" type="primary">
-                {status === VersionStatus.PUBLISHED ? '查看' : '编辑'}
+              <Button
+                size="small"
+                type="primary"
+                onClick={() => {
+                  navigateToAction(detail.version.id, 'view');
+                }}
+              >
+                预览
               </Button>
+              {status !== VersionStatus.PUBLISHED && (
+                <Button
+                  size="small"
+                  type="primary"
+                  onClick={() => {
+                    navigateToAction(detail.version.id, 'edit');
+                  }}
+                >
+                  编辑
+                </Button>
+              )}
               <Button size="small" type="primary">
                 打开文档
               </Button>
@@ -179,6 +200,12 @@ export const DomainReversion = (props: DomainReversionProps) => {
         }}
         onNavigate={v => {
           navigateToVersion(v.id);
+        }}
+        onEdit={v => {
+          navigateToAction(v.id, 'edit');
+        }}
+        onPreview={v => {
+          navigateToAction(v.id, 'view');
         }}
       />
       <VersionCreate ref={versionCreateRef} onSubmit={handleCreateVersion} />
