@@ -3,7 +3,7 @@ import { AutoCompleteProps, AutoComplete } from 'antd';
 import classNames from 'classnames';
 import React, { memo, useRef, useState } from 'react';
 import { NameTooltipSimple, NameCase } from '@/lib/core';
-import { useIdentifierCompletion } from '@/lib/components';
+import { useIdentifierCompletion } from '@/lib/components/Completion';
 
 import { valueTransform } from './utils';
 

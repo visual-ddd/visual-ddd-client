@@ -4,9 +4,9 @@
 import { withIronSessionSsr } from 'iron-session/next';
 import type { GetServerSideProps, PreviewData } from 'next';
 import type { ParsedUrlQuery } from 'querystring';
-import { request } from '@/modules/backend-node';
+import { isResponseError, request } from '@/modules/backend-node';
 
-import { IRON_SESSION_OPTIONS } from './config';
+import { IRON_SESSION_OPTIONS, UNAUTH_CODE } from './config';
 
 /**
  * 注入 session 到 getServerSideProps 处理器
@@ -34,7 +34,7 @@ export function withWakedataRequestSsr<
   Q extends ParsedUrlQuery = ParsedUrlQuery,
   D extends PreviewData = PreviewData
 >(handler: GetServerSideProps<P, Q, D>): GetServerSideProps<P, Q, D> {
-  return withSessionSsr<P, Q, D>(context => {
+  return withSessionSsr<P, Q, D>(async context => {
     const { req } = context;
     const session = req.session.content;
 
@@ -48,6 +48,19 @@ export function withWakedataRequestSsr<
       });
     };
 
-    return handler(context);
+    try {
+      return await handler(context);
+    } catch (err) {
+      // 捕获未授权
+      if (isResponseError(err)) {
+        const code = err.code;
+        if (code === UNAUTH_CODE) {
+          return {
+            redirect: { permanent: false, destination: `/login?from=${req.url}` },
+          };
+        }
+      }
+      throw err;
+    }
   });
 }

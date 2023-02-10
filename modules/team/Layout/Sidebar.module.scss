@@ -13,6 +13,7 @@
   padding: var(--vd-spacing-sm) 0;
   position: relative;
   border-right: 1px solid transparent;
+  background-color: var(--vd-color-gray-200);
 
   &:not(:only-child) {
     border-right: 1px solid var(--vd-color-border-light);

@@ -16,7 +16,7 @@ import { TabLabel } from './TabLabel';
 import { YJS_FIELD_NAME } from '../constants';
 import { VisionDesign } from '../vision-design';
 import { UbiquitousLanguage } from '../ubiquitous-language-design';
-import { CompletionContextProvider } from '@/lib/components';
+import { CompletionContextProvider } from '@/lib/components/Completion';
 import { ProductDesign } from '../product-design';
 import { MapperEditor } from '../mapper-design';
 

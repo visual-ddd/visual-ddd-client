@@ -1,2 +1,2 @@
-export { NameInput } from '@/lib/components';
-export type { NameInputProps } from '@/lib/components';
+export { NameInput } from '@/lib/components/NameInput';
+export type { NameInputProps } from '@/lib/components/NameInput';

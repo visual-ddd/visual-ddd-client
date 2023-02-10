@@ -1,6 +1,5 @@
 .root {
   display: inline-flex;
-  background-color: var(--vd-color-secondary-500);
   color: white;
   font-size: 12px;
   padding: 4px 6px;
@@ -14,5 +13,5 @@
 
 .status {
   margin-left: var(--vd-spacing-xs);
-  color: orangered;
+  color: var(--vd-color-gray-400);
 }

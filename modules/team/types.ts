@@ -1,7 +1,6 @@
-export enum DomainVersionStatus {
-  UNPUBLISHED = 1,
-  PUBLISHED = 2,
-}
+import { VersionStatus } from '@/lib/core';
+
+export { VersionStatus };
 
 export interface DomainVersion {
   createBy: string;
@@ -13,7 +12,7 @@ export interface DomainVersion {
   domainDesignDsl?: string;
   id: number;
   startVersion: string;
-  state: DomainVersionStatus;
+  state: VersionStatus;
   updateBy: string;
   updateTime: string;
 }
@@ -48,6 +47,10 @@ export interface DomainSimple {
   updateTime: string;
 }
 
-export interface DomainDetail extends DomainSimple {
+export interface DomainDetailPayload extends DomainSimple {
   domainDesignLatestVersion: DomainVersion;
+}
+
+export interface DomainDetail extends DomainSimple {
+  version: DomainVersion;
 }

@@ -5,7 +5,7 @@ import {
   useEditorFormContext,
   useEditorModel,
 } from '@/lib/editor';
-import { ColorInput } from '@/lib/components';
+import { ColorInput } from '@/lib/components/ColorInput';
 import { observer, useLocalObservable } from 'mobx-react';
 import { Select } from 'antd';
 import diff from 'lodash/difference';

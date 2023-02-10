@@ -1,7 +1,7 @@
 import { getTeamLayout } from '@/modules/team/TeamLayout';
 import { withWakedataRequestSsr } from '@/modules/session/ssr-helper';
 import dynamic from 'next/dynamic';
-import { DomainDetail } from '@/modules/team/types';
+import { DomainDetail, DomainDetailPayload } from '@/modules/team/types';
 
 const Reversion = dynamic(() => import('@/modules/team/Domain/Reversion'), { ssr: false });
 
@@ -17,7 +17,7 @@ export const getServerSideProps = withWakedataRequestSsr<{ detail: DomainDetail 
   const { did } = context.params as { did: string };
 
   // 获取业务域详情
-  const detail = await context.req.request<DomainDetail>(
+  const { domainDesignLatestVersion, ...other } = await context.req.request<DomainDetailPayload>(
     '/wd/visual/web/domain-design/domain-design-detail-query',
     {
       id: did,
@@ -26,7 +26,7 @@ export const getServerSideProps = withWakedataRequestSsr<{ detail: DomainDetail 
   );
 
   return {
-    props: { detail },
+    props: { detail: { ...other, version: domainDesignLatestVersion } },
   };
 });
 

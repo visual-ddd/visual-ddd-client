@@ -7,7 +7,7 @@ import { action, observable } from 'mobx';
 import { useRefValue } from '@wakeapp/hooks';
 
 import { EditorFormTooltip, useEditorFormContext } from '@/lib/editor';
-import { DragHandle, SortableList } from '@/lib/components';
+import { DragHandle, SortableList } from '@/lib/components/SortableList';
 
 import { IDDSL } from '../../dsl';
 

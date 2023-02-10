@@ -1,7 +1,7 @@
 import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import { Form, message } from 'antd';
 import { ModalForm, ProFormText, ProFormTextArea } from '@ant-design/pro-components';
-import { NameInput } from '@/lib/components';
+import { NameInput } from '@/lib/components/NameInput';
 import { request } from '@/modules/backend-client';
 import { useRouter } from 'next/router';
 
