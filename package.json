@@ -51,6 +51,7 @@
     "js-base64": "^3.7.4",
     "localforage": "^1.10.0",
     "lodash": "^4.17.21",
+    "lru-cache": "^7.14.1",
     "mobx": "^6.7.0",
     "mobx-react": "^7.6.0",
     "mousetrap": "^1.6.5",

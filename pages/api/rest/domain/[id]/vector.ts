@@ -1,6 +1,4 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import { allowMethod } from '@/lib/api';
 import { handleGetVector } from '@/modules/domain/api';
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  handleGetVector(req, res);
-}
+export default allowMethod('GET', handleGetVector);

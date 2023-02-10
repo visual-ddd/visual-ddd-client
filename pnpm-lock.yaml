@@ -56,6 +56,7 @@ specifiers:
   js-base64: ^3.7.4
   localforage: ^1.10.0
   lodash: ^4.17.21
+  lru-cache: ^7.14.1
   mobx: ^6.7.0
   mobx-react: ^7.6.0
   mousetrap: ^1.6.5
@@ -128,6 +129,7 @@ dependencies:
   js-base64: 3.7.4
   localforage: 1.10.0
   lodash: 4.17.21
+  lru-cache: 7.14.1
   mobx: 6.7.0
   mobx-react: 7.6.0_jofyzmwkboewm6mjrhi25mngky
   mousetrap: 1.6.5
@@ -5825,6 +5827,12 @@ packages:
     engines: { node: '>=10' }
     dependencies:
       yallist: 4.0.0
+
+  /lru-cache/7.14.1:
+    resolution:
+      { integrity: sha512-ysxwsnTKdAx96aTRdhDOCQfDgbHnt8SK0KY8SEjO0wHinhWOFTESbjVCMPbU1uGXg/ch4lifqx0wfjOawU2+WA== }
+    engines: { node: '>=12' }
+    dev: false
 
   /luxon/3.2.1:
     resolution:

@@ -7,13 +7,13 @@ export const config = {
   },
 };
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
     case 'GET':
-      handleGet(req, res);
+      await handleGet(req, res);
       break;
     case 'PUT':
-      handleSave(req, res);
+      await handleSave(req, res);
       break;
     default:
       res.status(405).end('Method not allowed');

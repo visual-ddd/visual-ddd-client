@@ -3,9 +3,18 @@ import { observer } from 'mobx-react';
 import { useEffect, useMemo } from 'react';
 import { message, Tabs } from 'antd';
 import { tryDispose } from '@/lib/utils';
+import { VersionStatus } from '@/lib/core';
+import { useRouter } from 'next/router';
+import { CompletionContextProvider } from '@/lib/components/Completion';
 
 import { DomainEditor } from '../domain-design';
 import { DataObjectEditor } from '../data-design';
+
+import { YJS_FIELD_NAME } from '../constants';
+import { VisionDesign } from '../vision-design';
+import { UbiquitousLanguage } from '../ubiquitous-language-design';
+import { ProductDesign } from '../product-design';
+import { MapperEditor } from '../mapper-design';
 
 import s from './index.module.scss';
 import { DomainDesignerContextProvider } from './Context';
@@ -13,13 +22,6 @@ import { DomainDesignerHeader } from './Header';
 import { DomainDesignerLoading } from './Loading';
 import { DomainDesignerTabs, DomainDesignerTabsMap, DomainDesignerModel } from './model';
 import { TabLabel } from './TabLabel';
-import { YJS_FIELD_NAME } from '../constants';
-import { VisionDesign } from '../vision-design';
-import { UbiquitousLanguage } from '../ubiquitous-language-design';
-import { CompletionContextProvider } from '@/lib/components/Completion';
-import { ProductDesign } from '../product-design';
-import { MapperEditor } from '../mapper-design';
-import { VersionStatus } from '@/lib/core';
 
 export interface DomainDescription {
   id: string | number;
@@ -75,7 +77,8 @@ export interface DomainDesignerProps {
  * 领域模型设计器
  */
 const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerProps) {
-  const { id, readonly } = props;
+  const { id, readonly, description } = props;
+  const router = useRouter();
   const model = useMemo(() => {
     const instance = new DomainDesignerModel({ id, readonly });
 
@@ -151,12 +154,44 @@ const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerPro
     };
   }, [model]);
 
+  /**
+   * 关闭阻止
+   */
+  useEffect(() => {
+    if (readonly) {
+      return;
+    }
+
+    const listener = (evt: Event) => {
+      evt.preventDefault();
+
+      // @ts-expect-error
+      return (evt.returnValue = '确定关闭吗？');
+    };
+
+    window.addEventListener('beforeunload', listener, { capture: true });
+    router.beforePopState(() => {
+      const confirm = window.confirm('确定关闭吗？');
+
+      return confirm;
+    });
+
+    return () => {
+      window.removeEventListener('beforeunload', listener, { capture: true });
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [readonly]);
+
   return (
     <DomainDesignerContextProvider value={model}>
       <CompletionContextProvider words={model.ubiquitousLanguageModel.words}>
         <div className={classNames('vd-domain', s.root)}>
           <DomainDesignerLoading></DomainDesignerLoading>
-          <DomainDesignerHeader></DomainDesignerHeader>
+          <DomainDesignerHeader
+            name={description?.name}
+            version={description?.version}
+            versionStatus={description?.versionStatus}
+          ></DomainDesignerHeader>
           <Tabs
             className={classNames('vd-domain-body', s.body)}
             items={items}

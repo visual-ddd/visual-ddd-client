@@ -15,6 +15,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
+  &:hover {
+    background-color: var(--vd-color-gray-100);
+  }
 }
 
 .center {
@@ -26,4 +30,16 @@
 
 .aside {
   padding: 0 var(--vd-spacing-sm);
+}
+
+.name {
+  color: var(--vd-color-font-secondary);
+}
+
+.split {
+  display: inline-block;
+  text-align: center;
+  font-weight: 300;
+  width: 15px;
+  color: var(--vd-color-gray-600);
 }
