@@ -10,7 +10,7 @@ import { request } from '../request';
  * @returns
  */
 export function useRequest<R = any, P extends {} = any>(
-  url: string,
+  url: string | null,
   body?: P,
   config?: RequestConfig & {
     swrConfig?: SWRConfiguration;
@@ -19,7 +19,7 @@ export function useRequest<R = any, P extends {} = any>(
   return useSWR(
     url,
     async () => {
-      const result = await request.request<R, P>(url, body, config);
+      const result = await request.request<R, P>(url!, body, config);
 
       return result;
     },

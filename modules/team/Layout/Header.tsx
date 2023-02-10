@@ -12,13 +12,14 @@ export interface HeaderProps {
 
 export const Header = observer(function Header(props: HeaderProps) {
   const { className, title, ...other } = props;
+
   return (
     <div className={classNames('vd-layout-header', className, s.root)} {...other}>
       <div className={classNames('vd-layout-header__logo', s.logo)}>
         <LogoIcon />
       </div>
-      <div className={classNames('vd-layout-header__content')}>
-        {!!title && <div className={classNames('vd-layout-header__title')}>{title}</div>}
+      <div className={classNames('vd-layout-header__content', s.content)}>
+        {!!title && <div className={classNames('vd-layout-header__title', s.title)}>{title}</div>}
       </div>
     </div>
   );

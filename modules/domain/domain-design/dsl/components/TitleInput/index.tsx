@@ -1,4 +1,4 @@
-import { useCompletion } from '@/lib/components';
+import { useCompletion } from '@/lib/components/Completion';
 import { NoopArray } from '@wakeapp/utils';
 import { AutoCompleteProps, AutoComplete } from 'antd';
 import classNames from 'classnames';

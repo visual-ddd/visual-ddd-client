@@ -1,0 +1,17 @@
+.root {
+  display: inline-flex;
+  color: white;
+  font-size: 12px;
+  padding: 4px 6px;
+  border-radius: 2px;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+.version {
+  font-weight: bold;
+}
+
+.status {
+  margin-left: var(--vd-spacing-xs);
+  color: var(--vd-color-gray-400);
+}
