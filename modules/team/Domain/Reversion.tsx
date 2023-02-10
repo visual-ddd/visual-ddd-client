@@ -100,7 +100,6 @@ export const DomainReversion = (props: DomainReversionProps) => {
 
   return (
     <div className={classNames('vd-domain-rv', s.root)}>
-      <div className={classNames('vd-domain-rv__desc', s.desc)}>{detail.description || '未配置描述'}</div>
       <div className={classNames('vd-domain-rv__meta', s.meta)}>
         <Space>
           <span className={classNames('vd-domain-rv__version', s.version)}>
@@ -154,8 +153,21 @@ export const DomainReversion = (props: DomainReversionProps) => {
       </div>
       <div className={classNames('vd-domain-rv__detail', s.detail)}>
         <div className={classNames('vd-domain-rv__col', s.col)}>
-          <Card size="small" title="愿景/目标">
-            {dsl?.vision || '未配置愿景/目标'}
+          <Card size="small" title="简介">
+            <div className={classNames('vd-domain-rv-section', s.section)}>
+              <div className={classNames('vd-domain-rv-section__name', s.sectionName)}>描述</div>
+              {detail.description || '未配置描述'}
+            </div>
+            <div className={classNames('vd-domain-rv__section', s.section)}>
+              <div className={classNames('vd-domain-rv-section__name', s.sectionName)}>
+                版本描述({detail.version.currentVersion})
+              </div>
+              {detail.version.description}
+            </div>
+            <div className={classNames('vd-domain-rv__section', s.section)}>
+              <div className={classNames('vd-domain-rv-section__name', s.sectionName)}>愿景/目标</div>
+              {dsl?.vision || '未配置愿景/目标'}
+            </div>
           </Card>
         </div>
         <div className={classNames('vd-domain-rv__col', s.col)}>
