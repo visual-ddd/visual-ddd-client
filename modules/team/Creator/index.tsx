@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { CreateDomain, useCreateDomain } from '../Domain/Create';
+import { CreateApp, useCreateApp } from '../App/Create';
 
 import s from './index.module.scss';
 
@@ -11,6 +12,7 @@ export const TeamCreator = () => {
   const router = useRouter();
   const teamId = router.query.id as string | undefined;
   const createDomainRef = useCreateDomain();
+  const createAppRef = useCreateApp();
 
   const menus = useMemo<MenuProps>(() => {
     return {
@@ -30,7 +32,9 @@ export const TeamCreator = () => {
         {
           key: 'app',
           label: '创建应用',
-          onClick: () => {},
+          onClick: () => {
+            createAppRef.current?.open();
+          },
         },
       ],
     };
@@ -43,6 +47,7 @@ export const TeamCreator = () => {
         <PlusOutlined />
       </Dropdown>
       <CreateDomain ref={createDomainRef} teamId={teamId!} />
+      <CreateApp ref={createAppRef} teamId={teamId!} />
     </div>
   );
 };

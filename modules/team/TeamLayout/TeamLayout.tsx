@@ -62,7 +62,7 @@ export const TeamLayout = observer(function TeamLayout(props: TeamLayoutProps) {
             children: model?.domainListMenu,
           },
           { icon: <FlowIcon />, name: '业务场景', route: `/team/${teamId}/scenario` },
-          { icon: <AppIcon />, name: '应用', route: `/team/${teamId}/app` },
+          { icon: <AppIcon />, name: '应用', route: `/team/${teamId}/app`, children: model?.appListMenu },
         ]}
         actions={NoopArray}
         primarySidebarSlot={<Creator />}

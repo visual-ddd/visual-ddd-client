@@ -1,15 +1,14 @@
-import { getLayout } from '@/modules/layout';
-import { useRouter } from 'next/router';
+import { getTeamLayout } from '@/modules/team/TeamLayout';
+import dynamic from 'next/dynamic';
 
+const Home = dynamic(() => import('@/modules/team/App/Home'), { ssr: false });
+
+/**
+ * 应用首页
+ * @returns
+ */
 export default function App() {
-  const router = useRouter();
-  const { id } = router.query;
-  return (
-    <div>
-      <div>我是团队app业务域内容,id:{id}</div>
-    </div>
-  );
+  return <Home />;
 }
 
-App.getLayout = getLayout;
-App.pageTitle = 'app业务域';
+App.getLayout = getTeamLayout;

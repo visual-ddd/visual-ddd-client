@@ -1,6 +1,6 @@
 import { request } from '@/modules/backend-client';
 import { computed, makeObservable, observable, runInAction } from 'mobx';
-import { DomainSimple } from '../types';
+import { AppSimple, DomainSimple } from '../types';
 
 export class TeamLayoutModel {
   private teamId: string;
@@ -8,11 +8,22 @@ export class TeamLayoutModel {
   @observable
   domainList: DomainSimple[] = [];
 
+  @observable
+  appList: AppSimple[] = [];
+
   @computed
   get domainListMenu() {
     return this.domainList.map(i => ({
       name: i.name,
       route: `/team/${this.teamId}/domain/${i.id}`,
+    }));
+  }
+
+  @computed
+  get appListMenu() {
+    return this.appList.map(i => ({
+      name: i.name,
+      route: `/team/${this.teamId}/app/${i.id}`,
     }));
   }
 
@@ -26,8 +37,13 @@ export class TeamLayoutModel {
     this.getDomainList();
   };
 
+  refreshAppList = () => {
+    this.getAppList();
+  };
+
   initial() {
     this.getDomainList();
+    this.getAppList();
   }
 
   private getDomainList = async () => {
@@ -39,6 +55,18 @@ export class TeamLayoutModel {
 
     runInAction(() => {
       this.domainList = list;
+    });
+  };
+
+  private getAppList = async () => {
+    const list = await request.requestByGet<AppSimple[]>('/wd/visual/web/application/application-page-query', {
+      teamId: this.teamId,
+      pageNo: 1,
+      pageSize: 1000,
+    });
+
+    runInAction(() => {
+      this.appList = list;
     });
   };
 }

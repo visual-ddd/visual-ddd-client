@@ -54,3 +54,29 @@ export interface DomainDetailPayload extends DomainSimple {
 export interface DomainDetail extends DomainSimple {
   version: DomainVersion;
 }
+
+export interface AppSimple {
+  createBy: string;
+  createTime: string;
+  updateBy: string;
+  updateTime: string;
+  description: string;
+  id: number;
+
+  /**
+   * 标识符
+   */
+  identity: string;
+  name: string;
+  packageName: string;
+  teamId: number;
+}
+
+export interface AppCreatePayload {
+  identity: string;
+  name: string;
+  teamId: number;
+  packageName: string;
+  description?: string;
+  startVersion: string;
+}
