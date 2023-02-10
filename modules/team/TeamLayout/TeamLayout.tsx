@@ -7,7 +7,7 @@ import { TeamIcon } from './TeamIcon';
 import { DomainIcon } from './DomainIcon';
 import { FlowIcon } from './FlowIcon';
 import { AppIcon } from './AppIcon';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { TeamLayoutModel } from './TeamLayoutModel';
 import { TeamLayoutProvider } from './Context';
 import { NoopArray } from '@wakeapp/utils';
@@ -24,6 +24,10 @@ export const TeamLayout = observer(function TeamLayout(props: TeamLayoutProps) {
   const router = useRouter();
   const teamId = router.query.id as string | undefined;
   const model = useMemo(() => (teamId ? new TeamLayoutModel({ teamId }) : undefined), [teamId]);
+
+  useEffect(() => {
+    model?.initial();
+  }, [model]);
 
   return (
     <TeamLayoutProvider value={model}>

@@ -19,14 +19,16 @@ export class TeamLayoutModel {
   constructor(inject: { teamId: string }) {
     this.teamId = inject.teamId;
 
-    this.initial();
-
     makeObservable(this);
   }
 
   refreshDomainList = () => {
     this.getDomainList();
   };
+
+  initial() {
+    this.getDomainList();
+  }
 
   private getDomainList = async () => {
     const list = await request.requestByGet<DomainSimple[]>('/wd/visual/web/domain-design/domain-design-page-query', {
@@ -39,8 +41,4 @@ export class TeamLayoutModel {
       this.domainList = list;
     });
   };
-
-  private initial() {
-    this.getDomainList();
-  }
 }
