@@ -8,8 +8,18 @@ import { IVersion, VersionStatus } from './types';
 
 export interface VersionListProps {
   onRequest: (params: { pageNo: number; pageSize: number }) => Promise<{ data: IVersion[]; total: number }>;
+  /**
+   * 是否可以编辑，默认为 true
+   */
+  editable?: boolean;
   onEdit?: (item: IVersion) => void;
+
   onFork?: (item: IVersion) => void;
+
+  /**
+   * 是否可以预览， 默认为 true
+   */
+  previewable?: boolean;
   onPreview?: (item: IVersion) => void;
   onNavigate?: (item: IVersion) => void;
 }
@@ -27,7 +37,7 @@ export function useVersionListRef() {
  * 版本列表
  */
 export const VersionList = forwardRef<VersionListRef, VersionListProps>((props, ref) => {
-  const { onRequest } = props;
+  const { onRequest, previewable = true, editable = true } = props;
   const propsRef = useRefValue(props);
   const [visible, setVisible] = useState(false);
 
@@ -65,7 +75,7 @@ export const VersionList = forwardRef<VersionListRef, VersionListProps>((props, 
             <Button
               size="small"
               type="link"
-              key="preview"
+              key="detail"
               onClick={() => {
                 propsRef.current?.onNavigate?.(item);
                 setVisible(false);
@@ -73,7 +83,7 @@ export const VersionList = forwardRef<VersionListRef, VersionListProps>((props, 
             >
               跳转
             </Button>,
-            item.state === VersionStatus.UNPUBLISHED && (
+            editable && item.state === VersionStatus.UNPUBLISHED && (
               <Button
                 size="small"
                 type="link"
@@ -86,17 +96,19 @@ export const VersionList = forwardRef<VersionListRef, VersionListProps>((props, 
                 编辑
               </Button>
             ),
-            <Button
-              size="small"
-              type="link"
-              key="preview"
-              onClick={() => {
-                propsRef.current?.onPreview?.(item);
-                setVisible(false);
-              }}
-            >
-              预览
-            </Button>,
+            previewable && (
+              <Button
+                size="small"
+                type="link"
+                key="preview"
+                onClick={() => {
+                  propsRef.current?.onPreview?.(item);
+                  setVisible(false);
+                }}
+              >
+                预览
+              </Button>
+            ),
             <Button
               size="small"
               type="link"
@@ -111,7 +123,7 @@ export const VersionList = forwardRef<VersionListRef, VersionListProps>((props, 
         },
       },
     ],
-    [propsRef]
+    [propsRef, previewable, editable]
   );
 
   useImperativeHandle(
@@ -143,6 +155,7 @@ export const VersionList = forwardRef<VersionListRef, VersionListProps>((props, 
       <ProTable
         cardProps={{ size: 'small' }}
         columns={columns}
+        rowKey="id"
         search={false}
         size="small"
         options={false}

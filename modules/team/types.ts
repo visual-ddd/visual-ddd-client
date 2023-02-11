@@ -55,6 +55,21 @@ export interface DomainDetail extends DomainSimple {
   version: DomainVersion;
 }
 
+export interface ScenarioVersion {
+  businessSceneId: number;
+  createBy: string;
+  createTime: string;
+  currentVersion: string;
+  description: string;
+  dsl: string;
+  graphDsl: string;
+  id: number;
+  startVersion: string;
+  state: number;
+  updateBy: string;
+  updateTime: string;
+}
+
 export interface AppSimple {
   createBy: string;
   createTime: string;
@@ -79,4 +94,36 @@ export interface AppCreatePayload {
   packageName: string;
   description?: string;
   startVersion: string;
+}
+
+/**
+ * 应用版本信息
+ */
+export interface AppVersion {
+  applicationId: number;
+  businessSceneVersionDTOList?: ScenarioVersion[];
+  businessSceneVersionIds?: number[];
+  createBy: string;
+  createTime: string;
+  currentVersion: string;
+  description: string;
+  domainDesignVersionDTOList?: DomainVersion[];
+  domainDesignVersionIds?: number[];
+  dsl?: string;
+  id: number;
+  startVersion: string;
+  state: VersionStatus;
+  updateBy: string;
+  updateTime: string;
+}
+
+/**
+ * 应用详情
+ */
+export interface AppDetail extends AppSimple {
+  version: AppVersion;
+}
+
+export interface AppDetailPayload extends AppSimple {
+  applicationLatestVersion: AppVersion;
 }
