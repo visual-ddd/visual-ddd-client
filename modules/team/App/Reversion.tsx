@@ -17,6 +17,7 @@ import { request } from '@/modules/backend-client';
 
 import { useLayoutTitle } from '../Layout';
 import { AppDetail, VersionStatus } from '../types';
+import { UpdateApp, useUpdateApp } from './Update';
 
 export interface AppReversionProps {
   detail: AppDetail;
@@ -26,6 +27,7 @@ export const AppReversion = (props: AppReversionProps) => {
   const { detail } = props;
   const router = useRouter();
   useLayoutTitle(`应用 - ${detail.name}`);
+  const updateRef = useUpdateApp();
   const versionListRef = useVersionListRef();
   const versionCreateRef = useVersionCreateRef();
   const versionPublishRef = useVersionPublishRef();
@@ -152,8 +154,20 @@ export const AppReversion = (props: AppReversionProps) => {
         <>
           <Card size="small" title="操作">
             <Space>
-              <Button size="small" type="primary">
+              <Button size="small" type="primary" onClick={() => updateRef.current?.open()}>
                 设置
+              </Button>
+              <Button size="small" type="primary">
+                关联业务域
+              </Button>
+              <Button size="small" type="primary">
+                关联业务场景
+              </Button>
+              <Button size="small" type="primary">
+                接口列表
+              </Button>
+              <Button size="small" type="primary">
+                下载脚手架
               </Button>
             </Space>
           </Card>
@@ -174,6 +188,7 @@ export const AppReversion = (props: AppReversionProps) => {
       />
       <VersionCreate ref={versionCreateRef} onSubmit={handleCreateVersion} />
       <VersionPublish ref={versionPublishRef} onSubmit={handlePublish} />
+      <UpdateApp ref={updateRef} detail={detail} />
     </PreviewPageLayout>
   );
 };

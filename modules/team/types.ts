@@ -127,3 +127,10 @@ export interface AppDetail extends AppSimple {
 export interface AppDetailPayload extends AppSimple {
   applicationLatestVersion: AppVersion;
 }
+
+export interface AppUpdatePayload {
+  id: number;
+  name: string;
+  packageName: string;
+  description?: string;
+}
