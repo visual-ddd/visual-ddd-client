@@ -145,11 +145,14 @@ export const UbiquitousLanguage = observer(function UbiquitousLanguage(props: Ub
           <Button size="small" disabled={readonly}>
             导入 Excel
           </Button>
-          <Button size="small">导出</Button>
+          <Button size="small" onClick={model.exportExcel}>
+            导出
+          </Button>
         </Space>
       </div>
       <div className={classNames('vd-ul__table', s.table)}>
         <Table
+          loading={model.loading}
           rowKey="uuid"
           rowSelection={{ selectedRowKeys: model.selecting, onChange: e => model.setSelecting(e as string[]) }}
           columns={columns}

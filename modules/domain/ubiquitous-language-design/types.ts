@@ -31,6 +31,9 @@ export interface UbiquitousLanguageItem {
 }
 
 export interface IUbiquitousLanguageModel {
+  loading?: boolean;
+  error?: Error;
+
   /**
    * 只读模式
    */
@@ -53,4 +56,6 @@ export interface IUbiquitousLanguageModel {
   removeItem(params: { uuid: string }): void;
 
   removeSelecting(): void;
+
+  exportExcel?: () => void;
 }

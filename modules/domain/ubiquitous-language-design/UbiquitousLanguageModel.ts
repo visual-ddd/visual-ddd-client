@@ -2,10 +2,10 @@ import { makeAutoBindThis, mutation } from '@/lib/store';
 import { makeObservable, observable, runInAction, computed, reaction } from 'mobx';
 import { Doc as YDoc, Array as YArray, Map as YMap } from 'yjs';
 import { v4 } from 'uuid';
-import Fuse from 'fuse.js';
 
 import { IUbiquitousLanguageModel, UbiquitousLanguageItem } from './types';
 import { UbiquitousLanguageEvent } from './UbiquitousLanguageEvents';
+import { UbiquitousLanguageFuseStore } from './UbiquitousLanguageFuseStore';
 
 class ItemWrapper {
   static from(item: UbiquitousLanguageItem) {
@@ -43,31 +43,6 @@ class ItemWrapper {
 
   toJSON(): UbiquitousLanguageItem {
     return this.map.toJSON() as UbiquitousLanguageItem;
-  }
-}
-
-class FuseStore {
-  private fuse = new Fuse<UbiquitousLanguageItem>([], { keys: ['conception', 'englishName'] });
-
-  add(item: UbiquitousLanguageItem) {
-    this.fuse.add(item);
-  }
-
-  remove(item: UbiquitousLanguageItem) {
-    this.fuse.remove(i => {
-      return i.uuid === item.uuid;
-    });
-  }
-
-  update(item: UbiquitousLanguageItem, key: keyof UbiquitousLanguageItem, value: string) {
-    if (key === 'conception' || key === 'englishName') {
-      this.remove(item);
-      this.add(item);
-    }
-  }
-
-  search(filter: string) {
-    return this.fuse.search(filter);
   }
 }
 
@@ -134,7 +109,7 @@ export class UbiquitousLanguageModel implements IUbiquitousLanguageModel {
    */
   private datasourcePulling: boolean = false;
   private event: UbiquitousLanguageEvent = new UbiquitousLanguageEvent();
-  private fuseStore = new FuseStore();
+  private fuseStore = new UbiquitousLanguageFuseStore();
 
   constructor(inject: { doc: YDoc; datasource: YArray<YMap<string>>; readonly?: boolean }) {
     const { datasource, readonly = false } = inject;

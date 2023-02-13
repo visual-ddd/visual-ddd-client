@@ -12,7 +12,12 @@ import type { VDSessionDetail } from '../types';
 export function useSession(options?: { redirectTo?: string | URL }) {
   const router = useRouter();
   const redirect = options?.redirectTo;
-  const { data, isLoading } = useRequestByGet<VDSessionDetail>('/api/session');
+  const { data, isLoading } = useRequestByGet<VDSessionDetail>('/api/session', undefined, {
+    swrConfig: {
+      revalidateOnMount: false,
+      revalidateOnFocus: false,
+    },
+  });
 
   useEffect(() => {
     if (data == null && !isLoading && redirect) {
