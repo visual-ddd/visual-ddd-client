@@ -9,6 +9,7 @@ import {
   VersionPublish,
   useVersionPublishRef,
   VersionPublishProps,
+  IVersion,
 } from '@/lib/components/VersionControl';
 import { PreviewPageLayout, PreviewPageSection, PreviewPageVersion } from '@/lib/components/PreviewPageLayout';
 import { Button, Card, Space, Statistic } from 'antd';
@@ -16,8 +17,9 @@ import classNames from 'classnames';
 import { request } from '@/modules/backend-client';
 
 import { useLayoutTitle } from '../Layout';
-import { AppDetail, VersionStatus } from '../types';
+import { AppDetail, DomainSimple, VersionStatus } from '../types';
 import { UpdateApp, useUpdateApp } from './Update';
+import { Association, AssociationProps, IAssociable, useAssociation } from './Association';
 
 export interface AppReversionProps {
   detail: AppDetail;
@@ -31,7 +33,9 @@ export const AppReversion = (props: AppReversionProps) => {
   const versionListRef = useVersionListRef();
   const versionCreateRef = useVersionCreateRef();
   const versionPublishRef = useVersionPublishRef();
+  const domainAssociationRef = useAssociation();
   const status = detail.version.state;
+  const readonly = status === VersionStatus.PUBLISHED;
 
   const requestVersionList: VersionListProps['onRequest'] = async ({ pageNo, pageSize }) => {
     const { totalCount, data } = await request.requestPaginationByGet(
@@ -45,6 +49,48 @@ export const AppReversion = (props: AppReversionProps) => {
     );
 
     return { data, total: totalCount };
+  };
+
+  const requestDomainAssociations: AssociationProps['onRequest'] = async () => {
+    const list = await request.requestByGet<DomainSimple[]>('/wd/visual/web/domain-design/domain-design-page-query', {
+      teamId: detail.teamId,
+      pageNo: 1,
+      pageSize: 1000,
+    });
+
+    return list.map<IAssociable>(i => {
+      return {
+        ...i,
+        version: detail.version.domainDesignVersionDTOList?.find(j => {
+          return j.domainDesignId === i.id;
+        }),
+      };
+    });
+  };
+
+  const requestDomainVersionList: AssociationProps['onRequestVersions'] = async id => {
+    const list = await request.requestByGet<IVersion[]>(
+      '/wd/visual/web/domain-design-version/domain-design-version-page-query',
+      {
+        domainDesignId: id,
+        pageNo: 1,
+        pageSize: 10000,
+      }
+    );
+    return list;
+  };
+
+  /**
+   * 保存业务域关联
+   * @param result
+   */
+  const saveDomainAssociations: AssociationProps['onFinish'] = async result => {
+    await request.requestByPost('/wd/visual/web/application-version/domain-design-version-bind', {
+      id: detail.version.id,
+      domainDesignVersionIds: result.versionIds,
+    });
+
+    router.replace(router.asPath);
   };
 
   const navigateToVersion = (id: number) => {
@@ -157,7 +203,13 @@ export const AppReversion = (props: AppReversionProps) => {
               <Button size="small" type="primary" onClick={() => updateRef.current?.open()}>
                 设置
               </Button>
-              <Button size="small" type="primary">
+              <Button
+                size="small"
+                type="primary"
+                onClick={() => {
+                  domainAssociationRef.current?.open();
+                }}
+              >
                 关联业务域
               </Button>
               <Button size="small" type="primary">
@@ -189,6 +241,15 @@ export const AppReversion = (props: AppReversionProps) => {
       <VersionCreate ref={versionCreateRef} onSubmit={handleCreateVersion} />
       <VersionPublish ref={versionPublishRef} onSubmit={handlePublish} />
       <UpdateApp ref={updateRef} detail={detail} />
+      <Association
+        name="业务域"
+        identify={`${detail.id}.domain`}
+        onRequest={requestDomainAssociations}
+        onRequestVersions={requestDomainVersionList}
+        ref={domainAssociationRef}
+        onFinish={saveDomainAssociations}
+        readonly={readonly}
+      />
     </PreviewPageLayout>
   );
 };
