@@ -27,6 +27,12 @@ export interface UbLangModelProps {
   update(item: UbiquitousLanguageItem): Promise<void>;
 
   exportExcel(): void;
+
+  /**
+   * 导入 excel
+   * @param params
+   */
+  importExcel(params: { file: File }): Promise<void>;
 }
 
 /**
@@ -139,6 +145,14 @@ export class LanguageModel implements IUbiquitousLanguageModel {
     }
   }
 
+  /**
+   * 刷新列表
+   */
+  async refresh() {
+    this.fuseStore.clear();
+    await this.initialize();
+  }
+
   isEditing(id: string, key: keyof UbiquitousLanguageItem): boolean {
     return !!this.editing.get(id)?.has(key);
   }
@@ -202,8 +216,15 @@ export class LanguageModel implements IUbiquitousLanguageModel {
     }
   }
 
-  exportExcel = () => {
-    this.props.exportExcel();
+  exportExcel = async () => {
+    await this.props.exportExcel();
+  };
+
+  importExcel: IUbiquitousLanguageModel['importExcel'] = async params => {
+    await this.props.importExcel(params);
+
+    // 刷新
+    this.refresh();
   };
 
   /**

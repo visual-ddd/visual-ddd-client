@@ -4,6 +4,8 @@ import { observer } from 'mobx-react';
 import { useEffect, useMemo, useRef } from 'react';
 
 import { IUbiquitousLanguageModel, UbiquitousLanguageItem } from './types';
+import { Import } from '@/lib/components/Import';
+
 import s from './List.module.scss';
 
 export interface UbiquitousLanguageProps {
@@ -142,12 +144,18 @@ export const UbiquitousLanguage = observer(function UbiquitousLanguage(props: Ub
           <Button size="small" disabled={readonly}>
             导入 Word
           </Button>
-          <Button size="small" disabled={readonly}>
-            导入 Excel
-          </Button>
-          <Button size="small" onClick={model.exportExcel}>
-            导出
-          </Button>
+          {!!model.importExcel && (
+            <Import template="/TODO" title="导入 Excel" onUpload={model.importExcel}>
+              <Button size="small" disabled={readonly}>
+                导入 Excel
+              </Button>
+            </Import>
+          )}
+          {!!model.exportExcel && (
+            <Button size="small" onClick={model.exportExcel}>
+              导出
+            </Button>
+          )}
         </Space>
       </div>
       <div className={classNames('vd-ul__table', s.table)}>

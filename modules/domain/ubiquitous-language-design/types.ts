@@ -57,5 +57,16 @@ export interface IUbiquitousLanguageModel {
 
   removeSelecting(): void;
 
-  exportExcel?: () => void;
+  /**
+   * 导出 excel
+   * @returns
+   */
+  exportExcel?: () => Promise<void>;
+
+  /**
+   * 导入 excel
+   * @param file
+   * @returns
+   */
+  importExcel?: (params: { file: File }) => Promise<void>;
 }

@@ -58,6 +58,13 @@ export const Language = observer(function Language(props: LanguageProps) {
           exportExcel() {
             // TODO: 导出
           },
+          /**
+           * excel 导入
+           * @param param0
+           */
+          async importExcel({ file }) {
+            // TODO: 导入
+          },
         })
       : undefined;
   }, [id, ready, scope]);

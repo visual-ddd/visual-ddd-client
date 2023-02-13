@@ -2,7 +2,11 @@ import Fuse from 'fuse.js';
 import { UbiquitousLanguageItem } from './types';
 
 export class UbiquitousLanguageFuseStore {
-  private fuse = new Fuse<UbiquitousLanguageItem>([], { keys: ['conception', 'englishName'] });
+  private fuse: Fuse<UbiquitousLanguageItem>;
+
+  constructor() {
+    this.fuse = this.createFuse();
+  }
 
   add(item: UbiquitousLanguageItem) {
     this.fuse.add(item);
@@ -23,5 +27,13 @@ export class UbiquitousLanguageFuseStore {
 
   search(filter: string) {
     return this.fuse.search(filter);
+  }
+
+  clear() {
+    this.fuse = this.createFuse();
+  }
+
+  private createFuse() {
+    return new Fuse<UbiquitousLanguageItem>([], { keys: ['conception', 'englishName'] });
   }
 }

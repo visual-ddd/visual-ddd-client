@@ -35,16 +35,8 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 ## TODO
 
-- 接口代理 -> 完成
-- node request session 注入, withWakedataRequest, 异常捕获 -> 完成
-- client request session 注入
-- client request 接口拦截 -> 完成
-- 用户鉴权体系设计
-  - 认证 -> 完成
-  - 授权
-- fetch 拦截 -> 完成
-- useSWR
-
+- 接入团队和组织统一语言
+- 对象结构映射标记类型
 - 对象字段定位
 - NodeYMap 单元测试
 - rule 包含 label, 更好的信息提示
