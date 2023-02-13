@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
-import { Button, Form, FormInstance, Input, Modal, Select, Table, TableProps, Tabs, TabsProps } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Button, Form, FormInstance, Input, message, Modal, Popconfirm, Select, Tabs, TabsProps } from 'antd';
 import { useRef } from 'react';
 
 import { getLayout } from '@/modules/layout';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { ProTable } from '@ant-design/pro-components';
 import { DeleteOutlined } from '@ant-design/icons';
+import { UserListItem } from '@/pages/system/user';
+import { MemberType, MemberTypeOption } from '@/modules/user/constants';
+import { request } from '@/modules/backend-client';
 
 import s from './index.module.scss';
 
@@ -19,10 +22,17 @@ type TableListItem = {
   createTime: string;
   description: string;
   /**
-   * 团队管理员ID(账号ID)
+   * 	所属组织ID
    */
-  organizationManagerId: number;
-  organizationManagerName: string;
+  organizationId: number;
+  /**
+   * 	团队管理员ID(账号id)
+   */
+  teamManagerId: number;
+  /**
+   * 	团队管理员名称
+   */
+  teamManagerName: string;
   updateBy: string;
   updateTime: string;
 };
@@ -41,13 +51,14 @@ enum TAB_KEYS {
 interface BaseInfoProps {
   form: FormInstance;
   onFinish: (values: any) => void;
+  userList: UserListItem[];
 }
 /**
  * 基本信息
  * @param BaseInfoProps
  * @returns
  */
-const BaseInfo = ({ form, onFinish }: BaseInfoProps) => {
+const BaseInfo = ({ form, onFinish, userList }: BaseInfoProps) => {
   return (
     <Form
       name="form"
@@ -65,11 +76,13 @@ const BaseInfo = ({ form, onFinish }: BaseInfoProps) => {
         <Input.TextArea rows={4} placeholder="描述" />
       </Form.Item>
 
-      <Form.Item name="organizationManagerId" label="管理员" rules={[{ required: true, message: '请选择管理员' }]}>
+      <Form.Item name="teamManagerId" label="管理员" rules={[{ required: true, message: '请选择管理员' }]}>
         <Select placeholder="请选择管理员">
-          <Select.Option value={0}>张三</Select.Option>
-          <Select.Option value={1}>李四</Select.Option>
-          <Select.Option value={2}>王五</Select.Option>
+          {userList.map(item => (
+            <Select.Option key={item.id} value={item.id}>
+              {item.userName}
+            </Select.Option>
+          ))}
         </Select>
       </Form.Item>
     </Form>
@@ -79,41 +92,96 @@ const BaseInfo = ({ form, onFinish }: BaseInfoProps) => {
 /**
  * 成员列表
  */
-interface MemberListItem {
+interface TeamMemberListItem {
   accountId: number;
   accountNo: string;
   id: number;
-  memberTypeList: number[];
+  memberTypeList: MemberType[];
   teamId: number;
 }
+interface TeamMemberProp {
+  teamId?: number;
+  userList: UserListItem[];
+}
+
 /**
  * 成员管理
  * @returns
  */
-const Member = () => {
-  const handleDeleteMember = (id: React.Key) => {
-    const newData = dataSource.filter(item => item.id !== id);
-    setDataSource(newData);
+const TeamMember = ({ teamId, userList }: TeamMemberProp) => {
+  const [accountId, setAccountId] = useState<number>();
+  const TeamActionRef = useRef<ActionType>();
+
+  useEffect(() => {
+    TeamActionRef.current?.reload();
+  }, [teamId]);
+
+  /**
+   * 删除团队成员
+   * @param id
+   */
+  const handleDeleteMember = async (id: React.Key) => {
+    try {
+      await request.requestByPost('/wd/visual/web/team-member/team-member-remove', {
+        id,
+      });
+      message.success('删除成功');
+      TeamActionRef.current?.reload();
+    } catch (err) {
+      message.error((err as Error).message);
+    }
   };
 
-  const [dataSource, setDataSource] = useState<MemberListItem[]>([
-    {
-      id: 0,
-      accountId: 0,
-      accountNo: '张三',
-      memberTypeList: [1, 2, 3],
-      teamId: 0,
-    },
-    {
-      id: 1,
-      accountId: 1,
-      accountNo: '李四',
-      memberTypeList: [1, 3],
-      teamId: 1,
-    },
-  ]);
+  let timer: NodeJS.Timeout;
+  /**
+   * 绑定团队成员职位
+   * @param value
+   */
+  const handleChangeRole = async (memberTypeList: MemberType[], id: number) => {
+    if (timer) {
+      clearTimeout(timer);
+    }
 
-  const columns: TableProps<MemberListItem>['columns'] = [
+    try {
+      timer = setTimeout(async () => {
+        await request.requestByPost('/wd/visual/web/team-member/team-member-role-bind', {
+          memberTypeList,
+          id,
+        });
+        TeamActionRef.current?.reload();
+      }, 200);
+    } catch (err) {
+      message.error((err as Error).message);
+    }
+  };
+
+  /**
+   * 添加团队成员
+   */
+  const handleAddMember = async () => {
+    if (!accountId) return;
+    try {
+      await request.requestByPost('/wd/visual/web/team-member/team-member-add', {
+        accountId,
+        memberTypeList: [],
+        teamId,
+      });
+      message.success('添加成功');
+      TeamActionRef.current?.reload();
+    } catch (err) {
+      message.error((err as Error).message);
+    }
+  };
+
+  /**
+   * 选择用户
+   * @param value 用户id
+   */
+  const onChangeAccount = (value: number) => {
+    setAccountId(value);
+  };
+
+  const columns: ProColumns<TeamMemberListItem>[] = [
     {
       title: '用户',
       dataIndex: 'accountNo',
@@ -125,17 +193,19 @@ const Member = () => {
       dataIndex: 'memberTypeList',
       key: 'memberTypeList',
 
-      render: (_: any, record: MemberListItem) => (
-        <Select
+      render: (_: any, record: TeamMemberListItem) => (
+        <Select<MemberType[]>
           placeholder="请选择角色"
-          defaultValue={record.memberTypeList}
-          onChange={handleChangeRole}
+          defaultValue={record.memberTypeList || []}
+          onChange={value => handleChangeRole(value, record.id)}
           mode="multiple"
           style={{ width: '100%' }}
         >
-          <Select.Option value={0}>张三</Select.Option>
-          <Select.Option value={1}>李四</Select.Option>
-          <Select.Option value={2}>王五</Select.Option>
+          {MemberTypeOption.map(item => (
+            <Select.Option key={item.value} value={item.value}>
+              {item.label}
+            </Select.Option>
+          ))}
         </Select>
       ),
     },
@@ -143,35 +213,45 @@ const Member = () => {
       title: '',
       dataIndex: 'operation',
       width: 60,
-      render: (_: any, record: MemberListItem) => (
+      render: (_: any, record: TeamMemberListItem) => (
         <Button type="link" icon={<DeleteOutlined />} onClick={() => handleDeleteMember(record.id)}></Button>
       ),
     },
   ];
 
-  const handleChangeRole = (value: number[]) => {
-    console.log(`selected ${value}`);
-  };
-
-  const handleAddMember = () => {
-    const newData: MemberListItem = {
-      id: dataSource.length,
-      accountId: dataSource.length,
-      accountNo: '张三' + dataSource.length,
-      memberTypeList: [1, 2, 3],
-      teamId: dataSource.length,
-    };
-    setDataSource([...dataSource, newData]);
-  };
-
   return (
     <div>
-      <Table dataSource={dataSource} columns={columns} rowKey="id" />
+      <ProTable<TeamMemberListItem>
+        actionRef={TeamActionRef}
+        columns={columns}
+        rowKey="id"
+        search={false}
+        options={false}
+        request={async ({ current = 1, pageSize = 20 }) => {
+          try {
+            const params = {
+              teamId,
+              pageNo: current,
+              pageSize,
+            };
+            const { success, data, totalCount } = await request.requestPaginationByGet(
+              '/wd/visual/web/team-member/team-member-by-team-id-page-query',
+              params
+            );
+            return { success, data, total: totalCount };
+          } catch (err) {
+            message.error((err as Error).message);
+            return {};
+          }
+        }}
+      />
       <div>
-        <Select placeholder="用户选择器" className={s.memberSelect}>
-          <Select.Option value={0}>张三</Select.Option>
-          <Select.Option value={1}>李四</Select.Option>
-          <Select.Option value={2}>王五</Select.Option>
+        <Select placeholder="用户选择器" className={s.memberSelect} onChange={onChangeAccount}>
+          {userList.map(item => (
+            <Select.Option key={item.id} value={item.id}>
+              {item.userName}
+            </Select.Option>
+          ))}
         </Select>
         <Button onClick={handleAddMember}>添加</Button>
       </div>
@@ -183,9 +263,29 @@ export default function TeamList() {
   const actionRef = useRef<ActionType>();
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
-  const [isAdd, setIsAdd] = useState(true);
+  const [currentId, setCurrentId] = useState<TableListItem['id']>();
   const [form] = Form.useForm();
   const [activeKey, setActiveKey] = useState(TAB_KEYS.base);
+  const [userList, setUserList] = useState<UserListItem[]>([]);
+
+  useEffect(() => {
+    getUserList();
+  }, []);
+
+  /**
+   * 管理员列表
+   */
+  const getUserList = async () => {
+    try {
+      const { data } = await request.requestPaginationByGet('/wd/visual/web/account/account-page-query', {
+        pageNo: 1,
+        pageSize: 9999,
+      });
+      setUserList(data);
+    } catch (err) {
+      message.error((err as Error).message);
+    }
+  };
 
   const handleOk = () => {
     form.submit();
@@ -196,34 +296,37 @@ export default function TeamList() {
    */
   const handleCancel = () => {
     setOpen(false);
-    form.resetFields();
+    setCurrentId(undefined);
     setActiveKey(TAB_KEYS.base);
-    console.log('取消');
+    form.resetFields();
   };
 
   /**
    * 编辑
    */
   const handleEdit = (record: TableListItem) => {
-    setIsAdd(false);
+    setCurrentId(record.id);
     form.setFieldsValue({ ...record });
     setOpen(true);
-    console.log('编辑', record);
   };
 
   /**
    * 删除
    */
-  const handleDelete = (record: TableListItem) => {
-    console.log('删除', record);
+  const handleDelete = async (record: TableListItem) => {
+    try {
+      await request.requestByPost('/wd/visual/web/team/team-remove', { id: record.id });
+      message.success('删除成功');
+      actionRef.current?.reload();
+    } catch (err) {
+      message.error((err as Error).message);
+    }
   };
 
   /**
    * 新增
    */
   const handleAdd = () => {
-    console.log('新增');
-    setIsAdd(true);
     setOpen(true);
   };
 
@@ -231,13 +334,19 @@ export default function TeamList() {
    * 提交表单
    * @param values
    */
-  const onFinish = (values: any) => {
-    console.log('Success:', values);
+  const onFinish = async (values: any) => {
     setConfirmLoading(true);
-    setTimeout(() => {
+    try {
+      const api = currentId ? '/wd/visual/web/team/team-update' : '/wd/visual/web/team/team-create';
+      await request.requestByPost(api, { ...values, id: currentId });
+      message.success('操作成功');
       handleCancel();
+      actionRef.current?.reload();
+    } catch (err) {
+      message.error((err as Error).message);
+    } finally {
       setConfirmLoading(false);
-    }, 2000);
+    }
   };
 
   const columns: ProColumns<TableListItem>[] = [
@@ -248,7 +357,7 @@ export default function TeamList() {
     },
     {
       title: '管理员',
-      dataIndex: 'organizationManagerName',
+      dataIndex: 'teamManagerName',
       hideInSearch: true,
     },
 
@@ -263,9 +372,16 @@ export default function TeamList() {
       valueType: 'option',
       key: 'option',
       render: (text, record, index, action) => [
-        <Button type="link" key="deleteTable" onClick={() => handleDelete(record)}>
-          删除
-        </Button>,
+        <Popconfirm
+          key="deleteTable"
+          title="删除"
+          description="确认删除?"
+          onConfirm={() => handleDelete(record)}
+          okText="确定"
+          cancelText="取消"
+        >
+          <Button type="link">删除</Button>
+        </Popconfirm>,
         <Button type="link" key="editTable" onClick={() => handleEdit(record)}>
           编辑
         </Button>,
@@ -277,12 +393,12 @@ export default function TeamList() {
     {
       label: `基本信息`,
       key: TAB_KEYS.base,
-      children: <BaseInfo form={form} onFinish={onFinish} />,
+      children: <BaseInfo form={form} onFinish={onFinish} userList={userList} />,
     },
     {
       label: `成员管理`,
       key: TAB_KEYS.member,
-      children: <Member />,
+      children: <TeamMember teamId={currentId} userList={userList} />,
     },
   ];
 
@@ -296,49 +412,41 @@ export default function TeamList() {
         columns={columns}
         actionRef={actionRef}
         cardBordered
-        request={async (params = {}, sort, filter) => {
-          console.log(params, sort, filter);
-
-          const data: TableListItem[] = [
-            {
-              createBy: '',
-              createTime: '2023-02-02 12:12:12',
-              description: '',
-              id: 0,
-              name: '团队名称',
-              organizationManagerId: 0,
-              organizationManagerName: '123@wakedata.com',
-              updateBy: '',
-              updateTime: '',
-            },
-          ];
-          return Promise.resolve({
-            data,
-            success: true,
-          });
-        }}
         rowKey="id"
         search={{
           labelWidth: 'auto',
         }}
         options={false}
-        pagination={{
-          pageSize: 5,
-          onChange: page => console.log(page),
-        }}
         toolBarRender={() => [
           <Button key="button" type="primary" onClick={handleAdd}>
             创建团队
           </Button>,
         ]}
+        request={async ({ current = 1, pageSize = 20, ...payload }) => {
+          try {
+            const params = {
+              ...payload,
+              pageNo: current,
+              pageSize,
+            };
+            const { success, data, totalCount } = await request.requestPaginationByGet(
+              '/wd/visual/web/team/team-page-query',
+              params
+            );
+            return { success, data, total: totalCount };
+          } catch (err) {
+            message.error((err as Error).message);
+            return {};
+          }
+        }}
       ></ProTable>
 
       <Modal
-        title={isAdd ? '新增团队' : '编辑团队'}
+        title={currentId ? '编辑团队' : '新增团队'}
         open={open}
         onOk={handleOk}
         onCancel={handleCancel}
-        width={800}
+        width={700}
         footer={
           <>
             <Button key="back" onClick={handleCancel}>
@@ -352,10 +460,10 @@ export default function TeamList() {
           </>
         }
       >
-        {isAdd ? (
-          <BaseInfo form={form} onFinish={onFinish} />
-        ) : (
+        {currentId ? (
           <Tabs tabPosition="left" items={items} onChange={onTabChange} activeKey={activeKey} />
+        ) : (
+          <BaseInfo form={form} onFinish={onFinish} userList={userList} />
         )}
       </Modal>
     </>

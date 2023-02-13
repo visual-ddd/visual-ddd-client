@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { Button, Form, Input, Modal } from 'antd';
+import { Button, Form, Input, message, Modal, Popconfirm } from 'antd';
 import { useRef } from 'react';
 
 import { getLayout } from '@/modules/layout';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { ProTable } from '@ant-design/pro-components';
+import { request } from '@/modules/backend-client';
 
-type TableListItem = {
+export type UserListItem = {
   /**
    * 账号
    */
@@ -29,7 +30,7 @@ export default function User() {
   const actionRef = useRef<ActionType>();
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
-  const [isAdd, setIsAdd] = useState(true);
+  const [currentId, setCurrentId] = useState<UserListItem['id']>();
   const [form] = Form.useForm();
 
   const handleOk = () => {
@@ -41,33 +42,36 @@ export default function User() {
    */
   const handleCancel = () => {
     setOpen(false);
+    setCurrentId(undefined);
     form.resetFields();
-    console.log('取消');
   };
 
   /**
    * 编辑
    */
-  const handleEdit = (record: TableListItem) => {
-    setIsAdd(false);
+  const handleEdit = (record: UserListItem) => {
+    setCurrentId(record.id);
     form.setFieldsValue({ ...record });
     setOpen(true);
-    console.log('编辑', record);
   };
 
   /**
    * 删除
    */
-  const handleDelete = (record: TableListItem) => {
-    console.log('删除', record);
+  const handleDelete = async (record: UserListItem) => {
+    try {
+      await request.requestByPost('/wd/visual/web/account/account-delete', { id: record.id });
+      message.success('删除成功');
+      actionRef.current?.reload();
+    } catch (err) {
+      message.error((err as Error).message);
+    }
   };
 
   /**
    * 新增
    */
   const handleAdd = () => {
-    console.log('新增');
-    setIsAdd(true);
     setOpen(true);
   };
 
@@ -75,16 +79,22 @@ export default function User() {
    * 提交表单
    * @param values
    */
-  const onFinish = (values: any) => {
-    console.log('Success:', values);
+  const onFinish = async (values: any) => {
     setConfirmLoading(true);
-    setTimeout(() => {
+    try {
+      const api = currentId ? '/wd/visual/web/account/account-update' : '/wd/visual/web/account/account-create';
+      await request.requestByPost(api, { ...values, id: currentId });
+      message.success('操作成功');
       handleCancel();
+      actionRef.current?.reload();
+    } catch (err) {
+      message.error((err as Error).message);
+    } finally {
       setConfirmLoading(false);
-    }, 2000);
+    }
   };
 
-  const columns: ProColumns<TableListItem>[] = [
+  const columns: ProColumns<UserListItem>[] = [
     {
       title: '用户名',
       dataIndex: 'userName',
@@ -107,9 +117,16 @@ export default function User() {
       valueType: 'option',
       key: 'option',
       render: (text, record, index, action) => [
-        <Button type="link" key="deleteTable" onClick={() => handleDelete(record)}>
-          删除
-        </Button>,
+        <Popconfirm
+          key="deleteTable"
+          title="删除"
+          description="确认删除?"
+          onConfirm={() => handleDelete(record)}
+          okText="确定"
+          cancelText="取消"
+        >
+          <Button type="link">删除</Button>
+        </Popconfirm>,
         <Button type="link" key="editTable" onClick={() => handleEdit(record)}>
           编辑
         </Button>,
@@ -119,50 +136,41 @@ export default function User() {
 
   return (
     <>
-      <ProTable<TableListItem>
+      <ProTable<UserListItem>
         columns={columns}
         actionRef={actionRef}
         cardBordered
-        request={async (params = {}, sort, filter) => {
-          console.log(params, sort, filter);
-
-          const data: TableListItem[] = [
-            {
-              accountNo: '123@wakedata.com',
-              accountRole: 0,
-              createBy: '',
-              createTime: '2023-02-02 12:12:12',
-              description: '',
-              icon: '',
-              id: 0,
-              updateBy: '',
-              updateTime: '',
-              userName: '张三',
-            },
-          ];
-          return Promise.resolve({
-            data,
-            success: true,
-          });
-        }}
         rowKey="id"
         search={{
           labelWidth: 'auto',
         }}
         options={false}
-        pagination={{
-          pageSize: 5,
-          onChange: page => console.log(page),
-        }}
         toolBarRender={() => [
           <Button key="button" type="primary" onClick={handleAdd}>
             创建用户
           </Button>,
         ]}
+        request={async ({ current = 1, pageSize = 20, ...payload }) => {
+          try {
+            const params = {
+              ...payload,
+              pageNo: current,
+              pageSize,
+            };
+            const { success, data, totalCount } = await request.requestPaginationByGet(
+              '/wd/visual/web/account/account-page-query',
+              params
+            );
+            return { success, data, total: totalCount };
+          } catch (err) {
+            message.error((err as Error).message);
+            return {};
+          }
+        }}
       ></ProTable>
 
       <Modal
-        title={isAdd ? '新增用户' : '编辑用户'}
+        title={currentId ? '编辑用户' : '新增用户'}
         open={open}
         onOk={handleOk}
         confirmLoading={confirmLoading}
@@ -181,20 +189,24 @@ export default function User() {
             <Input placeholder="名称" />
           </Form.Item>
 
-          <Form.Item
-            label="邮箱"
-            name="accountNo"
-            rules={[
-              { required: true, message: '请输入邮箱' },
-              { type: 'email', message: '邮箱格式错误' },
-            ]}
-          >
-            <Input placeholder="邮箱，必须唯一" />
-          </Form.Item>
+          {!currentId && (
+            <>
+              <Form.Item
+                label="邮箱"
+                name="accountNo"
+                rules={[
+                  { required: true, message: '请输入邮箱' },
+                  { type: 'email', message: '邮箱格式错误' },
+                ]}
+              >
+                <Input placeholder="邮箱，必须唯一" />
+              </Form.Item>
 
-          <Form.Item label="密码" name="password" rules={[{ required: true, message: '请输入密码' }]}>
-            <Input.Password placeholder="密码" />
-          </Form.Item>
+              <Form.Item label="密码" name="password" rules={[{ required: true, message: '请输入密码' }]}>
+                <Input.Password placeholder="密码" />
+              </Form.Item>
+            </>
+          )}
         </Form>
       </Modal>
     </>
