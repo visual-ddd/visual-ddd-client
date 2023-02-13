@@ -2,6 +2,35 @@ import { VersionStatus } from '@/lib/core';
 
 export { VersionStatus };
 
+export interface OrganizationDetail {
+  createBy: string;
+  createTime: string;
+  description: string;
+  id: number;
+  name: string;
+  organizationManagerId: number;
+  organizationManagerName: string;
+  updateBy: string;
+  updateTime: string;
+}
+
+/**
+ * 团队详情
+ */
+export interface TeamDetail {
+  createBy: string;
+  createTime: string;
+  description: string;
+  id: number;
+  name: string;
+  organizationDTO: OrganizationDetail;
+  organizationId: number;
+  teamManagerId: number;
+  teamManagerName: string;
+  updateBy: string;
+  updateTime: string;
+}
+
 export interface DomainVersion {
   createBy: string;
   createTime: string;

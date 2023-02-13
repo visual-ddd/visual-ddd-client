@@ -9,7 +9,7 @@ import { LanguageModel } from './LanguageModel';
 
 export interface LanguageProps {
   ready: boolean;
-  id?: string;
+  id?: string | number;
   scope: LanguageScope;
 }
 

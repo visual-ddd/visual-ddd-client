@@ -1,18 +1,25 @@
 import { observer } from 'mobx-react';
 import { useRouter } from 'next/router';
+import { useRequestByGet } from '@/modules/backend-client';
+
+import { TeamDetail } from '../types';
 
 import { LanguageScope } from './types';
 import Language from './Language';
 
 /**
  * 团队统一语言
- * TODO: 获取团队信息
  */
 export const OrganizationLanguage = observer(function OrganizationLanguage() {
   const router = useRouter();
   const teamId = router.query.id as string | undefined;
+  const { data } = useRequestByGet<TeamDetail>(
+    router.isReady ? `/wd/visual/web/team/team-detail-query?id=${teamId}` : null,
+    undefined,
+    { swrConfig: { keepPreviousData: true, revalidateOnFocus: false } }
+  );
 
-  return <Language ready={router.isReady} id={teamId} scope={LanguageScope.TEAM_LANGUAGE} />;
+  return <Language ready={!!data} id={data?.organizationId} scope={LanguageScope.ORGANIZATION_LANGUAGE} />;
 });
 
 export default OrganizationLanguage;
