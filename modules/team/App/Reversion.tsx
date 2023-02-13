@@ -12,7 +12,7 @@ import {
   IVersion,
 } from '@/lib/components/VersionControl';
 import { PreviewPageLayout, PreviewPageSection, PreviewPageVersion } from '@/lib/components/PreviewPageLayout';
-import { Button, Card, Space, Statistic } from 'antd';
+import { Button, Card, Space, Statistic, Modal } from 'antd';
 import classNames from 'classnames';
 import { request } from '@/modules/backend-client';
 
@@ -128,6 +128,21 @@ export const AppReversion = (props: AppReversionProps) => {
     router.replace(router.asPath);
   };
 
+  /**
+   * 下载脚手架
+   */
+  const handleDownload = () => {
+    Modal.confirm({
+      content: '确定下载脚手架？',
+      onOk: async () => {
+        // @ts-expect-error TODO: 下载脚手架
+        const result = await request.requestByPost('/wd/visual/web/application-version/application-code-generate', {
+          id: detail.version.id,
+        });
+      },
+    });
+  };
+
   return (
     <PreviewPageLayout
       className={classNames('vd-domain-rv')}
@@ -218,7 +233,7 @@ export const AppReversion = (props: AppReversionProps) => {
               <Button size="small" type="primary">
                 接口列表
               </Button>
-              <Button size="small" type="primary">
+              <Button size="small" type="primary" onClick={handleDownload}>
                 下载脚手架
               </Button>
             </Space>

@@ -9,7 +9,7 @@ request.initial({
   interceptor: compose(
     (request, next) => {
       // 后端接口多语言
-      request.headers['Accept-Language'] = 'zh-cn';
+      request.headers['Accept-Language'] = 'zh';
       return next();
     },
     async (request, next) => {

@@ -1,4 +1,5 @@
 .root {
+  flex-shrink: 0;
   border-right: 1px solid var(--vd-color-border-light);
   display: flex;
   height: 100%;
