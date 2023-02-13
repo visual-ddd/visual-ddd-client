@@ -40,6 +40,25 @@ export function addCacheWithBuffer(id: string, buffer: Buffer) {
   return buffer;
 }
 
+/**
+ * 保存数据
+ * @param req
+ * @param id 版本 id
+ * @param data
+ */
+const save = async (req: NextApiRequest, id: string, data: Buffer) => {
+  const doc = createDocFromUpdate(data);
+  const dsl = transformToDSL(doc);
+
+  await req.request('/wd/visual/web/domain-design-version/domain-design-dsl-update', {
+    id,
+    domainDesignDsl: JSON.stringify(dsl),
+    graphDsl: data.toString('base64'),
+  });
+
+  return dsl;
+};
+
 const getData = async (req: NextApiRequest): Promise<Buffer> => {
   const id = req.query.id as string;
 
@@ -60,6 +79,9 @@ const getData = async (req: NextApiRequest): Promise<Buffer> => {
       const update = encodeStateAsUpdate(doc);
       const buf = Buffer.from(update);
       addCacheWithBuffer(id, buf);
+
+      // 保存
+      await save(req, id, buf);
 
       return buf;
     } else {
@@ -121,14 +143,8 @@ export const handleSave = withWakedataRequestApiRoute(async (req, res) => {
   }
 
   const buff = addCacheWithBuffer(id, Buffer.from(update));
-  const doc = createDocFromUpdate(update);
-  const dsl = transformToDSL(doc);
 
-  await req.request('/wd/visual/web/domain-design-version/domain-design-dsl-update', {
-    id,
-    domainDesignDsl: JSON.stringify(dsl),
-    graphDsl: buff.toString('base64'),
-  });
+  const dsl = await save(req, id, buff);
 
   res.status(200).json(dsl);
 });
