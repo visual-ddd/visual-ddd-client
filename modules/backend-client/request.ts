@@ -1,5 +1,21 @@
-import { createBackend, compose } from '@wakeapp/wakedata-backend';
+import { createBackend, compose, FuckResponse, Response } from '@wakeapp/wakedata-backend';
 import { gotoLogin, isUnauth } from './helper';
+
+/**
+ * 规范化响应
+ * @param response
+ * @returns
+ */
+export function normalizeResponse<T>(response: FuckResponse<T>): Response<T> {
+  const { data, success, errorCode, errorMessage, msg, code, ...other } = response;
+  return {
+    ...other,
+    data,
+    success,
+    errorCode: errorCode ?? code,
+    errorMessage: errorMessage ?? msg,
+  };
+}
 
 const request = createBackend();
 

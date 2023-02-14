@@ -1,4 +1,4 @@
-import { request } from '@/modules/backend-client';
+import { request, download } from '@/modules/backend-client';
 import { UbiquitousLanguage } from '@/modules/domain/ubiquitous-language-design';
 import { UbiquitousLanguageItem } from '@/modules/domain/ubiquitous-language-design/types';
 import { observer } from 'mobx-react';
@@ -55,15 +55,25 @@ export const Language = observer(function Language(props: LanguageProps) {
           async update(item) {
             await request.requestByPost('/wd/visual/web/universal-language/universal-language-update', { ...item });
           },
-          exportExcel() {
-            // TODO: 导出
+          async exportExcel() {
+            return download({
+              name: '/wd/visual/web/universal-language/universal-language-export',
+              filename: '统一语言.xlsx',
+              method: 'POST',
+              body: {
+                pageNo: 1,
+                pageSize: 1000,
+                languageType: scope,
+                identity: id,
+              },
+            });
           },
           /**
            * excel 导入
            * @param param0
            */
           async importExcel({ file }) {
-            // TODO: 导入
+            // TODO:
           },
         })
       : undefined;

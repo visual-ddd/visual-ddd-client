@@ -217,14 +217,22 @@ export class LanguageModel implements IUbiquitousLanguageModel {
   }
 
   exportExcel = async () => {
-    await this.props.exportExcel();
+    try {
+      await this.props.exportExcel();
+    } catch (err) {
+      message.error(`导出失败：${(err as Error).message}`);
+    }
   };
 
   importExcel: IUbiquitousLanguageModel['importExcel'] = async params => {
-    await this.props.importExcel(params);
+    try {
+      await this.props.importExcel(params);
 
-    // 刷新
-    this.refresh();
+      // 刷新
+      this.refresh();
+    } catch (err) {
+      message.error(`导入失败：${(err as Error).message}`);
+    }
   };
 
   /**
