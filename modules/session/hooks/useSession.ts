@@ -1,4 +1,4 @@
-import { useRequestByGet } from '@/modules/backend-client';
+import { IMMUTABLE_REQUEST_CONFIG, useRequestByGet } from '@/modules/backend-client';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
@@ -12,12 +12,7 @@ import type { VDSessionDetail } from '../types';
 export function useSession(options?: { redirectTo?: string | URL }) {
   const router = useRouter();
   const redirect = options?.redirectTo;
-  const { data, isLoading } = useRequestByGet<VDSessionDetail>('/api/session', undefined, {
-    swrConfig: {
-      revalidateOnMount: false,
-      revalidateOnFocus: false,
-    },
-  });
+  const { data, isLoading } = useRequestByGet<VDSessionDetail>('/api/session', undefined, IMMUTABLE_REQUEST_CONFIG);
 
   useEffect(() => {
     if (data == null && !isLoading && redirect) {

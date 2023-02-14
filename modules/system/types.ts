@@ -16,3 +16,21 @@ export type UserItem = {
    */
   userName: string;
 };
+
+export type OrganizationItem = {
+  /**
+   * 组织名称
+   */
+  name: string;
+  id: number;
+  createBy: string;
+  createTime: string;
+  description: string;
+  /**
+   * 组织管理员ID(账号ID)
+   */
+  organizationManagerId: number;
+  organizationManagerName: string;
+  updateBy: string;
+  updateTime: string;
+};

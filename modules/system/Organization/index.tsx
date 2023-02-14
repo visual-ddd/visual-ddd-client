@@ -1,22 +1,21 @@
 import React, { useState } from 'react';
 import { Button, Form, Input, message, Modal, Popconfirm } from 'antd';
 import { useRef } from 'react';
-import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
+import type { ActionType, ProColumns } from '@ant-design/pro-components';
+import { ProTable } from '@ant-design/pro-components';
 import { request } from '@/modules/backend-client';
+import type { OrganizationItem } from '@/modules/system/types';
 import { useLayoutTitle } from '@/modules/team/Layout';
+import { UserSelect } from '../User';
 
-import { UserItem } from '../types';
-
-export * from './UserSelect';
-
-export function User() {
+export function Organization() {
   const actionRef = useRef<ActionType>();
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
-  const [currentId, setCurrentId] = useState<UserItem['id']>();
+  const [currentId, setCurrentId] = useState<OrganizationItem['id']>();
   const [form] = Form.useForm();
 
-  useLayoutTitle('用户管理');
+  useLayoutTitle('组织管理');
 
   const handleOk = () => {
     form.submit();
@@ -34,7 +33,7 @@ export function User() {
   /**
    * 编辑
    */
-  const handleEdit = (record: UserItem) => {
+  const handleEdit = (record: OrganizationItem) => {
     setCurrentId(record.id);
     form.setFieldsValue({ ...record });
     setOpen(true);
@@ -43,9 +42,9 @@ export function User() {
   /**
    * 删除
    */
-  const handleDelete = async (record: UserItem) => {
+  const handleDelete = async (record: OrganizationItem) => {
     try {
-      await request.requestByPost('/wd/visual/web/account/account-delete', { id: record.id });
+      await request.requestByPost('/wd/visual/web/organization/organization-remove', { id: record.id });
       message.success('删除成功');
       actionRef.current?.reload();
     } catch (err) {
@@ -67,7 +66,9 @@ export function User() {
   const onFinish = async (values: any) => {
     setConfirmLoading(true);
     try {
-      const api = currentId ? '/wd/visual/web/account/account-update' : '/wd/visual/web/account/account-create';
+      const api = currentId
+        ? '/wd/visual/web/organization/organization-update'
+        : '/wd/visual/web/organization/organization-create';
       await request.requestByPost(api, { ...values, id: currentId });
       message.success('操作成功');
       handleCancel();
@@ -79,19 +80,15 @@ export function User() {
     }
   };
 
-  const columns: ProColumns<UserItem>[] = [
+  const columns: ProColumns<OrganizationItem>[] = [
     {
-      title: '用户名',
-      dataIndex: 'userName',
+      title: '组织名称',
+      dataIndex: 'name',
       ellipsis: true,
-      valueType: 'text',
-      fieldProps: {
-        placeholder: '用户名搜索',
-      },
     },
     {
-      title: '邮箱',
-      dataIndex: 'accountNo',
+      title: '管理员',
+      dataIndex: 'organizationManagerName',
       hideInSearch: true,
     },
 
@@ -105,6 +102,7 @@ export function User() {
       title: '操作',
       valueType: 'option',
       key: 'option',
+      width: 120,
       render: (text, record, index, action) => [
         <Popconfirm
           key="deleteTable"
@@ -125,7 +123,7 @@ export function User() {
 
   return (
     <>
-      <ProTable<UserItem>
+      <ProTable<OrganizationItem>
         columns={columns}
         actionRef={actionRef}
         rowKey="id"
@@ -135,7 +133,7 @@ export function User() {
         options={false}
         toolBarRender={() => [
           <Button key="button" type="primary" onClick={handleAdd}>
-            创建用户
+            创建组织
           </Button>,
         ]}
         request={async ({ current = 1, pageSize = 20, ...payload }) => {
@@ -146,7 +144,7 @@ export function User() {
               pageSize,
             };
             const { success, data, totalCount } = await request.requestPaginationByGet(
-              '/wd/visual/web/account/account-page-query',
+              '/wd/visual/web/organization/organization-page-query',
               params
             );
             return { success, data, total: totalCount };
@@ -156,9 +154,8 @@ export function User() {
           }
         }}
       ></ProTable>
-
       <Modal
-        title={currentId ? '编辑用户' : '新增用户'}
+        title={currentId ? '编辑组织' : '新增组织'}
         open={open}
         onOk={handleOk}
         confirmLoading={confirmLoading}
@@ -174,32 +171,21 @@ export function User() {
           onFinish={onFinish}
           autoComplete="off"
         >
-          <Form.Item label="用户名" name="userName" rules={[{ required: true, message: '请输入用户名' }]}>
+          <Form.Item label="组织名称" name="name" rules={[{ required: true, message: '请输入组织名称' }]}>
             <Input placeholder="名称" />
           </Form.Item>
 
-          {!currentId && (
-            <>
-              <Form.Item
-                label="邮箱"
-                name="accountNo"
-                rules={[
-                  { required: true, message: '请输入邮箱' },
-                  { type: 'email', message: '邮箱格式错误' },
-                ]}
-              >
-                <Input placeholder="邮箱，必须唯一" />
-              </Form.Item>
+          <Form.Item label="描述" name="description">
+            <Input.TextArea rows={4} placeholder="描述" />
+          </Form.Item>
 
-              <Form.Item label="密码" name="password" rules={[{ required: true, message: '请输入密码' }]}>
-                <Input.Password placeholder="密码" />
-              </Form.Item>
-            </>
-          )}
+          <Form.Item name="organizationManagerId" label="管理员" rules={[{ required: true, message: '请选择管理员' }]}>
+            <UserSelect placeholder="搜索用户名"></UserSelect>
+          </Form.Item>
         </Form>
       </Modal>
     </>
   );
 }
 
-export default User;
+export default Organization;

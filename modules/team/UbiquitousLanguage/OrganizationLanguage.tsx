@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react';
 import { useRouter } from 'next/router';
-import { useRequestByGet } from '@/modules/backend-client';
+import { IMMUTABLE_REQUEST_CONFIG, useRequestByGet } from '@/modules/backend-client';
 
 import { TeamDetail } from '../types';
 import { useLayoutTitle } from '../Layout';
@@ -17,7 +17,7 @@ export const OrganizationLanguage = observer(function OrganizationLanguage() {
   const { data } = useRequestByGet<TeamDetail>(
     router.isReady ? `/wd/visual/web/team/team-detail-query?id=${teamId}` : null,
     undefined,
-    { swrConfig: { keepPreviousData: true, revalidateOnFocus: false } }
+    IMMUTABLE_REQUEST_CONFIG
   );
 
   useLayoutTitle('组织统一语言');

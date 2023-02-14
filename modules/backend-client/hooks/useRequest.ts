@@ -2,6 +2,19 @@ import useSWR, { SWRConfiguration } from 'swr';
 import type { RequestConfig } from '@wakeapp/wakedata-backend';
 import { request } from '../request';
 
+export interface UseRequestConfig extends RequestConfig {
+  swrConfig?: SWRConfiguration;
+}
+
+export const IMMUTABLE_REQUEST_CONFIG: UseRequestConfig = {
+  swrConfig: {
+    revalidateIfStale: false,
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+    keepPreviousData: true,
+  },
+};
+
 /**
  * wakedata-backend + swr
  * @param url
@@ -9,13 +22,7 @@ import { request } from '../request';
  * @param config
  * @returns
  */
-export function useRequest<R = any, P extends {} = any>(
-  url: string | null,
-  body?: P,
-  config?: RequestConfig & {
-    swrConfig?: SWRConfiguration;
-  }
-) {
+export function useRequest<R = any, P extends {} = any>(url: string | null, body?: P, config?: UseRequestConfig) {
   return useSWR(
     url,
     async () => {
