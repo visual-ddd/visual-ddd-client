@@ -6,7 +6,7 @@ import { message } from 'antd';
 import { debounce } from 'lodash';
 import { makeObservable, observable, reaction } from 'mobx';
 
-export interface UbLangModelProps {
+export interface LanguageModelProps {
   fetcher: () => Promise<UbiquitousLanguageItem[]>;
 
   /**
@@ -36,10 +36,12 @@ export interface UbLangModelProps {
 }
 
 /**
- * TODO: 支持排序
+ * 组织、团队统一语言模型
  */
 export class LanguageModel implements IUbiquitousLanguageModel {
   readonly: boolean = false;
+
+  readonly sortable = false;
 
   @observable
   loading: boolean = false;
@@ -77,12 +79,12 @@ export class LanguageModel implements IUbiquitousLanguageModel {
   @observable
   list: UbiquitousLanguageItem[] = [];
 
-  private props: UbLangModelProps;
+  private props: LanguageModelProps;
   private event: UbiquitousLanguageEvent = new UbiquitousLanguageEvent();
   private fuseStore = new UbiquitousLanguageFuseStore();
   private idsToRemove: string[] = [];
 
-  constructor(props: UbLangModelProps) {
+  constructor(props: LanguageModelProps) {
     this.props = props;
 
     makeObservable(this);

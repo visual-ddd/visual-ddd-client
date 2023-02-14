@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { useRequestByGet } from '@/modules/backend-client';
 
 import { TeamDetail } from '../types';
+import { useLayoutTitle } from '../Layout';
 
 import { LanguageScope } from './types';
 import Language from './Language';
@@ -18,6 +19,8 @@ export const OrganizationLanguage = observer(function OrganizationLanguage() {
     undefined,
     { swrConfig: { keepPreviousData: true, revalidateOnFocus: false } }
   );
+
+  useLayoutTitle('组织统一语言');
 
   return <Language ready={!!data} id={data?.organizationId} scope={LanguageScope.ORGANIZATION_LANGUAGE} />;
 });

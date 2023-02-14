@@ -51,6 +51,9 @@ class ItemWrapper {
  */
 export class UbiquitousLanguageModel implements IUbiquitousLanguageModel {
   readonly readonly: boolean;
+
+  readonly sortable = true;
+
   /**
    * 列表
    */

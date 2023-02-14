@@ -38,6 +38,12 @@ export interface IUbiquitousLanguageModel {
    * 只读模式
    */
   readonly readonly: boolean;
+
+  /**
+   * 是否支持排序
+   */
+  readonly sortable: boolean;
+
   readonly list: UbiquitousLanguageItem[];
   readonly selecting: string[];
 

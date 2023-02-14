@@ -130,7 +130,11 @@ export const UbiquitousLanguage = observer(function UbiquitousLanguage(props: Ub
       </div>
       <div className={classNames('vd-ul__actions', s.actions)}>
         <Space>
-          <Button size="small" onClick={() => model.addItem('unshift')} disabled={readonly}>
+          <Button
+            size="small"
+            onClick={() => (model.sortable ? model.addItem('unshift') : model.addItem('push'))}
+            disabled={readonly}
+          >
             新增一行
           </Button>
           <Button size="small" disabled={!model.selecting.length || readonly} onClick={model.removeSelecting}>
