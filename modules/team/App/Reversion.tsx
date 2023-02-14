@@ -12,9 +12,9 @@ import {
   IVersion,
 } from '@/lib/components/VersionControl';
 import { PreviewPageLayout, PreviewPageSection, PreviewPageVersion } from '@/lib/components/PreviewPageLayout';
-import { Button, Card, Space, Statistic, Modal } from 'antd';
+import { Button, Card, Space, Statistic, Modal, message } from 'antd';
 import classNames from 'classnames';
-import { request } from '@/modules/backend-client';
+import { download, request } from '@/modules/backend-client';
 
 import { useLayoutTitle } from '../Layout';
 import { AppDetail, DomainSimple, VersionStatus } from '../types';
@@ -135,10 +135,18 @@ export const AppReversion = (props: AppReversionProps) => {
     Modal.confirm({
       content: '确定下载脚手架？',
       onOk: async () => {
-        // @ts-expect-error TODO: 下载脚手架
-        const result = await request.requestByPost('/wd/visual/web/application-version/application-code-generate', {
-          id: detail.version.id,
-        });
+        try {
+          await download({
+            method: 'POST',
+            filename: '项目脚手架.zip',
+            name: '/wd/visual/web/application-version/application-code-generate',
+            body: {
+              id: detail.version.id,
+            },
+          });
+        } catch (err) {
+          message.error(`下载项目脚手架失败：${(err as Error).message}`);
+        }
       },
     });
   };
