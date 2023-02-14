@@ -6,6 +6,7 @@ import { withWakedataRequestSsr, VDSessionEntry, VDSessionState } from '@/module
 import { request } from '@/modules/backend-client';
 
 import s from './index.module.scss';
+import { Alert } from 'antd';
 
 interface TeamDTO {
   id: number;
@@ -75,6 +76,9 @@ export default function Launch({ data }: { data: LaunchInfo }) {
     <div className={classNames('vd-launch', s.root)}>
       <Logo />
       <div className={s.groups}>
+        {!data.isSysAdmin && !data.accountOrganizationInfoList.length && !data.teamDTOList.length && (
+          <Alert message="暂时没有加入任何团队，请通知相关团队负责人，邀请进入" type="error" />
+        )}
         {!!data.isSysAdmin && (
           <div
             className={classNames(s.head, 'u-pointer')}
