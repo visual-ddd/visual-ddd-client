@@ -34,7 +34,9 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
 
   return (
     <SWRConfig>
-      <ConfigProvider locale={zhCN}>{getLayout(<Component {...pageProps} />, pageTitle)}</ConfigProvider>
+      <ConfigProvider componentSize="small" locale={zhCN}>
+        {getLayout(<Component {...pageProps} />, pageTitle)}
+      </ConfigProvider>
     </SWRConfig>
   );
 }

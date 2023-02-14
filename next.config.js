@@ -1,8 +1,22 @@
+// @ts-check
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false, // 暂时关闭，打开 react 会模拟 useEffect 多次执行
   swcMinify: true,
   output: 'standalone',
+  // https://nextjs.org/docs/api-reference/next.config.js/redirects
+  redirects: async () => {
+    return [
+      {
+        source: '/system',
+        destination: '/system/user',
+
+        // TODO: 临时解决方案，后续需要优化
+        permanent: false,
+      },
+    ];
+  },
   transpilePackages: [
     '@wakeapp/inversify',
     '@wakeapp/framework-core',

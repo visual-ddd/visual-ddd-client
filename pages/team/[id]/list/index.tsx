@@ -6,7 +6,7 @@ import { getLayout } from '@/modules/layout';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { ProTable } from '@ant-design/pro-components';
 import { DeleteOutlined } from '@ant-design/icons';
-import { UserListItem } from '@/pages/system/user';
+import { UserItem } from '@/modules/system/types';
 import { MemberType, MemberTypeOption } from '@/modules/user/constants';
 import { request } from '@/modules/backend-client';
 
@@ -51,7 +51,7 @@ enum TAB_KEYS {
 interface BaseInfoProps {
   form: FormInstance;
   onFinish: (values: any) => void;
-  userList: UserListItem[];
+  userList: UserItem[];
 }
 /**
  * 基本信息
@@ -102,7 +102,7 @@ interface TeamMemberListItem {
 }
 interface TeamMemberProp {
   teamId?: number;
-  userList: UserListItem[];
+  userList: UserItem[];
 }
 
 /**
@@ -267,7 +267,7 @@ export default function TeamList() {
   const [currentId, setCurrentId] = useState<TableListItem['id']>();
   const [form] = Form.useForm();
   const [activeKey, setActiveKey] = useState(TAB_KEYS.base);
-  const [userList, setUserList] = useState<UserListItem[]>([]);
+  const [userList, setUserList] = useState<UserItem[]>([]);
 
   useEffect(() => {
     getUserList();
