@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { CaretDownOutlined, LeftOutlined, RightOutlined, UserOutlined } from '@ant-design/icons';
 import { Logo } from '@/modules/user';
 import s from './index.module.scss';
-import { PageMenu } from './components';
+import { AccountSetting, PageMenu } from './components';
 
 const { Content, Sider } = Layout;
 
@@ -16,6 +16,7 @@ export interface LayoutProps {
 
 const LayoutPage = ({ children, pageTitle }: LayoutProps) => {
   const [collapsed, setCollapsed] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const router = useRouter();
 
@@ -24,6 +25,7 @@ const LayoutPage = ({ children, pageTitle }: LayoutProps) => {
    */
   const handleAccountSet = () => {
     console.log('账户设置');
+    setOpen(true);
   };
 
   /**
@@ -100,6 +102,7 @@ const LayoutPage = ({ children, pageTitle }: LayoutProps) => {
           </main>
         </Content>
       </Layout>
+      <AccountSetting open={open} setOpen={setOpen}></AccountSetting>
     </Layout>
   );
 };
