@@ -98,6 +98,7 @@ interface TeamMemberListItem {
   id: number;
   memberTypeList: MemberType[];
   teamId: number;
+  teamMemberName: string;
 }
 interface TeamMemberProp {
   teamId?: number;
@@ -184,8 +185,8 @@ const TeamMember = ({ teamId, userList }: TeamMemberProp) => {
   const columns: ProColumns<TeamMemberListItem>[] = [
     {
       title: '用户',
-      dataIndex: 'accountNo',
-      key: 'accountNo',
+      dataIndex: 'teamMemberName',
+      key: 'teamMemberName',
       width: 150,
     },
     {
