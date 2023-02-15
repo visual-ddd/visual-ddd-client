@@ -1,0 +1,14 @@
+.root {
+  :global(.ant-pro-card-body) {
+    padding: 0;
+  }
+}
+
+.add {
+}
+
+.userSelect {
+  width: 12em;
+  margin-top: var(--vd-spacing-sm);
+  margin-right: var(--vd-spacing-xs);
+}

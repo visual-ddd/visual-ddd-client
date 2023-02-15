@@ -1,11 +1,14 @@
-import { getLayout } from '@/modules/layout';
+import { getOrganizationLayout } from '@/modules/organization/OrganizationLayout';
+import dynamic from 'next/dynamic';
 
-export default function OrganizationManage() {
-  return (
-    <div>
-      <div>我是组织主页</div>
-    </div>
-  );
+const Organization = dynamic(() => import('@/modules/organization/Organization'), { ssr: false });
+
+/**
+ * 组织管理
+ * @returns
+ */
+export default function OrganizationPage() {
+  return <Organization />;
 }
 
-OrganizationManage.getLayout = getLayout;
+OrganizationPage.getLayout = getOrganizationLayout;

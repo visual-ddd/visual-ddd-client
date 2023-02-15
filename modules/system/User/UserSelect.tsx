@@ -5,17 +5,20 @@ import { memo, useMemo, useState } from 'react';
 
 import { UserItem } from '../types';
 
-export interface UserSelectProps extends SelectProps {}
+export interface UserSelectProps extends SelectProps {
+  filter?: (item: UserItem) => boolean;
+}
 
 /**
  * 用户选择器
  */
 export const UserSelect = memo((props: UserSelectProps) => {
-  const [filter, setFilter] = useState<string>('');
+  const { filter, ...other } = props;
+  const [query, setQuery] = useState<string>('');
 
   // 搜索列表
   const { isLoading, data } = useRequestByGet<UserItem[]>(
-    `/wd/visual/web/account/account-page-query?pageNo=1&pageSize=20&userName=${filter}`,
+    `/wd/visual/web/account/account-page-query?pageNo=1&pageSize=20&userName=${query}`,
     undefined,
     IMMUTABLE_REQUEST_CONFIG
   );
@@ -40,12 +43,20 @@ export const UserSelect = memo((props: UserSelectProps) => {
     return list.concat([currentUser]);
   }, [currentUser, data]);
 
+  const filtered = useMemo(() => {
+    if (filter) {
+      return options.filter(filter);
+    }
+
+    return options;
+  }, [filter, options]);
+
   const handleSearch = useMemo(
     () =>
       debounce((value: string) => {
-        setFilter(value);
+        setQuery(value);
       }, 400),
-    [setFilter]
+    [setQuery]
   );
 
   return (
@@ -55,12 +66,12 @@ export const UserSelect = memo((props: UserSelectProps) => {
       onSearch={handleSearch}
       filterOption={false}
       showArrow={false}
-      options={options.map(item => ({
+      options={filtered.map(item => ({
         key: item.id,
         label: item.userName,
         value: item.id,
       }))}
-      {...props}
+      {...other}
     />
   );
 });
