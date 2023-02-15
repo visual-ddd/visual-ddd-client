@@ -8,6 +8,7 @@ import { useRouter } from 'next/router';
 import { TeamDetail } from '../types';
 import { CreateTeam, useCreateTeam } from './CreateTeam';
 import { UpdateTeam, useUpdateTeam } from './UpdateTeam';
+import { useLayoutTitle } from '@/modules/team/Layout';
 
 /**
  * 组织管理
@@ -19,6 +20,8 @@ export function Organization() {
   const actionRef = useRef<ActionType>();
   const updateRef = useUpdateTeam();
   const createRef = useCreateTeam();
+
+  useLayoutTitle('团队管理');
 
   /**
    * 编辑

@@ -1,1 +1,1 @@
-export { Register as default } from '@/modules/user';
+export { Register as default } from '@/modules/user/Login';

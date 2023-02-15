@@ -34,7 +34,14 @@ export function Forgot() {
   };
 
   return (
-    <Form name="loginForm" className={s.login} onFinish={handleReset} layout="vertical" requiredMark={false}>
+    <Form
+      name="loginForm"
+      className={s.login}
+      onFinish={handleReset}
+      layout="vertical"
+      requiredMark={false}
+      size="middle"
+    >
       <Form.Item>
         <Logo />
       </Form.Item>

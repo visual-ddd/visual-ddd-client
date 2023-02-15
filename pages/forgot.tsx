@@ -1,1 +1,1 @@
-export { Forgot as default } from '@/modules/user';
+export { Forgot as default } from '@/modules/user/Login';

@@ -52,6 +52,7 @@ export function Register() {
       className={s.login}
       onFinish={handleRegister}
       layout="vertical"
+      size="middle"
       requiredMark={false}
     >
       <Form.Item>

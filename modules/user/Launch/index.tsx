@@ -1,12 +1,12 @@
-import { Logo } from '@/modules/user';
 import { ArrowRightOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import classNames from 'classnames';
-import { withWakedataRequestSsr, VDSessionEntry, VDSessionState } from '@/modules/session/server';
+import { VDSessionEntry, VDSessionState } from '@/modules/session/server';
 import { request } from '@/modules/backend-client';
-
-import s from './index.module.scss';
 import { Alert } from 'antd';
+
+import { Logo } from '../Logo';
+import s from './index.module.scss';
 
 interface TeamDTO {
   id: number;
@@ -41,18 +41,22 @@ interface AccountOrganizationInfoList {
   isOrganizationAdmin: boolean;
 }
 
-interface LaunchInfo {
+export interface LaunchInfo {
   id: number;
   isSysAdmin: boolean;
   teamDTOList: TeamDTOList[];
   accountOrganizationInfoList: AccountOrganizationInfoList[];
 }
 
+export interface LaunchProps {
+  data: LaunchInfo;
+}
+
 /**
  * 启动页
  * @returns
  */
-export default function Launch({ data }: { data: LaunchInfo }) {
+export function Launch({ data }: LaunchProps) {
   const router = useRouter();
 
   const handleGo = async (params: VDSessionState) => {
@@ -140,12 +144,3 @@ export default function Launch({ data }: { data: LaunchInfo }) {
     </div>
   );
 }
-
-export const getServerSideProps = withWakedataRequestSsr<{ data: LaunchInfo }>(async context => {
-  const data = await context.req.request<LaunchInfo>(
-    '/wd/visual/web/account/login/get-account-role',
-    {},
-    { method: 'POST' }
-  );
-  return { props: { data } };
-});

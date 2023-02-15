@@ -48,6 +48,7 @@ export function Login() {
   return (
     <Form<LoginPayload>
       name="loginForm"
+      size="middle"
       className={s.login}
       onFinish={handleLogin}
       layout="vertical"
