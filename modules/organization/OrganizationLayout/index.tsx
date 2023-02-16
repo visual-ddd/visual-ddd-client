@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react';
 
-import { Layout } from '../../team/Layout';
+import { Layout } from '../../Layout';
 
 import { NoopArray } from '@wakeapp/utils';
 import { ControlOutlined } from '@ant-design/icons';

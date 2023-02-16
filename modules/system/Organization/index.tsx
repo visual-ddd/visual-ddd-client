@@ -5,7 +5,7 @@ import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { ProTable } from '@ant-design/pro-components';
 import { request } from '@/modules/backend-client';
 import type { OrganizationDetail } from '@/modules/system/types';
-import { useLayoutTitle } from '@/modules/team/Layout';
+import { useLayoutTitle } from '@/modules/Layout';
 import { UserSelect } from '../User';
 
 export function Organization() {

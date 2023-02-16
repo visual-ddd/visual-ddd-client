@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react';
 import { useRouter } from 'next/router';
+import { useLayoutTitle } from '@/modules/Layout';
 
-import { useLayoutTitle } from '../Layout';
 import { LanguageScope } from './types';
 import Language from './Language';
 

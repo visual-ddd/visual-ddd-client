@@ -8,7 +8,7 @@ import { useRouter } from 'next/router';
 import { TeamDetail } from '../types';
 import { CreateTeam, useCreateTeam } from './CreateTeam';
 import { UpdateTeam, useUpdateTeam } from './UpdateTeam';
-import { useLayoutTitle } from '@/modules/team/Layout';
+import { useLayoutTitle } from '@/modules/Layout';
 
 /**
  * 组织管理

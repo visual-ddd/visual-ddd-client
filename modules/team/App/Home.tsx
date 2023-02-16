@@ -2,7 +2,8 @@ import { useRequestByGet } from '@/modules/backend-client';
 import { Button, Empty } from 'antd';
 import classNames from 'classnames';
 import { useRouter } from 'next/router';
-import { useLayoutTitle } from '../Layout';
+import { useLayoutTitle } from '@/modules/Layout';
+
 import { DomainDetail } from '../types';
 import { CreateApp, useCreateApp } from './Create';
 

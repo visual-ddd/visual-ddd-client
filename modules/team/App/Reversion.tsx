@@ -16,7 +16,7 @@ import { Button, Card, Space, Statistic, Modal, message } from 'antd';
 import classNames from 'classnames';
 import { download, request } from '@/modules/backend-client';
 
-import { useLayoutTitle } from '../Layout';
+import { useLayoutTitle } from '@/modules/Layout';
 import { AppDetail, DomainSimple, VersionStatus } from '../types';
 import { UpdateApp, useUpdateApp } from './Update';
 import { Association, AssociationProps, IAssociable, useAssociation } from './Association';

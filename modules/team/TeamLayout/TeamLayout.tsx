@@ -4,8 +4,8 @@ import { useRouter } from 'next/router';
 import { NoopArray } from '@wakeapp/utils';
 import dynamic from 'next/dynamic';
 import { useSession } from '@/modules/session';
+import { Layout, LayoutAction } from '@/modules/Layout';
 
-import { Layout, LayoutAction } from '../Layout';
 import { LanguageIcon } from './LanguageIcon';
 import { TeamIcon } from './TeamIcon';
 import { DomainIcon } from './DomainIcon';

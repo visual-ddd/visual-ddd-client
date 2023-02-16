@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { IMMUTABLE_REQUEST_CONFIG, useRequestByGet } from '@/modules/backend-client';
 
 import { TeamDetail } from '@/modules/organization/types';
-import { useLayoutTitle } from '../Layout';
+import { useLayoutTitle } from '@/modules/Layout';
 
 import { LanguageScope } from './types';
 import Language from './Language';

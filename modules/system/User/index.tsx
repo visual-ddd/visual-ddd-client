@@ -3,7 +3,7 @@ import { Button, Form, Input, message, Modal, Popconfirm } from 'antd';
 import { useRef } from 'react';
 import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
 import { request } from '@/modules/backend-client';
-import { useLayoutTitle } from '@/modules/team/Layout';
+import { useLayoutTitle } from '@/modules/Layout';
 
 import { UserItem } from '../types';
 

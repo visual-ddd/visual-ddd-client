@@ -17,7 +17,7 @@ import { Button, Card, Space, Statistic } from 'antd';
 import classNames from 'classnames';
 import { request } from '@/modules/backend-client';
 
-import { useLayoutTitle } from '../Layout';
+import { useLayoutTitle } from '@/modules/Layout';
 import { DomainDetail, VersionStatus } from '../types';
 import { UpdateDomain, useUpdateDomain } from './Update';
 
