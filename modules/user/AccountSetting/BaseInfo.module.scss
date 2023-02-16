@@ -1,0 +1,11 @@
+.root {
+  textarea {
+    resize: none;
+  }
+}
+
+.avatar {
+  display: flex;
+  justify-content: center;
+  padding: var(--vd-spacing-sm);
+}

@@ -1,4 +1,6 @@
 export interface VDUser {
+  id: number;
+
   /**
    * 用户标识符
    */

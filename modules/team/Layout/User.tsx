@@ -1,14 +1,15 @@
 import { useSession } from '@/modules/session';
+import { useRouter } from 'next/router';
 import { observer } from 'mobx-react';
 import { Avatar, Dropdown, MenuProps } from 'antd';
 import { useMemo } from 'react';
 import classNames from 'classnames';
 import { request } from '@/modules/backend-client';
+import { AccountSetting, useAccountSetting } from '@/modules/user/AccountSetting';
 import type { MenuItemType, ItemType } from 'antd/es/menu/hooks/useItems';
 
 import { LayoutAction } from './types';
 import s from './User.module.scss';
-import { useRouter } from 'next/router';
 
 export interface UserProps {
   actions: LayoutAction[];
@@ -18,6 +19,7 @@ export const User = observer(function User(props: UserProps) {
   const { actions } = props;
   const router = useRouter();
   const { session } = useSession();
+  const accountSetting = useAccountSetting();
 
   const menus = useMemo<MenuProps>(() => {
     const items: ItemType[] = actions.map(i => {
@@ -56,6 +58,13 @@ export const User = observer(function User(props: UserProps) {
         },
       },
       {
+        key: 'user-setting',
+        label: '账号设置',
+        onClick: () => {
+          accountSetting.current?.open();
+        },
+      },
+      {
         key: 'logout',
         label: '退出登录',
         onClick: async () => {
@@ -66,14 +75,21 @@ export const User = observer(function User(props: UserProps) {
     );
 
     return { items: items };
-  }, [actions, session?.user]);
+  }, [actions, session?.user, accountSetting, router]);
 
   return (
-    <Dropdown menu={menus} placement="topRight" arrow>
-      <Avatar src={session?.user.icon} alt={session?.user.userName} className={classNames('vd-user__avatar', s.avatar)}>
-        {session?.user.userName}
-      </Avatar>
-    </Dropdown>
+    <>
+      <AccountSetting ref={accountSetting} />
+      <Dropdown menu={menus} placement="topRight" arrow>
+        <Avatar
+          src={session?.user.icon}
+          alt={session?.user.userName}
+          className={classNames('vd-user__avatar', s.avatar)}
+        >
+          {session?.user.userName}
+        </Avatar>
+      </Dropdown>
+    </>
   );
 });
 
