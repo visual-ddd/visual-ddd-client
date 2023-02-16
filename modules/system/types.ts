@@ -1,4 +1,4 @@
-export type UserItem = {
+export interface UserDetail {
   /**
    * 账号
    */
@@ -15,7 +15,7 @@ export type UserItem = {
    * 用户名
    */
   userName: string;
-};
+}
 
 /**
  * 组织详情

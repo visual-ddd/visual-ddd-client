@@ -1,49 +1,30 @@
-import React, { useState } from 'react';
-import { Button, Form, Input, message, Modal, Popconfirm } from 'antd';
+import { Button, message, Popconfirm } from 'antd';
 import { useRef } from 'react';
 import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
 import { request } from '@/modules/backend-client';
 import { useLayoutTitle } from '@/modules/Layout';
 
-import { UserItem } from '../types';
+import { UserDetail } from '../types';
+import { CreateUser, useCreateUser } from './Create';
+import { UpdateUser, useUpdateUser } from './Update';
 
 export * from './UserSelect';
 
 export function User() {
   const actionRef = useRef<ActionType>();
-  const [open, setOpen] = useState(false);
-  const [confirmLoading, setConfirmLoading] = useState(false);
-  const [currentId, setCurrentId] = useState<UserItem['id']>();
-  const [form] = Form.useForm();
+  const createRef = useCreateUser();
+  const updateRef = useUpdateUser();
 
   useLayoutTitle('用户管理');
 
-  const handleOk = () => {
-    form.submit();
-  };
-
-  /**
-   * 关闭弹窗
-   */
-  const handleCancel = () => {
-    setOpen(false);
-    setCurrentId(undefined);
-    form.resetFields();
-  };
-
-  /**
-   * 编辑
-   */
-  const handleEdit = (record: UserItem) => {
-    setCurrentId(record.id);
-    form.setFieldsValue({ ...record });
-    setOpen(true);
+  const handleRefresh = () => {
+    actionRef.current?.reload();
   };
 
   /**
    * 删除
    */
-  const handleDelete = async (record: UserItem) => {
+  const handleDelete = async (record: UserDetail) => {
     try {
       await request.requestByPost('/wd/visual/web/account/account-delete', { id: record.id });
       message.success('删除成功');
@@ -53,33 +34,7 @@ export function User() {
     }
   };
 
-  /**
-   * 新增
-   */
-  const handleAdd = () => {
-    setOpen(true);
-  };
-
-  /**
-   * 提交表单
-   * @param values
-   */
-  const onFinish = async (values: any) => {
-    setConfirmLoading(true);
-    try {
-      const api = currentId ? '/wd/visual/web/account/account-update' : '/wd/visual/web/account/account-create';
-      await request.requestByPost(api, { ...values, id: currentId });
-      message.success('操作成功');
-      handleCancel();
-      actionRef.current?.reload();
-    } catch (err) {
-      message.error((err as Error).message);
-    } finally {
-      setConfirmLoading(false);
-    }
-  };
-
-  const columns: ProColumns<UserItem>[] = [
+  const columns: ProColumns<UserDetail>[] = [
     {
       title: '用户名',
       dataIndex: 'userName',
@@ -117,7 +72,7 @@ export function User() {
         >
           <Button type="link">删除</Button>
         </Popconfirm>,
-        <Button type="link" key="editTable" onClick={() => handleEdit(record)}>
+        <Button type="link" key="editTable" onClick={() => updateRef.current?.open(record)}>
           编辑
         </Button>,
       ],
@@ -126,7 +81,7 @@ export function User() {
 
   return (
     <>
-      <ProTable<UserItem>
+      <ProTable<UserDetail>
         columns={columns}
         actionRef={actionRef}
         rowKey="id"
@@ -135,7 +90,7 @@ export function User() {
         }}
         options={false}
         toolBarRender={() => [
-          <Button key="button" type="primary" onClick={handleAdd}>
+          <Button key="button" type="primary" onClick={() => createRef.current?.open()}>
             创建用户
           </Button>,
         ]}
@@ -158,47 +113,8 @@ export function User() {
         }}
       ></ProTable>
 
-      <Modal
-        title={currentId ? '编辑用户' : '新增用户'}
-        open={open}
-        onOk={handleOk}
-        confirmLoading={confirmLoading}
-        onCancel={handleCancel}
-        okText="保存"
-        width={400}
-      >
-        <Form
-          name="form"
-          form={form}
-          labelCol={{ span: 6 }}
-          wrapperCol={{ span: 15 }}
-          onFinish={onFinish}
-          autoComplete="off"
-        >
-          <Form.Item label="用户名" name="userName" rules={[{ required: true, message: '请输入用户名' }]}>
-            <Input placeholder="名称" />
-          </Form.Item>
-
-          {!currentId && (
-            <>
-              <Form.Item
-                label="邮箱"
-                name="accountNo"
-                rules={[
-                  { required: true, message: '请输入邮箱' },
-                  { type: 'email', message: '邮箱格式错误' },
-                ]}
-              >
-                <Input placeholder="邮箱，必须唯一" />
-              </Form.Item>
-
-              <Form.Item label="密码" name="password" rules={[{ required: true, message: '请输入密码' }]}>
-                <Input.Password placeholder="密码" />
-              </Form.Item>
-            </>
-          )}
-        </Form>
-      </Modal>
+      <CreateUser ref={createRef} onFinish={handleRefresh} />
+      <UpdateUser ref={updateRef} onFinish={handleRefresh} />
     </>
   );
 }

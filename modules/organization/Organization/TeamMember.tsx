@@ -4,7 +4,7 @@ import { DeleteOutlined } from '@ant-design/icons';
 import { Button, message } from 'antd';
 import { request } from '@/modules/backend-client';
 import { UserSelect } from '@/modules/system/User';
-import type { UserItem } from '@/modules/system/types';
+import type { UserDetail } from '@/modules/system/types';
 import classNames from 'classnames';
 import { NoopArray } from '@wakeapp/utils';
 
@@ -29,7 +29,7 @@ export const TeamMember = (props: TeamMemberProp) => {
   const [list, setList] = useState<TeamMemberItem[]>(NoopArray);
 
   const addMemberFilter = useCallback(
-    (item: UserItem) => {
+    (item: UserDetail) => {
       return !list.some(i => i.accountId === item.id);
     },
     [list]

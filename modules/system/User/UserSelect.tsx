@@ -3,10 +3,10 @@ import { debounce, NoopArray } from '@wakeapp/utils';
 import { Select, SelectProps } from 'antd';
 import { memo, useMemo, useState } from 'react';
 
-import { UserItem } from '../types';
+import { UserDetail } from '../types';
 
 export interface UserSelectProps extends SelectProps {
-  filter?: (item: UserItem) => boolean;
+  filter?: (item: UserDetail) => boolean;
 }
 
 /**
@@ -17,7 +17,7 @@ export const UserSelect = memo((props: UserSelectProps) => {
   const [query, setQuery] = useState<string>('');
 
   // 搜索列表
-  const { isLoading, data } = useRequestByGet<UserItem[]>(
+  const { isLoading, data } = useRequestByGet<UserDetail[]>(
     `/wd/visual/web/account/account-page-query?pageNo=1&pageSize=20&userName=${query}`,
     undefined,
     IMMUTABLE_REQUEST_CONFIG
