@@ -3,7 +3,9 @@ import { useRouter } from 'next/router';
 import classNames from 'classnames';
 import { VDSessionEntry, VDSessionState } from '@/modules/session/server';
 import { request } from '@/modules/backend-client';
-import { Alert } from 'antd';
+import { Alert, Button, Space } from 'antd';
+import { useMemo } from 'react';
+import { NoopArray } from '@wakeapp/utils';
 
 import s from './index.module.scss';
 import { Layout } from '../Login/Layout';
@@ -61,6 +63,19 @@ export interface LaunchProps {
  */
 export function Launch({ data }: LaunchProps) {
   const router = useRouter();
+  const organizations = useMemo(() => {
+    return (data.accountOrganizationInfoList ?? NoopArray).filter(item => item.isOrganizationAdmin);
+  }, [data.accountOrganizationInfoList]);
+  const isEmpty = !data.isSysAdmin && !organizations.length && !data.teamDTOList.length;
+
+  const handleRefresh = () => {
+    router.replace(router.asPath);
+  };
+
+  const handleLogout = async () => {
+    await request.requestByPost('/api/logout');
+    router.push('/login');
+  };
 
   const handleGo = async (params: VDSessionState) => {
     // 缓存启动配置
@@ -84,8 +99,25 @@ export function Launch({ data }: LaunchProps) {
       <div className={classNames('vd-launch', s.root)}>
         <Layout.H1>选择入口</Layout.H1>
         <div className={s.groups}>
-          {!data.isSysAdmin && !data.accountOrganizationInfoList.length && !data.teamDTOList.length && (
-            <Alert message="暂时没有加入任何团队，请通知相关团队负责人，邀请进入" type="error" />
+          {isEmpty && (
+            <Alert
+              message="抱歉"
+              description={
+                <div>
+                  您暂时没有加入任何团队，请通知相关团队负责人，邀请进入
+                  <div>
+                    <Space className="u-mt-sm">
+                      <Button type="primary" onClick={handleRefresh}>
+                        刷新看看
+                      </Button>
+                      <Button onClick={handleLogout}>退出登录</Button>
+                    </Space>
+                  </div>
+                </div>
+              }
+              type="info"
+              showIcon
+            />
           )}
           {!!data.isSysAdmin && (
             <div
@@ -100,7 +132,7 @@ export function Launch({ data }: LaunchProps) {
             </div>
           )}
 
-          {!!data.accountOrganizationInfoList.length && (
+          {!!organizations.length && (
             <>
               <div className={s.head}>
                 <span className={s.logo}>
@@ -108,7 +140,7 @@ export function Launch({ data }: LaunchProps) {
                 </span>
                 组织管理
               </div>
-              {data.accountOrganizationInfoList.map(item => {
+              {organizations.map(item => {
                 return (
                   <div
                     className={s.item}

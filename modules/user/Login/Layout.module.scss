@@ -58,4 +58,7 @@
 
 .h1 {
   margin: var(--vd-spacing-sm) 0;
+  background: linear-gradient(135deg, var(--vd-color-primary-100), var(--vd-color-primary));
+  -webkit-background-clip: text;
+  color: transparent;
 }
