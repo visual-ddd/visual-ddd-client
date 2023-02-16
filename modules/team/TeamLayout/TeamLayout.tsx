@@ -1,17 +1,19 @@
 import { observer } from 'mobx-react';
+import { useEffect, useMemo } from 'react';
 import { useRouter } from 'next/router';
+import { NoopArray } from '@wakeapp/utils';
+import dynamic from 'next/dynamic';
+import { useSession } from '@/modules/session';
 
-import { Layout } from '../Layout';
+import { Layout, LayoutAction } from '../Layout';
 import { LanguageIcon } from './LanguageIcon';
 import { TeamIcon } from './TeamIcon';
 import { DomainIcon } from './DomainIcon';
 import { FlowIcon } from './FlowIcon';
 import { AppIcon } from './AppIcon';
-import { useEffect, useMemo } from 'react';
 import { TeamLayoutModel } from './TeamLayoutModel';
 import { TeamLayoutProvider } from './Context';
-import { NoopArray } from '@wakeapp/utils';
-import dynamic from 'next/dynamic';
+import { Updater, useUpdater } from '../Updater';
 
 export interface TeamLayoutProps {
   children: React.ReactNode;
@@ -23,7 +25,21 @@ export const TeamLayout = observer(function TeamLayout(props: TeamLayoutProps) {
   const { children } = props;
   const router = useRouter();
   const teamId = router.query.id as string | undefined;
+  const session = useSession({ immutable: false });
+  const updaterRef = useUpdater();
   const model = useMemo(() => (teamId ? new TeamLayoutModel({ teamId }) : undefined), [teamId]);
+
+  /**
+   * 是否为团队管理员
+   */
+  const isTeamManager = session.session?.state?.isManager;
+  const actions = useMemo<LayoutAction[]>(() => {
+    if (isTeamManager) {
+      return [{ name: '团队管理', handler: () => updaterRef.current?.open() }];
+    }
+
+    return NoopArray;
+  }, [isTeamManager, updaterRef]);
 
   useEffect(() => {
     model?.initial();
@@ -64,10 +80,11 @@ export const TeamLayout = observer(function TeamLayout(props: TeamLayoutProps) {
           { icon: <FlowIcon />, name: '业务场景', route: `/team/${teamId}/scenario` },
           { icon: <AppIcon />, name: '应用', route: `/team/${teamId}/app`, children: model?.appListMenu },
         ]}
-        actions={NoopArray}
+        actions={actions}
         primarySidebarSlot={<Creator />}
       >
         {children}
+        {!!isTeamManager && <Updater ref={updaterRef} />}
       </Layout>
     </TeamLayoutProvider>
   );

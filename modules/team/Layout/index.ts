@@ -3,3 +3,4 @@
  */
 export * from './Layout';
 export { useLayoutTitle } from './Context';
+export * from './types';

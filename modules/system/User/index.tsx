@@ -105,6 +105,7 @@ export function User() {
       title: '操作',
       valueType: 'option',
       key: 'option',
+      width: 150,
       render: (text, record, index, action) => [
         <Popconfirm
           key="deleteTable"

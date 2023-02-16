@@ -1,5 +1,5 @@
 import { Button, Form, message, Modal, Tabs } from 'antd';
-import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
+import { forwardRef, useImperativeHandle, useRef, Ref, useState } from 'react';
 import { request } from '@/modules/backend-client';
 
 import { TeamCreatePayload, TeamDetail } from '../types';
@@ -10,6 +10,7 @@ import classNames from 'classnames';
 
 export interface UpdateTeamProps {
   onFinish?: () => void;
+  lazyRef?: Ref<UpdateTeamRef>;
 }
 
 export interface UpdateTeamRef {
@@ -32,7 +33,7 @@ export function useUpdateTeam() {
 }
 
 export const UpdateTeam = forwardRef<UpdateTeamRef, UpdateTeamProps>((props, ref) => {
-  const { onFinish } = props;
+  const { onFinish, lazyRef } = props;
   const [visible, setVisible] = useState(false);
   const [activeKey, setActiveKey] = useState(TAB_KEYS.Base);
   const [saving, setSaving] = useState(false);
@@ -70,7 +71,7 @@ export const UpdateTeam = forwardRef<UpdateTeamRef, UpdateTeamProps>((props, ref
     setVisible(false);
   };
 
-  useImperativeHandle(ref, () => {
+  useImperativeHandle(lazyRef || ref, () => {
     return {
       open(detail: TeamDetail) {
         setDetail(detail);
@@ -126,3 +127,5 @@ export const UpdateTeam = forwardRef<UpdateTeamRef, UpdateTeamProps>((props, ref
 });
 
 UpdateTeam.displayName = 'UpdateTeam';
+
+export default UpdateTeam;

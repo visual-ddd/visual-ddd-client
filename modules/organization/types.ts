@@ -1,4 +1,6 @@
-export type TeamDetail = {
+import { OrganizationDetail } from '@/modules/system/types';
+
+export interface TeamDetail {
   /**
    * 团队名称
    */
@@ -11,6 +13,11 @@ export type TeamDetail = {
    * 	所属组织ID
    */
   organizationId: number;
+
+  /**
+   * 关联的组织详情
+   */
+  organizationDTO: OrganizationDetail;
   /**
    * 	团队管理员ID(账号id)
    */
@@ -21,7 +28,7 @@ export type TeamDetail = {
   teamManagerName: string;
   updateBy: string;
   updateTime: string;
-};
+}
 
 export interface TeamCreatePayload {
   description: string;

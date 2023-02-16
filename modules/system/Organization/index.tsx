@@ -4,7 +4,7 @@ import { useRef } from 'react';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { ProTable } from '@ant-design/pro-components';
 import { request } from '@/modules/backend-client';
-import type { OrganizationItem } from '@/modules/system/types';
+import type { OrganizationDetail } from '@/modules/system/types';
 import { useLayoutTitle } from '@/modules/team/Layout';
 import { UserSelect } from '../User';
 
@@ -12,7 +12,7 @@ export function Organization() {
   const actionRef = useRef<ActionType>();
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
-  const [currentId, setCurrentId] = useState<OrganizationItem['id']>();
+  const [currentId, setCurrentId] = useState<OrganizationDetail['id']>();
   const [form] = Form.useForm();
 
   useLayoutTitle('组织管理');
@@ -33,7 +33,7 @@ export function Organization() {
   /**
    * 编辑
    */
-  const handleEdit = (record: OrganizationItem) => {
+  const handleEdit = (record: OrganizationDetail) => {
     setCurrentId(record.id);
     form.setFieldsValue({ ...record });
     setOpen(true);
@@ -42,7 +42,7 @@ export function Organization() {
   /**
    * 删除
    */
-  const handleDelete = async (record: OrganizationItem) => {
+  const handleDelete = async (record: OrganizationDetail) => {
     try {
       await request.requestByPost('/wd/visual/web/organization/organization-remove', { id: record.id });
       message.success('删除成功');
@@ -80,7 +80,7 @@ export function Organization() {
     }
   };
 
-  const columns: ProColumns<OrganizationItem>[] = [
+  const columns: ProColumns<OrganizationDetail>[] = [
     {
       title: '组织名称',
       dataIndex: 'name',
@@ -123,7 +123,7 @@ export function Organization() {
 
   return (
     <>
-      <ProTable<OrganizationItem>
+      <ProTable<OrganizationDetail>
         columns={columns}
         actionRef={actionRef}
         rowKey="id"

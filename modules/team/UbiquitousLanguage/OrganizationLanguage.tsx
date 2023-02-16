@@ -2,7 +2,7 @@ import { observer } from 'mobx-react';
 import { useRouter } from 'next/router';
 import { IMMUTABLE_REQUEST_CONFIG, useRequestByGet } from '@/modules/backend-client';
 
-import { TeamDetail } from '../types';
+import { TeamDetail } from '@/modules/organization/types';
 import { useLayoutTitle } from '../Layout';
 
 import { LanguageScope } from './types';

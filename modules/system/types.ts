@@ -17,7 +17,10 @@ export type UserItem = {
   userName: string;
 };
 
-export type OrganizationItem = {
+/**
+ * 组织详情
+ */
+export interface OrganizationDetail {
   /**
    * 组织名称
    */
@@ -33,4 +36,4 @@ export type OrganizationItem = {
   organizationManagerName: string;
   updateBy: string;
   updateTime: string;
-};
+}
