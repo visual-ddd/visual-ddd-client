@@ -1,7 +1,9 @@
 import { makeAutoBindThis, mutation } from '@/lib/store';
-import { makeObservable, observable, runInAction, computed, reaction } from 'mobx';
+import { makeObservable, observable, runInAction, computed, reaction, toJS } from 'mobx';
 import { Doc as YDoc, Array as YArray, Map as YMap } from 'yjs';
 import { v4 } from 'uuid';
+import { download, request } from '@/modules/backend-client';
+import pick from 'lodash/pick';
 
 import { IUbiquitousLanguageModel, UbiquitousLanguageItem } from './types';
 import { UbiquitousLanguageEvent } from './UbiquitousLanguageEvents';
@@ -45,6 +47,14 @@ class ItemWrapper {
     return this.map.toJSON() as UbiquitousLanguageItem;
   }
 }
+
+const VALID_FIELDS: (keyof UbiquitousLanguageItem)[] = [
+  'conception',
+  'englishName',
+  'definition',
+  'restraint',
+  'example',
+];
 
 /**
  * 统一语言列表模型
@@ -230,6 +240,39 @@ export class UbiquitousLanguageModel implements IUbiquitousLanguageModel {
     });
   }
 
+  /**
+   * 导出 excel
+   */
+  exportExcel: IUbiquitousLanguageModel['exportExcel'] = async () => {
+    await download({
+      name: '/wd/visual/web/universal-language/universal-language-export.business',
+      filename: '统一语言.xlsx',
+      method: 'POST',
+      body: {
+        list: toJS(this.innerList),
+      },
+    });
+  };
+
+  /**
+   * 导入 excel
+   * @param param0
+   */
+  importExcel: IUbiquitousLanguageModel['importExcel'] = async ({ file }) => {
+    const form = new FormData();
+    form.append('file', file);
+
+    const list = await request.requestByPost(
+      '/wd/visual/web/universal-language/universal-language-import.business',
+      form
+    );
+
+    // 插入
+    for (const item of list) {
+      this.pushItem({ item: pick(item, VALID_FIELDS) });
+    }
+  };
+
   isEditing(id: string, key: keyof UbiquitousLanguageItem): boolean {
     return !!this.editing.get(id)?.has(key);
   }
@@ -316,5 +359,14 @@ export class UbiquitousLanguageModel implements IUbiquitousLanguageModel {
     const { index, item } = params;
     this.innerList.splice(index, 0, item);
     this.event.emit('ITEM_ADDED', { item, index });
+  }
+
+  @mutation('UBL_PUSH_ITEM', false)
+  private pushItem(params: { item: UbiquitousLanguageItem }) {
+    const { item } = params;
+    item.uuid ||= v4();
+
+    this.innerList.push(item);
+    this.event.emit('ITEM_ADDED', { item, index: this.innerList.length - 1 });
   }
 }

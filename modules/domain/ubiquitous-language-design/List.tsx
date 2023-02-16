@@ -149,15 +149,19 @@ export const UbiquitousLanguage = observer(function UbiquitousLanguage(props: Ub
             导入 Word
           </Button>
           {!!model.importExcel && (
-            <Import template="/TODO" title="导入 Excel" onUpload={model.importExcel}>
+            <Import
+              template="/excel-templates/ubiquitous-language.xlsx"
+              title="导入 Excel"
+              onUpload={model.importExcel}
+            >
               <Button size="small" disabled={readonly}>
                 导入 Excel
               </Button>
             </Import>
           )}
           {!!model.exportExcel && (
-            <Button size="small" onClick={model.exportExcel}>
-              导出
+            <Button size="small" onClick={model.exportExcel} disabled={!model.list.length}>
+              导出 Excel
             </Button>
           )}
         </Space>

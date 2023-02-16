@@ -44,7 +44,14 @@ export interface IUbiquitousLanguageModel {
    */
   readonly sortable: boolean;
 
+  /**
+   * 列表，通常是过滤后的
+   */
   readonly list: UbiquitousLanguageItem[];
+
+  /**
+   * 当前选中的节点
+   */
   readonly selecting: string[];
 
   setFilter(params: { value: string }): void;

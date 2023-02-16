@@ -13,6 +13,10 @@ export interface ImportProps extends Pick<UploadProps, 'beforeUpload' | 'accept'
   onUpload: (options: { file: File }) => Promise<void>;
 }
 
+const stop = (e: React.MouseEvent) => {
+  e.stopPropagation();
+};
+
 /**
  * 文件导入
  */
@@ -33,6 +37,7 @@ export const Import = (props: ImportProps) => {
       setVisible(false);
     } catch (err) {
       options.onError?.(err as Error);
+      console.error(err);
     }
   };
 
@@ -65,7 +70,7 @@ export const Import = (props: ImportProps) => {
           </div>
           <div className={classNames('vd-import__text')}>
             点击或者拖拽文件到这里。点击这里
-            <a className="u-link" href={template}>
+            <a className="u-link" href={template} onClick={stop}>
               下载模板
             </a>
           </div>
