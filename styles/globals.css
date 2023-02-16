@@ -55,6 +55,18 @@ a {
   margin-top: var(--vd-spacing-xs);
 }
 
+.u-mt-sm {
+  margin-top: var(--vd-spacing-sm);
+}
+
+.u-mb-xs {
+  margin-bottom: var(--vd-spacing-xs);
+}
+
+.u-mb-sm {
+  margin-bottom: var(--vd-spacing-sm);
+}
+
 .u-bold {
   font-weight: bold;
 }

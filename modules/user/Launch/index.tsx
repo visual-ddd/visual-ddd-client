@@ -5,8 +5,11 @@ import { VDSessionEntry, VDSessionState } from '@/modules/session/server';
 import { request } from '@/modules/backend-client';
 import { Alert } from 'antd';
 
-import { Logo } from '../Logo';
 import s from './index.module.scss';
+import { Layout } from '../Login/Layout';
+import { SystemIcon } from './SystemIcon';
+import { OrganizationIcon } from './OrganizationIcon';
+import { TeamIcon } from './TeamIcon';
 
 interface TeamDTO {
   id: number;
@@ -77,70 +80,85 @@ export function Launch({ data }: LaunchProps) {
   };
 
   return (
-    <div className={classNames('vd-launch', s.root)}>
-      <Logo />
-      <div className={s.groups}>
-        {!data.isSysAdmin && !data.accountOrganizationInfoList.length && !data.teamDTOList.length && (
-          <Alert message="暂时没有加入任何团队，请通知相关团队负责人，邀请进入" type="error" />
-        )}
-        {!!data.isSysAdmin && (
-          <div
-            className={classNames(s.head, 'u-pointer')}
-            onClick={() => handleGo({ entry: VDSessionEntry.System, isManager: true })}
-          >
-            系统管理
-            <ArrowRightOutlined />
-          </div>
-        )}
+    <Layout title="启动">
+      <div className={classNames('vd-launch', s.root)}>
+        <Layout.H1>选择入口</Layout.H1>
+        <div className={s.groups}>
+          {!data.isSysAdmin && !data.accountOrganizationInfoList.length && !data.teamDTOList.length && (
+            <Alert message="暂时没有加入任何团队，请通知相关团队负责人，邀请进入" type="error" />
+          )}
+          {!!data.isSysAdmin && (
+            <div
+              className={classNames(s.head, s.hoverable)}
+              onClick={() => handleGo({ entry: VDSessionEntry.System, isManager: true })}
+            >
+              <span className={s.logo}>
+                <SystemIcon />
+              </span>
+              系统管理
+              <ArrowRightOutlined className={s.arrow} />
+            </div>
+          )}
 
-        {!!data.accountOrganizationInfoList.length && (
-          <>
-            <div className={s.head}>组织管理</div>
-            {data.accountOrganizationInfoList.map(item => {
-              return (
-                <div
-                  className={s.item}
-                  key={item.organizationDTO.id}
-                  onClick={() =>
-                    handleGo({
-                      entry: VDSessionEntry.Organization,
-                      entryId: item.organizationDTO.id,
-                      isManager: item.isOrganizationAdmin,
-                    })
-                  }
-                >
-                  {item.organizationDTO.name}
-                  <ArrowRightOutlined />
-                </div>
-              );
-            })}
-          </>
-        )}
+          {!!data.accountOrganizationInfoList.length && (
+            <>
+              <div className={s.head}>
+                <span className={s.logo}>
+                  <OrganizationIcon />
+                </span>
+                组织管理
+              </div>
+              {data.accountOrganizationInfoList.map(item => {
+                return (
+                  <div
+                    className={s.item}
+                    key={item.organizationDTO.id}
+                    onClick={() =>
+                      handleGo({
+                        entry: VDSessionEntry.Organization,
+                        entryId: item.organizationDTO.id,
+                        isManager: item.isOrganizationAdmin,
+                      })
+                    }
+                  >
+                    {item.organizationDTO.name}
+                    <ArrowRightOutlined className={s.arrow} />
+                  </div>
+                );
+              })}
+            </>
+          )}
 
-        {!!data.teamDTOList.length && (
-          <>
-            <div className={s.head}>团队</div>
-            {data.teamDTOList.map(item => {
-              return (
-                <div
-                  className={s.item}
-                  key={item.teamDTO.id}
-                  onClick={() =>
-                    handleGo({
-                      entry: VDSessionEntry.Team,
-                      entryId: item.teamDTO.id,
-                      isManager: item.isTeamAdmin,
-                    })
-                  }
-                >
-                  {item.teamDTO.name}
-                  <ArrowRightOutlined />
-                </div>
-              );
-            })}
-          </>
-        )}
+          {!!data.teamDTOList.length && (
+            <>
+              <div className={s.head}>
+                <span className={s.logo}>
+                  <TeamIcon />
+                </span>
+                团队
+              </div>
+              {data.teamDTOList.map(item => {
+                return (
+                  <div
+                    className={s.item}
+                    key={item.teamDTO.id}
+                    onClick={() =>
+                      handleGo({
+                        entry: VDSessionEntry.Team,
+                        entryId: item.teamDTO.id,
+                        isManager: item.isTeamAdmin,
+                      })
+                    }
+                  >
+                    {item.teamDTO.name}
+                    <ArrowRightOutlined className={s.arrow} />
+                  </div>
+                );
+              })}
+            </>
+          )}
+        </div>
       </div>
-    </div>
+    </Layout>
   );
 }

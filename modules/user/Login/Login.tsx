@@ -1,11 +1,11 @@
-import { Button, Form, Input, message } from 'antd';
+import { Button, Form, Input, message, Space } from 'antd';
 import { useEffect, useState } from 'react';
 import { request } from '@/modules/backend-client';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
-import { Logo } from '../Logo';
-import s from './index.module.scss';
+import { Layout } from './Layout';
+import s from './Login.module.scss';
 
 interface LoginPayload {
   accountNo: string;
@@ -46,49 +46,47 @@ export function Login() {
   }, [from]);
 
   return (
-    <Form<LoginPayload>
-      name="loginForm"
-      size="middle"
-      className={s.login}
-      onFinish={handleLogin}
-      layout="vertical"
-      requiredMark={false}
-    >
-      <Form.Item>
-        <Logo />
-      </Form.Item>
-
-      <Form.Item
-        name="accountNo"
-        label="账号"
-        rules={[
-          { required: true, message: '请输入邮箱!' },
-          { type: 'email', message: '邮箱格式错误' },
-        ]}
+    <Layout title="登录">
+      <Form<LoginPayload>
+        size="middle"
+        className={s.login}
+        onFinish={handleLogin}
+        layout="vertical"
+        requiredMark={false}
       >
-        <Input placeholder="输入邮箱" />
-      </Form.Item>
+        <Layout.H1>欢迎使用 Visual DDD</Layout.H1>
 
-      <Form.Item name="password" label="密码" rules={[{ required: true, message: '请输入密码!' }]}>
-        <Input type="password" placeholder="输入密码" />
-      </Form.Item>
+        <Form.Item
+          name="accountNo"
+          rules={[
+            { required: true, message: '请输入邮箱!' },
+            { type: 'email', message: '邮箱格式错误' },
+          ]}
+        >
+          <Input placeholder="邮箱" />
+        </Form.Item>
 
-      <Form.Item className={s.forgot}>
-        <Link href="/forgot">
-          <Button type="link">忘记密码？</Button>
-        </Link>
-      </Form.Item>
+        <Form.Item name="password" rules={[{ required: true, message: '请输入密码!' }]}>
+          <Input type="password" placeholder="密码" />
+        </Form.Item>
 
-      <Form.Item>
-        <Button type="primary" htmlType="submit" className={s.submit} block loading={loading}>
-          登录
-        </Button>
-        <Link href="/register">
-          <Button type="link" block>
-            注册
+        <Form.Item className={s.forgot}>
+          <Link href="/forgot" className="u-link">
+            忘记密码？
+          </Link>
+        </Form.Item>
+
+        <Space direction="vertical" className="u-fw u-mb-sm">
+          <Button type="primary" htmlType="submit" className={s.submit} block loading={loading} size="large">
+            登录
           </Button>
-        </Link>
-      </Form.Item>
-    </Form>
+          <Link href="/register">
+            <Button type="link" block size="large">
+              注册
+            </Button>
+          </Link>
+        </Space>
+      </Form>
+    </Layout>
   );
 }

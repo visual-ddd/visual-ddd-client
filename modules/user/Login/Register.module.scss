@@ -1,0 +1,12 @@
+.register {
+  :global(.ant-form-item-label > label) {
+    height: 1em !important;
+  }
+}
+.code {
+  width: 250px;
+  margin-right: var(--vd-spacing-sm);
+}
+.codeBtn {
+  width: 100px;
+}

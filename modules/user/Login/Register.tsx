@@ -1,11 +1,11 @@
-import { Button, Form, Input, message } from 'antd';
+import { Button, Form, Input, message, Space } from 'antd';
 import Link from 'next/link';
 import { useState } from 'react';
-
 import { request } from '@/modules/backend-client';
+import classNames from 'classnames';
 
-import { Logo } from '../Logo';
-import s from './index.module.scss';
+import { Layout } from './Layout';
+import s from './Register.module.scss';
 
 /**
  * 注册
@@ -46,77 +46,76 @@ export function Register() {
   };
 
   return (
-    <Form
-      name="registerForm"
-      form={form}
-      className={s.login}
-      onFinish={handleRegister}
-      layout="vertical"
-      size="middle"
-      requiredMark={false}
-    >
-      <Form.Item>
-        <Logo />
-      </Form.Item>
-
-      <Form.Item
-        name="accountNo"
-        label="账号"
-        rules={[
-          { required: true, message: '请输入邮箱!' },
-          { type: 'email', message: '邮箱格式错误' },
-        ]}
+    <Layout title="注册使用">
+      <Form
+        name="registerForm"
+        form={form}
+        className={classNames(s.register)}
+        onFinish={handleRegister}
+        layout="vertical"
+        size="middle"
+        requiredMark={false}
       >
-        <Input placeholder="输入邮箱" />
-      </Form.Item>
-
-      <Form.Item name="userName" label="用户名" rules={[{ required: true, message: '请输入用户名!' }]}>
-        <Input placeholder="输入用户名" />
-      </Form.Item>
-
-      <Form.Item label="验证码">
-        <Form.Item noStyle name="code" rules={[{ required: true, message: '请输入验证码!' }]}>
-          <Input placeholder="输入验证码" className={s.code} />
+        <Layout.H1>欢迎注册使用 Visual DDD</Layout.H1>
+        <Form.Item
+          name="accountNo"
+          label="账号"
+          rules={[
+            { required: true, message: '请输入邮箱!' },
+            { type: 'email', message: '邮箱格式错误' },
+          ]}
+        >
+          <Input placeholder="输入邮箱" />
         </Form.Item>
 
-        <Button type="primary" className={s.codeBtn} onClick={getCode} loading={codeLoading}>
-          验证码
-        </Button>
-      </Form.Item>
+        <Form.Item name="userName" label="用户名" rules={[{ required: true, message: '请输入用户名!' }]}>
+          <Input placeholder="输入用户名" />
+        </Form.Item>
 
-      <Form.Item name="password" label="密码" rules={[{ required: true, message: '请输入密码!' }]}>
-        <Input type="password" placeholder="输入密码" />
-      </Form.Item>
+        <Form.Item label="验证码">
+          <Form.Item noStyle name="code" rules={[{ required: true, message: '请输入验证码!' }]}>
+            <Input placeholder="输入验证码" className={s.code} />
+          </Form.Item>
 
-      <Form.Item
-        name="affirmPassword"
-        label="确认密码"
-        dependencies={['password']}
-        rules={[
-          { required: true, message: '请输入确认密码!' },
-          ({ getFieldValue }) => ({
-            validator(_, value) {
-              if (!value || getFieldValue('password') === value) {
-                return Promise.resolve();
-              }
-              return Promise.reject(new Error('您输入的两个密码不匹配!'));
-            },
-          }),
-        ]}
-      >
-        <Input type="password" placeholder="输入确认密码" />
-      </Form.Item>
-
-      <Form.Item>
-        <Button type="primary" htmlType="submit" className={s.submit} block loading={formLoading}>
-          注册
-        </Button>
-        <Link href="/login">
-          <Button type="link" block>
-            登录
+          <Button type="primary" className={s.codeBtn} onClick={getCode} loading={codeLoading}>
+            验证码
           </Button>
-        </Link>
-      </Form.Item>
-    </Form>
+        </Form.Item>
+
+        <Form.Item name="password" label="密码" rules={[{ required: true, message: '请输入密码!' }]}>
+          <Input type="password" placeholder="输入密码" />
+        </Form.Item>
+
+        <Form.Item
+          name="affirmPassword"
+          label="确认密码"
+          dependencies={['password']}
+          rules={[
+            { required: true, message: '请输入确认密码!' },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                if (!value || getFieldValue('password') === value) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(new Error('您输入的两个密码不匹配!'));
+              },
+            }),
+          ]}
+        >
+          <Input type="password" placeholder="输入确认密码" />
+        </Form.Item>
+
+        <Space className="u-fw u-mt-sm" direction="vertical">
+          <Button type="primary" htmlType="submit" className={s.submit} block loading={formLoading}>
+            注册
+          </Button>
+          <Link href="/login">
+            <Button type="link" block>
+              已有账号？登录
+            </Button>
+          </Link>
+        </Space>
+      </Form>
+    </Layout>
   );
 }
