@@ -47,6 +47,10 @@ a {
   font-size: var(--vd-font-size-h5);
 }
 
+.u-fs-6 {
+  font-size: var(--vd-font-size-h6);
+}
+
 .u-ml-xs {
   margin-left: var(--vd-spacing-xs);
 }

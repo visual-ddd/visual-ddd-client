@@ -55,7 +55,7 @@ export function Register() {
 
       // 开始等待
       message.success('验证码发送成功');
-      start(9);
+      start(90);
     } catch (err) {
       message.error((err as Error).message);
     } finally {
