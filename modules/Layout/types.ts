@@ -42,12 +42,17 @@ export interface LayoutMenu {
   children?: LayoutMenuItem[] | (() => Promise<LayoutMenuItem[]>);
 }
 
-export interface LayoutAction {
-  name: React.ReactNode;
+export type LayoutAction =
+  | {
+      type: 'button';
+      name: React.ReactNode;
 
-  /**
-   * 处理器
-   * @returns
-   */
-  handler: () => void;
-}
+      /**
+       * 处理器
+       * @returns
+       */
+      handler: () => void;
+    }
+  | {
+      type: 'divider';
+    };

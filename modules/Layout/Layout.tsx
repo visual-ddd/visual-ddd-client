@@ -46,9 +46,9 @@ export const Layout = observer(function Layout(props: LayoutProps) {
   return (
     <LayoutContextProvider value={context}>
       <div className={classNames('vd-layout', s.root)}>
-        <Header className={s.header} title={title}></Header>
+        <Header className={s.header} title={title} actions={actions}></Header>
         <div className={classNames('vd-layout-body', s.body)}>
-          <Sidebar menu={menu} actions={actions} className={classNames(s.sidebar)}>
+          <Sidebar menu={menu} className={classNames(s.sidebar)}>
             {primarySidebarSlot}
           </Sidebar>
           <Content className={s.content}>{children}</Content>

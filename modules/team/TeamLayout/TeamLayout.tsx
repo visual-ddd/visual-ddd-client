@@ -1,7 +1,6 @@
 import { observer } from 'mobx-react';
 import { useEffect, useMemo } from 'react';
 import { useRouter } from 'next/router';
-import { NoopArray } from '@wakeapp/utils';
 import dynamic from 'next/dynamic';
 import { useSession } from '@/modules/session';
 import { Layout, LayoutAction } from '@/modules/Layout';
@@ -14,6 +13,8 @@ import { AppIcon } from './AppIcon';
 import { TeamLayoutModel } from './TeamLayoutModel';
 import { TeamLayoutProvider } from './Context';
 import { Updater, useUpdater } from '../Updater';
+import { IMMUTABLE_REQUEST_CONFIG, useRequestByGet } from '@/modules/backend-client';
+import { TeamDetail } from '@/modules/organization/types';
 
 export interface TeamLayoutProps {
   children: React.ReactNode;
@@ -28,18 +29,36 @@ export const TeamLayout = observer(function TeamLayout(props: TeamLayoutProps) {
   const session = useSession({ immutable: false });
   const updaterRef = useUpdater();
   const model = useMemo(() => (teamId ? new TeamLayoutModel({ teamId }) : undefined), [teamId]);
+  const { data: teamInfo } = useRequestByGet<TeamDetail>(
+    teamId ? `/wd/visual/web/team/team-detail-query?id=${teamId}` : null,
+    undefined,
+    IMMUTABLE_REQUEST_CONFIG
+  );
 
   /**
    * 是否为团队管理员
    */
   const isTeamManager = session.session?.state?.isManager;
   const actions = useMemo<LayoutAction[]>(() => {
-    if (isTeamManager) {
-      return [{ name: '团队管理', handler: () => updaterRef.current?.open() }];
+    const list: LayoutAction[] = [];
+
+    if (teamInfo) {
+      list.push({
+        type: 'button',
+        name: `当前团队: ${teamInfo.name}`,
+        handler: () => router.push(`/team/${teamId}`),
+      });
+
+      if (isTeamManager) {
+        list.push({ type: 'button', name: '团队管理', handler: () => updaterRef.current?.open() });
+      }
+
+      list.push({ type: 'divider' });
     }
 
-    return NoopArray;
-  }, [isTeamManager, updaterRef]);
+    return list;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isTeamManager, teamInfo]);
 
   useEffect(() => {
     model?.initial();

@@ -23,11 +23,13 @@ export const User = observer(function User(props: UserProps) {
 
   const menus = useMemo<MenuProps>(() => {
     const items: ItemType[] = actions.map(i => {
-      return {
-        key: i.name,
-        label: i.name,
-        onClick: i.handler,
-      } as MenuItemType;
+      return 'type' in i && i.type === 'divider'
+        ? i
+        : ({
+            key: i.name,
+            label: i.name,
+            onClick: i.handler,
+          } as MenuItemType);
     });
 
     if (session?.user) {
@@ -64,6 +66,7 @@ export const User = observer(function User(props: UserProps) {
           accountSetting.current?.open();
         },
       },
+      { type: 'divider' },
       {
         key: 'logout',
         label: '退出登录',
@@ -85,6 +88,8 @@ export const User = observer(function User(props: UserProps) {
           src={session?.user.icon}
           alt={session?.user.userName}
           className={classNames('vd-user__avatar', s.avatar)}
+          size={30}
+          shape="square"
         >
           {session?.user.userName}
         </Avatar>

@@ -1,4 +1,5 @@
 .avatar {
-  background-color: gray;
+  background-color: var(--vd-color-gray-400);
+  background-clip: content-box;
   cursor: pointer;
 }

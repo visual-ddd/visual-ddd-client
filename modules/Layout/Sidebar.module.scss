@@ -1,3 +1,5 @@
+$primaryWidth: 58px;
+
 .root {
   flex-shrink: 0;
   border-right: 1px solid var(--vd-color-border-light);
@@ -7,7 +9,7 @@
 }
 
 .primary {
-  width: 45px;
+  width: $primaryWidth;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -32,6 +34,7 @@
   cursor: pointer;
   color: var(--vd-color-gray-600);
   position: relative;
+  border-radius: 4px;
 
   &:global(.active)::before {
     content: '';
@@ -45,14 +48,16 @@
 
   &:global(.active),
   &:hover {
-    color: var(--vd-color-primary);
+    color: var(--vd-color-primary-700);
+    background-color: var(--vd-color-gray-300);
   }
 }
 
 .secondary {
   height: 100%;
-  min-width: 120px;
+  min-width: 150px;
   max-width: 200px;
+  padding: var(--vd-spacing-xs);
   overflow-x: hidden;
   overflow-y: auto;
 }
@@ -62,20 +67,15 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  border-radius: 4px;
   padding: 4px var(--vd-spacing-sm);
+  margin-bottom: 4px;
   color: var(--vd-color-gray-800);
   cursor: pointer;
 
   &:hover,
   &:global(.active) {
     background-color: var(--vd-color-gray-200);
-    color: var(--vd-color-primary);
+    color: var(--vd-color-gray-900);
   }
-}
-
-.user {
-  position: absolute;
-  bottom: var(--vd-spacing-base);
-  left: 50%;
-  transform: translateX(-50%);
 }
