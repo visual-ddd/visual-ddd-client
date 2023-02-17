@@ -73,7 +73,12 @@ export const Language = observer(function Language(props: LanguageProps) {
            * @param param0
            */
           async importExcel({ file }) {
-            // TODO:
+            const form = new FormData();
+            form.append('file', file);
+            form.append('identity', String(id));
+            form.append('languageType', String(scope));
+
+            await request.requestByPost('/wd/visual/web/universal-language/universal-language-import', form);
           },
         })
       : undefined;
