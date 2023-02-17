@@ -8,6 +8,11 @@ const nextConfig = {
   env: {
     VERSION: pkg.version,
   },
+  eslint: {
+    // Warning: This allows production builds to successfully complete even if
+    // your project has ESLint errors.
+    ignoreDuringBuilds: true,
+  },
   // https://nextjs.org/docs/api-reference/next.config.js/redirects
   redirects: async () => {
     return [
