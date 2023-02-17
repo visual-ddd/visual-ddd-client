@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: visual-ddd-client
+spec:
+  selector:
+    matchLabels:
+      app: visual-ddd-client
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: visual-ddd-client
+    spec:
+      containers:
+        - name: visual-ddd-client
+          image: 172.26.59.200/wkfe/visual-ddd:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: BACKEND
+              value: { { .BACKEND } }
+            - name: SESSION_SECRET
+              value: { { .SECRET } }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: visual-ddd-client
+spec:
+  selector:
+    app: visual-ddd-client
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: NodePort
+---
+# ingress
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: visual-ddd-ingress
+  labels:
+    app.kubernetes.io/name: visual-ddd-ingress
+spec:
+  rules:
+    - host: { { .HOST } }
+      http:
+        paths:
+          - backend:
+              serviceName: visual-ddd-client
+              servicePort: 80
+            path: /
+            pathType: ImplementationSpecific
+  tls:
+    - hosts:
+        - { { .HOST } }
+      secretName: wakedt
