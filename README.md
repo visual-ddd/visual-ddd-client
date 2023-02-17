@@ -54,3 +54,12 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 - updateProperty debounce 发布 yjs 事件, 使用合并事件形式
 - node edit
 - label edit
+
+# 部署配置
+
+环境变量
+
+| 名称           | 说明                                        |
+| -------------- | ------------------------------------------- |
+| BACKEND        | 后端服务地址, 例如 http://172.26.57.49:8080 |
+| SESSION_SECRET | 会话加密密钥                                |
