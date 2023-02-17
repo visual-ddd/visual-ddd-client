@@ -1,10 +1,13 @@
-// @ts-check
+const pkg = require('./package.json');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false, // 暂时关闭，打开 react 会模拟 useEffect 多次执行
   swcMinify: true,
   output: 'standalone',
+  env: {
+    VERSION: pkg.version,
+  },
   // https://nextjs.org/docs/api-reference/next.config.js/redirects
   redirects: async () => {
     return [

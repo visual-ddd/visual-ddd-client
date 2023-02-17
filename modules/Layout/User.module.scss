@@ -3,3 +3,13 @@
   background-clip: content-box;
   cursor: pointer;
 }
+
+.profile {
+  color: gray;
+  cursor: default;
+}
+
+.version {
+  font-size: 12px;
+  color: var(--vd-color-gray-400);
+}

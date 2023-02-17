@@ -38,9 +38,10 @@ export const User = observer(function User(props: UserProps) {
           key: 'user',
           disabled: true,
           label: (
-            <div className={classNames('vd-user__name', s.name)}>
+            <div className={classNames('vd-user__name', s.profile)}>
               <div className="u-bold">{session.user.userName}</div>
               <div className="u-fs-5">{session.user.accountNo}</div>
+              <div className={classNames('vd-user__version', s.version)}>系统版本: {process.env.VERSION}</div>
             </div>
           ),
         },
@@ -83,7 +84,7 @@ export const User = observer(function User(props: UserProps) {
   return (
     <>
       <AccountSetting ref={accountSetting} />
-      <Dropdown menu={menus} placement="topRight" arrow>
+      <Dropdown menu={menus} placement="topRight" arrow trigger={['click']}>
         <Avatar
           src={session?.user.icon}
           alt={session?.user.userName}
