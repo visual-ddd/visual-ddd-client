@@ -1,8 +1,7 @@
 /**
  * 后端服务
- * TODO: 默认地址
  */
-export const BACKEND = new URL(process.env.BACKEND ?? 'http://172.26.57.49:8080');
+export const BACKEND = new URL(process.env.BACKEND ?? 'http://ddd.wakedt.cn');
 
 /**
  * 后端服务前缀
