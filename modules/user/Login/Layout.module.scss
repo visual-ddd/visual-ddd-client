@@ -29,6 +29,7 @@
   border-radius: 8px;
   background-color: white;
   backdrop-filter: blur(3px);
+  position: relative;
   z-index: 1;
 }
 
@@ -61,4 +62,14 @@
   background: linear-gradient(135deg, var(--vd-color-primary-100), var(--vd-color-primary));
   -webkit-background-clip: text;
   color: transparent;
+}
+
+.footer {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 50%;
+  font-size: 12px;
+  transform: translateX(-50%) scale(0.9);
+  white-space: nowrap;
+  color: var(--vd-color-gray-600);
 }

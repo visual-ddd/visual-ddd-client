@@ -1,5 +1,5 @@
 import { Noop } from '@wakeapp/utils';
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useEffect } from 'react';
 
 export interface LayoutContextValue {
   setTitle(title: React.ReactNode): void;
@@ -19,7 +19,11 @@ export function useLayoutContext() {
  */
 export function useLayoutTitle(title: string) {
   const { setTitle } = useLayoutContext();
-  return setTitle(title);
+  return useEffect(() => {
+    if (title) {
+      setTitle(title);
+    }
+  }, [title, setTitle]);
 }
 
 export const LayoutContextProvider = CONTEXT.Provider;

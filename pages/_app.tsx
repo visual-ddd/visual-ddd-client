@@ -12,6 +12,7 @@ import 'antd/dist/reset.css';
 import '../styles/theme.css';
 import '../styles/globals.css';
 import { SWRConfig } from 'swr';
+import Head from 'next/head';
 
 configure({
   enforceActions: 'always',
@@ -35,6 +36,9 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
   return (
     <SWRConfig>
       <ConfigProvider componentSize="small" locale={zhCN}>
+        <Head>
+          <title>Visual DDD</title>
+        </Head>
         {getLayout(<Component {...pageProps} />, pageTitle)}
       </ConfigProvider>
     </SWRConfig>

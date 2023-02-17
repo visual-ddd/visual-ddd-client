@@ -36,9 +36,8 @@ export const Layout = observer(function Layout(props: LayoutProps) {
   const context = useMemo<LayoutContextValue>(() => {
     return {
       setTitle(t) {
-        setTimeout(() => {
-          setTitle(t);
-        });
+        setTitle(t);
+        document.title = `${t} - Visual DDD`;
       },
     };
   }, []);
