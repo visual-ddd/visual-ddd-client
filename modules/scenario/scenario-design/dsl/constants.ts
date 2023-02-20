@@ -8,6 +8,11 @@ export enum ScenarioObjectName {
    * 起始节点
    */
   Start = 'start',
+
+  /**
+   * 结束节点
+   */
+  End = 'end',
 }
 
 export const DEFAULT_LANE_WIDTH = 1000;

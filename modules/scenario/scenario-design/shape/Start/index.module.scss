@@ -1,0 +1,19 @@
+$width: 45px;
+
+.root {
+  width: $width;
+  height: $width;
+  border-radius: $width;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 5px solid var(--vd-color-success-700);
+  background-color: var(--vd-color-success-200);
+
+  font-size: 20px;
+  color: white;
+
+  & > svg {
+    margin-left: -1px;
+  }
+}

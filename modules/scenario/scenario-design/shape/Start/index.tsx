@@ -1,9 +1,17 @@
 import { defineShape, ShapeComponentProps } from '@/lib/editor';
 import { ReactComponentBinding, ReactComponentProps, registerReactComponent } from '@/lib/g6-binding';
+
 import { ScenarioObjectName } from '../../dsl';
+import s from './index.module.scss';
+import { TriangleIcon } from './TriangleIcon';
+import icon from './start.png';
 
 const StartReactShapeComponent = (props: ReactComponentProps) => {
-  return <div style={{ background: 'red', width: 100, height: 100 }}></div>;
+  return (
+    <div className={s.root}>
+      <TriangleIcon />
+    </div>
+  );
 };
 
 const StartShapeComponent = (props: ShapeComponentProps) => {
@@ -14,6 +22,7 @@ registerReactComponent(ScenarioObjectName.Start, StartReactShapeComponent);
 
 defineShape({
   name: ScenarioObjectName.Start,
+  icon,
   title: '起始',
   description: '起始节点',
   shapeType: 'node',

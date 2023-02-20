@@ -1,0 +1,19 @@
+$width: 45px;
+
+.root {
+  width: $width;
+  height: $width;
+  border-radius: $width;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 5px solid var(--vd-color-gray-700);
+  background-color: var(--vd-color-gray-400);
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border-radius: 5px;
+}
