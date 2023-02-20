@@ -6,7 +6,7 @@ import { useEditorModel } from '../../Model';
  * 只能在 React Shape 组件里面使用
  */
 export function useShapeModel(cell: Cell) {
-  const { index, formStore, commandHandler } = useEditorModel();
+  const { index, formStore, commandHandler, model: editorModel } = useEditorModel();
 
   const model = index.getNodeById(cell.id)!;
   const formModel = formStore.getFormModel(cell.id)!;
@@ -26,6 +26,11 @@ export function useShapeModel(cell: Cell) {
      * 获取属性
      */
     properties: model?.properties,
+
+    /**
+     * 编辑器模型
+     */
+    editorModel,
 
     /**
      * 更新属性

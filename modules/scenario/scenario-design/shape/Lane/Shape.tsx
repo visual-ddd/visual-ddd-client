@@ -1,8 +1,9 @@
-import { FormModel } from '@/lib/editor';
-import { EditOutlined, PlusCircleOutlined } from '@ant-design/icons';
+import { BaseEditorModel, FormModel } from '@/lib/editor';
+import { DeleteOutlined, EditOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { NoopArray } from '@wakeapp/utils';
 import { observer } from 'mobx-react';
 import React, { useRef, useState } from 'react';
+import { message, Modal } from 'antd';
 import type { Graph, Node, Rectangle } from '@antv/x6';
 
 import { createLaneDSL, DEFAULT_LANE_HEIGHT, DEFAULT_LANE_WIDTH, LaneDSL, LanesDSL } from '../../dsl';
@@ -15,16 +16,19 @@ export interface LaneShapeProps {
   dsl: LanesDSL;
   formModel: FormModel;
   graph: Graph;
+  editorModel: BaseEditorModel;
   node: Node;
 }
 
 const GAP = 40;
 
 interface LaneProps {
+  readonly: boolean;
   value: LaneDSL;
   index: number;
   formModel: FormModel;
   onAppend: (params: { index: number; rect: DOMRect; bbox: Rectangle }) => void;
+  onDelete: (params: { index: number; rect: DOMRect; bbox: Rectangle }) => void;
   onSizeChange: (params: {
     index: number;
     size: number;
@@ -38,9 +42,8 @@ interface LaneProps {
 }
 
 // TODO: 考虑缩放和偏移
-// TODO: 只读模式
 const Lane = observer(function Lane(props: LaneProps) {
-  const { value, formModel, index, onAppend, onSizeChange, graph } = props;
+  const { value, formModel, readonly, index, onAppend, onDelete, onSizeChange, graph } = props;
   const [editing, setEditing] = useState(false);
   const nameRef = useRef<HTMLSpanElement>(null);
 
@@ -106,7 +109,22 @@ const Lane = observer(function Lane(props: LaneProps) {
     onAppend({ index, rect, bbox });
   };
 
+  const handleDelete = (evt: React.MouseEvent) => {
+    evt.stopPropagation();
+    evt.preventDefault();
+
+    const instance = laneDrag.instanceRef.current!;
+    const rect = instance.getBoundingClientRect();
+    const bbox = graph.clientToLocal(rect.left, rect.top, rect.width, rect.height);
+
+    onDelete({ index, rect, bbox });
+  };
+
   const handleNameEditStart = (evt: React.MouseEvent) => {
+    if (readonly) {
+      return;
+    }
+
     evt.stopPropagation();
     evt.preventDefault();
 
@@ -144,9 +162,11 @@ const Lane = observer(function Lane(props: LaneProps) {
         height: value.height,
       }}
     >
-      <div className={s.creator} onClick={handleAppend}>
-        <PlusCircleOutlined />
-      </div>
+      {!readonly && (
+        <div className={s.creator} onClick={handleAppend}>
+          <PlusCircleOutlined />
+        </div>
+      )}
       <aside className={s.aside}>
         <span
           ref={nameRef}
@@ -156,7 +176,13 @@ const Lane = observer(function Lane(props: LaneProps) {
           onDoubleClick={handleNameEditStart}
           onBlur={handleNameEditCancel}
         ></span>
-        <EditOutlined className={s.edit} onClick={handleNameEditStart} />
+
+        {!readonly && (
+          <div className={s.icons}>
+            <EditOutlined className={s.icon} onClick={handleNameEditStart} />
+            <DeleteOutlined className={s.icon} onClick={handleDelete} />
+          </div>
+        )}
       </aside>
       <main className={s.container}>x</main>
       <div className={`${s.resizerHorizontal} ${s.resizerBottom}`} onMouseDown={laneDrag.handleStart}></div>
@@ -165,7 +191,7 @@ const Lane = observer(function Lane(props: LaneProps) {
 });
 
 export const LaneShape = observer(function LaneShape(props: LaneShapeProps) {
-  const { dsl, formModel, graph, node } = props;
+  const { dsl, formModel, graph, node, editorModel } = props;
   const lanesDrag = useLanesDrag({
     direction: 'vertical',
     /**
@@ -247,6 +273,49 @@ export const LaneShape = observer(function LaneShape(props: LaneShapeProps) {
     moveChildrenUnderLine(bbox.y + bbox.height, DEFAULT_LANE_HEIGHT);
   };
 
+  /**
+   * 删除泳道
+   * @param param0
+   */
+  const handleDelete: LaneProps['onDelete'] = ({ index, bbox }) => {
+    if (dsl.panes.length === 1) {
+      // 不能删除
+      message.warning(`不能删除该泳道`);
+      return;
+    }
+
+    Modal.confirm({
+      content: '确认删除该泳道吗？',
+      onOk: () => {
+        const remove = () => {
+          const list = formModel.getProperty('panes') as LaneDSL[];
+          const clone = list.slice();
+          clone.splice(index, 1);
+          formModel.setProperty('panes', clone);
+        };
+
+        const removeChildren = () => {
+          const children = graph.getNodesInArea(bbox, { strict: true });
+
+          for (const i of children) {
+            const node = editorModel.index.getNodeById(i.id);
+            if (node) {
+              editorModel.commandHandler.removeNode({ node });
+            }
+          }
+        };
+
+        // 移除泳道下的节点
+        removeChildren();
+
+        // 移除泳道
+        remove();
+        // 移动跟随节点
+        moveChildrenUnderLine(bbox.y + bbox.height, -bbox.height);
+      },
+    });
+  };
+
   const handleLaneSizeChange: LaneProps['onSizeChange'] = params => {
     const { index, size, delta, bbox } = params;
 
@@ -259,12 +328,14 @@ export const LaneShape = observer(function LaneShape(props: LaneShapeProps) {
       {dsl.panes.map((i, idx) => {
         return (
           <Lane
+            readonly={editorModel.readonly}
             onSizeChange={handleLaneSizeChange}
             key={i.uuid}
             index={idx}
             value={i}
             formModel={formModel}
             onAppend={handleAppend}
+            onDelete={handleDelete}
             node={node}
             graph={graph}
           ></Lane>

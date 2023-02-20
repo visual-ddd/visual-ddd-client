@@ -72,10 +72,20 @@ $border-color: var(--vd-color-primary-400);
   }
 }
 
-.edit {
+.icons {
   position: relative;
   top: 1em;
+  display: flex;
+  flex-direction: column;
+  font-size: 1.1em;
+  gap: 6px;
+}
+
+.icon {
   cursor: pointer;
+  &:hover {
+    color: white;
+  }
 }
 
 .resizerVertical,
