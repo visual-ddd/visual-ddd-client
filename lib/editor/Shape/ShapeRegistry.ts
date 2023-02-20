@@ -216,6 +216,29 @@ export class ShapeRegistry {
   };
 
   /**
+   * 是否支持移动
+   * @param context
+   * @returns
+   */
+  isMovable = (context: { cell: Cell; graph: Graph }): boolean => {
+    const { cell, graph } = context;
+    this.bindGraphIfNeed(graph);
+
+    const model = this.getModelByCell(cell)!;
+    const conf = this.getConfigurationByModel(model);
+
+    if (conf?.movable != null) {
+      if (typeof conf.movable === 'function') {
+        return conf.movable({ model, graph });
+      }
+
+      return conf.movable ?? true;
+    }
+
+    return true;
+  };
+
+  /**
    * 是否支持选中
    * @param context
    * @returns

@@ -181,6 +181,11 @@ export interface ShapeConfiguration {
   removable?: boolean | ((context: { model: BaseNode; graph: Graph }) => boolean);
 
   /**
+   * 是否支持移动, 默认 true
+   */
+  movable?: boolean | ((context: { model: BaseNode; graph: Graph }) => boolean);
+
+  /**
    * 是否允许循环连线, 默认为 true
    */
   allowLoopConnect?: boolean;

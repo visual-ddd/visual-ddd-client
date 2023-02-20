@@ -248,13 +248,20 @@ export class CanvasModel {
       },
 
       // 交互行为
-      interacting: {
-        nodeMovable: !readonly,
-        edgeMovable: !readonly,
-        edgeLabelMovable: !readonly,
-        arrowheadMovable: !readonly,
-        magnetConnectable: !readonly,
-      },
+      interacting: readonly
+        ? false
+        : {
+            nodeMovable(view) {
+              return shapeRegistry.isMovable({ cell: view.cell, graph: this });
+            },
+            edgeMovable: true,
+            edgeLabelMovable: true,
+            arrowheadMovable: true,
+            magnetConnectable: true,
+            vertexDeletable: true,
+            vertexAddable: true,
+            vertexMovable: true,
+          },
 
       // 自动根据容器调整大小
       autoResize: true,
