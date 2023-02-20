@@ -1,13 +1,15 @@
 import { FormModel } from '@/lib/editor';
 import { EditOutlined, PlusCircleOutlined } from '@ant-design/icons';
+import { NoopArray } from '@wakeapp/utils';
 import { observer } from 'mobx-react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import type { Graph, Node } from '@antv/x6';
 
 import { createLaneDSL, DEFAULT_LANE_HEIGHT, DEFAULT_LANE_WIDTH, LaneDSL, LanesDSL } from '../../dsl';
 
 import s from './Shape.module.scss';
-import { NoopArray } from '@wakeapp/utils';
+
+import { useLanesDrag } from './useLanesDrag';
 
 export interface LaneShapeProps {
   dsl: LanesDSL;
@@ -18,124 +20,54 @@ export interface LaneShapeProps {
 
 const GAP = 40;
 
-/**
- * 整体泳道只能横向扩展
- */
-function useLanesDrag(options: {
-  direction: 'horizontal' | 'vertical';
-  min: number | (() => number);
-  update: (value: number) => void;
-}) {
-  const instanceRef = useRef<HTMLDivElement>(null);
-  const disposer = useRef<Function>();
-
-  const handleStart = (evt: React.MouseEvent) => {
-    if (disposer.current != null) {
-      disposer.current();
-      disposer.current = undefined;
-    }
-
-    evt.stopPropagation();
-    evt.preventDefault();
-
-    const getValueFromEvent = (e: MouseEvent) => {
-      return options.direction === 'vertical' ? e.pageX : e.pageY;
-    };
-
-    const instance = instanceRef.current!;
-
-    let start = getValueFromEvent(evt.nativeEvent);
-    let disposed = false;
-    let dragging = false;
-    let ghost: HTMLElement | null = null;
-
-    const height = instance.offsetHeight;
-    const width = instance.offsetWidth;
-    const min = typeof options.min === 'function' ? options.min() : options.min;
-
-    const relativeValue = options.direction === 'vertical' ? width : height;
-
-    console.log('down');
-
-    const handleMove = (evt: MouseEvent) => {
-      if (!dragging) {
-        ghost = document.createElement('div');
-        ghost.className = s.ghost;
-        ghost.style.height = `${height}px`;
-        ghost.style.width = `${width}px`;
-        instance.appendChild(ghost);
-      }
-
-      dragging = true;
-      const delta = getValueFromEvent(evt) - start;
-      const newValue = Math.max(relativeValue + delta, min);
-
-      if (options.direction === 'vertical') {
-        ghost!.style.width = `${newValue}px`;
-      } else {
-        ghost!.style.height = `${newValue}px`;
-      }
-    };
-
-    const dispose = () => {
-      if (disposed) {
-        return;
-      }
-
-      disposed = true;
-
-      document.removeEventListener('mousemove', handleMove);
-      document.removeEventListener('mouseup', handleEnd);
-      document.removeEventListener('mouseleave', handleEnd);
-
-      if (ghost) {
-        ghost.remove();
-      }
-    };
-
-    const handleEnd = (evt: MouseEvent) => {
-      if (disposed) {
-        return;
-      }
-
-      if (ghost) {
-        const delta = getValueFromEvent(evt) - start;
-        const newValue = Math.max(relativeValue + delta, min);
-        if (newValue !== relativeValue) {
-          // 触发修改
-          options.update(newValue);
-        }
-      }
-
-      dispose();
-    };
-
-    document.addEventListener('mousemove', handleMove);
-    document.addEventListener('mouseup', handleEnd);
-    document.addEventListener('mouseleave', handleEnd);
-    disposer.current = dispose;
-  };
-
-  useEffect(() => {
-    disposer.current?.();
-  }, []);
-
-  return { instanceRef, handleStart };
-}
-
-const Lane = observer(function Lane(props: {
+interface LaneProps {
   value: LaneDSL;
   index: number;
   formModel: FormModel;
   onAppend: (index: number) => void;
-}) {
-  const { value, formModel, index, onAppend } = props;
+  node: Node;
+  graph: Graph;
+}
+
+// TODO: 考虑缩放和偏移
+const Lane = observer(function Lane(props: LaneProps) {
+  const { value, formModel, index, onAppend, graph } = props;
   const [editing, setEditing] = useState(false);
   const nameRef = useRef<HTMLSpanElement>(null);
 
   const laneDrag = useLanesDrag({
     direction: 'horizontal',
-    min: DEFAULT_LANE_HEIGHT,
+    /**
+     * 获取区域内的节点，计算最小高度
+     */
+    min: () => {
+      const instance = laneDrag.instanceRef.current;
+      if (instance == null) {
+        return DEFAULT_LANE_HEIGHT;
+      }
+
+      const rect = instance.getBoundingClientRect();
+      const paneBBox = graph.clientToLocal(rect.left, rect.top, rect.width, rect.height);
+      const nodesUnderBBOX = graph.getNodesInArea(paneBBox, { strict: true });
+
+      if (!nodesUnderBBOX.length) {
+        return DEFAULT_LANE_HEIGHT;
+      }
+
+      const bbox = graph.getCellsBBox(nodesUnderBBOX);
+
+      if (bbox == null) {
+        return DEFAULT_LANE_HEIGHT;
+      }
+
+      const paneBottomEdge = paneBBox.y + paneBBox.height;
+      const nodesBottomEdge = bbox.y + bbox.height;
+
+      return Math.min(
+        Math.max(DEFAULT_LANE_HEIGHT, nodesBottomEdge - paneBottomEdge + paneBBox.height + GAP),
+        paneBBox.height
+      );
+    },
     update(v) {
       formModel.setProperty(`panes[${index}].height`, v);
     },
@@ -250,7 +182,17 @@ export const LaneShape = observer(function LaneShape(props: LaneShapeProps) {
   return (
     <div ref={lanesDrag.instanceRef} className={s.root} style={{ width: dsl.width }}>
       {dsl.panes.map((i, idx) => {
-        return <Lane key={i.uuid} index={idx} value={i} formModel={formModel} onAppend={handleAppend}></Lane>;
+        return (
+          <Lane
+            key={i.uuid}
+            index={idx}
+            value={i}
+            formModel={formModel}
+            onAppend={handleAppend}
+            node={node}
+            graph={graph}
+          ></Lane>
+        );
       })}
       <div className={`${s.resizerVertical} ${s.resizerRight}`} onMouseDown={lanesDrag.handleStart}></div>
     </div>
