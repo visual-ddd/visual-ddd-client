@@ -1,8 +1,9 @@
 $border-color: var(--vd-color-primary-400);
+$border-radius: 8px;
+$pane-gap: var(--vd-spacing-xs);
+$ghost-color: var(--vd-color-success-300);
 
 .root {
-  border: 1px solid $border-color;
-  background-color: white;
   position: relative;
 }
 
@@ -10,18 +11,20 @@ $border-color: var(--vd-color-primary-400);
   display: flex;
   position: relative;
   width: 100%;
+  padding-bottom: $pane-gap;
 
   &:hover .creator {
-    z-index: 1000;
-    bottom: -15px;
+    opacity: 0.7;
   }
 }
 
 .container {
   flex: 1;
-  z-index: 2;
   position: relative;
-  background-color: white;
+  background-color: var(--vd-color-gray-700);
+  opacity: 0.4;
+  border-top-right-radius: $border-radius;
+  border-bottom-right-radius: $border-radius;
 }
 
 .creator {
@@ -36,14 +39,16 @@ $border-color: var(--vd-color-primary-400);
   width: 30px;
   border-radius: 25px;
   color: var(--vd-color-gray-800);
-  opacity: 0.7;
+  opacity: 0.4;
   cursor: pointer;
+  pointer-events: all;
   left: 50%;
-  bottom: 0;
-  z-index: 0;
+  bottom: -12px;
+  z-index: 100;
 
   &:hover {
     opacity: 1;
+    color: var(--vd-color-primary);
   }
 }
 
@@ -57,6 +62,9 @@ $border-color: var(--vd-color-primary-400);
   align-items: center;
   justify-content: center;
   border-right: 1px solid $border-color;
+  border-top-left-radius: $border-radius;
+  border-bottom-left-radius: $border-radius;
+  pointer-events: all;
 }
 
 .title {
@@ -66,6 +74,7 @@ $border-color: var(--vd-color-primary-400);
   display: inline-block;
   writing-mode: vertical-lr;
   font-weight: bold;
+  pointer-events: all;
 
   &::selection {
     background-color: white;
@@ -83,6 +92,7 @@ $border-color: var(--vd-color-primary-400);
 
 .icon {
   cursor: pointer;
+
   &:hover {
     color: white;
   }
@@ -91,13 +101,14 @@ $border-color: var(--vd-color-primary-400);
 .resizerVertical,
 .resizerHorizontal {
   position: absolute;
-  background-color: red;
+  background-color: transparent;
   z-index: 3;
-  --width: 1px;
+  pointer-events: all;
+  --width: #{$pane-gap};
 
   &:hover,
   &:active {
-    --width: 3px;
+    background-color: $ghost-color;
   }
 }
 
@@ -125,7 +136,7 @@ $border-color: var(--vd-color-primary-400);
 
 .ghost {
   position: absolute;
-  border: 2px solid green;
+  border: 3px solid $ghost-color;
   top: 0;
   left: 0;
   z-index: var(--vd-z-index-fixed);

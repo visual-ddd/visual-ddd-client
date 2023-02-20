@@ -184,7 +184,7 @@ const Lane = observer(function Lane(props: LaneProps) {
           </div>
         )}
       </aside>
-      <main className={s.container}>x</main>
+      <main className={s.container}></main>
       <div className={`${s.resizerHorizontal} ${s.resizerBottom}`} onMouseDown={laneDrag.handleStart}></div>
     </section>
   );

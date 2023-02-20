@@ -19,7 +19,14 @@ const LaneReactShapeComponent = (props: ReactComponentProps) => {
 };
 
 const LaneShapeComponent = (props: ShapeComponentProps) => {
-  return <ReactComponentBinding {...props.cellProps} component={ScenarioObjectName.Lane} />;
+  return (
+    <ReactComponentBinding
+      {...props.cellProps}
+      // 支持在泳道中进行框选
+      attrs={{ fo: { style: { pointerEvents: 'none' } } }}
+      component={ScenarioObjectName.Lane}
+    />
+  );
 };
 
 registerReactComponent(ScenarioObjectName.Lane, LaneReactShapeComponent);
@@ -48,6 +55,7 @@ defineShape({
   initialProps: () => {
     return {
       zIndex: 0,
+
       ...createLanesDSL(),
     };
   },

@@ -10,5 +10,5 @@ export enum ScenarioObjectName {
   Start = 'start',
 }
 
-export const DEFAULT_LANE_WIDTH = 600;
-export const DEFAULT_LANE_HEIGHT = 200;
+export const DEFAULT_LANE_WIDTH = 1000;
+export const DEFAULT_LANE_HEIGHT = 300;
