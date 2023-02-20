@@ -24,7 +24,7 @@ interface LaneProps {
   value: LaneDSL;
   index: number;
   formModel: FormModel;
-  onAppend: (index: number) => void;
+  onAppend: (params: { index: number; rect: DOMRect; bbox: Rectangle }) => void;
   onSizeChange: (params: {
     index: number;
     size: number;
@@ -38,6 +38,7 @@ interface LaneProps {
 }
 
 // TODO: 考虑缩放和偏移
+// TODO: 只读模式
 const Lane = observer(function Lane(props: LaneProps) {
   const { value, formModel, index, onAppend, onSizeChange, graph } = props;
   const [editing, setEditing] = useState(false);
@@ -98,7 +99,11 @@ const Lane = observer(function Lane(props: LaneProps) {
     evt.stopPropagation();
     evt.preventDefault();
 
-    onAppend(index);
+    const instance = laneDrag.instanceRef.current!;
+    const rect = instance.getBoundingClientRect();
+    const bbox = graph.clientToLocal(rect.left, rect.top, rect.width, rect.height);
+
+    onAppend({ index, rect, bbox });
   };
 
   const handleNameEditStart = (evt: React.MouseEvent) => {
@@ -191,26 +196,11 @@ export const LaneShape = observer(function LaneShape(props: LaneShapeProps) {
     },
   });
 
-  const handleAppend = (index: number) => {
-    const list = formModel.getProperty('panes') as LaneDSL[];
-    const newItem = createLaneDSL();
-    const clone = list.slice();
-    clone.splice(index + 1, 0, newItem);
-
-    formModel.setProperty('panes', clone);
-  };
-
-  const handleLaneSizeChange: LaneProps['onSizeChange'] = params => {
-    const { index, size, delta, bbox } = params;
-    // 获取所有在指定节点横向之下的节点
-    const updateSize = () => {
-      formModel.setProperty(`panes[${index}].height`, size);
-    };
+  const moveChildrenUnderLine = (y: number, delta: number) => {
     const children = node.getChildren() ?? NoopArray;
 
     if (!children.length) {
-      updateSize();
-      return;
+      return false;
     }
 
     const childrenNeedToChange = children.filter((i): i is Node => {
@@ -223,7 +213,7 @@ export const LaneShape = observer(function LaneShape(props: LaneShapeProps) {
         return false;
       }
 
-      if (pos.y >= bbox.y + bbox.height) {
+      if (pos.y >= y) {
         return true;
       }
 
@@ -231,8 +221,7 @@ export const LaneShape = observer(function LaneShape(props: LaneShapeProps) {
     });
 
     if (!childrenNeedToChange.length) {
-      updateSize();
-      return;
+      return false;
     }
 
     for (const i of childrenNeedToChange) {
@@ -241,7 +230,28 @@ export const LaneShape = observer(function LaneShape(props: LaneShapeProps) {
       i.setPosition({ x: pos.x, y: newY });
     }
 
-    updateSize();
+    return true;
+  };
+
+  const handleAppend: LaneProps['onAppend'] = ({ index, bbox }) => {
+    const insert = () => {
+      const list = formModel.getProperty('panes') as LaneDSL[];
+      const newItem = createLaneDSL();
+      const clone = list.slice();
+      clone.splice(index + 1, 0, newItem);
+
+      formModel.setProperty('panes', clone);
+    };
+
+    insert();
+    moveChildrenUnderLine(bbox.y + bbox.height, DEFAULT_LANE_HEIGHT);
+  };
+
+  const handleLaneSizeChange: LaneProps['onSizeChange'] = params => {
+    const { index, size, delta, bbox } = params;
+
+    moveChildrenUnderLine(bbox.y + bbox.height, delta);
+    formModel.setProperty(`panes[${index}].height`, size);
   };
 
   return (
