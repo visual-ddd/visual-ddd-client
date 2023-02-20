@@ -4,9 +4,10 @@ import { createLanesDSL, LanesDSL, ScenarioObjectName } from '../../dsl';
 import { LaneShape } from './Shape';
 
 const LaneReactShapeComponent = (props: ReactComponentProps) => {
+  const { graph, node } = props;
   const { formModel, properties } = useShapeModel(props.node);
 
-  return <LaneShape dsl={properties as unknown as LanesDSL} formModel={formModel} />;
+  return <LaneShape dsl={properties as unknown as LanesDSL} formModel={formModel} graph={graph} node={node} />;
 };
 
 const LaneShapeComponent = (props: ShapeComponentProps) => {

@@ -24,8 +24,8 @@ const doc = new YDoc();
 const model = new ScenarioEditorModel({
   scopeId: 'scenario',
   activeScope: true,
-  shapeList: [ScenarioObjectName.Lane],
-  whitelist: [ScenarioObjectName.Lane],
+  shapeList: [ScenarioObjectName.Lane, ScenarioObjectName.Start],
+  whitelist: [ScenarioObjectName.Lane, ScenarioObjectName.Start],
   doc,
   datasource: doc.getMap('scenario'),
 });

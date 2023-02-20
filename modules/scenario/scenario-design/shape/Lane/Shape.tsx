@@ -2,21 +2,30 @@ import { FormModel } from '@/lib/editor';
 import { EditOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { observer } from 'mobx-react';
 import React, { useEffect, useRef, useState } from 'react';
+import type { Graph, Node } from '@antv/x6';
+
 import { createLaneDSL, DEFAULT_LANE_HEIGHT, DEFAULT_LANE_WIDTH, LaneDSL, LanesDSL } from '../../dsl';
 
 import s from './Shape.module.scss';
+import { NoopArray } from '@wakeapp/utils';
 
 export interface LaneShapeProps {
   dsl: LanesDSL;
   formModel: FormModel;
+  graph: Graph;
+  node: Node;
 }
 
-const MIN_WIDTH = DEFAULT_LANE_WIDTH;
+const GAP = 40;
 
 /**
  * 整体泳道只能横向扩展
  */
-function useLanesDrag(options: { direction: 'horizontal' | 'vertical'; min: number; update: (value: number) => void }) {
+function useLanesDrag(options: {
+  direction: 'horizontal' | 'vertical';
+  min: number | (() => number);
+  update: (value: number) => void;
+}) {
   const instanceRef = useRef<HTMLDivElement>(null);
   const disposer = useRef<Function>();
 
@@ -34,6 +43,7 @@ function useLanesDrag(options: { direction: 'horizontal' | 'vertical'; min: numb
     };
 
     const instance = instanceRef.current!;
+
     let start = getValueFromEvent(evt.nativeEvent);
     let disposed = false;
     let dragging = false;
@@ -41,6 +51,7 @@ function useLanesDrag(options: { direction: 'horizontal' | 'vertical'; min: numb
 
     const height = instance.offsetHeight;
     const width = instance.offsetWidth;
+    const min = typeof options.min === 'function' ? options.min() : options.min;
 
     const relativeValue = options.direction === 'vertical' ? width : height;
 
@@ -57,7 +68,7 @@ function useLanesDrag(options: { direction: 'horizontal' | 'vertical'; min: numb
 
       dragging = true;
       const delta = getValueFromEvent(evt) - start;
-      const newValue = Math.max(relativeValue + delta, options.min);
+      const newValue = Math.max(relativeValue + delta, min);
 
       if (options.direction === 'vertical') {
         ghost!.style.width = `${newValue}px`;
@@ -89,7 +100,7 @@ function useLanesDrag(options: { direction: 'horizontal' | 'vertical'; min: numb
 
       if (ghost) {
         const delta = getValueFromEvent(evt) - start;
-        const newValue = Math.max(relativeValue + delta, options.min);
+        const newValue = Math.max(relativeValue + delta, min);
         if (newValue !== relativeValue) {
           // 触发修改
           options.update(newValue);
@@ -196,10 +207,32 @@ const Lane = observer(function Lane(props: {
 });
 
 export const LaneShape = observer(function LaneShape(props: LaneShapeProps) {
-  const { dsl, formModel } = props;
+  const { dsl, formModel, graph, node } = props;
   const lanesDrag = useLanesDrag({
     direction: 'vertical',
-    min: MIN_WIDTH,
+    /**
+     * 计算容器内的所有元素，得出最小宽度
+     * @returns
+     */
+    min: () => {
+      const children = node.getChildren() ?? NoopArray;
+      if (!children.length) {
+        return DEFAULT_LANE_WIDTH;
+      }
+
+      const bbox = graph.getCellsBBox(children);
+      if (bbox == null) {
+        return DEFAULT_LANE_WIDTH;
+      }
+
+      const bboxRightEdge = bbox.x + bbox.width;
+
+      const nodePosition = node.getPosition();
+      const nodeSize = node.getSize();
+      const nodeRightEdge = nodePosition.x + nodeSize.width;
+
+      return Math.max(DEFAULT_LANE_WIDTH, bboxRightEdge - nodeRightEdge + nodeSize.width + GAP);
+    },
     update(v) {
       formModel.setProperty('width', v);
     },
