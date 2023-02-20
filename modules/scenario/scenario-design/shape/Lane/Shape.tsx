@@ -3,7 +3,7 @@ import { EditOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { NoopArray } from '@wakeapp/utils';
 import { observer } from 'mobx-react';
 import React, { useRef, useState } from 'react';
-import type { Graph, Node } from '@antv/x6';
+import type { Graph, Node, Rectangle } from '@antv/x6';
 
 import { createLaneDSL, DEFAULT_LANE_HEIGHT, DEFAULT_LANE_WIDTH, LaneDSL, LanesDSL } from '../../dsl';
 
@@ -25,13 +25,21 @@ interface LaneProps {
   index: number;
   formModel: FormModel;
   onAppend: (index: number) => void;
+  onSizeChange: (params: {
+    index: number;
+    size: number;
+    oldSize: number;
+    rect: DOMRect;
+    bbox: Rectangle;
+    delta: number;
+  }) => void;
   node: Node;
   graph: Graph;
 }
 
 // TODO: 考虑缩放和偏移
 const Lane = observer(function Lane(props: LaneProps) {
-  const { value, formModel, index, onAppend, graph } = props;
+  const { value, formModel, index, onAppend, onSizeChange, graph } = props;
   const [editing, setEditing] = useState(false);
   const nameRef = useRef<HTMLSpanElement>(null);
 
@@ -69,7 +77,20 @@ const Lane = observer(function Lane(props: LaneProps) {
       );
     },
     update(v) {
-      formModel.setProperty(`panes[${index}].height`, v);
+      const instance = laneDrag.instanceRef.current!;
+      const rect = instance.getBoundingClientRect();
+      const bbox = graph.clientToLocal(rect.left, rect.top, rect.width, rect.height);
+      const size = v;
+      const oldSize = instance.offsetHeight;
+
+      onSizeChange({
+        index,
+        size,
+        oldSize,
+        delta: size - oldSize,
+        rect: rect,
+        bbox,
+      });
     },
   });
 
@@ -179,11 +200,56 @@ export const LaneShape = observer(function LaneShape(props: LaneShapeProps) {
     formModel.setProperty('panes', clone);
   };
 
+  const handleLaneSizeChange: LaneProps['onSizeChange'] = params => {
+    const { index, size, delta, bbox } = params;
+    // 获取所有在指定节点横向之下的节点
+    const updateSize = () => {
+      formModel.setProperty(`panes[${index}].height`, size);
+    };
+    const children = node.getChildren() ?? NoopArray;
+
+    if (!children.length) {
+      updateSize();
+      return;
+    }
+
+    const childrenNeedToChange = children.filter((i): i is Node => {
+      if (!i.isNode()) {
+        return false;
+      }
+
+      const pos = i.getPosition();
+      if (pos == null) {
+        return false;
+      }
+
+      if (pos.y >= bbox.y + bbox.height) {
+        return true;
+      }
+
+      return false;
+    });
+
+    if (!childrenNeedToChange.length) {
+      updateSize();
+      return;
+    }
+
+    for (const i of childrenNeedToChange) {
+      const pos = i.getPosition();
+      const newY = pos.y + delta;
+      i.setPosition({ x: pos.x, y: newY });
+    }
+
+    updateSize();
+  };
+
   return (
     <div ref={lanesDrag.instanceRef} className={s.root} style={{ width: dsl.width }}>
       {dsl.panes.map((i, idx) => {
         return (
           <Lane
+            onSizeChange={handleLaneSizeChange}
             key={i.uuid}
             index={idx}
             value={i}
