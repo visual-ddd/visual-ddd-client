@@ -8,7 +8,7 @@ import { wrapPreventListenerOptions } from '@/lib/g6-binding/hooks';
 import { GraphBindingOptions, GraphBindingProps } from '@/lib/g6-binding';
 
 import { CanvasEvent } from './CanvasEvent';
-import { BaseEditorModel, BaseNodeProperties, BaseNode } from '../Model';
+import { BaseEditorModel, BaseNode } from '../Model';
 import { NormalizedAutoResizeGroup, ShapeRegistry } from '../Shape';
 import { assertShapeInfo } from '../Shape';
 import { copy, paste } from './ClipboardUtils';
@@ -173,6 +173,9 @@ export class CanvasModel {
     this.graphOptions = {
       background: { color: '#f8f8f8' },
       grid: { size: 15, visible: true },
+      onEdgeLabelRendered: args => {
+        shapeRegistry.renderEdgeLabel(args);
+      },
 
       // 体验不好，暂时关闭
       // minimap: {
@@ -256,7 +259,7 @@ export class CanvasModel {
         // allowNode 不太靠谱，统一使用 allowLoop 验证
         // allowNode
         createEdge(arg) {
-          return shapeRegistry.createEdge({
+          return shapeRegistry.createTempEdge({
             graph: this,
             cell: arg.sourceCell,
             magnet: arg.sourceMagnet,
@@ -279,7 +282,8 @@ export class CanvasModel {
               return shapeRegistry.isMovable({ cell: view.cell, graph: this });
             },
             edgeMovable: true,
-            edgeLabelMovable: true,
+            // TODO: 暂时不支持标签移动
+            edgeLabelMovable: false,
             arrowheadMovable: true,
             magnetConnectable: true,
             vertexDeletable: true,
@@ -799,18 +803,8 @@ export class CanvasModel {
     if (isNew) {
       console.log('new connect', evt);
 
-      // 插入新的边节点
-      const shapeName = (edge.getData() as BaseNodeProperties)?.__node_name__ ?? 'edge';
-
       // 转换为 model 上的节点
-      this.editorCommandHandler.createNode({
-        name: shapeName,
-        type: 'edge',
-        properties: {
-          source: edge.getSource(),
-          target: edge.getTarget(),
-        },
-      });
+      this.editorCommandHandler.createNode(this.shapeRegistry.edgeFactory({ edge }));
 
       // 移除画布上的旧节点
       this.graph?.removeCell(edge.id, wrapPreventListenerOptions({}));

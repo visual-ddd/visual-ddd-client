@@ -1,6 +1,6 @@
 import React from 'react';
-import { Node, Graph, Size, PointLike, Cell, Edge } from '@antv/x6';
-import { Transform } from '@antv/x6-plugin-transform';
+import type { Node, Graph, Size, PointLike, Cell, Edge, Markup } from '@antv/x6';
+import type { Transform } from '@antv/x6-plugin-transform';
 
 import { BaseEditorModel, BaseNode, Properties, ShapeType } from '../Model';
 import { CopyPayload } from '../Canvas/ClipboardUtils';
@@ -45,6 +45,18 @@ export interface ShapeAttributesComponentProps {
   model: BaseEditorModel;
   node: BaseNode;
   formModel: FormModel;
+}
+
+/**
+ * 边的标签组件
+ */
+export interface EdgeLabelComponentProps {
+  model: BaseEditorModel;
+  node: BaseNode;
+  edge: Edge;
+  label: Edge.Label;
+  container: Element;
+  selectors: Markup.Selectors;
 }
 
 export interface NormalizedAutoResizeGroup {
@@ -154,14 +166,21 @@ export interface ShapeConfiguration {
   edgeFactory?: string | ((context: { graph: Graph; cell: Cell; model: BaseNode; magnet: Element }) => string);
 
   /**
-   * 静态的、初始参数
+   * 边标签 React 组件
+   * 注意：这里无法访问 context
+   */
+  edgeLabelComponent?: React.ComponentType<EdgeLabelComponentProps>;
+
+  /**
+   * 静态的、初始参数，这里指定的参数不会进行持久化
+   *
    * @returns
    */
   staticProps?: () => Record<string, any>;
 
   /**
    * 初始状态，这里指定的状态会放置到 Model 进行持久化
-   * 而 staticProps 是静态的，只在组件渲染时有用
+   * 而 staticProps 是静态的，只在组件渲染时有用。
    * 这些参数可以在 component 中通过 model.properties 获取
    *
    * 另外在 copyFactory、dropFactory 中也可以定义参数，这些工厂定义的参数优先级高于 initialProps

@@ -1,4 +1,6 @@
-import { Cell, Graph, Node, Shape } from '@antv/x6';
+import { Cell, Edge, Graph, Markup, Node, Shape } from '@antv/x6';
+import { createElement } from 'react';
+import { createRoot } from 'react-dom/client';
 import { Options } from '@antv/x6/lib/graph/options';
 import { Transform } from '@antv/x6-plugin-transform';
 import { NoopObject } from '@wakeapp/utils';
@@ -29,7 +31,34 @@ export class ShapeRegistry {
     this.bindGraphIfNeed(graph);
   };
 
-  createEdge = (context: { graph: Graph; cell: Cell; magnet: Element }) => {
+  renderEdgeLabel = (context: { edge: Edge; label: Edge.Label; container: Element; selectors: Markup.Selectors }) => {
+    const { edge, selectors } = context;
+    const model = this.getModelByCell(edge);
+
+    if (model == null) {
+      return;
+    }
+
+    const conf = this.getConfigurationByModel(model);
+    if (conf?.edgeLabelComponent == null) {
+      return;
+    }
+
+    const mountPoint = selectors.foContent as HTMLDivElement;
+    if (!mountPoint) {
+      return;
+    }
+
+    const root = createRoot(mountPoint);
+    root.render(createElement(conf.edgeLabelComponent, { ...context, model: this.editorModel, node: model }));
+
+    // 销毁
+    edge.once('removed', () => {
+      root.unmount();
+    });
+  };
+
+  createTempEdge = (context: { graph: Graph; cell: Cell; magnet: Element }) => {
     const { graph, cell, magnet } = context;
     this.bindGraphIfNeed(graph);
 
@@ -51,6 +80,7 @@ export class ShapeRegistry {
         const initialStaticProperties = edgeConfiguration.staticProps?.();
 
         // 注入类型信息，方便恢复
+        // 见 下方 edgeFactory
         const typeInfo: BaseNodeProperties = {
           __node_type__: edgeConfiguration.shapeType,
           __node_name__: type,
@@ -67,6 +97,28 @@ export class ShapeRegistry {
     }
 
     return new Shape.Edge();
+  };
+
+  edgeFactory = (context: { edge: Edge }) => {
+    const { edge } = context;
+    // 插入新的边节点
+    const shapeName = (edge.getData() as BaseNodeProperties)?.__node_name__ ?? 'edge';
+    const config = this.getConfigurationByName(shapeName);
+
+    if (config == null) {
+      throw new Error(`未找到 ${shapeName} 类型的组件`);
+    }
+
+    // 转换为 model 上的节点
+    return {
+      name: shapeName,
+      type: config.shapeType,
+      properties: {
+        ...config?.initialProps?.(),
+        source: edge.getSource(),
+        target: edge.getTarget(),
+      },
+    };
   };
 
   /**

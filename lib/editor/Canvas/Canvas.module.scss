@@ -11,6 +11,10 @@
       border: 2px solid #1677ff;
     }
 
+    .x6-edge-label foreignObject {
+      overflow: visible;
+    }
+
     // 不采用这种方式，因为 marker 的样式不会从 path 中继承
     // /**
     //  * 选中样式

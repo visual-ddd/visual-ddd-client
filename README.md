@@ -53,6 +53,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 - 无连接桩连接交互
 - updateProperty debounce 发布 yjs 事件, 使用合并事件形式
 - 多节点框选显示优化
+- 拷贝控制
 - node edit
 - label edit
 

@@ -23,6 +23,11 @@ export enum ScenarioObjectName {
    * 普通边
    */
   NormalEdge = 's-edge',
+
+  /**
+   * 标签边
+   */
+  LabelEdge = 's-label-edge',
 }
 
 export const DEFAULT_LANE_WIDTH = 1000;

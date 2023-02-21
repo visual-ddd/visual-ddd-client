@@ -13,3 +13,10 @@ export interface LanesDSL extends NameDSL {
    */
   panes: LaneDSL[];
 }
+
+/**
+ * 标签边
+ */
+export interface LabelEdgeDSL extends IDDSL {
+  label: string;
+}

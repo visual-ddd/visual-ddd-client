@@ -1,0 +1,14 @@
+.root {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  font-size: 12px;
+  line-height: 1;
+  padding: 2px 8px;
+  border: 2px solid var(--vd-color-gray-600);
+  border-radius: 12px;
+  white-space: nowrap;
+  max-width: 10em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
