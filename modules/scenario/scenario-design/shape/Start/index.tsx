@@ -1,4 +1,4 @@
-import { defineShape, ShapeComponentProps } from '@/lib/editor';
+import { defineShape, ShapeComponentProps, useHoverShowPorts } from '@/lib/editor';
 import { ReactComponentBinding, ReactComponentProps, registerReactComponent } from '@/lib/g6-binding';
 
 import { ScenarioObjectName } from '../../dsl';
@@ -15,7 +15,8 @@ const StartReactShapeComponent = (props: ReactComponentProps) => {
 };
 
 const StartShapeComponent = (props: ShapeComponentProps) => {
-  return <ReactComponentBinding {...props.cellProps} component={ScenarioObjectName.Start} />;
+  const hoverHandlers = useHoverShowPorts();
+  return <ReactComponentBinding {...props.cellProps} component={ScenarioObjectName.Start} {...hoverHandlers} />;
 };
 
 registerReactComponent(ScenarioObjectName.Start, StartReactShapeComponent);
@@ -27,11 +28,48 @@ defineShape({
   description: '起始节点',
   shapeType: 'node',
   group: false,
+  allowLoopConnect: false,
+  allowConnectNodes: [ScenarioObjectName.Activity],
+  edgeFactory: ScenarioObjectName.NormalEdge,
+
+  /**
+   * 开始节点只允许一条出边
+   */
+  allowMagnetCreateEdge: ({ graph, cell }) => {
+    const outgoingEdges = graph.getOutgoingEdges(cell);
+    if (outgoingEdges?.length) {
+      return false;
+    }
+
+    return true;
+  },
 
   initialProps: () => {
-    return {
-      zIndex: 1,
-    };
+    return {};
   },
+
+  staticProps: () => ({
+    zIndex: 1,
+    ports: {
+      groups: {
+        left: {
+          position: 'left',
+          attrs: { circle: { magnet: true, r: 5 } },
+        },
+        right: {
+          position: 'right',
+          label: {
+            position: 'right',
+          },
+          attrs: { circle: { magnet: true, r: 5 } },
+        },
+      },
+      items: [
+        { id: 'left', group: 'left' },
+        { id: 'right', group: 'right' },
+      ],
+    },
+  }),
+
   component: StartShapeComponent,
 });

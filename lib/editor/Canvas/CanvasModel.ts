@@ -1,4 +1,4 @@
-import { Graph, PointLike, Node } from '@antv/x6';
+import { Graph, PointLike, Node, Cell } from '@antv/x6';
 import { Transform } from '@antv/x6-plugin-transform';
 import { booleanPredicate, debounce, Disposer } from '@wakeapp/utils';
 import { message } from 'antd';
@@ -33,6 +33,12 @@ declare global {
 }
 
 type Resizing = GraphBindingOptions['resizing'];
+
+const DEFAULT_SELECTED_COLOR = '#1890ff';
+
+export interface CanvasModelOptions {
+  selectedColor?: string;
+}
 
 /**
  * 这个模型是无状态的，核心状态保存在 EditorModel
@@ -123,7 +129,18 @@ export class CanvasModel {
    */
   private resizing = false;
 
-  constructor(inject: { editorModel: BaseEditorModel }) {
+  /**
+   * 配置项
+   */
+  private options: CanvasModelOptions;
+
+  /**
+   * 储存临时的节点状态
+   */
+  private tempNodeState: WeakMap<Cell, any> = new WeakMap();
+
+  constructor(inject: { editorModel: BaseEditorModel; options?: CanvasModelOptions }) {
+    this.options = inject.options ?? {};
     this.editorModel = inject.editorModel;
     const shapeRegistry = (this.shapeRegistry = new ShapeRegistry({ editorModel: inject.editorModel }));
     this.editorModel.scope.registerScopeMember('canvasModel', this);
@@ -243,6 +260,13 @@ export class CanvasModel {
             graph: this,
             cell: arg.sourceCell,
             magnet: arg.sourceMagnet,
+          });
+        },
+        validateMagnet(arg) {
+          return shapeRegistry.isAllowMagnetCreateEdge({
+            graph: this,
+            cell: arg.cell,
+            magnet: arg.magnet,
           });
         },
       },
@@ -655,6 +679,42 @@ export class CanvasModel {
     const { node } = evt;
 
     this.setNodeSize(node, false);
+  };
+
+  /**
+   * 边选中
+   * @param evt
+   */
+  handleEdgeSelected: GraphBindingProps['onEdge$Selected'] = evt => {
+    const edge = evt.edge;
+    const model = this.shapeRegistry.getModelByCell(edge);
+
+    // 非模型无法操作
+    if (model == null) {
+      return;
+    }
+
+    const oldStroke = edge.attr('line/stroke');
+    const oldStrokeWidth = edge.attr('line/strokeWidth');
+
+    this.tempNodeState.set(edge, { stroke: oldStroke, strokeWidth: oldStrokeWidth });
+
+    edge.attr('line/stroke', this.options.selectedColor ?? DEFAULT_SELECTED_COLOR);
+    edge.attr('line/strokeWidth', 3);
+  };
+
+  /**
+   * 边取消选中
+   * @param evt
+   */
+  handleEdgeUnselected: GraphBindingProps['onEdge$Unselected'] = evt => {
+    const edge = evt.edge;
+    const oldStrokeState = this.tempNodeState.get(edge) as { stroke: string; strokeWidth: number } | undefined;
+
+    if (oldStrokeState) {
+      edge.attr('line/stroke', oldStrokeState.stroke);
+      edge.attr('line/strokeWidth', oldStrokeState.strokeWidth);
+    }
   };
 
   /**

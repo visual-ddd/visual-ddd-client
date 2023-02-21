@@ -100,6 +100,33 @@ export class ShapeRegistry {
   };
 
   /**
+   * 是否允许磁吸点创建边
+   * @param context
+   */
+  isAllowMagnetCreateEdge = (context: { graph?: Graph; cell: Cell; magnet?: Element }): boolean => {
+    const { graph, cell, magnet } = context;
+
+    if (graph) {
+      this.bindGraphIfNeed(graph);
+    }
+
+    const model = this.getModelByCell(cell);
+    const conf = this.getConfigurationByCell(cell);
+
+    if (conf == null) {
+      return true;
+    }
+
+    const allowMagnetCreateEdge = conf.allowMagnetCreateEdge;
+
+    if (typeof allowMagnetCreateEdge === 'function') {
+      return allowMagnetCreateEdge({ cell, graph: graph || this.graph, magnet, model: model! }) ?? true;
+    }
+
+    return allowMagnetCreateEdge ?? true;
+  };
+
+  /**
    * 判断是否支持节点连接，这个需要挂载到 allowLoop 验证器上，因为 allowNode 并不可靠
    * @param context
    * @returns

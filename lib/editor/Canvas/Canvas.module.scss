@@ -10,6 +10,15 @@
     .x6-widget-selection-inner {
       border: 2px solid #1677ff;
     }
+
+    // 不采用这种方式，因为 marker 的样式不会从 path 中继承
+    // /**
+    //  * 选中样式
+    //  */
+    // .x6-edge-selected path:nth-child(2) {
+    //   stroke: var(--vd-color-primary);
+    //   fill: red;;
+    // }
   }
 }
 

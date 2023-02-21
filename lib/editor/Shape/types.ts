@@ -207,6 +207,13 @@ export interface ShapeConfiguration {
       }) => boolean);
 
   /**
+   * 是否允许磁吸点创建链接
+   */
+  allowMagnetCreateEdge?:
+    | boolean
+    | ((context: { graph: Graph; cell: Cell; magnet?: Element; model: BaseNode }) => boolean);
+
+  /**
    * 组件渲染定义
    */
   component: React.ComponentType<ShapeComponentProps>;

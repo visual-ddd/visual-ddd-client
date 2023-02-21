@@ -1,4 +1,5 @@
 import { CellBindingProps } from '@/lib/g6-binding';
+import { useCanvasModel } from '../../Canvas';
 
 const setPortVisible = (cellId: string, visible: boolean) => {
   const cell = document.querySelector('[data-cell-id="' + cellId + '"]');
@@ -19,8 +20,16 @@ const setPortVisible = (cellId: string, visible: boolean) => {
  * X6 目前并没有提供响应的接口
  */
 export function useHoverShowPorts() {
+  const { model: canvasModel } = useCanvasModel();
+
   const handleMouseEnter: CellBindingProps['onMouseenter'] = evt => {
-    setPortVisible(evt.cell.id, true);
+    const cell = evt.cell;
+
+    const registry = canvasModel.shapeRegistry;
+
+    if (registry.isAllowMagnetCreateEdge({ cell })) {
+      setPortVisible(evt.cell.id, true);
+    }
   };
 
   const handleMouseLeave: CellBindingProps['onMouseleave'] = evt => {

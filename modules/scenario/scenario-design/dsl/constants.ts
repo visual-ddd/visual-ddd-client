@@ -2,17 +2,27 @@ export enum ScenarioObjectName {
   /**
    * 泳道
    */
-  Lane = 'lane',
+  Lane = 's-lane',
 
   /**
    * 起始节点
    */
-  Start = 'start',
+  Start = 's-start',
 
   /**
    * 结束节点
    */
-  End = 'end',
+  End = 's-end',
+
+  /**
+   * 活动节点
+   */
+  Activity = 's-activity',
+
+  /**
+   * 普通边
+   */
+  NormalEdge = 's-edge',
 }
 
 export const DEFAULT_LANE_WIDTH = 1000;

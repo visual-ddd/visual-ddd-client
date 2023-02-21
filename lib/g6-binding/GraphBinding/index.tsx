@@ -176,6 +176,20 @@ export interface GraphBindingProps {
   onEdge$Added?: (evt: EventArgs['edge:added']) => void;
 
   /**
+   * 边选中时触发
+   * @param evt
+   * @returns
+   */
+  onEdge$Selected?: (evt: EventArgs['edge:selected']) => void;
+
+  /**
+   * 边取消选中时触发
+   * @param evt
+   * @returns
+   */
+  onEdge$Unselected?: (evt: EventArgs['edge:unselected']) => void;
+
+  /**
    * z-index 变动
    * @param evt
    * @returns
