@@ -20,3 +20,10 @@ export interface LanesDSL extends NameDSL {
 export interface LabelEdgeDSL extends IDDSL {
   label: string;
 }
+
+/**
+ * 注释节点
+ */
+export interface CommentDSL extends IDDSL {
+  content: string;
+}

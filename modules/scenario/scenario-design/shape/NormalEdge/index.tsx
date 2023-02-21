@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 import { ScenarioObjectName } from '../../dsl';
 import { EDGE_PROPS } from '../shared';
 
-const EdgeComponent = (props: ShapeComponentProps) => {
+export const EdgeComponent = (props: ShapeComponentProps) => {
   const cellProps = props.cellProps;
   const { source: originSource, target: originTarget } = cellProps;
 

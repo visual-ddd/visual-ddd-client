@@ -30,6 +30,7 @@ const model = new ScenarioEditorModel({
     ScenarioObjectName.End,
     ScenarioObjectName.Activity,
     ScenarioObjectName.Decision,
+    ScenarioObjectName.Comment,
   ],
   whitelist: [
     ScenarioObjectName.Start,
@@ -37,6 +38,7 @@ const model = new ScenarioEditorModel({
     ScenarioObjectName.Activity,
     ScenarioObjectName.NormalEdge,
     ScenarioObjectName.Decision,
+    ScenarioObjectName.Comment,
   ],
   doc,
   datasource: doc.getMap('scenario'),

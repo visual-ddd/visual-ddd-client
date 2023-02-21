@@ -25,9 +25,19 @@ export enum ScenarioObjectName {
   Decision = 's-decision',
 
   /**
+   * 注释节点
+   */
+  Comment = 's-comment',
+
+  /**
    * 普通边
    */
   NormalEdge = 's-edge',
+
+  /**
+   * 注释边
+   */
+  CommentEdge = 's-comment-edge',
 
   /**
    * 标签边

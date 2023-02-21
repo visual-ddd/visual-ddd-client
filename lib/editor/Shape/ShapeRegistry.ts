@@ -429,14 +429,24 @@ export class ShapeRegistry {
       throw new Error(`未找到 ${type} 类型的组件`);
     }
 
+    const properties = {
+      ...configuration.initialProps?.(),
+      ...payload.properties,
+      ...(configuration?.copyFactory?.({ properties: payload.properties, payload }) ?? NoopObject),
+    };
+
+    // 节点拷贝或者粘贴的过程中，Canvas 会自动生成新的 id， 以避免和现有的节点冲突
+    // 但是部分节点的 properties 也会缓存 uuid(通常是冗余 id), 这可能导致一些问题
+    // 虽然放在这里处理不是特别合适，但是 uuid 基本上是大多数节点通用的
+    const maybeIncludeId = properties as { uuid?: string };
+    if (maybeIncludeId.uuid && maybeIncludeId.uuid !== payload.id) {
+      maybeIncludeId.uuid === payload.id;
+    }
+
     return {
       type,
       shapeType: configuration.shapeType,
-      properties: {
-        ...configuration.initialProps?.(),
-        ...payload.properties,
-        ...(configuration?.copyFactory?.({ properties: payload.properties, payload }) ?? NoopObject),
-      },
+      properties: properties,
     };
   }
 

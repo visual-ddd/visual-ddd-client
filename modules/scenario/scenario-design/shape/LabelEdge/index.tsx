@@ -1,33 +1,9 @@
-import { defineShape, ShapeComponentProps } from '@/lib/editor';
-import { EdgeBinding } from '@/lib/g6-binding';
-import { Edge } from '@antv/x6';
-import { useMemo } from 'react';
+import { defineShape } from '@/lib/editor';
 
 import { createLabelEdge, LabelEdgeDSL, ScenarioObjectName } from '../../dsl';
+import { EdgeComponent } from '../NormalEdge';
 import { EDGE_PROPS } from '../shared';
 import { Label } from './Label';
-
-const EdgeComponent = (props: ShapeComponentProps) => {
-  const cellProps = props.cellProps;
-  const { source: originSource, target: originTarget } = cellProps;
-
-  /**
-   * 强制不连接到锚点上，这样在节点移动时会灵活一些
-   */
-  const source = useMemo(() => {
-    if (originSource) {
-      return { cell: (originSource as Edge.TerminalCellData).cell };
-    }
-  }, [originSource]);
-
-  const target = useMemo(() => {
-    if (originTarget) {
-      return { cell: (originTarget as Edge.TerminalCellData).cell };
-    }
-  }, [originTarget]);
-
-  return <EdgeBinding {...props.cellProps} source={source} target={target} />;
-};
 
 /**
  * 默认边
