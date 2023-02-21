@@ -1,7 +1,8 @@
-import { defineShape, ShapeComponentProps } from '@/lib/editor';
+import { defineShape, ShapeComponentProps, useHoverShowPorts } from '@/lib/editor';
 import { ReactComponentBinding, ReactComponentProps, registerReactComponent } from '@/lib/g6-binding';
 
 import { ScenarioObjectName } from '../../dsl';
+import { PORTS } from '../shared';
 import s from './index.module.scss';
 
 const ActivityReactShapeComponent = (props: ReactComponentProps) => {
@@ -9,7 +10,9 @@ const ActivityReactShapeComponent = (props: ReactComponentProps) => {
 };
 
 const ActivityShapeComponent = (props: ShapeComponentProps) => {
-  return <ReactComponentBinding {...props.cellProps} component={ScenarioObjectName.Activity} />;
+  const handlers = useHoverShowPorts();
+
+  return <ReactComponentBinding {...props.cellProps} component={ScenarioObjectName.Activity} {...handlers} />;
 };
 
 registerReactComponent(ScenarioObjectName.Activity, ActivityReactShapeComponent);
@@ -20,11 +23,16 @@ defineShape({
   description: '活动节点',
   shapeType: 'node',
   group: false,
+  allowLoopConnect: false,
+  allowConnectNodes: [ScenarioObjectName.Activity, ScenarioObjectName.Decision, ScenarioObjectName.End],
+  edgeFactory: ScenarioObjectName.NormalEdge,
 
   initialProps: () => {
-    return {
-      zIndex: 1,
-    };
+    return {};
   },
+  staticProps: () => ({
+    zIndex: 2,
+    ...PORTS,
+  }),
   component: ActivityShapeComponent,
 });

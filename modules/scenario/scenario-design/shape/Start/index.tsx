@@ -5,6 +5,7 @@ import { ScenarioObjectName } from '../../dsl';
 import s from './index.module.scss';
 import { TriangleIcon } from './TriangleIcon';
 import icon from './start.png';
+import { PORTS } from '../shared';
 
 const StartReactShapeComponent = (props: ReactComponentProps) => {
   return (
@@ -29,7 +30,7 @@ defineShape({
   shapeType: 'node',
   group: false,
   allowLoopConnect: false,
-  allowConnectNodes: [ScenarioObjectName.Activity],
+  allowConnectNodes: [ScenarioObjectName.Activity, ScenarioObjectName.End, ScenarioObjectName.Decision],
   edgeFactory: ScenarioObjectName.NormalEdge,
 
   /**
@@ -49,26 +50,8 @@ defineShape({
   },
 
   staticProps: () => ({
-    zIndex: 1,
-    ports: {
-      groups: {
-        left: {
-          position: 'left',
-          attrs: { circle: { magnet: true, r: 5 } },
-        },
-        right: {
-          position: 'right',
-          label: {
-            position: 'right',
-          },
-          attrs: { circle: { magnet: true, r: 5 } },
-        },
-      },
-      items: [
-        { id: 'left', group: 'left' },
-        { id: 'right', group: 'right' },
-      ],
-    },
+    zIndex: 2,
+    ...PORTS,
   }),
 
   component: StartShapeComponent,

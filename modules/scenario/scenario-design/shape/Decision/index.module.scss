@@ -1,0 +1,11 @@
+$width: 50px;
+
+.root {
+  width: $width;
+  height: $width;
+  background-color: var(--vd-color-warning-200);
+  border: 2px solid var(--vd-color-warning-400);
+  border-radius: 4px;
+  transform: rotate(45deg) scale(0.8);
+  transform-origin: center;
+}

@@ -1,0 +1,7 @@
+.port {
+  &:hover {
+    fill: var(--vd-color-primary);
+    opacity: 1 !important;
+    transform: scale(1.1);
+  }
+}

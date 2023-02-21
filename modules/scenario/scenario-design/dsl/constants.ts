@@ -20,6 +20,11 @@ export enum ScenarioObjectName {
   Activity = 's-activity',
 
   /**
+   * 决策节点
+   */
+  Decision = 's-decision',
+
+  /**
    * 普通边
    */
   NormalEdge = 's-edge',

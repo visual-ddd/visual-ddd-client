@@ -24,12 +24,19 @@ const doc = new YDoc();
 const model = new ScenarioEditorModel({
   scopeId: 'scenario',
   activeScope: true,
-  shapeList: [ScenarioObjectName.Lane, ScenarioObjectName.Start, ScenarioObjectName.End, ScenarioObjectName.Activity],
+  shapeList: [
+    ScenarioObjectName.Lane,
+    ScenarioObjectName.Start,
+    ScenarioObjectName.End,
+    ScenarioObjectName.Activity,
+    ScenarioObjectName.Decision,
+  ],
   whitelist: [
     ScenarioObjectName.Start,
     ScenarioObjectName.End,
     ScenarioObjectName.Activity,
     ScenarioObjectName.NormalEdge,
+    ScenarioObjectName.Decision,
   ],
   doc,
   datasource: doc.getMap('scenario'),

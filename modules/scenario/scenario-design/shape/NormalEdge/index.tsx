@@ -4,14 +4,7 @@ import { Edge } from '@antv/x6';
 import { useMemo } from 'react';
 
 import { ScenarioObjectName } from '../../dsl';
-
-const Connector: Edge.BaseOptions['connector'] = { name: 'rounded' };
-const Router: Edge.BaseOptions['router'] = {
-  name: 'er',
-  args: {
-    offset: 'center',
-  },
-};
+import { EDGE_PROPS } from '../shared';
 
 const EdgeComponent = (props: ShapeComponentProps) => {
   const cellProps = props.cellProps;
@@ -32,16 +25,7 @@ const EdgeComponent = (props: ShapeComponentProps) => {
     }
   }, [originTarget]);
 
-  return (
-    <EdgeBinding
-      {...props.cellProps}
-      source={source}
-      target={target}
-      connector={Connector}
-      router={Router}
-      // tools={['target-arrowhead', 'source-arrowhead']}
-    />
-  );
+  return <EdgeBinding {...props.cellProps} source={source} target={target} />;
 };
 
 /**
@@ -51,8 +35,8 @@ defineShape({
   name: ScenarioObjectName.NormalEdge,
   title: '边',
   shapeType: 'edge',
-  // staticProps: () => {
-  //   return { attrs: { line: { stroke: 'red' } } };
-  // },
   component: EdgeComponent,
+  staticProps: () => {
+    return { zIndex: 1, ...EDGE_PROPS };
+  },
 });

@@ -4,20 +4,8 @@ import { Edge } from '@antv/x6';
 import { useMemo } from 'react';
 
 import { createLabelEdge, LabelEdgeDSL, ScenarioObjectName } from '../../dsl';
+import { EDGE_PROPS } from '../shared';
 import { Label } from './Label';
-
-const Connector: Edge.BaseOptions['connector'] = { name: 'rounded' };
-const Router: Edge.BaseOptions['router'] = {
-  name: 'er',
-  args: {
-    offset: 'center',
-  },
-};
-const Attrs: Edge.BaseOptions['attrs'] = {
-  line: {
-    stroke: 'gray',
-  },
-};
 
 const EdgeComponent = (props: ShapeComponentProps) => {
   const cellProps = props.cellProps;
@@ -38,16 +26,7 @@ const EdgeComponent = (props: ShapeComponentProps) => {
     }
   }, [originTarget]);
 
-  return (
-    <EdgeBinding
-      {...props.cellProps}
-      source={source}
-      target={target}
-      connector={Connector}
-      router={Router}
-      attrs={Attrs}
-    />
-  );
+  return <EdgeBinding {...props.cellProps} source={source} target={target} />;
 };
 
 /**
@@ -76,8 +55,8 @@ defineShape({
       ...createLabelEdge(),
     };
   },
-  // staticProps: () => {
-  //   return { attrs: { line: { stroke: 'red' } } };
-  // },
+  staticProps: () => {
+    return { zIndex: 1, ...EDGE_PROPS };
+  },
   component: EdgeComponent,
 });
