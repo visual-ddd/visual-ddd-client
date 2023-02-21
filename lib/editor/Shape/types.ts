@@ -226,6 +226,14 @@ export interface ShapeConfiguration {
       }) => boolean);
 
   /**
+   * 是否允许重复的连接
+   * allow-all 默认， 不检查
+   * allow-port 允许不同端口的重复连接
+   * none 不允许重复, 不管端口是否相同
+   */
+  allowDuplicatedConnect?: 'allow-all' | 'allow-port' | 'none';
+
+  /**
    * 是否允许磁吸点创建链接
    */
   allowMagnetCreateEdge?:

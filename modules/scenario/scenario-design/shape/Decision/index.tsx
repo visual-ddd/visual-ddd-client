@@ -26,6 +26,7 @@ defineShape({
   group: false,
   allowLoopConnect: false,
   allowConnectNodes: [ScenarioObjectName.Activity, ScenarioObjectName.Decision, ScenarioObjectName.End],
+  allowDuplicatedConnect: 'none',
   edgeFactory: ScenarioObjectName.LabelEdge,
 
   initialProps: () => {

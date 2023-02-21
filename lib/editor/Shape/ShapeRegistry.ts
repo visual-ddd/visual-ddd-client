@@ -184,7 +184,7 @@ export class ShapeRegistry {
    * @returns
    */
   isAllowNodeConnect = (context: Options.ValidateConnectionArgs) => {
-    const { sourceCell, sourcePort, targetCell, targetPort } = context;
+    const { sourceCell, sourcePort, targetCell, targetPort, edge } = context;
 
     // 源头修改
     if (sourceCell?.isEdge()) {
@@ -206,20 +206,63 @@ export class ShapeRegistry {
     if (targetCell?.isNode()) {
       const validate = configuration.allowConnectNodes;
 
-      if (Array.isArray(validate)) {
-        return validate.includes(targetModel.name);
-      } else if (typeof validate === 'function') {
-        return validate({
-          sourceCell: sourceCell!,
-          sourcePort: sourcePort!,
-          sourceModel,
-          targetCell: targetCell!,
-          targetModel,
-          targetPort: targetPort!,
-          graph: this.graph,
+      const executeValidateAllowConnectNodes = () => {
+        if (Array.isArray(validate)) {
+          return validate.includes(targetModel.name);
+        } else if (typeof validate === 'function') {
+          return validate({
+            sourceCell: sourceCell!,
+            sourcePort: sourcePort!,
+            sourceModel,
+            targetCell: targetCell!,
+            targetModel,
+            targetPort: targetPort!,
+            graph: this.graph,
+          });
+        }
+        return validate ?? true;
+      };
+
+      const allow = executeValidateAllowConnectNodes();
+
+      if (allow) {
+        // 检查重复链接
+        const dupRule = configuration.allowDuplicatedConnect ?? 'allow-all';
+
+        if (dupRule === 'allow-all') {
+          return allow;
+        }
+
+        const edges = this.graph.getOutgoingEdges(sourceCell!)?.filter(i => i !== edge);
+
+        if (!edges?.length) {
+          return allow;
+        }
+
+        const duplicatedEdge = edges.filter(i => {
+          return i.getTargetCellId() === targetCell?.id;
         });
+
+        if (!duplicatedEdge.length) {
+          return allow;
+        }
+
+        // 不允许出现重复
+        if (dupRule === 'none') {
+          return false;
+        }
+
+        // 允许出现重复，但是不允许出现重复的端口
+        if (
+          duplicatedEdge.some(i => {
+            return i.getTargetPortId() === targetPort;
+          })
+        ) {
+          return false;
+        }
       }
-      return validate ?? true;
+
+      return allow;
     }
 
     return true;
