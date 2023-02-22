@@ -12,39 +12,17 @@ import {
 } from '@/lib/editor';
 import { observer } from 'mobx-react';
 import { useMemo } from 'react';
-import { Doc as YDoc } from 'yjs';
-import { ScenarioObjectName } from '../dsl';
 
 import { ScenarioEditorModel } from '../model';
 
-export interface ScenarioEditorProps {}
+export interface ScenarioEditorProps {
+  model: ScenarioEditorModel;
 
-const doc = new YDoc();
-
-const model = new ScenarioEditorModel({
-  scopeId: 'scenario',
-  activeScope: true,
-  shapeList: [
-    ScenarioObjectName.Lane,
-    ScenarioObjectName.Start,
-    ScenarioObjectName.End,
-    ScenarioObjectName.Activity,
-    ScenarioObjectName.Decision,
-    ScenarioObjectName.Comment,
-  ],
-  whitelist: [
-    ScenarioObjectName.Start,
-    ScenarioObjectName.End,
-    ScenarioObjectName.Activity,
-    ScenarioObjectName.NormalEdge,
-    ScenarioObjectName.Decision,
-    ScenarioObjectName.Comment,
-  ],
-  doc,
-  datasource: doc.getMap('scenario'),
-});
+  active?: boolean;
+}
 
 export const ScenarioEditor = observer(function ScenarioEditor(props: ScenarioEditorProps) {
+  const { model } = props;
   const configuration = useMemo<EditorConfigurationValue>(() => {
     return {
       renderTitle(node) {
