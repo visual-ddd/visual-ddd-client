@@ -5,7 +5,7 @@ import React from 'react';
 
 import s from './index.module.scss';
 
-export interface TabLabelProps {
+export interface DesignerTabLabelProps {
   children: React.ReactNode;
   model: {
     hasIssue: boolean;
@@ -14,7 +14,7 @@ export interface TabLabelProps {
   };
 }
 
-export const TabLabel = observer(function TabLabel(props: TabLabelProps) {
+export const DesignerTabLabel = observer(function DesignerTabLabel(props: DesignerTabLabelProps) {
   const { children, model } = props;
   return (
     <span

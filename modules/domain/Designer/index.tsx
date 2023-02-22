@@ -1,11 +1,11 @@
-import classNames from 'classnames';
 import { observer } from 'mobx-react';
 import { useEffect, useMemo } from 'react';
-import { message, Tabs } from 'antd';
+import { message } from 'antd';
 import { tryDispose } from '@/lib/utils';
 import { VersionStatus } from '@/lib/core';
 import { useRouter } from 'next/router';
 import { CompletionContextProvider } from '@/lib/components/Completion';
+import { DesignerLayout, DesignerTabLabel } from '@/lib/components/DesignerLayout';
 
 import { DomainEditor } from '../domain-design';
 import { DataObjectEditor } from '../data-design';
@@ -16,12 +16,10 @@ import { UbiquitousLanguage } from '../ubiquitous-language-design';
 import { ProductDesign } from '../product-design';
 import { MapperEditor } from '../mapper-design';
 
-import s from './index.module.scss';
 import { DomainDesignerContextProvider } from './Context';
 import { DomainDesignerHeader } from './Header';
 import { DomainDesignerLoading } from './Loading';
 import { DomainDesignerTabs, DomainDesignerTabsMap, DomainDesignerModel } from './model';
-import { TabLabel } from './TabLabel';
 
 export interface DomainDescription {
   id: string | number;
@@ -105,7 +103,9 @@ const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerPro
     },
     {
       label: (
-        <TabLabel model={model.domainEditorModel}>{DomainDesignerTabsMap[DomainDesignerTabs.DomainModel]}</TabLabel>
+        <DesignerTabLabel model={model.domainEditorModel}>
+          {DomainDesignerTabsMap[DomainDesignerTabs.DomainModel]}
+        </DesignerTabLabel>
       ),
       key: DomainDesignerTabs.DomainModel,
       children: (
@@ -113,7 +113,11 @@ const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerPro
       ),
     },
     {
-      label: <TabLabel model={model.queryEditorModel}>{DomainDesignerTabsMap[DomainDesignerTabs.QueryModel]}</TabLabel>,
+      label: (
+        <DesignerTabLabel model={model.queryEditorModel}>
+          {DomainDesignerTabsMap[DomainDesignerTabs.QueryModel]}
+        </DesignerTabLabel>
+      ),
       key: DomainDesignerTabs.QueryModel,
       children: (
         <DomainEditor model={model.queryEditorModel} active={model.activeTab === DomainDesignerTabs.QueryModel} />
@@ -121,7 +125,9 @@ const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerPro
     },
     {
       label: (
-        <TabLabel model={model.dataObjectEditorModel}>{DomainDesignerTabsMap[DomainDesignerTabs.DataModel]}</TabLabel>
+        <DesignerTabLabel model={model.dataObjectEditorModel}>
+          {DomainDesignerTabsMap[DomainDesignerTabs.DataModel]}
+        </DesignerTabLabel>
       ),
       key: DomainDesignerTabs.DataModel,
       children: (
@@ -133,7 +139,9 @@ const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerPro
     },
     {
       label: (
-        <TabLabel model={model.mapperObjectEditorModel}>{DomainDesignerTabsMap[DomainDesignerTabs.Mapper]}</TabLabel>
+        <DesignerTabLabel model={model.mapperObjectEditorModel}>
+          {DomainDesignerTabsMap[DomainDesignerTabs.Mapper]}
+        </DesignerTabLabel>
       ),
       key: DomainDesignerTabs.Mapper,
       children: (
@@ -185,23 +193,18 @@ const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerPro
   return (
     <DomainDesignerContextProvider value={model}>
       <CompletionContextProvider words={model.ubiquitousLanguageModel.words}>
-        <div className={classNames('vd-domain', s.root)}>
+        <DesignerLayout
+          items={items}
+          activeKey={model.activeTab}
+          onActiveKeyChange={tab => model.setActiveTab({ tab: tab as DomainDesignerTabs })}
+        >
           <DomainDesignerLoading></DomainDesignerLoading>
           <DomainDesignerHeader
             name={description?.name}
             version={description?.version}
             versionStatus={description?.versionStatus}
           ></DomainDesignerHeader>
-          <Tabs
-            className={classNames('vd-domain-body', s.body)}
-            items={items}
-            tabPosition="bottom"
-            activeKey={model.activeTab}
-            onChange={tab => model.setActiveTab({ tab: tab as DomainDesignerTabs })}
-            tabBarGutter={20}
-            size="small"
-          ></Tabs>
-        </div>
+        </DesignerLayout>
       </CompletionContextProvider>
     </DomainDesignerContextProvider>
   );
