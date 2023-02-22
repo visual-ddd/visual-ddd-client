@@ -1,4 +1,4 @@
-import { Doc as YDoc, applyUpdate, XmlElement, XmlText } from 'yjs';
+import { Doc as YDoc, XmlElement, XmlText } from 'yjs';
 import { NodeYMap, MapTypeRoot } from '@/lib/editor/Model/NodeYMap';
 
 import { YJS_FIELD_NAME } from '../../constants';
@@ -42,19 +42,6 @@ export function createDoc() {
 
   // 统一语言
   doc.getArray(YJS_FIELD_NAME.UBIQUITOUS_LANGUAGE);
-
-  return doc;
-}
-
-/**
- * 创建文档
- * @param update
- * @returns
- */
-export function createDocFromUpdate(update: Uint8Array) {
-  const doc = new YDoc();
-
-  applyUpdate(doc, update);
 
   return doc;
 }
