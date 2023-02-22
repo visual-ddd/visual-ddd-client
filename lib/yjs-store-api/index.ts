@@ -4,6 +4,7 @@ import LRUCache from 'lru-cache';
 import { withWakedataRequestApiRoute } from '@/modules/session/api-helper';
 
 import { readBuffer, createDocFromUpdate } from './utils';
+import { allowMethod } from '../api';
 
 export function createYjsStore(options: {
   transformYDocToDSL: (doc: YDoc) => any;
@@ -111,24 +112,30 @@ export function createYjsStore(options: {
    * @param req
    * @param res
    */
-  const handleGetBase64 = withWakedataRequestApiRoute(async (req, res) => {
-    const buf = await getData(req);
+  const handleGetBase64 = allowMethod(
+    'GET',
+    withWakedataRequestApiRoute(async (req, res) => {
+      const buf = await getData(req);
 
-    res.status(200).send(buf.toString('base64'));
-  });
+      res.status(200).send(buf.toString('base64'));
+    })
+  );
 
   /**
    * 获取偏移值
    * @param req
    * @param res
    */
-  const handleGetVector = withWakedataRequestApiRoute(async (req, res) => {
-    const buffer = await getData(req);
+  const handleGetVector = allowMethod(
+    'GET',
+    withWakedataRequestApiRoute(async (req, res) => {
+      const buffer = await getData(req);
 
-    const vector = encodeStateVectorFromUpdate(buffer);
+      const vector = encodeStateVectorFromUpdate(buffer);
 
-    res.status(200).send(Buffer.from(vector));
-  });
+      res.status(200).send(Buffer.from(vector));
+    })
+  );
 
   const handleSave = withWakedataRequestApiRoute(async (req, res) => {
     const id = req.query.id as string;

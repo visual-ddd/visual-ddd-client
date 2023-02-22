@@ -1,23 +1,10 @@
 import { Doc as YDoc, XmlElement, XmlText } from 'yjs';
-import { NodeYMap, MapTypeRoot } from '@/lib/editor/Model/NodeYMap';
+import { MapTypeRoot, createRoot } from '@/lib/editor/Model/NodeYMap';
 
 import { YJS_FIELD_NAME } from '../../constants';
 
 import * as DSL from './interface';
 import { DSLModel } from './model';
-
-// 创建根节点，需要和 NodeYMap 保持同步
-function createRoot() {
-  return NodeYMap.fromNodePO({
-    id: MapTypeRoot,
-    parent: undefined,
-    children: [],
-    properties: {
-      __node_name__: MapTypeRoot,
-      __node_type__: 'node',
-    },
-  });
-}
 
 export function createDoc() {
   const doc = new YDoc();

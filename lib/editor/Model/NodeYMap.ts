@@ -92,3 +92,18 @@ export class NodeYMap {
     };
   }
 }
+
+/**
+ * 创建根节点，需要和 NodeYMap 保持同步
+ */
+export function createRoot() {
+  return NodeYMap.fromNodePO({
+    id: MapTypeRoot,
+    parent: undefined,
+    children: [],
+    properties: {
+      __node_name__: MapTypeRoot,
+      __node_type__: 'node',
+    },
+  });
+}
