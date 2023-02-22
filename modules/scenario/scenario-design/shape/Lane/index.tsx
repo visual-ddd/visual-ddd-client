@@ -1,1 +1,1 @@
-export * from './LaneShape';
+export * from './register';

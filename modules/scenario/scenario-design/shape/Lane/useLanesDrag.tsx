@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-import s from './Shape.module.scss';
+import s from './LaneShape.module.scss';
 
 /**
  * 整体泳道只能横向扩展
