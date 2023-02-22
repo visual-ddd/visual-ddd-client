@@ -1,0 +1,26 @@
+.root {
+  display: flex;
+  align-items: center;
+  padding: var(--vd-spacing-xs);
+  background-color: white;
+  width: 200px;
+  border: 2px solid var(--vd-color-info-300);
+  background-color: var(--vd-color-info-100);
+  border-radius: 4px;
+}
+
+.icon {
+  font-size: 20px;
+  color: var(--vd-color-info-700);
+}
+
+.content {
+  flex: 1;
+  margin-left: var(--vd-spacing-xs);
+  font-size: 14px;
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--vd-color-gray-700);
+}

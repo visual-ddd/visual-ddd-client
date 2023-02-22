@@ -4,6 +4,7 @@
   width: 200px;
   background-color: #f8f1e6;
   border: 2px solid var(--vd-color-warning-100);
+  border-radius: 4px;
 }
 
 .icon {
@@ -19,6 +20,7 @@
   cursor: text;
   padding: 0 2px;
   white-space: pre-wrap;
+  color: var(--vd-color-gray-700);
 
   &:global(:not(.editing)) {
     overflow: hidden;

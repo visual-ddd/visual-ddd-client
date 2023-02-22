@@ -156,7 +156,22 @@ export interface ShapeConfiguration {
    * @param context
    * @returns
    */
-  copyFactory?: (context: { properties: Properties; payload: CopyPayload }) => Properties;
+  copyFactory?: (context: {
+    /**
+     * initialProps 配置生成的属性
+     */
+    initialProperties: Properties;
+
+    /**
+     * 拷贝的载荷
+     */
+    payload: CopyPayload;
+
+    /**
+     * 拷贝载荷中的属性
+     */
+    properties: Properties;
+  }) => Properties;
 
   /**
    * 边创建工厂

@@ -27,3 +27,39 @@ export interface LabelEdgeDSL extends IDDSL {
 export interface CommentDSL extends IDDSL {
   content: string;
 }
+
+// TODO: 支持外部团队接口
+export enum ActivityBindingType {
+  ScenarioService = 'scenarioService',
+  DomainService = 'domainService',
+}
+
+/**
+ * 业务场景接口
+ */
+export interface ActivityBindingScenarioService {
+  type: ActivityBindingType.ScenarioService;
+  serviceId?: string;
+}
+
+/**
+ * 业务域接口
+ */
+export interface ActivityBindingDomainService {
+  type: ActivityBindingType.DomainService;
+  domainId?: string;
+  versionId?: string;
+  serviceId?: string;
+}
+
+export type ActivityBinding = ActivityBindingScenarioService | ActivityBindingDomainService;
+
+/**
+ * 业务活动
+ */
+export interface ActivityDSL extends NameDSL {
+  /**
+   * 关联
+   */
+  binding?: ActivityBinding;
+}

@@ -472,10 +472,11 @@ export class ShapeRegistry {
       throw new Error(`未找到 ${type} 类型的组件`);
     }
 
+    const initialProperties = configuration.initialProps?.() ?? NoopObject;
     const properties = {
-      ...configuration.initialProps?.(),
+      ...initialProperties,
       ...payload.properties,
-      ...(configuration?.copyFactory?.({ properties: payload.properties, payload }) ?? NoopObject),
+      ...(configuration?.copyFactory?.({ initialProperties, properties: payload.properties, payload }) ?? NoopObject),
     };
 
     // 节点拷贝或者粘贴的过程中，Canvas 会自动生成新的 id， 以避免和现有的节点冲突
@@ -483,7 +484,7 @@ export class ShapeRegistry {
     // 虽然放在这里处理不是特别合适，但是 uuid 基本上是大多数节点通用的
     const maybeIncludeId = properties as { uuid?: string };
     if (maybeIncludeId.uuid && maybeIncludeId.uuid !== payload.id) {
-      maybeIncludeId.uuid === payload.id;
+      maybeIncludeId.uuid = payload.id;
     }
 
     return {
