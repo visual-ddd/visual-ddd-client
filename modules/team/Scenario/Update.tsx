@@ -4,28 +4,28 @@ import { ModalForm, ProFormText, ProFormTextArea } from '@ant-design/pro-compone
 import { request } from '@/modules/backend-client';
 import { useRouter } from 'next/router';
 
-import { AppDetail, AppUpdatePayload } from '../types';
+import { ScenarioDetail, ScenarioUpdatePayload } from '../types';
 import { useTeamLayoutModel } from '../TeamLayout';
 import { useLazyFalsy } from '@/lib/hooks';
 
-export interface UpdateAppRef {
+export interface UpdateScenarioRef {
   open(): void;
 }
 
-export interface UpdateAppProps {
-  detail: AppDetail;
+export interface UpdateScenarioProps {
+  detail: ScenarioDetail;
 }
 
-export function useUpdateApp() {
-  return useRef<UpdateAppRef>(null);
+export function useUpdateScenario() {
+  return useRef<UpdateScenarioRef>(null);
 }
 
-export const UpdateApp = forwardRef<UpdateAppRef, UpdateAppProps>((props, ref) => {
+export const UpdateScenario = forwardRef<UpdateScenarioRef, UpdateScenarioProps>((props, ref) => {
   const { detail } = props;
   const router = useRouter();
   const [visible, setVisible] = useState(false);
-  const shouldRender = useLazyFalsy(visible);
   const model = useTeamLayoutModel();
+  const shouldRender = useLazyFalsy(visible);
 
   useImperativeHandle(ref, () => {
     return {
@@ -35,14 +35,14 @@ export const UpdateApp = forwardRef<UpdateAppRef, UpdateAppProps>((props, ref) =
     };
   });
 
-  const handleFinish = async (values: AppDetail) => {
+  const handleFinish = async (values: ScenarioDetail) => {
     try {
       const { id } = detail;
-      const { description, name, packageName } = values;
-      const payload: AppUpdatePayload = { id, description, name, packageName };
-      await request.requestByPost('/wd/visual/web/application/application-update', payload);
+      const { description, name } = values;
+      const payload: ScenarioUpdatePayload = { id, description, name };
+      await request.requestByPost('/wd/visual/web/business-scene/business-scene-update', payload);
 
-      model?.refreshAppList();
+      model?.refreshScenarioList();
 
       message.success('保存成功');
 
@@ -55,30 +55,32 @@ export const UpdateApp = forwardRef<UpdateAppRef, UpdateAppProps>((props, ref) =
   };
 
   const handleDelete = async () => {
-    const val = window.prompt('确定删除应用？删除应用可能导致严重后果，如果确定要删除，请输入当前应用的 **标识符** ');
+    const val = window.prompt(
+      '确定删除业务场景？删除业务场景可能导致严重后果，如果确定要删除，请输入当前业务场景的 **标识符** '
+    );
 
     if (val !== detail.identity) {
       return;
     }
 
     try {
-      await request.requestByPost('/wd/visual/web/application/application-remove', { id: detail.id });
+      await request.requestByPost('/wd/visual/web/business-scene/business-scene-remove', { id: detail.id });
 
       message.success('已删除');
 
-      router.replace(`/team/${detail.teamId}/app`);
+      router.replace(`/team/${detail.teamId}/scenario`);
     } catch (err) {
       message.error((err as Error).message);
     }
   };
 
   return shouldRender ? (
-    <ModalForm<AppDetail>
+    <ModalForm<ScenarioDetail>
       open={visible}
       initialValues={detail}
       onFinish={handleFinish}
       onOpenChange={setVisible}
-      title="编辑应用"
+      title="编辑业务场景"
       layout="horizontal"
       labelCol={{ span: 5 }}
       width="500px"
@@ -86,7 +88,7 @@ export const UpdateApp = forwardRef<UpdateAppRef, UpdateAppProps>((props, ref) =
         render(props, dom) {
           return [
             <Button danger key="delete" onClick={handleDelete}>
-              删除应用
+              删除业务场景
             </Button>,
             ...dom,
           ];
@@ -96,26 +98,13 @@ export const UpdateApp = forwardRef<UpdateAppRef, UpdateAppProps>((props, ref) =
       <ProFormText
         name="name"
         label="名称"
-        placeholder="应用名称"
+        placeholder="业务场景名称"
         rules={[{ required: true, message: '请输入名称' }]}
       ></ProFormText>
       <ProFormText name="identity" label="标识符" disabled></ProFormText>
-      <ProFormText
-        name="packageName"
-        label="包名"
-        tooltip="通常为反向域名"
-        placeholder="com.example.app"
-        rules={[
-          { required: true, message: '请输入包名' },
-          {
-            pattern: /^[a-zA-Z]+(\.[a-zA-Z]+)*$/,
-            message: '包名格式错误',
-          },
-        ]}
-      ></ProFormText>
-      <ProFormTextArea name="description" label="描述" placeholder="应用描述"></ProFormTextArea>
+      <ProFormTextArea name="description" label="描述" placeholder="业务场景描述"></ProFormTextArea>
     </ModalForm>
   ) : null;
 });
 
-UpdateApp.displayName = 'CreateDomain';
+UpdateScenario.displayName = 'UpdateScenario';

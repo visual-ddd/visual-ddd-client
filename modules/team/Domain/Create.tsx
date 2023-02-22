@@ -7,6 +7,7 @@ import { useRouter } from 'next/router';
 
 import { DomainCreatePayload } from '../types';
 import { useTeamLayoutModel } from '../TeamLayout';
+import { useLazyFalsy } from '@/lib/hooks';
 
 export interface CreateDomainRef {
   open(): void;
@@ -25,6 +26,7 @@ export const CreateDomain = forwardRef<CreateDomainRef, CreateDomainProps>((prop
   const router = useRouter();
   const [visible, setVisible] = useState(false);
   const model = useTeamLayoutModel();
+  const shouldRender = useLazyFalsy(visible);
 
   useImperativeHandle(ref, () => {
     return {
@@ -52,7 +54,7 @@ export const CreateDomain = forwardRef<CreateDomainRef, CreateDomainProps>((prop
     }
   };
 
-  return (
+  return shouldRender ? (
     <ModalForm<DomainCreatePayload>
       open={visible}
       onFinish={handleFinish}
@@ -85,7 +87,7 @@ export const CreateDomain = forwardRef<CreateDomainRef, CreateDomainProps>((prop
       ></ProFormText>
       <ProFormTextArea name="description" label="描述" placeholder="业务域描述"></ProFormTextArea>
     </ModalForm>
-  );
+  ) : null;
 });
 
 CreateDomain.displayName = 'CreateDomain';

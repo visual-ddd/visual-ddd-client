@@ -1,3 +1,4 @@
+import { useLazyFalsy } from '@/lib/hooks';
 import { ModalForm, ProFormText, ProFormTextArea } from '@ant-design/pro-components';
 import { message } from 'antd';
 import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
@@ -22,6 +23,7 @@ export const VersionPublish = forwardRef<VersionPublishRef, VersionPublishProps>
   const { onSubmit } = props;
   const [version, setStartVersion] = useState<IVersion>();
   const [visible, setVisible] = useState(false);
+  const shouldRender = useLazyFalsy(visible);
 
   useImperativeHandle(ref, () => {
     return {
@@ -43,7 +45,7 @@ export const VersionPublish = forwardRef<VersionPublishRef, VersionPublishProps>
     }
   };
 
-  return (
+  return shouldRender ? (
     <ModalForm
       size="small"
       title="发布"
@@ -59,7 +61,7 @@ export const VersionPublish = forwardRef<VersionPublishRef, VersionPublishProps>
       <ProFormText name="currentVersion" label="版本号" disabled></ProFormText>
       <ProFormTextArea name="description" label="描述" placeholder="发布描述"></ProFormTextArea>
     </ModalForm>
-  );
+  ) : null;
 });
 
 VersionPublish.displayName = 'VersionPublish';

@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { CreateDomain, useCreateDomain } from '../Domain/Create';
 import { CreateApp, useCreateApp } from '../App/Create';
+import { CreateScenario, useCreateScenario } from '../Scenario/Create';
 
 import s from './index.module.scss';
 
@@ -13,6 +14,7 @@ export const TeamCreator = () => {
   const teamId = router.query.id as string | undefined;
   const createDomainRef = useCreateDomain();
   const createAppRef = useCreateApp();
+  const createScenarioRef = useCreateScenario();
 
   const menus = useMemo<MenuProps>(() => {
     return {
@@ -27,7 +29,9 @@ export const TeamCreator = () => {
         {
           key: 'scenario',
           label: '创建业务场景',
-          onClick: () => {},
+          onClick: () => {
+            createScenarioRef.current?.open();
+          },
         },
         {
           key: 'app',
@@ -48,6 +52,7 @@ export const TeamCreator = () => {
       </Dropdown>
       <CreateDomain ref={createDomainRef} teamId={teamId!} />
       <CreateApp ref={createAppRef} teamId={teamId!} />
+      <CreateScenario ref={createScenarioRef} teamId={teamId!} />
     </div>
   );
 };

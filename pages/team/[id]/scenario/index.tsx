@@ -1,7 +1,14 @@
 import { getTeamLayout } from '@/modules/team/TeamLayout';
+import dynamic from 'next/dynamic';
 
-export default function ScenarioHome() {
-  return <div>业务场景，敬请期待</div>;
+const ScenarioHome = dynamic(() => import('@/modules/team/Scenario/Home'), { ssr: false });
+
+/**
+ * 业务场景首页
+ * @returns
+ */
+export default function Scenario() {
+  return <ScenarioHome />;
 }
 
-ScenarioHome.getLayout = getTeamLayout;
+Scenario.getLayout = getTeamLayout;

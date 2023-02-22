@@ -65,3 +65,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 | -------------- | ------------------------------------------- |
 | BACKEND        | 后端服务地址, 例如 http://172.26.57.49:8080 |
 | SESSION_SECRET | 会话加密密钥                                |
+
+# 资源
+
+SWAGGER https://ddd.wakedt.cn/wd/visual/doc.html

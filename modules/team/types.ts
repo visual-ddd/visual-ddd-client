@@ -55,6 +55,13 @@ export interface DomainDetail extends DomainSimple {
   version: DomainVersion;
 }
 
+/**
+ * 业务场景创建参数
+ */
+export interface ScenarioCreatePayload extends DomainCreatePayload {}
+
+export interface ScenarioUpdatePayload extends DomainUpdatePayload {}
+
 export interface ScenarioVersion {
   businessSceneId: number;
   createBy: string;
@@ -68,6 +75,16 @@ export interface ScenarioVersion {
   state: number;
   updateBy: string;
   updateTime: string;
+}
+
+export interface ScenarioSimple extends DomainSimple {}
+
+export interface ScenarioDetail extends ScenarioSimple {
+  version: ScenarioVersion;
+}
+
+export interface ScenarioDetailPayload extends ScenarioSimple {
+  businessSceneLatestVersion: ScenarioVersion;
 }
 
 export interface AppSimple {

@@ -1,3 +1,4 @@
+import { useLazyFalsy } from '@/lib/hooks';
 import { ModalForm, ProFormText, ProFormTextArea } from '@ant-design/pro-components';
 import { Form, message } from 'antd';
 import Input from 'antd/es/input/Input';
@@ -23,6 +24,7 @@ export const VersionCreate = forwardRef<VersionCreateRef, VersionCreateProps>((p
   const { onSubmit } = props;
   const [startVersion, setStartVersion] = useState<IVersion>();
   const [visible, setVisible] = useState(false);
+  const shouldRender = useLazyFalsy(visible);
 
   useImperativeHandle(ref, () => {
     return {
@@ -44,11 +46,10 @@ export const VersionCreate = forwardRef<VersionCreateRef, VersionCreateProps>((p
     }
   };
 
-  return (
+  return shouldRender ? (
     <ModalForm
       size="small"
       title="新增版本"
-      modalProps={{ destroyOnClose: true }}
       open={visible}
       onOpenChange={setVisible}
       layout="horizontal"
@@ -74,7 +75,7 @@ export const VersionCreate = forwardRef<VersionCreateRef, VersionCreateProps>((p
       ></ProFormText>
       <ProFormTextArea name="description" label="描述" placeholder="描述"></ProFormTextArea>
     </ModalForm>
-  );
+  ) : null;
 });
 
 VersionCreate.displayName = 'VersionCreate';

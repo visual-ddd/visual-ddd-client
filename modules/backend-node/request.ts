@@ -14,6 +14,8 @@ declare global {
 
 const request = createBackend();
 
+console.log(`后端服务地址: ${BACKEND.href}`);
+
 request.initial({
   baseURL: BACKEND.origin,
   fetch: fetch.bind(globalThis),

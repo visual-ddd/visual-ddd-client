@@ -5,23 +5,26 @@ import { NameInput } from '@/lib/components/NameInput';
 import { request } from '@/modules/backend-client';
 import { useRouter } from 'next/router';
 
-import { AppCreatePayload } from '../types';
+import { ScenarioCreatePayload } from '../types';
 import { useTeamLayoutModel } from '../TeamLayout';
 import { useLazyFalsy } from '@/lib/hooks';
 
-export interface CreateAppRef {
+export interface CreateScenarioRef {
   open(): void;
 }
 
-export interface CreateAppProps {
+export interface CreateScenarioProps {
   teamId: string;
 }
 
-export function useCreateApp() {
-  return useRef<CreateAppRef>(null);
+export function useCreateScenario() {
+  return useRef<CreateScenarioRef>(null);
 }
 
-export const CreateApp = forwardRef<CreateAppRef, CreateAppProps>((props, ref) => {
+/**
+ * 创建业务场景
+ */
+export const CreateScenario = forwardRef<CreateScenarioRef, CreateScenarioProps>((props, ref) => {
   const { teamId } = props;
   const router = useRouter();
   const [visible, setVisible] = useState(false);
@@ -36,15 +39,15 @@ export const CreateApp = forwardRef<CreateAppRef, CreateAppProps>((props, ref) =
     };
   });
 
-  const handleFinish = async (values: AppCreatePayload) => {
+  const handleFinish = async (values: ScenarioCreatePayload) => {
     const payload = { ...values, teamId };
 
     try {
-      const id = await request.requestByPost<number>('/wd/visual/web/application/application-create', payload);
+      const id = await request.requestByPost<number>('/wd/visual/web/business-scene/business-scene-create', payload);
 
-      model?.refreshAppList();
+      model?.refreshScenarioList();
 
-      router.push(`/team/${teamId}/app/${id}`);
+      router.push(`/team/${teamId}/scenario/${id}`);
 
       message.success('创建成功');
 
@@ -55,11 +58,11 @@ export const CreateApp = forwardRef<CreateAppRef, CreateAppProps>((props, ref) =
   };
 
   return shouldRender ? (
-    <ModalForm<AppCreatePayload>
+    <ModalForm<ScenarioCreatePayload>
       open={visible}
       onFinish={handleFinish}
       onOpenChange={setVisible}
-      title="新建应用"
+      title="新建业务场景"
       layout="horizontal"
       labelCol={{ span: 5 }}
       width="500px"
@@ -67,7 +70,7 @@ export const CreateApp = forwardRef<CreateAppRef, CreateAppProps>((props, ref) =
       <ProFormText
         name="name"
         label="名称"
-        placeholder="应用名称"
+        placeholder="业务场景名称"
         rules={[{ required: true, message: '请输入名称' }]}
       ></ProFormText>
       <Form.Item name="identity" label="标识符" rules={[{ required: true, message: '请输入标识符' }]}>
@@ -85,22 +88,9 @@ export const CreateApp = forwardRef<CreateAppRef, CreateAppProps>((props, ref) =
           },
         ]}
       ></ProFormText>
-      <ProFormText
-        name="packageName"
-        label="包名"
-        tooltip="通常为反向域名"
-        placeholder="com.example.app"
-        rules={[
-          { required: true, message: '请输入包名' },
-          {
-            pattern: /^[a-zA-Z]+(\.[a-zA-Z]+)*$/,
-            message: '包名格式错误',
-          },
-        ]}
-      ></ProFormText>
-      <ProFormTextArea name="description" label="描述" placeholder="应用描述"></ProFormTextArea>
+      <ProFormTextArea name="description" label="描述" placeholder="业务场景描述"></ProFormTextArea>
     </ModalForm>
   ) : null;
 });
 
-CreateApp.displayName = 'CreateApp';
+CreateScenario.displayName = 'CreateScenario';
