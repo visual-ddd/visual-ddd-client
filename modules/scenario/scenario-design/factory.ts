@@ -1,6 +1,5 @@
-import { BaseEditorModelOptions } from '@/lib/editor';
 import { ScenarioObjectName } from './dsl';
-import { ScenarioEditorModel } from './model';
+import { ScenarioEditorModel, ScenarioEditorModelOptions } from './model';
 
 const SHAPE_LIST = [
   ScenarioObjectName.Start,
@@ -18,7 +17,7 @@ const WHITE_LIST = [
 ];
 
 export function createScenarioEditorModel(
-  options: Omit<BaseEditorModelOptions, 'shapeList' | 'whitelist' | 'scopeId'>
+  options: Omit<ScenarioEditorModelOptions, 'shapeList' | 'whitelist' | 'scopeId'>
 ) {
   return new ScenarioEditorModel({
     ...options,

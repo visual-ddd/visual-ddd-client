@@ -172,7 +172,7 @@ export class CanvasModel {
     // 默认配置
     this.graphOptions = {
       background: { color: '#f8f8f8' },
-      grid: { size: 28, visible: true },
+      grid: { size: 25, visible: true },
       onEdgeLabelRendered: args => {
         shapeRegistry.renderEdgeLabel(args);
       },

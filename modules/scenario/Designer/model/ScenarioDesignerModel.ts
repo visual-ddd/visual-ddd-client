@@ -12,6 +12,7 @@ import { ScenarioDesignerTabs } from './constants';
 import { ScenarioDesignerKeyboardBinding } from './KeyboardBinding';
 import { createScenarioEditorModel, ScenarioEditorModel } from '../../scenario-design';
 import { createServiceEditorModel, DomainEditorModel } from '../../service-design';
+import { ScenarioServiceStore } from './ScenarioServiceStore';
 
 const KEY_ACTIVE_TAB = 'SCENARIO_DESIGNER:activeTab';
 
@@ -72,16 +73,21 @@ export class ScenarioDesignerModel implements IDisposable {
     const scenarioDatabase = doc.getMap(YJS_FIELD_NAME.SCENARIO);
     const serviceDatabase = doc.getMap(YJS_FIELD_NAME.SERVICE);
 
-    this.scenarioEditorModel = createScenarioEditorModel({
-      datasource: scenarioDatabase,
-      doc,
-      readonly,
-    });
-
     this.serviceEditorModel = createServiceEditorModel({
       datasource: serviceDatabase,
       doc,
       readonly,
+    });
+
+    const serviceStore = new ScenarioServiceStore({
+      serviceEditorModel: this.serviceEditorModel,
+    });
+
+    this.scenarioEditorModel = createScenarioEditorModel({
+      datasource: scenarioDatabase,
+      doc,
+      readonly,
+      serviceStore,
     });
 
     this.tabs = [
