@@ -1,7 +1,8 @@
 import { InboxOutlined } from '@ant-design/icons';
+import classNames from 'classnames';
 import { observer } from 'mobx-react';
 
-import { ActivityDSL } from '../../dsl';
+import { ActivityBindingType, ActivityDSL } from '../../dsl';
 import s from './ActivityShape.module.scss';
 
 export interface ActivityShapeProps {
@@ -11,8 +12,12 @@ export interface ActivityShapeProps {
 export const ActivityShape = observer(function ActivityShape(props: ActivityShapeProps) {
   const { dsl } = props;
 
+  const bound =
+    dsl.binding?.type &&
+    (dsl.binding.type === ActivityBindingType.DomainService ? dsl.binding.domainId : dsl.binding.serviceId);
+
   return (
-    <div className={s.root}>
+    <div className={classNames(s.root, { [s.bound]: bound })}>
       <div className={s.icon}>
         <InboxOutlined />
       </div>

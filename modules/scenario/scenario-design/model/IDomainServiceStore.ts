@@ -1,14 +1,21 @@
+export namespace IDomainServiceStore {
+  export interface Item {
+    id: string | number;
+    name: React.ReactNode;
+  }
+}
+
 export interface IDomainServiceStore {
   /**
    * 获取业务域列表
    */
-  getDomains(): Promise<Array<{ id: string; name: string }>>;
+  getDomains(): Promise<IDomainServiceStore.Item[]>;
 
   /**
    * 获取版本列表
    * @param id
    */
-  getDomainVersionList(domainId: string): Promise<Array<{ id: string; name: string }>>;
+  getDomainVersionList(domainId: string): Promise<IDomainServiceStore.Item[]>;
 
   /**
    * 获取业务域服务列表
@@ -16,5 +23,5 @@ export interface IDomainServiceStore {
    * @param domainId
    * @param versionId
    */
-  getDomainServiceList(domainId: string, versionId: string): Promise<Array<{ id: string; name: string }>>;
+  getDomainServiceList(domainId: string, versionId: string): Promise<IDomainServiceStore.Item[]>;
 }

@@ -1,4 +1,4 @@
-.root {
+.root:global(.block) {
   display: inline-flex;
   color: white;
   font-size: 12px;
@@ -8,6 +8,11 @@
   border-radius: 2px;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
   vertical-align: middle;
+  background-color: var(--color);
+}
+
+.root:global(.text) {
+  color: var(--color);
 }
 
 .version {

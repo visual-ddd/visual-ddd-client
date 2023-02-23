@@ -12,6 +12,11 @@ const useServiceStore = () => {
   return model.domainServiceStore;
 };
 
+const COMMON_SELECT_PROPS: SelectProps = {
+  showSearch: true,
+  optionFilterProp: 'children',
+};
+
 const DomainSelect = observer(function DomainSelect(props: SelectProps) {
   const serviceStore = useServiceStore();
 
@@ -20,7 +25,7 @@ const DomainSelect = observer(function DomainSelect(props: SelectProps) {
   });
 
   return (
-    <Select {...props} loading={isLoading}>
+    <Select {...COMMON_SELECT_PROPS} {...props} loading={isLoading}>
       {data?.map(i => {
         return (
           <Select.Option key={i.id} value={i.id}>
@@ -40,12 +45,12 @@ const VersionSelect = observer(function VersionSelect(
   const { domainId, ...other } = props;
   const serviceStore = useServiceStore();
 
-  const { data, isLoading } = useSwr(domainId ? `custom/scenario/domain/version` : null, () => {
+  const { data, isLoading } = useSwr(domainId ? `custom/scenario/domain/version/${domainId}` : null, () => {
     return serviceStore.getDomainVersionList(domainId!);
   });
 
   return (
-    <Select {...other} loading={isLoading}>
+    <Select {...COMMON_SELECT_PROPS} {...other} loading={isLoading}>
       {data?.map(i => {
         return (
           <Select.Option key={i.id} value={i.id}>
@@ -66,12 +71,15 @@ const ServiceSelect = observer(function ServiceSelect(
   const { domainId, versionId, ...other } = props;
   const serviceStore = useServiceStore();
 
-  const { data, isLoading } = useSwr(domainId && versionId ? `custom/scenario/domain/version` : null, () => {
-    return serviceStore.getDomainServiceList(domainId!, versionId!);
-  });
+  const { data, isLoading } = useSwr(
+    domainId && versionId ? `custom/scenario/domain/${domainId}/version/${versionId}` : null,
+    () => {
+      return serviceStore.getDomainServiceList(domainId!, versionId!);
+    }
+  );
 
   return (
-    <Select {...other} loading={isLoading}>
+    <Select dropdownMatchSelectWidth={false} {...COMMON_SELECT_PROPS} {...other} loading={isLoading}>
       {data?.map(i => {
         return (
           <Select.Option key={i.id} value={i.id}>
@@ -87,13 +95,17 @@ export const DomainServiceEditor = observer(function DomainServiceEditor(props: 
   const { formModel } = useEditorFormContext()!;
 
   // 重置
-  const handleDomainIdChange = () => {
+  const handleDomainIdChange = (v: any) => {
     formModel.setProperty('binding.versionId', undefined);
     formModel.setProperty('binding.domainServiceId', undefined);
+
+    return v;
   };
 
-  const handleVersionIdChange = () => {
+  const handleVersionIdChange = (v: any) => {
     formModel.setProperty('binding.domainServiceId', undefined);
+
+    return v;
   };
 
   return (

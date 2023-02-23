@@ -1,4 +1,5 @@
 .root {
+  position: relative;
   display: flex;
   align-items: center;
   padding: var(--vd-spacing-xs);
@@ -9,9 +10,25 @@
   border-radius: 4px;
 }
 
+.bound::after {
+  content: '';
+  position: absolute;
+  background: #dadadd
+    url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAACKADAAQAAAABAAAACAAAAAC2TFloAAAAE0lEQVQYGWPYv//QfwZCYPgrAgBinxn5LVbUIwAAAABJRU5ErkJggg==)
+    repeat scroll;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 0;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
 .icon {
   font-size: 20px;
   color: var(--vd-color-info-700);
+  z-index: 1;
 }
 
 .content {
@@ -23,4 +40,5 @@
   overflow: hidden;
   text-overflow: ellipsis;
   color: var(--vd-color-gray-700);
+  z-index: 1;
 }
