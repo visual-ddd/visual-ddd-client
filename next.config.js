@@ -5,6 +5,8 @@ const nextConfig = {
   reactStrictMode: false, // 暂时关闭，打开 react 会模拟 useEffect 多次执行
   swcMinify: true,
   output: 'standalone',
+  // TODO: 移除
+  productionBrowserSourceMaps: true,
   env: {
     VERSION: pkg.version,
   },

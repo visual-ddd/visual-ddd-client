@@ -1,6 +1,6 @@
 {
   "name": "visual-ddd",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "DDD 可视化前端",
   "imageName": "wkfe/visual-ddd",
   "workload": "wakeadmin-visual-ddd",
