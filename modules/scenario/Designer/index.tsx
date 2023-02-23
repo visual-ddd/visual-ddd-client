@@ -109,6 +109,7 @@ const ScenarioDesigner = observer(function ScenarioDesigner(props: ScenarioDesig
 
   useEffect(() => {
     if (model.error) {
+      console.error(model.error);
       message.warning(model.error.message);
     }
   }, [model.error]);

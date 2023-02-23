@@ -151,6 +151,7 @@ const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerPro
 
   useEffect(() => {
     if (model.error) {
+      console.error(model.error);
       message.warning(model.error.message);
     }
   }, [model.error]);
