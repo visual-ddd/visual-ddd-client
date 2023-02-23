@@ -1,4 +1,4 @@
-$width: 50px;
+$width: 60px;
 
 .root {
   width: $width;
@@ -8,4 +8,18 @@ $width: 50px;
   border-radius: 4px;
   transform: rotate(45deg) scale(0.8);
   transform-origin: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.name {
+  display: block;
+  width: 100%;
+  text-align: center;
+  transform: rotate(-45deg);
+  color: var(--vd-color-gray-800);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

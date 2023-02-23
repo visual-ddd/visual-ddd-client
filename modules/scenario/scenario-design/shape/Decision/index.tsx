@@ -1,18 +1,43 @@
-import { defineShape, ShapeComponentProps, useHoverShowPorts } from '@/lib/editor';
+import {
+  defineShape,
+  EditorFormContainer,
+  EditorFormItem,
+  ShapeComponentProps,
+  useHoverShowPorts,
+  useShapeModel,
+} from '@/lib/editor';
 import { ReactComponentBinding, ReactComponentProps, registerReactComponent } from '@/lib/g6-binding';
 
-import { ScenarioObjectName } from '../../dsl';
+import { createDecisionDSL, DecisionDSL, ScenarioObjectName } from '../../dsl';
 import s from './index.module.scss';
 import icon from './decision.png';
 import { PORTS } from '../shared';
+import { TitleInput } from '@/lib/components/TitleInput';
 
 const DecisionReactShapeComponent = (props: ReactComponentProps) => {
-  return <div className={s.root}></div>;
+  const { properties } = useShapeModel(props.node);
+  const dsl = properties as unknown as DecisionDSL;
+
+  return (
+    <div className={s.root}>
+      <span className={s.name}>{dsl.title || '决策'}</span>
+    </div>
+  );
 };
 
 const DecisionShapeComponent = (props: ShapeComponentProps) => {
   const hoverHandlers = useHoverShowPorts();
   return <ReactComponentBinding {...props.cellProps} component={ScenarioObjectName.Decision} {...hoverHandlers} />;
+};
+
+const DecisionEditor = () => {
+  return (
+    <EditorFormContainer>
+      <EditorFormItem path="title" label="标题">
+        <TitleInput />
+      </EditorFormItem>
+    </EditorFormContainer>
+  );
 };
 
 registerReactComponent(ScenarioObjectName.Decision, DecisionReactShapeComponent);
@@ -30,7 +55,9 @@ defineShape({
   edgeFactory: ScenarioObjectName.LabelEdge,
 
   initialProps: () => {
-    return {};
+    return {
+      ...createDecisionDSL(),
+    };
   },
 
   staticProps: () => ({
@@ -39,4 +66,5 @@ defineShape({
   }),
 
   component: DecisionShapeComponent,
+  attributeComponent: DecisionEditor,
 });

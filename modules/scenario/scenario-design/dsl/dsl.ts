@@ -15,6 +15,11 @@ export interface LanesDSL extends NameDSL {
 }
 
 /**
+ * 决策
+ */
+export interface DecisionDSL extends NameDSL {}
+
+/**
  * 标签边
  */
 export interface LabelEdgeDSL extends IDDSL {

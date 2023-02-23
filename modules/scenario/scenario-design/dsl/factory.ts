@@ -1,7 +1,7 @@
 import { createNameDSL } from '@/modules/domain/domain-design/dsl';
 import { v4 } from 'uuid';
 import { DEFAULT_LANE_HEIGHT, DEFAULT_LANE_WIDTH } from './constants';
-import { ActivityDSL, CommentDSL, LabelEdgeDSL, LaneDSL, LanesDSL } from './dsl';
+import { ActivityDSL, CommentDSL, DecisionDSL, LabelEdgeDSL, LaneDSL, LanesDSL } from './dsl';
 
 export function createLaneDSL(): LaneDSL {
   return {
@@ -23,6 +23,16 @@ export function createLabelEdge(): LabelEdgeDSL {
   return {
     uuid: v4(),
     label: '标签',
+  };
+}
+
+export function createDecisionDSL(): DecisionDSL {
+  const nameDSL = createNameDSL();
+  return {
+    ...nameDSL,
+    // 自动生成
+    name: `decision${nameDSL.uuid.slice(-4)}${String(Date.now()).slice(-4)}`,
+    title: '决策',
   };
 }
 
