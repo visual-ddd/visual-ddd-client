@@ -3,7 +3,6 @@ import { useEffect, useMemo } from 'react';
 import { message } from 'antd';
 import { tryDispose } from '@/lib/utils';
 import { VersionStatus } from '@/lib/core';
-import { useRouter } from 'next/router';
 import { CompletionContextProvider } from '@/lib/components/Completion';
 import { DesignerLayout, DesignerTabLabel } from '@/lib/components/DesignerLayout';
 
@@ -20,6 +19,7 @@ import { DomainDesignerContextProvider } from './Context';
 import { DomainDesignerHeader } from './Header';
 import { DomainDesignerLoading } from './Loading';
 import { DomainDesignerTabs, DomainDesignerTabsMap, DomainDesignerModel } from './model';
+import { usePreventUnload } from '@/lib/hooks';
 
 export interface DomainDescription {
   id: string | number;
@@ -76,7 +76,6 @@ export interface DomainDesignerProps {
  */
 const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerProps) {
   const { id, readonly, description } = props;
-  const router = useRouter();
   const model = useMemo(() => {
     const instance = new DomainDesignerModel({ id, readonly });
 
@@ -162,33 +161,7 @@ const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerPro
     };
   }, [model]);
 
-  /**
-   * 关闭阻止
-   */
-  useEffect(() => {
-    if (readonly) {
-      return;
-    }
-
-    const listener = (evt: Event) => {
-      evt.preventDefault();
-
-      // @ts-expect-error
-      return (evt.returnValue = '确定关闭吗？');
-    };
-
-    window.addEventListener('beforeunload', listener, { capture: true });
-    router.beforePopState(() => {
-      const confirm = window.confirm('确定关闭吗？');
-
-      return confirm;
-    });
-
-    return () => {
-      window.removeEventListener('beforeunload', listener, { capture: true });
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [readonly]);
+  usePreventUnload(!readonly);
 
   return (
     <DomainDesignerContextProvider value={model}>

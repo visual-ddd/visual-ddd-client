@@ -3,12 +3,12 @@ import { useEffect, useMemo } from 'react';
 import { message } from 'antd';
 import { tryDispose } from '@/lib/utils';
 import { VersionStatus } from '@/lib/core';
-import { useRouter } from 'next/router';
 import { DesignerHeader, DesignerLayout, DesignerLoading } from '@/lib/components/DesignerLayout';
 
 import { ScenarioDesignerContextProvider } from './Context';
 import { ScenarioDesignerTabs, ScenarioDesignerTabsMap, ScenarioDesignerModel } from './model';
 import { ScenarioEditor } from '../scenario-design';
+import { usePreventUnload } from '@/lib/hooks';
 
 export interface ScenarioDescription {
   id: string | number;
@@ -65,7 +65,6 @@ export interface ScenarioDesignerProps {
  */
 const ScenarioDesigner = observer(function ScenarioDesigner(props: ScenarioDesignerProps) {
   const { id, readonly, description } = props;
-  const router = useRouter();
   const model = useMemo(() => {
     const instance = new ScenarioDesignerModel({ id, readonly });
 
@@ -104,33 +103,7 @@ const ScenarioDesigner = observer(function ScenarioDesigner(props: ScenarioDesig
     };
   }, [model]);
 
-  /**
-   * 关闭阻止
-   */
-  useEffect(() => {
-    if (readonly) {
-      return;
-    }
-
-    const listener = (evt: Event) => {
-      evt.preventDefault();
-
-      // @ts-expect-error
-      return (evt.returnValue = '确定关闭吗？');
-    };
-
-    window.addEventListener('beforeunload', listener, { capture: true });
-    router.beforePopState(() => {
-      const confirm = window.confirm('确定关闭吗？');
-
-      return confirm;
-    });
-
-    return () => {
-      window.removeEventListener('beforeunload', listener, { capture: true });
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [readonly]);
+  usePreventUnload(!readonly);
 
   return (
     <ScenarioDesignerContextProvider value={model}>

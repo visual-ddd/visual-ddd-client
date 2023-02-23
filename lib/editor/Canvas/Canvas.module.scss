@@ -2,6 +2,10 @@
   width: 100%;
   height: 100%;
 
+  &:global(.readonly) :global(.x6-port) {
+    display: none;
+  }
+
   :global {
     .x6-widget-selection-box {
       border: 2px dashed #1677ff;

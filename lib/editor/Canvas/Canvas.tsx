@@ -25,7 +25,7 @@ export const Canvas = memo((props: CanvasProps) => {
   return (
     <GraphBinding
       options={finalOptions}
-      className={classNames('vd-editor-canvas', s.root, className)}
+      className={classNames('vd-editor-canvas', s.root, className, { readonly: canvasModel.readonly })}
       style={style}
       minimapClassName={s.minimap}
       onDrop={canvasModel.handleDrop}

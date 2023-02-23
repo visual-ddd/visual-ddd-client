@@ -96,11 +96,11 @@ export class NodeYMap {
 /**
  * 创建根节点，需要和 NodeYMap 保持同步
  */
-export function createRoot() {
+export function createRoot(children: string[] = []) {
   return NodeYMap.fromNodePO({
     id: MapTypeRoot,
     parent: undefined,
-    children: [],
+    children,
     properties: {
       __node_name__: MapTypeRoot,
       __node_type__: 'node',

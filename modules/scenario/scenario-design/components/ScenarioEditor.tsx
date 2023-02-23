@@ -23,6 +23,7 @@ export interface ScenarioEditorProps {
 
 export const ScenarioEditor = observer(function ScenarioEditor(props: ScenarioEditorProps) {
   const { model } = props;
+  const readonly = model.readonly;
   const configuration = useMemo<EditorConfigurationValue>(() => {
     return {
       renderTitle(node) {
@@ -38,9 +39,11 @@ export const ScenarioEditor = observer(function ScenarioEditor(props: ScenarioEd
           <EditorConfigurationProvider value={configuration}>
             <EditorLayout
               left={
-                <EditorPanelLayout>
-                  <EditorShapeLibrary shapes={model.shapeList} />
-                </EditorPanelLayout>
+                !readonly && (
+                  <EditorPanelLayout>
+                    <EditorShapeLibrary shapes={model.shapeList} />
+                  </EditorPanelLayout>
+                )
               }
               right={<EditorInspectPanel />}
               toolbar={<EditorToolbar />}

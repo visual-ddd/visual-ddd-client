@@ -12,7 +12,7 @@ import { ScenarioDesignerTabs } from './constants';
 import { ScenarioDesignerKeyboardBinding } from './KeyboardBinding';
 import { createScenarioEditorModel, ScenarioEditorModel } from '../../scenario-design';
 
-const KEY_ACTIVE_TAB = 'DESIGNER:activeTab';
+const KEY_ACTIVE_TAB = 'SCENARIO_DESIGNER:activeTab';
 
 interface TabModel {
   /**
@@ -116,7 +116,7 @@ export class ScenarioDesignerModel implements IDisposable {
       }
 
       // 数据加载
-      const response = await fetch(`/api/rest/domain/${this.id}`, { method: 'GET' });
+      const response = await fetch(`/api/rest/scenario/${this.id}`, { method: 'GET' });
 
       if (!response.ok) {
         const message = await extraRestErrorMessage(response);
@@ -166,7 +166,7 @@ export class ScenarioDesignerModel implements IDisposable {
 
       const update = encodeStateAsUpdate(this.ydoc, vector);
 
-      const response = await fetch(`/api/rest/domain/${this.id}`, { method: 'PUT', body: update });
+      const response = await fetch(`/api/rest/scenario/${this.id}`, { method: 'PUT', body: update });
 
       if (!response.ok) {
         const message = await extraRestErrorMessage(response);
@@ -208,7 +208,7 @@ export class ScenarioDesignerModel implements IDisposable {
 
   protected async initialize() {
     const activeKey = await localStorage.getItem(KEY_ACTIVE_TAB);
-    if (activeKey != null) {
+    if (activeKey) {
       this.setActiveTab({ tab: activeKey as ScenarioDesignerTabs });
     } else {
       this.setActiveTab({ tab: ScenarioDesignerTabs.Scenario });
@@ -216,7 +216,7 @@ export class ScenarioDesignerModel implements IDisposable {
   }
 
   protected async getVector() {
-    const res = await fetch(`/api/rest/domain/${this.id}/vector`, { method: 'GET' });
+    const res = await fetch(`/api/rest/scenario/${this.id}/vector`, { method: 'GET' });
 
     if (res.ok) {
       const buffer = await res.arrayBuffer();
