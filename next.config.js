@@ -7,6 +7,10 @@ const nextConfig = {
   output: 'standalone',
   // TODO: 移除
   productionBrowserSourceMaps: true,
+  typescript: {
+    // 不需要执行，以为我们在提交时进行验证
+    ignoreBuildErrors: true,
+  },
   env: {
     VERSION: pkg.version,
   },
