@@ -35,7 +35,7 @@ export class BaseEditorDatasource {
   private updateQueue: Function[] = [];
   private updatePending: boolean = false;
 
-  private postPullQueue: Map<string, Function> = new Map();
+  private postPullQueue: Map<`${'REMOVE_CHILD' | 'ADD_CHILD'}:${string},${string}`, Function> = new Map();
 
   constructor(inject: {
     store: BaseEditorStore;
@@ -349,7 +349,24 @@ export class BaseEditorDatasource {
             }
           }
         } else if (this.isNodeMap(target)) {
-          // 节点内容变动，这里只可能是 parent 变动，这里不做处理，在children 那里处理
+          const nodePo = NodeYMap.fromYMap(target);
+          // 节点内容变动，这里只可能是 parent 变动，这里也做处理，在 children 那里也会处理, 需要进行去重
+          // 某些比较极端的场景 children 变更可能不会触发
+          for (const [key] of evt.keys) {
+            switch (key) {
+              case 'parent': {
+                if (nodePo?.parent) {
+                  this.postPullQueue.set(`ADD_CHILD:${nodePo.parent},${nodePo.id}`, () => {
+                    this.handleAddChild({
+                      parentId: nodePo.parent!,
+                      childId: nodePo.id,
+                    });
+                  });
+                }
+                break;
+              }
+            }
+          }
         } else if (this.isPropertiesMap(target)) {
           // 属性变动
           const nodePO = NodeYMap.fromYMap(target.parent as YMap<any>)!.toNodePO();
@@ -392,7 +409,22 @@ export class BaseEditorDatasource {
       const postPullQueue = this.postPullQueue;
       if (postPullQueue.size) {
         this.postPullQueue = new Map();
-        postPullQueue.forEach(i => i());
+
+        // 先删除后添加
+        const appendActions: Function[] = [];
+        for (const [key, action] of postPullQueue) {
+          if (key.startsWith('ADD_CHILD')) {
+            appendActions.push(action);
+          } else {
+            action();
+          }
+        }
+
+        if (appendActions.length) {
+          for (const i of appendActions) {
+            i();
+          }
+        }
       }
 
       console.log('datasource change end');

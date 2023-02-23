@@ -128,9 +128,12 @@ export class BaseNode {
 
     if (idx === -1) {
       this.children.push(node);
-      node.parent = this;
+      node.setParent(this);
 
       return true;
+    } else if (node.parent !== this) {
+      // 确保 parent 等于自己
+      node.setParent(this);
     }
 
     return false;
@@ -182,6 +185,19 @@ export class BaseNode {
         child.walk(visitor);
       }
     }
+  }
+
+  private setParent(parent: this) {
+    if (this.parent === parent) {
+      return;
+    }
+
+    // 先确保移除
+    if (this.parent && this.parent !== parent) {
+      this.parent.removeChild(this);
+    }
+
+    this.parent = parent;
   }
 
   private getNodeIdx(node: this) {
