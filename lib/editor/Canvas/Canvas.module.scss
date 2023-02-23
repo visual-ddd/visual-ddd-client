@@ -19,6 +19,16 @@
       overflow: visible;
     }
 
+    // port 默认隐藏
+    [data-port-visible='false'] .x6-port,
+    .x6-port {
+      visibility: hidden;
+    }
+
+    [data-port-visible='true'] .x6-port {
+      visibility: visible;
+    }
+
     // 不采用这种方式，因为 marker 的样式不会从 path 中继承
     // /**
     //  * 选中样式

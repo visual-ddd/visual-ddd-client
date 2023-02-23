@@ -2,15 +2,15 @@ import { CellBindingProps } from '@/lib/g6-binding';
 import { useCanvasModel } from '../../Canvas';
 
 const setPortVisible = (cellId: string, visible: boolean) => {
-  const cell = document.querySelector('[data-cell-id="' + cellId + '"]');
+  const cell = document.querySelector('[data-cell-id="' + cellId + '"]') as SVGGElement;
 
-  const ports = cell?.querySelectorAll('.x6-port');
+  if (cell) {
+    cell.setAttribute('data-port-visible', String(!!visible));
 
-  if (ports?.length) {
-    ports.forEach(p => {
-      (p as SVGGElement).style.visibility = visible ? 'visible' : 'hidden';
-    });
+    return true;
   }
+
+  return false;
 };
 
 /**
@@ -36,13 +36,6 @@ export function useHoverShowPorts() {
     setPortVisible(evt.cell.id, false);
   };
 
-  // 初始化
-  const handleCellReady: CellBindingProps['onCellReady'] = evt => {
-    requestAnimationFrame(() => {
-      setPortVisible(evt.id, false);
-    });
-  };
-
   // 高亮时也展示ports
   const handleHighligh: CellBindingProps['onHighlight'] = evt => {
     setPortVisible(evt.cell.id, true);
@@ -57,6 +50,5 @@ export function useHoverShowPorts() {
     onMouseleave: handleMouseLeave,
     onHighlight: handleHighligh,
     onUnhighlight: handleUnhighlight,
-    onCellReady: handleCellReady,
   };
 }

@@ -279,6 +279,7 @@ export function useCell<Props extends CellBindingProps>({
     );
 
     return disposers.release;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, NoopArray);
 
   // 监听属性变动
