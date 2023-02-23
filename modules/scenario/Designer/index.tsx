@@ -3,12 +3,13 @@ import { useEffect, useMemo } from 'react';
 import { message } from 'antd';
 import { tryDispose } from '@/lib/utils';
 import { VersionStatus } from '@/lib/core';
-import { DesignerHeader, DesignerLayout, DesignerLoading } from '@/lib/components/DesignerLayout';
+import { DesignerHeader, DesignerLayout, DesignerLoading, DesignerTabLabel } from '@/lib/components/DesignerLayout';
 
 import { ScenarioDesignerContextProvider } from './Context';
 import { ScenarioDesignerTabs, ScenarioDesignerTabsMap, ScenarioDesignerModel } from './model';
 import { ScenarioEditor } from '../scenario-design';
 import { usePreventUnload } from '@/lib/hooks';
+import { DomainEditor } from '../service-design';
 
 export interface ScenarioDescription {
   id: string | number;
@@ -68,10 +69,13 @@ const ScenarioDesigner = observer(function ScenarioDesigner(props: ScenarioDesig
   const model = useMemo(() => {
     const instance = new ScenarioDesignerModel({ id, readonly });
 
-    instance.load();
-
     return instance;
   }, [id, readonly]);
+
+  useEffect(() => {
+    model.initialize();
+    model.load();
+  }, [model]);
 
   const saveTooltip = useMemo(() => {
     const desc = model.keyboardBinding.getReadableKeyBinding('save');
@@ -80,14 +84,26 @@ const ScenarioDesigner = observer(function ScenarioDesigner(props: ScenarioDesig
 
   const items = [
     {
-      label: ScenarioDesignerTabsMap[ScenarioDesignerTabs.Scenario],
+      label: (
+        <DesignerTabLabel model={model.scenarioEditorModel}>
+          {ScenarioDesignerTabsMap[ScenarioDesignerTabs.Scenario]}
+        </DesignerTabLabel>
+      ),
       key: ScenarioDesignerTabs.Scenario,
-      children: <ScenarioEditor model={model.scenarioEditorModel} />,
+      children: (
+        <ScenarioEditor model={model.scenarioEditorModel} active={model.activeTab === ScenarioDesignerTabs.Scenario} />
+      ),
     },
     {
-      label: ScenarioDesignerTabsMap[ScenarioDesignerTabs.Service],
+      label: (
+        <DesignerTabLabel model={model.serviceEditorModel}>
+          {ScenarioDesignerTabsMap[ScenarioDesignerTabs.Service]}
+        </DesignerTabLabel>
+      ),
       key: ScenarioDesignerTabs.Service,
-      children: <div>TODO:</div>,
+      children: (
+        <DomainEditor model={model.serviceEditorModel} active={model.activeTab === ScenarioDesignerTabs.Service} />
+      ),
     },
   ];
 

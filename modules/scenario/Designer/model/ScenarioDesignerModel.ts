@@ -11,6 +11,7 @@ import { YJS_FIELD_NAME } from '../../constants';
 import { ScenarioDesignerTabs } from './constants';
 import { ScenarioDesignerKeyboardBinding } from './KeyboardBinding';
 import { createScenarioEditorModel, ScenarioEditorModel } from '../../scenario-design';
+import { createServiceEditorModel, DomainEditorModel } from '../../service-design';
 
 const KEY_ACTIVE_TAB = 'SCENARIO_DESIGNER:activeTab';
 
@@ -36,6 +37,11 @@ export class ScenarioDesignerModel implements IDisposable {
    * 业务流程图模型
    */
   scenarioEditorModel: ScenarioEditorModel;
+
+  /**
+   * 业务场景服务
+   */
+  serviceEditorModel: DomainEditorModel;
 
   /**
    * 当前激活的 Tab
@@ -64,10 +70,17 @@ export class ScenarioDesignerModel implements IDisposable {
     const doc = (this.ydoc = new YDoc());
 
     const scenarioDatabase = doc.getMap(YJS_FIELD_NAME.SCENARIO);
+    const serviceDatabase = doc.getMap(YJS_FIELD_NAME.SERVICE);
 
     this.scenarioEditorModel = createScenarioEditorModel({
       datasource: scenarioDatabase,
-      doc: doc,
+      doc,
+      readonly,
+    });
+
+    this.serviceEditorModel = createServiceEditorModel({
+      datasource: serviceDatabase,
+      doc,
       readonly,
     });
 
@@ -76,14 +89,25 @@ export class ScenarioDesignerModel implements IDisposable {
         key: ScenarioDesignerTabs.Scenario,
         model: this.scenarioEditorModel,
       },
+      {
+        key: ScenarioDesignerTabs.Service,
+        model: this.serviceEditorModel,
+      },
     ];
 
     this.keyboardBinding = new ScenarioDesignerKeyboardBinding({ model: this });
 
     makeAutoBindThis(this);
     makeObservable(this);
+  }
 
-    this.initialize();
+  async initialize() {
+    const activeKey = await localStorage.getItem(KEY_ACTIVE_TAB);
+    if (activeKey) {
+      this.setActiveTab({ tab: activeKey as ScenarioDesignerTabs });
+    } else {
+      this.setActiveTab({ tab: ScenarioDesignerTabs.Scenario });
+    }
   }
 
   /**
@@ -204,15 +228,6 @@ export class ScenarioDesignerModel implements IDisposable {
   @mutation('DESIGNER:SET_ERROR', false)
   protected setError(error?: Error) {
     this.error = error;
-  }
-
-  protected async initialize() {
-    const activeKey = await localStorage.getItem(KEY_ACTIVE_TAB);
-    if (activeKey) {
-      this.setActiveTab({ tab: activeKey as ScenarioDesignerTabs });
-    } else {
-      this.setActiveTab({ tab: ScenarioDesignerTabs.Scenario });
-    }
   }
 
   protected async getVector() {
