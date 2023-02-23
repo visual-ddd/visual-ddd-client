@@ -13,6 +13,7 @@ import { ScenarioDesignerKeyboardBinding } from './KeyboardBinding';
 import { createScenarioEditorModel, ScenarioEditorModel } from '../../scenario-design';
 import { createServiceEditorModel, DomainEditorModel } from '../../service-design';
 import { ScenarioServiceStore } from './ScenarioServiceStore';
+import { DomainServiceStore } from './DomainServiceStore';
 
 const KEY_ACTIVE_TAB = 'SCENARIO_DESIGNER:activeTab';
 
@@ -83,11 +84,14 @@ export class ScenarioDesignerModel implements IDisposable {
       serviceEditorModel: this.serviceEditorModel,
     });
 
+    const domainServiceStore = new DomainServiceStore();
+
     this.scenarioEditorModel = createScenarioEditorModel({
       datasource: scenarioDatabase,
       doc,
       readonly,
       serviceStore,
+      domainServiceStore,
     });
 
     this.tabs = [

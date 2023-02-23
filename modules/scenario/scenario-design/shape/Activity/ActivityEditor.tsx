@@ -5,6 +5,7 @@ import { Select } from 'antd';
 
 import { ActivityBindingType } from '../../dsl';
 import { ScenarioServiceSelect } from './ScenarioServiceSelect';
+import { DomainServiceEditor } from './DomainServiceEditor';
 
 export const ActivityEditor = () => {
   return (
@@ -23,7 +24,7 @@ export const ActivityEditor = () => {
       </EditorFormItem>
       <EditorFormConsumer<ActivityBindingType | undefined> path="binding.type">
         {({ value }) => {
-          if (!value == null) {
+          if (!value) {
             return <></>;
           }
 
@@ -33,9 +34,9 @@ export const ActivityEditor = () => {
                 <ScenarioServiceSelect placeholder="选择业务场景服务" className="u-fw" />
               </EditorFormItem>
             );
+          } else {
+            return <DomainServiceEditor />;
           }
-
-          return <></>;
         }}
       </EditorFormConsumer>
     </EditorFormContainer>

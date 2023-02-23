@@ -54,7 +54,7 @@ export interface ActivityBindingDomainService {
   type: ActivityBindingType.DomainService;
   domainId?: string;
   versionId?: string;
-  serviceId?: string;
+  domainServiceId?: string;
 }
 
 export type ActivityBinding = ActivityBindingScenarioService | ActivityBindingDomainService;
