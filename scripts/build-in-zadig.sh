@@ -8,6 +8,9 @@
 set -e
 set -x
 
+# 不进行登录
+export DOCKER_SKIP_LOGIN=true
+
 # 切换到项目目录
 cd $WORKSPACE/$REPONAME_0
 
