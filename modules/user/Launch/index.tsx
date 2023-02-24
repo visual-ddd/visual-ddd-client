@@ -64,7 +64,7 @@ export interface LaunchProps {
  */
 export function Launch({ data }: LaunchProps) {
   const router = useRouter();
-  const { reload: reloadSession } = useSession();
+  const session = useSession();
   const organizations = useMemo(() => {
     return (data.accountOrganizationInfoList ?? NoopArray).filter(item => item.isOrganizationAdmin);
   }, [data.accountOrganizationInfoList]);
@@ -83,7 +83,7 @@ export function Launch({ data }: LaunchProps) {
     // 缓存启动配置
     await request.requestByPost('/api/update-entry', params);
 
-    reloadSession();
+    session.reload();
 
     switch (params.entry) {
       case VDSessionEntry.System:

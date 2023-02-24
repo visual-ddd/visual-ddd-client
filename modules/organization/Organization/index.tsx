@@ -117,6 +117,7 @@ export function Organization() {
               ...payload,
               pageNo: current,
               pageSize,
+              organizationId,
             };
             const { success, data, totalCount } = await request.requestPaginationByGet(
               '/wd/visual/web/team/team-page-query',
