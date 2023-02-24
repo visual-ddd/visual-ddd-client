@@ -1,5 +1,8 @@
 const pkg = require('./package.json');
 
+const now = new Date();
+const snapshot = `${now.getFullYear()}${now.getMonth() + 1}${now.getDate()}`;
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false, // 暂时关闭，打开 react 会模拟 useEffect 多次执行
@@ -12,7 +15,7 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   env: {
-    VERSION: pkg.version,
+    VERSION: `${pkg.version}-${snapshot}`,
   },
   eslint: {
     // Warning: This allows production builds to successfully complete even if

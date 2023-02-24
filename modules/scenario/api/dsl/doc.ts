@@ -5,6 +5,13 @@ import { v4 } from 'uuid';
 import { ScenarioObjectName } from '../../scenario-design/dsl/constants';
 import { YJS_FIELD_NAME } from '../../constants';
 
+import { DSLModel } from './model';
+import { ScenarioDSL } from './interface';
+
+/**
+ * 创建初始化模板
+ * @returns
+ */
 export function createDoc() {
   const doc = new YDoc();
 
@@ -26,7 +33,7 @@ export function createDoc() {
         title: '泳道',
         description: '',
         meta: [],
-        width: 1000,
+        width: 1200,
         panes: [{ uuid: v4(), title: '未命名泳道', height: 300 }],
       },
     });
@@ -53,6 +60,8 @@ export function createDoc() {
  * @param doc
  * @returns
  */
-export function transformToDSL(doc: YDoc): unknown {
-  return { TODO: '生成业务场景DSL' };
+export function transformToDSL(doc: YDoc): ScenarioDSL {
+  const model = new DSLModel(doc);
+
+  return model.toDSL();
 }

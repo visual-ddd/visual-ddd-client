@@ -1,4 +1,4 @@
-import { createNameDSL } from '@/modules/domain/domain-design/dsl';
+import { createNameDSL } from '@/modules/domain/domain-design/dsl/factory';
 import { v4 } from 'uuid';
 import { DEFAULT_LANE_HEIGHT, DEFAULT_LANE_WIDTH } from './constants';
 import { ActivityDSL, CommentDSL, DecisionDSL, LabelEdgeDSL, LaneDSL, LanesDSL } from './dsl';
