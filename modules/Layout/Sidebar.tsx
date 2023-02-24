@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 
 import type { LayoutMenu, LayoutMenuItem } from './types';
 import s from './Sidebar.module.scss';
+import { openMenu } from './utils';
 
 export interface SidebarProps {
   /**
@@ -43,7 +44,7 @@ export const Sidebar = observer(function Sidebar(props: SidebarProps) {
               <div
                 className={classNames('vd-layout-sidebar__primary-item', s.primaryItem, { active })}
                 onClick={() => {
-                  router.push(i.route);
+                  openMenu(i);
                 }}
               >
                 {i.icon}

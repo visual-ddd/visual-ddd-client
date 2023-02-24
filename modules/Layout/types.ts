@@ -39,7 +39,7 @@ export interface LayoutMenu {
   /**
    * 子菜单
    */
-  children?: LayoutMenuItem[] | (() => Promise<LayoutMenuItem[]>);
+  children?: LayoutMenuItem[];
 }
 
 export type LayoutAction =

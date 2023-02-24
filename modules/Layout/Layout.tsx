@@ -1,10 +1,10 @@
 import classNames from 'classnames';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { observer } from 'mobx-react';
 import { useRouter } from 'next/router';
 import { NoopArray } from '@wakeapp/utils';
 
-import { LayoutAction, LayoutMenu, LayoutMenuItem } from './types';
+import { LayoutAction, LayoutMenu } from './types';
 import { Sidebar } from './Sidebar';
 import { LayoutContextProvider, LayoutContextValue } from './Context';
 import { Header } from './Header';
@@ -34,7 +34,6 @@ export interface LayoutProps {
 export const Layout = observer(function Layout(props: LayoutProps) {
   const { menu, actions, children, primarySidebarSlot } = props;
   const [title, setTitle] = useState<React.ReactNode>();
-  const [subMenu, setSubMenu] = useState<LayoutMenuItem[]>(NoopArray);
   const router = useRouter();
   const pathname = router.asPath;
 
@@ -68,38 +67,7 @@ export const Layout = observer(function Layout(props: LayoutProps) {
     };
   }, []);
 
-  /**
-   * 二级标题加载
-   */
-  useEffect(() => {
-    if (activeMenuItem) {
-      if (Array.isArray(activeMenuItem.children)) {
-        setSubMenu(activeMenuItem.children);
-      } else if (typeof activeMenuItem.children === 'function') {
-        setSubMenu(NoopArray);
-        let cancelled = false;
-
-        activeMenuItem
-          .children()
-          .then(children => {
-            if (!cancelled) {
-              setSubMenu(children);
-            }
-          })
-          .catch(err => {
-            console.error(`加载菜单失败`, err);
-          });
-
-        return () => {
-          cancelled = true;
-        };
-      } else {
-        setSubMenu(NoopArray);
-      }
-    } else {
-      setSubMenu(NoopArray);
-    }
-  }, [activeMenuItem]);
+  const subMenu = activeMenuItem?.children ?? NoopArray;
 
   return (
     <LayoutContextProvider value={context}>

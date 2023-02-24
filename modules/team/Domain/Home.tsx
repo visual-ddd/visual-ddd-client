@@ -1,8 +1,10 @@
 import { useRequestByGet } from '@/modules/backend-client';
 import { useLayoutTitle } from '@/modules/Layout';
+import { addTrailingSlash } from '@wakeapp/utils';
 import { Button, Empty } from 'antd';
 import classNames from 'classnames';
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import { DomainDetail } from '../types';
 import { CreateDomain, useCreateDomain } from './Create';
 
@@ -15,6 +17,13 @@ export const DomainHome = () => {
   );
 
   useLayoutTitle('创建业务域');
+
+  useEffect(() => {
+    if (data?.length) {
+      router.push(addTrailingSlash(router.asPath) + data[0].id);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, router.asPath]);
 
   return (
     <div className={classNames('vd-domain-home', 'u-abs-center')}>

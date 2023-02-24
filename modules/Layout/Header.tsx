@@ -1,11 +1,11 @@
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
 import dynamic from 'next/dynamic';
-import { useRouter } from 'next/router';
 
 import type { LayoutAction, LayoutMenu, LayoutMenuItem } from './types';
 import { LogoIcon } from './LogoIcon';
 import s from './Header.module.scss';
+import { openMenu } from './utils';
 
 const User = dynamic(() => import('./User'), { ssr: false });
 
@@ -32,7 +32,6 @@ export interface HeaderProps {
 
 export const Header = observer(function Header(props: HeaderProps) {
   const { className, title, subMenu, activeMenuItem, actions, ...other } = props;
-  const router = useRouter();
 
   return (
     <div className={classNames('vd-layout-header', className, s.root)} {...other}>
@@ -45,7 +44,7 @@ export const Header = observer(function Header(props: HeaderProps) {
             <div
               className={classNames('vd-layout-header__home', s.home)}
               onClick={() => {
-                router.push(activeMenuItem.route);
+                openMenu(activeMenuItem);
               }}
             >
               {activeMenuItem.name}
