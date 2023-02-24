@@ -30,7 +30,12 @@ const ZOOM_FACTOR_STYLE: React.CSSProperties = {
   width: 35,
 };
 
-export const EditorToolbar = observer(function EditorToolbar() {
+export interface EditorToolbarProps {
+  children?: React.ReactNode;
+}
+
+export const EditorToolbar = observer(function EditorToolbar(props: EditorToolbarProps) {
+  const { children } = props;
   const { model } = useCanvasModel();
   const editorViewStore = model.editorViewStore;
   const readonly = model.readonly;
@@ -151,6 +156,7 @@ export const EditorToolbar = observer(function EditorToolbar() {
           active={editorViewStore.viewState.mouseDragMode === 'select'}
         ></Item>
       </Group>
+      {children}
     </Toolbar>
   );
 });

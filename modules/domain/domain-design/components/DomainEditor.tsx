@@ -17,6 +17,7 @@ import { ShapeTree } from './ShapeTree';
 import { DomainObjectReferenceEdges } from './DomainObjectReferenceEdges';
 import { useMemo } from 'react';
 import { ShapeTitle } from './ShapeTitle';
+import { RelationShipSelect } from './RelationShipSelect';
 
 export interface DomainEditorProps {
   /**
@@ -60,7 +61,11 @@ export const DomainEditor = observer(function DomainEditor(props: DomainEditorPr
                 )
               }
               right={<EditorInspectPanel />}
-              toolbar={<EditorToolbar />}
+              toolbar={
+                <EditorToolbar>
+                  <RelationShipSelect />
+                </EditorToolbar>
+              }
             >
               <Canvas>
                 {/* 扩展连线 */}

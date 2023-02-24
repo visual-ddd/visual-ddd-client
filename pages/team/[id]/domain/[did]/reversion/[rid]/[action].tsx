@@ -24,7 +24,7 @@ export default function Designer(props: DesignerProps) {
   return (
     <>
       <Head>
-        <title>{description.name} - 业务域设计器</title>
+        <title>{`${description.name} - 业务域设计器`}</title>
       </Head>
       <DynamicDesigner id={id} readonly={readonly} description={description} />
     </>

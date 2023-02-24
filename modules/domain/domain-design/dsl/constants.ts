@@ -1,3 +1,5 @@
+import { RelationShipDSL } from './dsl';
+
 export { NameTooltip, NameTooltipSimple } from '@/lib/core';
 
 /**
@@ -14,6 +16,20 @@ export const UntitledInCamelCase = 'untitled';
 export const UntitledInUpperCamelCase = 'Untitled';
 export const UntitledInUpperCase = 'UNTITLED';
 export const UntitledInHumanReadable = '未命名';
+
+export const RelativeShipMap = {
+  [RelationShipDSL.Aggregation]: '聚合',
+  [RelationShipDSL.Association]: '关联',
+  [RelationShipDSL.Composition]: '组合',
+  [RelationShipDSL.Dependency]: '依赖',
+};
+
+export const RelationShipList = [
+  { label: RelativeShipMap[RelationShipDSL.Aggregation], value: RelationShipDSL.Aggregation },
+  { label: RelativeShipMap[RelationShipDSL.Association], value: RelationShipDSL.Association },
+  { label: RelativeShipMap[RelationShipDSL.Composition], value: RelationShipDSL.Composition },
+  { label: RelativeShipMap[RelationShipDSL.Dependency], value: RelationShipDSL.Dependency },
+];
 
 export const AccessModifier = {
   public: '',

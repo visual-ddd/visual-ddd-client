@@ -101,26 +101,32 @@ export const DomainObjectReferenceEdges = observer(function DomainObjectReferenc
     return null;
   }
 
+  const visible = model.domainEditorViewModel.relationShipVisible;
+
   return (
     <>
-      {model.domainObjectStore.edges.map(i => {
-        const EdgeType =
-          i.type === RelationShipDSL.Dependency
-            ? DependencyEdge
-            : i.type === RelationShipDSL.Association
-            ? AssociationEdge
-            : i.type === RelationShipDSL.Aggregation
-            ? DomainObjectFactory.isAggregation(i.sourceObject)
-              ? AggregationAggregateEdge
-              : AggregationEdge
-            : null;
+      {model.domainObjectStore.edges
+        .filter(i => {
+          return visible.includes(i.type);
+        })
+        .map(i => {
+          const EdgeType =
+            i.type === RelationShipDSL.Dependency
+              ? DependencyEdge
+              : i.type === RelationShipDSL.Association
+              ? AssociationEdge
+              : i.type === RelationShipDSL.Aggregation
+              ? DomainObjectFactory.isAggregation(i.sourceObject)
+                ? AggregationAggregateEdge
+                : AggregationEdge
+              : null;
 
-        if (EdgeType) {
-          return <EdgeType key={i.id} id={i.id} source={i.sourceObject} target={i.targetObject} />;
-        }
+          if (EdgeType) {
+            return <EdgeType key={i.id} id={i.id} source={i.sourceObject} target={i.targetObject} />;
+          }
 
-        return <EdgeBinding key={i.id} source={i.source} target={i.target}></EdgeBinding>;
-      })}
+          return <EdgeBinding key={i.id} source={i.source} target={i.target}></EdgeBinding>;
+        })}
     </>
   );
 });
