@@ -691,20 +691,22 @@ export class CanvasModel {
    */
   handleEdgeSelected: GraphBindingProps['onEdge$Selected'] = evt => {
     const edge = evt.edge;
-    const model = this.shapeRegistry.getModelByCell(edge);
+    // const model = this.shapeRegistry.getModelByCell(edge);
 
-    // 非模型无法操作
-    if (model == null) {
-      return;
-    }
+    // // 非模型无法操作
+    // if (model == null) {
+    //   return;
+    // }
 
     const oldStroke = edge.attr('line/stroke');
     const oldStrokeWidth = edge.attr('line/strokeWidth');
+    const oldIndex = edge.getZIndex();
 
-    this.tempNodeState.set(edge, { stroke: oldStroke, strokeWidth: oldStrokeWidth });
+    this.tempNodeState.set(edge, { stroke: oldStroke, strokeWidth: oldStrokeWidth, index: oldIndex });
 
     edge.attr('line/stroke', this.options.selectedColor ?? DEFAULT_SELECTED_COLOR);
     edge.attr('line/strokeWidth', 3);
+    edge.setZIndex(1000, wrapPreventListenerOptions({}));
   };
 
   /**
@@ -713,11 +715,14 @@ export class CanvasModel {
    */
   handleEdgeUnselected: GraphBindingProps['onEdge$Unselected'] = evt => {
     const edge = evt.edge;
-    const oldStrokeState = this.tempNodeState.get(edge) as { stroke: string; strokeWidth: number } | undefined;
+    const oldStrokeState = this.tempNodeState.get(edge) as
+      | { stroke: string; strokeWidth: number; index: number }
+      | undefined;
 
     if (oldStrokeState) {
       edge.attr('line/stroke', oldStrokeState.stroke);
       edge.attr('line/strokeWidth', oldStrokeState.strokeWidth);
+      edge.setZIndex(oldStrokeState.index, wrapPreventListenerOptions({}));
     }
   };
 
