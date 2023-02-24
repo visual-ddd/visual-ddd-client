@@ -17,7 +17,7 @@ import classNames from 'classnames';
 import { download, request } from '@/modules/backend-client';
 
 import { useLayoutTitle } from '@/modules/Layout';
-import { AppDetail, DomainSimple, VersionStatus } from '../types';
+import { AppDetail, DomainSimple, ScenarioSimple, VersionStatus } from '../types';
 import { UpdateApp, useUpdateApp } from './Update';
 import { Association, AssociationProps, IAssociable, useAssociation } from './Association';
 
@@ -34,6 +34,7 @@ export const AppReversion = (props: AppReversionProps) => {
   const versionCreateRef = useVersionCreateRef();
   const versionPublishRef = useVersionPublishRef();
   const domainAssociationRef = useAssociation();
+  const scenarioAssociationRef = useAssociation();
   const status = detail.version.state;
   const readonly = status === VersionStatus.PUBLISHED;
 
@@ -68,11 +69,49 @@ export const AppReversion = (props: AppReversionProps) => {
     });
   };
 
+  /**
+   * 请求业务场景列表
+   * @returns
+   */
+  const requestScenarioAssociations: AssociationProps['onRequest'] = async () => {
+    // 业务场景列表
+    const list = await request.requestByGet<ScenarioSimple[]>(
+      '/wd/visual/web/business-scene/business-scene-page-query',
+      {
+        teamId: detail.teamId,
+        pageNo: 1,
+        pageSize: 1000,
+      }
+    );
+
+    return list.map<IAssociable>(i => {
+      return {
+        ...i,
+        // 当前关联的版本
+        version: detail.version.businessSceneVersionDTOList?.find(j => {
+          return j.businessSceneId === i.id;
+        }),
+      };
+    });
+  };
+
   const requestDomainVersionList: AssociationProps['onRequestVersions'] = async id => {
     const list = await request.requestByGet<IVersion[]>(
       '/wd/visual/web/domain-design-version/domain-design-version-page-query',
       {
         domainDesignId: id,
+        pageNo: 1,
+        pageSize: 10000,
+      }
+    );
+    return list;
+  };
+
+  const requestScenarioVersionList: AssociationProps['onRequestVersions'] = async id => {
+    const list = await request.requestByGet<IVersion[]>(
+      '/wd/visual/web/business-scene-version/business-scene-version-page-query',
+      {
+        businessSceneId: id,
         pageNo: 1,
         pageSize: 10000,
       }
@@ -88,6 +127,15 @@ export const AppReversion = (props: AppReversionProps) => {
     await request.requestByPost('/wd/visual/web/application-version/domain-design-version-bind', {
       id: detail.version.id,
       domainDesignVersionIds: result.versionIds,
+    });
+
+    router.replace(router.asPath);
+  };
+
+  const saveScenarioAssociations: AssociationProps['onFinish'] = async result => {
+    await request.requestByPost('/wd/visual/web/application-version/business-scene-version-bind', {
+      id: detail.version.id,
+      businessSceneVersionIds: result.versionIds,
     });
 
     router.replace(router.asPath);
@@ -235,7 +283,13 @@ export const AppReversion = (props: AppReversionProps) => {
               >
                 关联业务域
               </Button>
-              <Button size="small" type="primary">
+              <Button
+                size="small"
+                type="primary"
+                onClick={() => {
+                  scenarioAssociationRef.current?.open();
+                }}
+              >
                 关联业务场景
               </Button>
               <Button size="small" type="primary">
@@ -273,6 +327,15 @@ export const AppReversion = (props: AppReversionProps) => {
         onFinish={saveDomainAssociations}
         readonly={readonly}
       />
+      <Association
+        name="业务场景"
+        identify={`${detail.id}.scenario`}
+        onRequest={requestScenarioAssociations}
+        onRequestVersions={requestScenarioVersionList}
+        onFinish={saveScenarioAssociations}
+        ref={scenarioAssociationRef}
+        readonly={readonly}
+      ></Association>
     </PreviewPageLayout>
   );
 };

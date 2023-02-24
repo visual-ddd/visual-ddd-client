@@ -106,7 +106,7 @@ export const Association = forwardRef<AssociationRef, AssociationProps>((props, 
         title: '版本号',
         width: '200px',
         render(_, row) {
-          const value = row.id in mapper ? mapper[row.id] : row.version?.id;
+          const currentValue = row.id in mapper ? mapper[row.id] : row.version?.id;
           const handleChange = (value: string) => {
             setMapper(old => {
               return { ...old, [row.id]: value };
@@ -116,7 +116,7 @@ export const Association = forwardRef<AssociationRef, AssociationProps>((props, 
           return (
             <VersionSelect
               disabled={readonly}
-              value={value}
+              value={currentValue}
               onChange={handleChange}
               identify={`${identify}.${row.id}`}
               onRequest={() => {
@@ -127,8 +127,7 @@ export const Association = forwardRef<AssociationRef, AssociationProps>((props, 
         },
       },
     ];
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [name, identify, readonly]);
+  }, [name, identify, readonly, mapper]);
 
   useEffect(() => {
     if (visible) {
