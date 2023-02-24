@@ -6,6 +6,7 @@ import { PORTS } from '../shared';
 import { ActivityShape } from './ActivityShape';
 import icon from './activity.png';
 import { ActivityEditor } from './ActivityEditor';
+import { checkDomainId, checkDomainServiceId, checkServiceId, checkVersionId } from './validate';
 
 const ActivityReactShapeComponent = (props: ReactComponentProps) => {
   const { properties } = useShapeModel(props.node);
@@ -32,6 +33,46 @@ defineShape({
   allowConnectNodes: [ScenarioObjectName.Activity, ScenarioObjectName.Decision, ScenarioObjectName.End],
   allowDuplicatedConnect: 'none',
   edgeFactory: ScenarioObjectName.NormalEdge,
+
+  rules: {
+    fields: {
+      binding: {
+        $self: { type: 'object' },
+        fields: {
+          serviceId: {
+            $self: [
+              {
+                async validator(value, context) {
+                  checkServiceId(value, context);
+                },
+              },
+            ],
+          },
+          domainId: {
+            $self: {
+              async validator(value, context) {
+                await checkDomainId(value, context);
+              },
+            },
+          },
+          versionId: {
+            $self: {
+              async validator(value, context) {
+                await checkVersionId(value, context);
+              },
+            },
+          },
+          domainServiceId: {
+            $self: {
+              async validator(value, context) {
+                await checkDomainServiceId(value, context);
+              },
+            },
+          },
+        },
+      },
+    },
+  },
 
   initialProps: () => {
     return {

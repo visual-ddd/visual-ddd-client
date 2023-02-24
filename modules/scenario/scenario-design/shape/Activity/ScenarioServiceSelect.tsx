@@ -10,7 +10,7 @@ export interface ScenarioServiceSelectProps extends SelectProps {}
 export const ScenarioServiceSelect = observer(function ScenarioServiceSelect(props: ScenarioServiceSelectProps) {
   const { model } = useEditorModel<ScenarioEditorModel>();
   return (
-    <Select showSearch optionFilterProp="children" {...props}>
+    <Select showSearch optionFilterProp="children" allowClear {...props}>
       {model.serviceStore.list.map(i => {
         return (
           <Select.Option value={i.uuid} key={i.uuid}>
