@@ -47,6 +47,11 @@ export interface VDSessionState {
   entry: VDSessionEntry;
 
   /**
+   * 入口名称
+   */
+  entryName: string;
+
+  /**
    * 入口的 id, 只有组织管理和团队管理有
    */
   entryId?: string | number;

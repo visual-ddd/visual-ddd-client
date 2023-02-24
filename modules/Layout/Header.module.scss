@@ -25,6 +25,21 @@
   flex: 1;
 }
 
+.home {
+  color: var(--vd-color-gray-700);
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.split {
+  color: var(--vd-color-gray-800);
+  margin: 0 var(--vd-spacing-xs);
+  font-size: 12px;
+}
+
 .title {
   font-weight: 500;
 }

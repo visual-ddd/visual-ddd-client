@@ -1,8 +1,9 @@
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/router';
 
-import type { LayoutAction } from './types';
+import type { LayoutAction, LayoutMenu, LayoutMenuItem } from './types';
 import { LogoIcon } from './LogoIcon';
 import s from './Header.module.scss';
 
@@ -12,6 +13,17 @@ export interface HeaderProps {
   className?: string;
   style?: React.CSSProperties;
   title?: React.ReactNode;
+
+  /**
+   * 当前激活的一级标题
+   */
+  activeMenuItem?: LayoutMenu;
+
+  /**
+   * 二级标题
+   */
+  subMenu: LayoutMenuItem[];
+
   /**
    * 用户操作
    */
@@ -19,7 +31,8 @@ export interface HeaderProps {
 }
 
 export const Header = observer(function Header(props: HeaderProps) {
-  const { className, title, actions, ...other } = props;
+  const { className, title, subMenu, activeMenuItem, actions, ...other } = props;
+  const router = useRouter();
 
   return (
     <div className={classNames('vd-layout-header', className, s.root)} {...other}>
@@ -27,6 +40,19 @@ export const Header = observer(function Header(props: HeaderProps) {
         <LogoIcon />
       </div>
       <div className={classNames('vd-layout-header__content', s.content)}>
+        {!!(activeMenuItem && subMenu.length) && (
+          <>
+            <div
+              className={classNames('vd-layout-header__home', s.home)}
+              onClick={() => {
+                router.push(activeMenuItem.route);
+              }}
+            >
+              {activeMenuItem.name}
+            </div>
+            <span className={classNames('vd-layout-header__split', s.split)}>/</span>
+          </>
+        )}
         {!!title && <div className={classNames('vd-layout-header__title', s.title)}>{title}</div>}
       </div>
       <div className={classNames('vd-layout-header__extra', s.extra)}>

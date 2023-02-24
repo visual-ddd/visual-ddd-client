@@ -14,7 +14,8 @@ export const AppHome = () => {
   const { data } = useRequestByGet<DomainDetail[]>(
     teamId ? `/wd/visual/web/application/application-page-query?teamId=${teamId}&pageNo=1&pageSize=10000` : null
   );
-  useLayoutTitle('应用');
+
+  useLayoutTitle('创建应用');
 
   return (
     <div className={classNames('vd-domain-home', 'u-abs-center')}>

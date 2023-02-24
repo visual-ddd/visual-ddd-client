@@ -26,7 +26,7 @@ export interface ScenarioReversionProps {
 export const ScenarioReversion = (props: ScenarioReversionProps) => {
   const { detail } = props;
   const router = useRouter();
-  useLayoutTitle(`业务场景 - ${detail.name}`);
+  useLayoutTitle(`${detail.name}`);
 
   const updateRef = useUpdateScenario();
   const versionListRef = useVersionListRef();

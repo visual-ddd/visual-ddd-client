@@ -14,11 +14,15 @@ export function useSession(options?: { redirectTo?: string | URL; immutable?: bo
   const router = useRouter();
   const redirect = options?.redirectTo;
   const immutable = options?.immutable ?? true;
-  const { data, isLoading } = useRequestByGet<VDSessionDetail>(
+  const { data, isLoading, mutate } = useRequestByGet<VDSessionDetail>(
     '/api/session',
     undefined,
     immutable ? IMMUTABLE_REQUEST_CONFIG : undefined
   );
+
+  const reload = () => {
+    mutate();
+  };
 
   useEffect(() => {
     if (data == null && !isLoading && redirect) {
@@ -29,6 +33,7 @@ export function useSession(options?: { redirectTo?: string | URL; immutable?: bo
 
   return {
     session: data,
+    reload,
     isLoading,
   };
 }

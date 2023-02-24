@@ -1,4 +1,5 @@
 import dynamic from 'next/dynamic';
+import Head from 'next/head';
 import { withWakedataRequestSsr } from '@/modules/session/ssr-helper';
 import { ScenarioDetailPayload, ScenarioVersion, VersionStatus } from '@/modules/team/types';
 import type { ScenarioDescription } from '@/modules/scenario/Designer';
@@ -20,7 +21,14 @@ export interface DesignerProps {
 export default function Designer(props: DesignerProps) {
   const { id, readonly, description } = props;
 
-  return <DynamicDesigner id={id} readonly={readonly} description={description} />;
+  return (
+    <>
+      <Head>
+        <title>{description.name} - 业务场景设计器</title>
+      </Head>
+      <DynamicDesigner id={id} readonly={readonly} description={description} />
+    </>
+  );
 }
 
 export const getServerSideProps = withWakedataRequestSsr<DesignerProps>(async context => {

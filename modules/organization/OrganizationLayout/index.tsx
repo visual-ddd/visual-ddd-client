@@ -5,6 +5,7 @@ import { Layout } from '../../Layout';
 import { NoopArray } from '@wakeapp/utils';
 import { ControlOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
+import { useSession } from '@/modules/session';
 
 export interface OrganizationLayoutProps {
   children: React.ReactNode;
@@ -17,13 +18,14 @@ export const OrganizationLayout = observer(function OrganizationLayout(props: Or
   const { children } = props;
   const router = useRouter();
   const id = router.query.id as string;
+  const { session } = useSession();
 
   return (
     <Layout
       menu={[
         {
           icon: <ControlOutlined />,
-          name: '组织管理',
+          name: session?.state ? `${session.state.entryName} - 组织管理` : '组织管理',
           route: `/organization/${id}`,
         },
       ]}

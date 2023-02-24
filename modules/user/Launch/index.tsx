@@ -12,6 +12,7 @@ import { Layout } from '../Login/Layout';
 import { SystemIcon } from './SystemIcon';
 import { OrganizationIcon } from './OrganizationIcon';
 import { TeamIcon } from './TeamIcon';
+import { useSession } from '@/modules/session';
 
 interface TeamDTO {
   id: number;
@@ -63,6 +64,7 @@ export interface LaunchProps {
  */
 export function Launch({ data }: LaunchProps) {
   const router = useRouter();
+  const { reload: reloadSession } = useSession();
   const organizations = useMemo(() => {
     return (data.accountOrganizationInfoList ?? NoopArray).filter(item => item.isOrganizationAdmin);
   }, [data.accountOrganizationInfoList]);
@@ -80,6 +82,8 @@ export function Launch({ data }: LaunchProps) {
   const handleGo = async (params: VDSessionState) => {
     // 缓存启动配置
     await request.requestByPost('/api/update-entry', params);
+
+    reloadSession();
 
     switch (params.entry) {
       case VDSessionEntry.System:
@@ -122,7 +126,7 @@ export function Launch({ data }: LaunchProps) {
           {!!data.isSysAdmin && (
             <div
               className={classNames(s.head, s.hoverable)}
-              onClick={() => handleGo({ entry: VDSessionEntry.System, isManager: true })}
+              onClick={() => handleGo({ entry: VDSessionEntry.System, isManager: true, entryName: '系统管理' })}
             >
               <span className={s.logo}>
                 <SystemIcon />
@@ -150,6 +154,7 @@ export function Launch({ data }: LaunchProps) {
                         entry: VDSessionEntry.Organization,
                         entryId: item.organizationDTO.id,
                         isManager: item.isOrganizationAdmin,
+                        entryName: item.organizationDTO.name,
                       })
                     }
                   >
@@ -179,6 +184,7 @@ export function Launch({ data }: LaunchProps) {
                         entry: VDSessionEntry.Team,
                         entryId: item.teamDTO.id,
                         isManager: item.isTeamAdmin,
+                        entryName: item.teamDTO.name,
                       })
                     }
                   >

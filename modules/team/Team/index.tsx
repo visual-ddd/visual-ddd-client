@@ -19,7 +19,7 @@ export function TeamHome(props: TeamHomeProps) {
   // @ts-expect-error
   const teamId = detail.id;
 
-  useLayoutTitle(`团队 - ${detail.name}`);
+  useLayoutTitle(`团队概览(${detail.name})`);
 
   return (
     <PreviewPageLayout

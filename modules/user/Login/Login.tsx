@@ -1,6 +1,6 @@
 import { Button, Form, Input, message, Space } from 'antd';
 import { useEffect, useState } from 'react';
-import { request } from '@/modules/backend-client';
+import { request, useCleanRequestCache } from '@/modules/backend-client';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
@@ -15,6 +15,7 @@ interface LoginPayload {
 export function Login() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const cleanSWRCache = useCleanRequestCache();
   const from = router.query.from as string | undefined;
 
   // 登录
@@ -29,6 +30,8 @@ export function Login() {
       if (from) {
         url.searchParams.set('from', from);
       }
+
+      cleanSWRCache();
 
       // 登录成功
       router.push(url);

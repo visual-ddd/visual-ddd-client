@@ -28,7 +28,7 @@ export interface DomainReversionProps {
 export const DomainReversion = (props: DomainReversionProps) => {
   const { detail } = props;
   const router = useRouter();
-  useLayoutTitle(`业务域 - ${detail.name}`);
+  useLayoutTitle(`${detail.name}`);
   const updateRef = useUpdateDomain();
   const versionListRef = useVersionListRef();
   const versionCreateRef = useVersionCreateRef();

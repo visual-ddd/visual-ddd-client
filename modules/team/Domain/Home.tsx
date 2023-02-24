@@ -1,4 +1,5 @@
 import { useRequestByGet } from '@/modules/backend-client';
+import { useLayoutTitle } from '@/modules/Layout';
 import { Button, Empty } from 'antd';
 import classNames from 'classnames';
 import { useRouter } from 'next/router';
@@ -12,6 +13,8 @@ export const DomainHome = () => {
   const { data } = useRequestByGet<DomainDetail[]>(
     teamId ? `/wd/visual/web/domain-design/domain-design-page-query?teamId=${teamId}&pageNo=1&pageSize=10000` : null
   );
+
+  useLayoutTitle('创建业务域');
 
   return (
     <div className={classNames('vd-domain-home', 'u-abs-center')}>

@@ -9,19 +9,21 @@ import { TeamDetail } from '../types';
 import { CreateTeam, useCreateTeam } from './CreateTeam';
 import { UpdateTeam, useUpdateTeam } from './UpdateTeam';
 import { useLayoutTitle } from '@/modules/Layout';
+import { useSession } from '@/modules/session';
 
 /**
  * 组织管理
  * @returns
  */
 export function Organization() {
+  const { session } = useSession();
   const router = useRouter();
   const organizationId = router.query.id as string;
   const actionRef = useRef<ActionType>();
   const updateRef = useUpdateTeam();
   const createRef = useCreateTeam();
 
-  useLayoutTitle('团队管理');
+  useLayoutTitle(session?.state ? `${session.state.entryName} - 团队管理` : '团队管理');
 
   /**
    * 编辑

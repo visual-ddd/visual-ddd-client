@@ -28,7 +28,7 @@ export interface AppReversionProps {
 export const AppReversion = (props: AppReversionProps) => {
   const { detail } = props;
   const router = useRouter();
-  useLayoutTitle(`应用 - ${detail.name}`);
+  useLayoutTitle(`${detail.name}`);
   const updateRef = useUpdateApp();
   const versionListRef = useVersionListRef();
   const versionCreateRef = useVersionCreateRef();
