@@ -1,4 +1,4 @@
-import { Graph, PointLike, Node, Cell } from '@antv/x6';
+import { Graph, PointLike, Node, Cell, Edge } from '@antv/x6';
 import { Transform } from '@antv/x6-plugin-transform';
 import { booleanPredicate, debounce, Disposer } from '@wakeapp/utils';
 import { message } from 'antd';
@@ -691,22 +691,8 @@ export class CanvasModel {
    */
   handleEdgeSelected: GraphBindingProps['onEdge$Selected'] = evt => {
     const edge = evt.edge;
-    // const model = this.shapeRegistry.getModelByCell(edge);
 
-    // // 非模型无法操作
-    // if (model == null) {
-    //   return;
-    // }
-
-    const oldStroke = edge.attr('line/stroke');
-    const oldStrokeWidth = edge.attr('line/strokeWidth');
-    const oldIndex = edge.getZIndex();
-
-    this.tempNodeState.set(edge, { stroke: oldStroke, strokeWidth: oldStrokeWidth, index: oldIndex });
-
-    edge.attr('line/stroke', this.options.selectedColor ?? DEFAULT_SELECTED_COLOR);
-    edge.attr('line/strokeWidth', 3);
-    edge.setZIndex(1000, wrapPreventListenerOptions({}));
+    this.highlightEdge(edge);
   };
 
   /**
@@ -715,15 +701,8 @@ export class CanvasModel {
    */
   handleEdgeUnselected: GraphBindingProps['onEdge$Unselected'] = evt => {
     const edge = evt.edge;
-    const oldStrokeState = this.tempNodeState.get(edge) as
-      | { stroke: string; strokeWidth: number; index: number }
-      | undefined;
 
-    if (oldStrokeState) {
-      edge.attr('line/stroke', oldStrokeState.stroke);
-      edge.attr('line/strokeWidth', oldStrokeState.strokeWidth);
-      edge.setZIndex(oldStrokeState.index, wrapPreventListenerOptions({}));
-    }
+    this.unhighlightEdge(edge);
   };
 
   /**
@@ -733,6 +712,8 @@ export class CanvasModel {
     if (evt.added.length || evt.removed.length) {
       const selected = evt.selected.map(i => this.shapeRegistry.getModelByCell(i)).filter(booleanPredicate);
       this.editorCommandHandler.setSelected({ selected });
+
+      this.highlightOutgoingEdges(evt.selected);
     }
   };
 
@@ -1014,6 +995,70 @@ export class CanvasModel {
       }
     }
   };
+
+  /**
+   * 高亮出边
+   * @param cells
+   */
+  protected highlightOutgoingEdges(cells: Cell[]) {
+    const graph = this.graph;
+    if (graph == null) {
+      return;
+    }
+
+    const edges = graph.getEdges();
+    const edgesToHighlight = new Set<Edge>();
+
+    for (const cell of cells) {
+      if (cell.isEdge()) {
+        edgesToHighlight.add(cell);
+      } else if (cell.isNode()) {
+        const outgoings = graph.getOutgoingEdges(cell);
+        outgoings?.forEach(i => edgesToHighlight.add(i));
+      }
+    }
+
+    for (const edge of edges) {
+      if (edgesToHighlight.has(edge)) {
+        this.highlightEdge(edge);
+      } else {
+        this.unhighlightEdge(edge);
+      }
+    }
+  }
+
+  /**
+   * 高亮边
+   */
+  protected highlightEdge(edge: Edge) {
+    if (this.tempNodeState.has(edge)) {
+      // 已激活
+      return;
+    }
+
+    const oldStroke = edge.attr('line/stroke');
+    const oldStrokeWidth = edge.attr('line/strokeWidth');
+
+    this.tempNodeState.set(edge, { stroke: oldStroke, strokeWidth: oldStrokeWidth });
+
+    edge.attr('line/stroke', this.options.selectedColor ?? DEFAULT_SELECTED_COLOR);
+    edge.attr('line/strokeWidth', 3);
+  }
+
+  /**
+   * 取消边高亮
+   * @param edge
+   */
+  protected unhighlightEdge(edge: Edge) {
+    const oldStrokeState = this.tempNodeState.get(edge) as { stroke: string; strokeWidth: number } | undefined;
+
+    if (oldStrokeState) {
+      edge.attr('line/stroke', oldStrokeState.stroke);
+      edge.attr('line/strokeWidth', oldStrokeState.strokeWidth);
+
+      this.tempNodeState.delete(edge);
+    }
+  }
 
   /**
    * 按需调整分组大小
