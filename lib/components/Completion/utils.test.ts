@@ -10,11 +10,12 @@ test('isIdentifier', () => {
 
 test('extraIdentifier', () => {
   expect(extraIdentifier('')).toEqual([]);
-  expect(extraIdentifier('hello  world')).toEqual(['hello', 'world']);
-  expect(extraIdentifier('hello,world')).toEqual(['hello', 'world']);
-  expect(extraIdentifier('hello--world')).toEqual(['hello', 'world']);
-  expect(extraIdentifier('hello_world')).toEqual(['hello', 'world']);
-  expect(extraIdentifier('hello  world _hello $nima')).toEqual(['hello', 'world', 'hello', 'nima']);
+  expect(extraIdentifier("don't do that")).toEqual(['dont', 'do', 'that', 'dont-do-that']);
+  expect(extraIdentifier('hello  world')).toEqual(['hello', 'world', 'hello-world']);
+  expect(extraIdentifier('hello,world')).toEqual(['hello', 'world', 'hello-world']);
+  expect(extraIdentifier('hello--world')).toEqual(['hello', 'world', 'hello-world']);
+  expect(extraIdentifier('hello_world')).toEqual(['hello', 'world', 'hello-world']);
+  expect(extraIdentifier('hello  world _hello $nima')).toEqual(['hello', 'world', 'nima', 'hello-world-hello-nima']);
 });
 
 test('extraUpperCamelCaseFilter', () => {

@@ -1,12 +1,15 @@
 import { NoopArray, upperFirst } from '@wakeapp/utils';
 import lowerFirst from 'lodash/lowerFirst';
+import memoize from 'lodash/memoize';
 import Fuse from 'fuse.js';
+import camelCase from 'lodash/camelCase';
+import snakeCase from 'lodash/snakeCase';
 
 /**
  * 最简单提示实现
  */
 export class CompletionImplement {
-  protected fuse: Fuse<string> = new Fuse([]);
+  protected fuse: Fuse<string> = new Fuse([], { includeScore: true, minMatchCharLength: 2, threshold: 0.48 });
 
   /**
    * 搜索
@@ -31,10 +34,10 @@ export class CompletionImplement {
  */
 export abstract class CompletionImplementIdentifier extends CompletionImplement {
   /**
-   * 获取过滤字段
+   * 获取过滤字段(用于查询的字符串)
    * @param value
    */
-  abstract getFilter(value: string): string;
+  abstract getFilter(value: string): string[];
 
   abstract transform(value: string): string;
 
@@ -46,53 +49,74 @@ export abstract class CompletionImplementIdentifier extends CompletionImplement 
 
     const filter = this.getFilter(value);
 
-    if (!filter) {
+    if (filter.length === 0) {
       return NoopArray;
     }
 
-    const result = this.fuse.search(filter);
+    const matched = new Map<string, number>();
+    const sections: string[] = filter.slice(0);
+    const prefix: string[] = [];
 
-    const prefix = value.slice(0, -filter.length);
+    while (sections.length) {
+      const query = sections.join('-');
+      const result = this.fuse.search(query);
+      const prefixInString = prefix.join('-');
 
-    return result.map(i => prefix + this.transform(i.item));
+      for (const { item, score } of result) {
+        const value = this.transform(prefixInString ? prefixInString + '-' + item : item);
+        matched.set(value, score as number);
+      }
+
+      const next = sections.shift();
+      if (next) {
+        prefix.push(next);
+      }
+    }
+
+    return Array.from(matched)
+      .sort((a, b) => a[1] - b[1])
+      .map(i => i[0]);
   }
 }
 
 export class CompletionImplementIdentifierUpperSnakeCase extends CompletionImplementIdentifier {
-  transform(value: string): string {
-    return value.toUpperCase();
-  }
-
-  getFilter(value: string): string {
-    const idx = value.lastIndexOf('_');
-    if (idx === -1) {
-      return value;
+  protected normalize = memoize((value: string) => {
+    if (value.includes('-')) {
+      return value.split('-').join('_');
     }
 
-    return value.slice(idx + 1);
+    return value;
+  });
+  transform(value: string): string {
+    return this.normalize(value).toUpperCase();
+  }
+
+  getFilter(value: string): string[] {
+    return value.split('_');
   }
 }
 
 export class CompletionImplementIdentifierLowerSnakeCase extends CompletionImplementIdentifierUpperSnakeCase {
   override transform(value: string): string {
-    return value.toLowerCase();
+    return super.transform(value).toLowerCase();
   }
 }
 
 export class CompletionImplementIdentifierUpperCamelCase extends CompletionImplementIdentifier {
-  transform(value: string): string {
-    return upperFirst(value);
-  }
-
-  getFilter(value: string): string {
-    for (let i = value.length - 1; i >= 0; i--) {
-      const char = value[i];
-      if (/[A-Z_$]/.test(char)) {
-        return value.slice(i);
-      }
+  protected normalize = memoize((value: string) => {
+    if (value.includes('-')) {
+      return camelCase(value);
     }
 
     return value;
+  });
+
+  transform(value: string): string {
+    return upperFirst(this.normalize(value));
+  }
+
+  getFilter(value: string): string[] {
+    return snakeCase(value).split('_');
   }
 
   override search(value: string): string[] {
