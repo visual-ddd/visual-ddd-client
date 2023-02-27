@@ -6,8 +6,19 @@ import { observer } from 'mobx-react';
 import { Mapper } from '../../model';
 import s from './ObjectMapperDisplay.module.scss';
 
-const stringifyObject = (id: ObjectReferenceDSL | undefined, object: NameDSL | undefined) => {
-  return (id ? object?.name : <span className="u-danger">未选择</span>) || <span className="u-danger">未定义</span>;
+const stringifyObject = (id: ObjectReferenceDSL | undefined, object: NameDSL | undefined, mapper: Mapper) => {
+  return id ? (
+    object == null ? (
+      <span className="u-danger">未定义</span>
+    ) : (
+      <>
+        <span className={classNames('u-link', s.name)}>{object.name}</span>:
+        <span className={s.modifier}>{mapper.getObjectType(object.uuid)?.label}</span>
+      </>
+    )
+  ) : (
+    <span className="u-danger">未选择</span>
+  );
 };
 
 export interface ObjectMapperDisplayProps {
@@ -24,19 +35,19 @@ export const ObjectMapperDisplay = observer(function ObjectMapperDisplay(props: 
 
   return (
     <span className={classNames('vd-object-mapper', s.root)}>
-      <span
-        className={classNames('vd-object-mapper__object u-link', s.object)}
+      <div
+        className={classNames('vd-object-mapper__object', s.object)}
         onClick={handleObjectClick(mapper.sourceObject)}
       >
-        {stringifyObject(mapper.dsl.source, mapper.sourceObject)}
-      </span>
+        {stringifyObject(mapper.dsl.source, mapper.sourceObject, mapper)}
+      </div>
       <ArrowRightOutlined />
-      <span
-        className={classNames('vd-object-mapper__object u-link', s.object)}
+      <div
+        className={classNames('vd-object-mapper__object', s.object)}
         onClick={handleObjectClick(mapper.targetObject)}
       >
-        {stringifyObject(mapper.dsl.target, mapper.targetObject)}
-      </span>
+        {stringifyObject(mapper.dsl.target, mapper.targetObject, mapper)}
+      </div>
     </span>
   );
 });

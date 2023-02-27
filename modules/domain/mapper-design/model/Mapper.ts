@@ -114,6 +114,10 @@ export class Mapper {
     this.mapperStore.focusObject(id);
   }
 
+  getObjectType(id: string) {
+    return this.mapperStore.getObjectType(id);
+  }
+
   /**
    * 获取兼容来源字段的目标字段列表
    * @param sourceId

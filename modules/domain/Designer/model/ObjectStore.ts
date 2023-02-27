@@ -117,6 +117,27 @@ export class ObjectStore implements IObjectStore {
     return this.dataObjectEditorModel.dataObjectStore.getObjectById(id)?.dsl as ITargetObject;
   }
 
+  getObjectType(id: string): { type: string; label: string } | undefined {
+    // 查询对象
+    let object: any = this.queryEditorModel.domainObjectStore.getObjectById(id);
+
+    if (object != null) {
+      return { type: 'query', label: '查询' };
+    }
+
+    // 领域对象，需要关联聚合
+    object = this.domainEditorModel.domainObjectStore.getObjectById(id);
+
+    if (object != null) {
+      return { type: 'domain', label: '查询' };
+    }
+
+    object = this.dataObjectEditorModel.dataObjectStore.getObjectById(id);
+    if (object != null) {
+      return { type: 'data', label: '数据' };
+    }
+  }
+
   async focusObject(id: string) {
     // 先尝试领域模型
     const domainObject = this.domainEditorModel.domainObjectStore.getObjectById(id);

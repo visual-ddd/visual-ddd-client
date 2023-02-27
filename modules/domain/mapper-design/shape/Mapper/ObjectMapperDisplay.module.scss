@@ -3,7 +3,22 @@
     color: gray;
     margin: 0 4px;
   }
+
+  display: flex;
+  gap: 6px;
+}
+
+.modifier {
+  color: var(--vd-color-gray-500);
+  margin-left: 4px;
+}
+
+.name {
+  font-weight: 600;
 }
 
 .object {
+  display: flex;
+  align-items: center;
+  line-height: 1.8;
 }

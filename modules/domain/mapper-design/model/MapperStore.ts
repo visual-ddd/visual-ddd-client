@@ -37,6 +37,12 @@ export interface IObjectStore {
    * @param id
    */
   focusObject(id: string): void;
+
+  /**
+   * 获取节点的类型
+   * @param id
+   */
+  getObjectType(id: string): { type: string; label: string } | undefined;
 }
 
 export class MapperStore {
@@ -89,6 +95,15 @@ export class MapperStore {
    */
   focusObject(id: string): void {
     this.objectStore.focusObject(id);
+  }
+
+  /**
+   * 对象类型
+   * @param id
+   * @returns
+   */
+  getObjectType(id: string) {
+    return this.objectStore.getObjectType(id);
   }
 
   /**
