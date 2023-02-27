@@ -87,6 +87,8 @@ export function transformDataObjectReference(
     // 目标对象 name
     string,
     {
+      // 目标对象 id
+      uuid: string;
       cardinality: 'OneToOne' | 'OneToMany' | 'ManyToMany' | 'ManyToOne';
       // 字段映射
       mapper: Map<string, string>;
@@ -113,6 +115,7 @@ export function transformDataObjectReference(
 
     if (state == null) {
       state = {
+        uuid: targetObject.uuid,
         cardinality,
         mapper: new Map(),
       };
@@ -125,8 +128,10 @@ export function transformDataObjectReference(
 
   return {
     source: viewDSL.name,
-    targets: Array.from(targets.entries()).map(([target, { cardinality, mapper }]) => ({
+    sourceId: viewDSL.uuid,
+    targets: Array.from(targets.entries()).map(([target, { cardinality, mapper, uuid }]) => ({
       target,
+      targetId: uuid,
       cardinality,
       mapper: Array.from(mapper.entries()).map(([sourceField, targetField]) => ({
         sourceField,

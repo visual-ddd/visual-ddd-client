@@ -175,9 +175,11 @@ test('transformDataObjectReference', () => {
     )
   ).toEqual({
     source: 'name',
+    sourceId: 'me',
     targets: [
       {
         target: 'nametarget',
+        targetId: 'target',
         cardinality: 'ManyToOne',
         mapper: [
           {

@@ -172,6 +172,7 @@ exports[`transform 1`] = `
   "references": [
     {
       "source": "Untitled",
+      "sourceId": "b51bebe2-85ee-4733-b9a0-25926d3d93dc",
       "targets": [
         {
           "cardinality": "OneToMany",
@@ -186,6 +187,7 @@ exports[`transform 1`] = `
             },
           ],
           "target": "HelloWorld",
+          "targetId": "28d7cc24-2bef-49fe-a4a1-7e3e11c87796",
         },
       ],
     },

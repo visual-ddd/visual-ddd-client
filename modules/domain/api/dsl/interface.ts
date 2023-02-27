@@ -388,11 +388,22 @@ export interface DataObjectDSL extends NameDSL {
  * 数据对象引用关系描述
  */
 export interface DataObjectReferenceDSL {
+  /**
+   * 来源名称
+   */
   source: string;
+
+  /**
+   * 来源 id
+   */
+  sourceId: string;
 
   targets: Array<{
     // 目标表
     target: string;
+
+    // 目标表 id
+    targetId: string;
 
     // 关联关系
     cardinality: 'OneToOne' | 'OneToMany' | 'ManyToMany' | 'ManyToOne';
@@ -404,14 +415,6 @@ export interface DataObjectReferenceDSL {
     }>;
   }>;
 }
-
-/**
- * -----------------------------------------------------------------------------------------
- *
- * 数据对象模型
- *
- * -----------------------------------------------------------------------------------------
- */
 
 /**
  * 数据模型
@@ -427,6 +430,14 @@ export interface DataModelDSL {
    */
   references: DataObjectReferenceDSL[];
 }
+
+/**
+ * -----------------------------------------------------------------------------------------
+ *
+ * 对象映射模型
+ *
+ * -----------------------------------------------------------------------------------------
+ */
 
 /**
  * 对象映射
