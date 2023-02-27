@@ -112,10 +112,13 @@ export function createClass(): ClassDSL {
 
 export function createEntity(): EntityDSL {
   const cls = createClass();
+  const idProperty = { ...createProperty(), type: createBaseType('Long'), name: 'id', title: '实体唯一标识符' };
+
   return {
     ...cls,
+    properties: [idProperty, ...cls.properties],
     isAggregationRoot: false,
-    id: cls.properties[0].uuid,
+    id: idProperty.uuid,
   };
 }
 
