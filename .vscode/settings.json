@@ -27,7 +27,8 @@
     "unreferable",
     "wakeapp",
     "wakedata",
-    "webrtc"
+    "webrtc",
+    "ydoc"
   ],
   "typescript.tsserver.experimental.enableProjectDiagnostics": true
 }

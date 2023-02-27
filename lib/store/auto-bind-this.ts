@@ -1,4 +1,5 @@
 const AUTO_BINDING_KEY = Symbol('AUTO_BINDING');
+const AUTO_BINDING_ASSIGNED_KEYS = Symbol('AUTO_BINDING_ASSIGNED');
 
 export function storeAutoBindingKey(target: any, key: string | symbol) {
   const desc = Object.getOwnPropertyDescriptor(target, AUTO_BINDING_KEY);
@@ -25,14 +26,33 @@ export function storeAutoBindingKey(target: any, key: string | symbol) {
 }
 
 export function makeAutoBindThis(target: any) {
-  const values = target[AUTO_BINDING_KEY];
+  const values = target[AUTO_BINDING_KEY] as Set<string | symbol> | undefined;
 
-  if (values instanceof Set) {
-    for (const key of values) {
-      const originProperty = target[key];
-      if (typeof originProperty === 'function') {
-        target[key] = originProperty.bind(target);
-      }
+  if (!values?.size) {
+    return;
+  }
+
+  let assigned = target[AUTO_BINDING_ASSIGNED_KEYS] as Set<string | symbol> | undefined;
+
+  if (assigned == null) {
+    assigned = new Set();
+    Object.defineProperty(target, AUTO_BINDING_ASSIGNED_KEYS, {
+      enumerable: false,
+      configurable: false,
+      value: assigned,
+    });
+  }
+
+  for (const key of values) {
+    if (assigned.has(key)) {
+      continue;
+    }
+
+    assigned.add(key);
+
+    const originProperty = target[key];
+    if (typeof originProperty === 'function') {
+      target[key] = originProperty.bind(target);
     }
   }
 }

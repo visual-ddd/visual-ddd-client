@@ -1,16 +1,16 @@
 import { KeyboardBinding } from '@/lib/utils';
-import { DomainDesignerModel } from './DomainDesignerModel';
 import MouseTrap from 'mousetrap';
+import { IDesigner } from './IDesigner';
 
 /**
  * 设计器键盘映射
  */
-export class DomainDesignerKeyboardBinding extends KeyboardBinding {
-  model: DomainDesignerModel;
+export class DesignerKeyboardBinding extends KeyboardBinding {
+  designer: IDesigner;
 
-  constructor(inject: { model: DomainDesignerModel }) {
+  constructor(inject: { model: IDesigner }) {
     super();
-    this.model = inject.model;
+    this.designer = inject.model;
 
     this.initial();
   }
@@ -25,7 +25,7 @@ export class DomainDesignerKeyboardBinding extends KeyboardBinding {
         other: 'ctrl+s',
       },
       handler: () => {
-        this.model.save();
+        this.designer.save();
       },
     });
 

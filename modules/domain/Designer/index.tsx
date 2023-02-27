@@ -76,13 +76,7 @@ export interface DomainDesignerProps {
  */
 const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerProps) {
   const { id, readonly, description } = props;
-  const model = useMemo(() => {
-    const instance = new DomainDesignerModel({ id, readonly });
-
-    instance.load();
-
-    return instance;
-  }, [id, readonly]);
+  const model = useMemo(() => new DomainDesignerModel({ id, readonly }), [id, readonly]);
 
   const items = [
     {
@@ -156,7 +150,11 @@ const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerPro
     }
   }, [model.error]);
 
+  // 加载和销毁
   useEffect(() => {
+    model.initialize();
+    model.load();
+
     return () => {
       tryDispose(model);
     };
