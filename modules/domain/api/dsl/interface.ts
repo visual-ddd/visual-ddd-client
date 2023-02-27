@@ -457,6 +457,11 @@ export namespace ObjectMapper {
     name: string;
 
     /**
+     * 类 id
+     */
+    id: string;
+
+    /**
      * 对象类型
      */
     type: ObjectType;
@@ -468,8 +473,13 @@ export namespace ObjectMapper {
     parent?: string;
   }
   export type ObjectFieldMapper = {
+    // 来源字段
     sourceField: string;
+    sourceFieldId: string;
+
+    // 目标字段
     targetField: string;
+    targetFieldId: string;
   };
 
   /**

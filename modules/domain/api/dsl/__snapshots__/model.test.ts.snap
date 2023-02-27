@@ -192,21 +192,27 @@ exports[`领域模型 DSL 转换集成测试 1`] = `
         "mapper": [
           {
             "sourceField": "untitled",
+            "sourceFieldId": "59b0e443-9f0b-40c5-b1ce-fb0b2e88aa8a",
             "targetField": "untitled0",
+            "targetFieldId": "17ad0d35-427c-4e99-951b-1949e79b5eca",
           },
           {
             "sourceField": "untitled1",
+            "sourceFieldId": "3fa04cab-fa02-4204-a952-d224951a1e6d",
             "targetField": "untitled1",
+            "targetFieldId": "95837329-f0e6-4022-9162-ee4b81da0ff6",
           },
         ],
         "meta": {},
         "name": "Mapper1",
         "source": {
+          "id": "d32afad8-66af-42ec-b733-2832672eb4d8",
           "name": "MyValueObject",
           "parent": "MyAggregation",
           "type": "valueObject",
         },
         "target": {
+          "id": "copy-d12d9df4-f325-44e0-bb97-30cf2938d700",
           "name": "MyValueObject",
           "parent": undefined,
           "type": "dataObject",
@@ -219,21 +225,27 @@ exports[`领域模型 DSL 转换集成测试 1`] = `
         "mapper": [
           {
             "sourceField": "str",
+            "sourceFieldId": "0f38005e-fb2b-43cc-baf8-47fa21b89575",
             "targetField": "untitled0",
+            "targetFieldId": "17ad0d35-427c-4e99-951b-1949e79b5eca",
           },
           {
             "sourceField": "integer",
+            "sourceFieldId": "45542315-da18-4fe1-a480-5daf7c59ff49",
             "targetField": "untitled1",
+            "targetFieldId": "95837329-f0e6-4022-9162-ee4b81da0ff6",
           },
         ],
         "meta": {},
         "name": "Mapper2",
         "source": {
+          "id": "43c68add-5848-4249-b125-6c4d17244c08",
           "name": "MyEntity",
           "parent": "MyAggregation",
           "type": "entity",
         },
         "target": {
+          "id": "copy-d12d9df4-f325-44e0-bb97-30cf2938d700",
           "name": "MyValueObject",
           "parent": undefined,
           "type": "dataObject",

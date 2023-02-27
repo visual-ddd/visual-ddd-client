@@ -28,8 +28,13 @@ export function getObjectType(instance: Entity | ValueObject | DTO | DataObject)
  * @param fieldId
  * @returns
  */
-export function getFieldNameFromObject(object: Entity | ValueObject | DTO | DataObject, fieldId: string) {
-  return (object.properties.properties as ViewDSL.NameDSL[]).find(i => i.uuid === fieldId)!.name;
+export function getFieldNameFromObject(
+  object: Entity | ValueObject | DTO | DataObject,
+  fieldId: string
+): { name: string; id: string } {
+  const { name, uuid } = (object.properties.properties as ViewDSL.NameDSL[]).find(i => i.uuid === fieldId)!;
+
+  return { name, id: uuid };
 }
 
 /**
@@ -50,19 +55,26 @@ export class MapperObject extends Node<ViewDSL.MapperObjectDSL> {
       meta: transformMeta(meta),
       source: {
         name: sourceObject.name,
+        id: sourceObject.id,
         parent: sourceParent?.name,
         type: getObjectType(sourceObject),
       },
       target: {
         name: targetObject.name,
+        id: targetObject.id,
         parent: targetParent?.name,
         type: getObjectType(targetObject),
       },
       mapper: mappers.map(i => {
         const { source, target } = i;
+        const sourceField = getFieldNameFromObject(sourceObject, source!);
+        const targetField = getFieldNameFromObject(targetObject, target!);
+
         return {
-          sourceField: getFieldNameFromObject(sourceObject, source!),
-          targetField: getFieldNameFromObject(targetObject, target!),
+          sourceField: sourceField.name,
+          sourceFieldId: sourceField.id,
+          targetField: targetField.name,
+          targetFieldId: targetField.id,
         };
       }),
     };
