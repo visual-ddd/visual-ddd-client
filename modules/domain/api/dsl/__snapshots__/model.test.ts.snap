@@ -303,7 +303,7 @@ exports[`领域模型 DSL 转换集成测试 1`] = `
           },
         ],
         "return": {
-          "type": "Untitled",
+          "type": "[Untitled:12865564-fce7-46c7-b9b6-cef6e9b19e7b]",
         },
         "rules": [],
         "source": [

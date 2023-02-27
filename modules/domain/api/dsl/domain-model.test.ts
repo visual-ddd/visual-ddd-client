@@ -18,7 +18,7 @@ test('transformMeta', () => {
 });
 
 test('transformType', () => {
-  const getRef = () => ({ name: 'Foo', uuid: 'ok' });
+  const getRef = (id: string) => ({ name: `NameOf${id}`, uuid: id });
   expect(transformType({ type: ViewDSL.TypeType.Base, name: 'Boolean' }, getRef)).toBe('Boolean');
   expect(
     transformType(
@@ -30,6 +30,7 @@ test('transformType', () => {
       getRef
     )
   ).toBe('List<Boolean>');
+
   expect(
     transformType(
       {
@@ -46,11 +47,35 @@ test('transformType', () => {
       },
       getRef
     )
-  ).toBe('Map<Boolean, Foo>');
+  ).toBe('Map<Boolean, [NameOfFoo:Foo]>');
+
+  expect(
+    transformType(
+      {
+        type: ViewDSL.TypeType.Container,
+        name: 'Map',
+        params: {
+          key: { type: ViewDSL.TypeType.Base, name: 'Boolean' },
+          value: {
+            type: ViewDSL.TypeType.Container,
+            name: 'List',
+            params: {
+              item: {
+                type: ViewDSL.TypeType.Reference,
+                referenceId: 'Foo',
+                name: 'Foo',
+              },
+            },
+          },
+        },
+      },
+      getRef
+    )
+  ).toBe('Map<Boolean, List<[NameOfFoo:Foo]>>');
 });
 
 test('transformProperty', () => {
-  const getRef = () => ({ name: 'Foo', uuid: 'ok' });
+  const getRef = (id: string) => ({ name: `NameOf${id}`, uuid: id });
   expect(
     transformProperty(
       {

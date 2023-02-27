@@ -85,7 +85,7 @@ exports[`Container 1`] = `
             "meta": {},
             "name": "untitled",
             "title": "未命名",
-            "type": "MyEnum",
+            "type": "[MyEnum:918dddbf-a695-4760-b4ad-8dfd1b66571f]",
             "uuid": "c1df59f2-5d44-41fd-80ff-fabfaab1d255",
           },
           "meta": {},

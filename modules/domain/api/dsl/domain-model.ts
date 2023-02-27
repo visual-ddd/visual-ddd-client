@@ -24,6 +24,11 @@ export function transformString(str?: string): string | undefined {
   return trimmed;
 }
 
+/**
+ * 转换元数据
+ * @param meta
+ * @returns
+ */
 export function transformMeta(meta?: ViewDSL.MetaDSL[]): DSL.MetaDSL | undefined {
   if (!meta) {
     return;
@@ -38,6 +43,12 @@ export function transformMeta(meta?: ViewDSL.MetaDSL[]): DSL.MetaDSL | undefined
   }, {} as DSL.MetaDSL);
 }
 
+/**
+ * 转换类型
+ * @param type
+ * @param getReference
+ * @returns
+ */
 export function transformType(
   type: ViewDSL.TypeDSL,
 
@@ -46,7 +57,8 @@ export function transformType(
   return stringifyTypeDSL(type, id => {
     const dsl = getReference(id);
 
-    return dsl.name;
+    // 引用类型返回对应的对象的 [name:id]
+    return `[${dsl.name}:${id}]`;
   });
 }
 

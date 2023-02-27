@@ -14,7 +14,7 @@ exports[`query-model 1`] = `
           "meta": {},
           "name": "untitled",
           "title": "未命名",
-          "type": "Hello",
+          "type": "[Hello:copy-e4d09acc-a697-4efe-b395-f30dace34efb]",
           "uuid": "6087b8e2-a8b9-418d-8f6b-8645a7129b2e",
         },
       ],
@@ -58,7 +58,7 @@ exports[`query-model 1`] = `
         },
       ],
       "return": {
-        "type": "Untitled",
+        "type": "[Untitled:5cabbc44-31d2-4e8f-a684-0a375aa6cfac]",
       },
       "rules": [
         {
