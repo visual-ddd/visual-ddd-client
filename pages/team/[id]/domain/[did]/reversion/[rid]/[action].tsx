@@ -5,6 +5,7 @@ import { DomainDetailPayload, DomainVersion, VersionStatus } from '@/modules/tea
 import type { DomainDescription } from '@/modules/domain/Designer';
 import { getSession } from '@/modules/session/api';
 import { addCacheWithBase64IfNeed } from '@/modules/domain/api';
+import { useGlobalUbiquitousLanguage } from '@/modules/team/UbiquitousLanguage/useGlobalUbiquitousLanguage';
 
 const DynamicDesigner = dynamic(() => import('@/modules/domain/Designer'), { ssr: false });
 
@@ -20,13 +21,14 @@ export interface DesignerProps {
  */
 export default function Designer(props: DesignerProps) {
   const { id, readonly, description } = props;
+  const { words } = useGlobalUbiquitousLanguage();
 
   return (
     <>
       <Head>
         <title>{`${description.name} - 业务域设计器`}</title>
       </Head>
-      <DynamicDesigner id={id} readonly={readonly} description={description} />
+      <DynamicDesigner id={id} readonly={readonly} description={description} words={words} />
     </>
   );
 }

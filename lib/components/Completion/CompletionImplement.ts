@@ -9,7 +9,7 @@ import snakeCase from 'lodash/snakeCase';
  * 最简单提示实现
  */
 export class CompletionImplement {
-  protected fuse: Fuse<string> = new Fuse([], { includeScore: true, minMatchCharLength: 2, threshold: 0.48 });
+  protected fuse: Fuse<string> = new Fuse([]);
 
   /**
    * 搜索
@@ -33,6 +33,8 @@ export class CompletionImplement {
  * 标识符提示实现
  */
 export abstract class CompletionImplementIdentifier extends CompletionImplement {
+  protected override fuse: Fuse<string> = new Fuse([], { includeScore: true, minMatchCharLength: 2, threshold: 0.48 });
+
   /**
    * 获取过滤字段(用于查询的字符串)
    * @param value

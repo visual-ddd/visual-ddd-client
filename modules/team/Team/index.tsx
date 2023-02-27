@@ -5,6 +5,8 @@ import { Card, Statistic } from 'antd';
 import { useRouter } from 'next/router';
 import s from './index.module.scss';
 
+export * from './useTeamInfo';
+
 export interface TeamHomeProps {
   detail: TeamDetail;
 }

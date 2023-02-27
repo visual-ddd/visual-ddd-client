@@ -4,11 +4,13 @@ import { message } from 'antd';
 import { tryDispose } from '@/lib/utils';
 import { VersionStatus } from '@/lib/core';
 import { DesignerHeader, DesignerLayout, DesignerLoading, DesignerTabLabel } from '@/lib/components/DesignerLayout';
+import { NoopArray } from '@wakeapp/utils';
+import { CompletionContextProvider } from '@/lib/components/Completion';
+import { usePreventUnload } from '@/lib/hooks';
 
 import { ScenarioDesignerContextProvider } from './Context';
 import { ScenarioDesignerTabs, ScenarioDesignerTabsMap, ScenarioDesignerModel } from './model';
 import { ScenarioEditor } from '../scenario-design';
-import { usePreventUnload } from '@/lib/hooks';
 import { DomainEditor } from '../service-design';
 
 export interface ScenarioDescription {
@@ -59,18 +61,25 @@ export interface ScenarioDesignerProps {
    * 是否为只读模式
    */
   readonly?: boolean;
+
+  /**
+   * 统一语言单词
+   */
+  words?: string[];
 }
 
 /**
  * 领域模型设计器
  */
 const ScenarioDesigner = observer(function ScenarioDesigner(props: ScenarioDesignerProps) {
-  const { id, readonly, description } = props;
+  const { id, readonly, description, words } = props;
   const model = useMemo(() => {
     const instance = new ScenarioDesignerModel({ id, readonly });
 
     return instance;
   }, [id, readonly]);
+
+  const globalWords = useMemo(() => (words ?? NoopArray).filter(i => !!i.trim()), [words]);
 
   useEffect(() => {
     model.initialize();
@@ -124,23 +133,25 @@ const ScenarioDesigner = observer(function ScenarioDesigner(props: ScenarioDesig
 
   return (
     <ScenarioDesignerContextProvider value={model}>
-      <DesignerLayout
-        items={items}
-        activeKey={model.activeTab}
-        onActiveKeyChange={tab => model.setActiveTab({ tab: tab as ScenarioDesignerTabs })}
-      >
-        <DesignerLoading loading={model.loading} />
-        <DesignerHeader
-          name={description?.name}
-          version={description?.version}
-          versionStatus={description?.versionStatus}
-          title={ScenarioDesignerTabsMap[model.activeTab]}
-          readonly={model.readonly}
-          saveTooltip={saveTooltip}
-          saving={model.saving}
-          onSave={() => model.keyboardBinding.trigger('save')}
-        ></DesignerHeader>
-      </DesignerLayout>
+      <CompletionContextProvider words={globalWords}>
+        <DesignerLayout
+          items={items}
+          activeKey={model.activeTab}
+          onActiveKeyChange={tab => model.setActiveTab({ tab: tab as ScenarioDesignerTabs })}
+        >
+          <DesignerLoading loading={model.loading} />
+          <DesignerHeader
+            name={description?.name}
+            version={description?.version}
+            versionStatus={description?.versionStatus}
+            title={ScenarioDesignerTabsMap[model.activeTab]}
+            readonly={model.readonly}
+            saveTooltip={saveTooltip}
+            saving={model.saving}
+            onSave={() => model.keyboardBinding.trigger('save')}
+          ></DesignerHeader>
+        </DesignerLayout>
+      </CompletionContextProvider>
     </ScenarioDesignerContextProvider>
   );
 });

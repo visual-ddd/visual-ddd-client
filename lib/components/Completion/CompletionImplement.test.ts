@@ -12,8 +12,8 @@ test('CompletionImplement', () => {
   expect(c.search(' ')).toEqual([]);
   expect(c.search('任意')).toEqual(['任意字符']);
 
-  expect(c.search('o')).toEqual(['foo']);
-  expect(c.search('el')).toEqual(['hello']);
+  expect(c.search('o')).toEqual(['world', 'foo', 'hello']);
+  expect(c.search('el')).toEqual(['hello', 'world']);
 });
 
 test('CompletionImplementIdentifierUpperSnakeCase', () => {

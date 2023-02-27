@@ -5,6 +5,8 @@ import { tryDispose } from '@/lib/utils';
 import { VersionStatus } from '@/lib/core';
 import { CompletionContextProvider } from '@/lib/components/Completion';
 import { DesignerLayout, DesignerTabLabel } from '@/lib/components/DesignerLayout';
+import { usePreventUnload } from '@/lib/hooks';
+import { NoopArray } from '@wakeapp/utils';
 
 import { DomainEditor } from '../domain-design';
 import { DataObjectEditor } from '../data-design';
@@ -19,7 +21,6 @@ import { DomainDesignerContextProvider } from './Context';
 import { DomainDesignerHeader } from './Header';
 import { DomainDesignerLoading } from './Loading';
 import { DomainDesignerTabs, DomainDesignerTabsMap, DomainDesignerModel } from './model';
-import { usePreventUnload } from '@/lib/hooks';
 
 export interface DomainDescription {
   id: string | number;
@@ -69,14 +70,25 @@ export interface DomainDesignerProps {
    * 是否为只读模式
    */
   readonly?: boolean;
+
+  /**
+   * 统一语言单词
+   */
+  words?: string[];
 }
 
 /**
  * 领域模型设计器
  */
 const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerProps) {
-  const { id, readonly, description } = props;
+  const { id, readonly, description, words } = props;
   const model = useMemo(() => new DomainDesignerModel({ id, readonly }), [id, readonly]);
+
+  const globalWords = useMemo(() => (words ?? NoopArray).filter(i => !!i.trim()), [words]);
+
+  const autoCompletionWords = useMemo(() => {
+    return globalWords.concat(model.ubiquitousLanguageModel.words);
+  }, [globalWords, model.ubiquitousLanguageModel.words]);
 
   const items = [
     {
@@ -164,7 +176,7 @@ const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerPro
 
   return (
     <DomainDesignerContextProvider value={model}>
-      <CompletionContextProvider words={model.ubiquitousLanguageModel.words}>
+      <CompletionContextProvider words={autoCompletionWords}>
         <DesignerLayout
           items={items}
           activeKey={model.activeTab}

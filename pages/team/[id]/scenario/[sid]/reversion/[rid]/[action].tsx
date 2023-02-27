@@ -5,6 +5,7 @@ import { ScenarioDetailPayload, ScenarioVersion, VersionStatus } from '@/modules
 import type { ScenarioDescription } from '@/modules/scenario/Designer';
 import { getSession } from '@/modules/session/api';
 import { addCacheWithBase64IfNeed } from '@/modules/scenario/api';
+import { useGlobalUbiquitousLanguage } from '@/modules/team/UbiquitousLanguage/useGlobalUbiquitousLanguage';
 
 const DynamicDesigner = dynamic(() => import('@/modules/scenario/Designer'), { ssr: false });
 
@@ -20,13 +21,14 @@ export interface DesignerProps {
  */
 export default function Designer(props: DesignerProps) {
   const { id, readonly, description } = props;
+  const { words } = useGlobalUbiquitousLanguage();
 
   return (
     <>
       <Head>
         <title>{`${description.name} - 业务场景设计器`}</title>
       </Head>
-      <DynamicDesigner id={id} readonly={readonly} description={description} />
+      <DynamicDesigner id={id} readonly={readonly} description={description} words={words} />
     </>
   );
 }

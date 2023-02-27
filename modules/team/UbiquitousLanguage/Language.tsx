@@ -27,7 +27,7 @@ export const Language = observer(function Language(props: LanguageProps) {
               '/wd/visual/web/universal-language/universal-language-page-query',
               {
                 pageNo: 1,
-                pageSize: 1000,
+                pageSize: 10000,
                 languageType: scope,
                 identity: id,
               }
@@ -62,7 +62,7 @@ export const Language = observer(function Language(props: LanguageProps) {
               method: 'POST',
               body: {
                 pageNo: 1,
-                pageSize: 1000,
+                pageSize: 10000,
                 languageType: scope,
                 identity: id,
               },
