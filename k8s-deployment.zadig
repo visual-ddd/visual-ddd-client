@@ -17,11 +17,17 @@ spec:
           image: 172.26.59.200/wkfe/visual-ddd:latest
           ports:
             - containerPort: 3000
+              name: server
+            - containerPort: 9229
+              name: debug
           env:
             - name: BACKEND
               value: {{ .BACKEND }}
             - name: SESSION_SECRET
               value: {{ .SECRET }}
+            # 配置为 --inspect=0.0.0.0 打开debugger 服务
+            - name: NODE_OPTIONS
+              value: {{ .NODE_OPTIONS }}
         # 信令服务
         - name: visual-ddd-signaling
           image: wkfe/visual-ddd-signaling:latest
@@ -42,7 +48,7 @@ spec:
       targetPort: 3000
   type: NodePort
 ---
-# 客户端服务
+# 信令服务
 apiVersion: v1
 kind: Service
 metadata:
@@ -54,6 +60,20 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 8080
+  type: NodePort
+---
+# debugger
+apiVersion: v1
+kind: Service
+metadata:
+  name: visual-ddd-debugger
+spec:
+  selector:
+    app: visual-ddd-client
+  ports:
+    - protocol: TCP
+      port: 9229
+      targetPort: 9229
   type: NodePort
 ---
 # ingress
