@@ -10,6 +10,7 @@ import { DesignerKeyboardBinding } from './DesignerKeyboardBinding';
 import { IDesignerTab } from './IDesignerTab';
 import { IDesigner } from './IDesigner';
 import { DesignerAwareness } from './DesignerAwareness';
+import { createYjsProvider } from './createYjsProvider';
 
 export interface BaseDesignerModelOptions {
   name: string;
@@ -144,26 +145,10 @@ export abstract class BaseDesignerModel<Tab extends string, State extends {} = {
       }
 
       // 多人协作
-      // TODO: 提取到工厂
-      // TODO: 自定义信令服务器
       if (!this.readonly) {
-        const roomName = `visual-ddd-${this.name}-${this.id}`;
-
-        // TODO: 不硬编码
-        // const SELF_HOST = new URL(location.href);
-        // SELF_HOST.protocol = 'wss:';
-        // SELF_HOST.pathname = '/signaling';
-        // SELF_HOST.search = '';
-        const SELF_HOST = 'wss://ddd.wakedt.cn/signaling';
-
-        this.webrtcProvider = new WebrtcProvider(roomName, this.ydoc, {
-          signaling: [
-            SELF_HOST,
-            'wss://signaling.yjs.dev',
-            'wss://y-webrtc-signaling-eu.herokuapp.com',
-            'wss://y-webrtc-signaling-us.herokuapp.com',
-          ],
-          password: 'visual-ddd',
+        this.webrtcProvider = createYjsProvider({
+          doc: this.ydoc,
+          id: `${this.name}-${this.id}`,
           awareness: this.awareness.awareness,
         });
       }
