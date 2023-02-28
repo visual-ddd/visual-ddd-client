@@ -31,7 +31,17 @@ export const login = allowMethod(
 
       if (sessionCookie) {
         const list = parseSetCookie(sessionCookie);
+
+        // 保存 cookie，将透传给客户端
+        // 通常这个信息不回透传给客户端，但是后端的流量不一定通过 当前 server 中转，
+        // 因此这里选择了这种方式
+        res.setHeader(
+          'set-cookie',
+          sessionCookie.split(',').map(i => i.trim())
+        );
+
         // 保存 session
+        // save 会自动合并 set-cookie
         req.session.content = {
           cookies: list,
           accountNo: loginPayload.accountNo,
