@@ -33,7 +33,7 @@ export class ScenarioDesignerModel extends BaseDesignerModel<ScenarioDesignerTab
   serviceEditorModel: DomainEditorModel;
 
   constructor(options: { id: string; readonly?: boolean }) {
-    super(options);
+    super({ ...options, name: 'scenario' });
 
     const doc = this.ydoc;
     const readonly = this.readonly;

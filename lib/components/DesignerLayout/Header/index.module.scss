@@ -30,6 +30,8 @@
 
 .aside {
   padding: 0 var(--vd-spacing-sm);
+  display: flex;
+  align-items: center;
 }
 
 .name {
@@ -42,4 +44,8 @@
   font-weight: 300;
   width: 15px;
   color: var(--vd-color-gray-600);
+}
+
+.collaborators {
+  margin-right: var(--vd-spacing-sm);
 }

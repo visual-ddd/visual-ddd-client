@@ -1,6 +1,11 @@
-import { makeAutoBindThis } from '@/lib/store';
+import { derive, makeAutoBindThis } from '@/lib/store';
 import { makeObservable, observable } from 'mobx';
 import { tryDispose } from '@/lib/utils';
+import { extraRestErrorMessage } from '@/modules/backend-client';
+import { BaseDesignerModel } from '@/lib/designer';
+import { IUser } from '@/lib/core';
+import { booleanPredicate } from '@wakeapp/utils';
+import unionBy from 'lodash/unionBy';
 
 import { YJS_FIELD_NAME } from '../../constants';
 import { DomainEditorModel, createDomainEditorModel } from '../../domain-design';
@@ -11,15 +16,25 @@ import { createMapperEditorModel, MapperEditorModel } from '../../mapper-design'
 
 import { DomainDesignerTabs } from './constants';
 import { ObjectStore } from './ObjectStore';
-import { extraRestErrorMessage } from '@/modules/backend-client';
-import { BaseDesignerModel } from '@/lib/designer';
+
+export interface DomainDesignerAwarenessState {
+  user?: IUser;
+}
 
 /**
  * 业务域设计器模型
  */
-export class DomainDesignerModel extends BaseDesignerModel<DomainDesignerTabs> {
+export class DomainDesignerModel extends BaseDesignerModel<DomainDesignerTabs, DomainDesignerAwarenessState> {
   @observable
   activeTab: DomainDesignerTabs = DomainDesignerTabs.Vision;
+
+  /**
+   * 参与协作的用户
+   */
+  @derive
+  get awarenessUsers() {
+    return unionBy(super.awarenessStates.map(i => i.user).filter(booleanPredicate), i => i.id);
+  }
 
   /**
    * 统一语言模型
@@ -47,7 +62,7 @@ export class DomainDesignerModel extends BaseDesignerModel<DomainDesignerTabs> {
   mapperObjectEditorModel: MapperEditorModel;
 
   constructor(options: { id: string; readonly?: boolean }) {
-    super(options);
+    super({ ...options, name: 'domain' });
 
     const readonly = this.readonly;
     const doc = this.ydoc;

@@ -1,7 +1,7 @@
 import { VersionBadge } from '@/lib/components/VersionBadge';
-import { VersionStatus } from '@/lib/core';
+import { IUser, VersionStatus } from '@/lib/core';
 import { LeftOutlined } from '@ant-design/icons';
-import { Button, Tooltip } from 'antd';
+import { Avatar, Button, Tooltip } from 'antd';
 import { observer } from 'mobx-react';
 import { useRouter } from 'next/router';
 
@@ -16,10 +16,18 @@ export interface DesignerHeaderProps {
   saveTooltip?: React.ReactNode;
   saving?: boolean;
   onSave?: () => void;
+
+  /**
+   * 参与协作的用户
+   */
+  collaborators?: IUser[];
+
+  // 插槽
+  right?: React.ReactNode;
 }
 
 export const DesignerHeader = observer(function DesignerHeader(props: DesignerHeaderProps) {
-  const { name, onSave, saving, version, title, readonly, saveTooltip, versionStatus } = props;
+  const { name, onSave, saving, version, title, readonly, collaborators, saveTooltip, versionStatus, right } = props;
   const router = useRouter();
 
   const save = (
@@ -48,17 +56,33 @@ export const DesignerHeader = observer(function DesignerHeader(props: DesignerHe
           {!!readonly && <span className="u-gray-500">(只读)</span>}
         </span>
       </div>
-      {!readonly && (
-        <div className={s.aside}>
-          {saveTooltip ? (
+      <div className={s.aside}>
+        {right}
+
+        {!!collaborators?.length && (
+          <Avatar.Group maxCount={7} className={s.collaborators}>
+            {collaborators.map(i => {
+              return (
+                <Tooltip title={i.name} key={i.id}>
+                  <Avatar size="small" src={i.avatar}>
+                    {i.name}
+                  </Avatar>
+                </Tooltip>
+              );
+            })}
+          </Avatar.Group>
+        )}
+
+        {/* 保存按钮 */}
+        {!readonly &&
+          (saveTooltip ? (
             <Tooltip title={saveTooltip} placement="bottomRight">
               {save}
             </Tooltip>
           ) : (
             save
-          )}
-        </div>
-      )}
+          ))}
+      </div>
     </div>
   );
 });

@@ -19,10 +19,16 @@ spec:
             - containerPort: 3000
           env:
             - name: BACKEND
-              value: { { .BACKEND } }
+              value: {{ .BACKEND }}
             - name: SESSION_SECRET
-              value: { { .SECRET } }
+              value: {{ .SECRET }}
+        # 信令服务
+        - name: visual-ddd-signaling
+          image: wkfe/visual-ddd-signaling:latest
+          ports:
+            - containerPort: 8080
 ---
+# 客户端服务
 apiVersion: v1
 kind: Service
 metadata:
@@ -36,6 +42,20 @@ spec:
       targetPort: 3000
   type: NodePort
 ---
+# 客户端服务
+apiVersion: v1
+kind: Service
+metadata:
+  name: visual-ddd-signaling
+spec:
+  selector:
+    app: visual-ddd-client
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: NodePort
+---
 # ingress
 apiVersion: extensions/v1beta1
 kind: Ingress
@@ -45,7 +65,7 @@ metadata:
     app.kubernetes.io/name: visual-ddd-ingress
 spec:
   rules:
-    - host: { { .HOST } }
+    - host: {{ .HOST }}
       http:
         paths:
           - backend:
@@ -53,7 +73,12 @@ spec:
               servicePort: 80
             path: /
             pathType: ImplementationSpecific
+          - backend:
+              serviceName: visual-ddd-signaling
+              servicePort: 80
+            path: /signaling
+            pathType: ImplementationSpecific
   tls:
     - hosts:
-        - { { .HOST } }
+        - {{ .HOST }}
       secretName: wakedt

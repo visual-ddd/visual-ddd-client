@@ -3,7 +3,7 @@
 # Build
 
 ```shell
-$ docker build -t wkfe/visual-ddd-signaling .
+$ docker build -t wkfe/visual-ddd-signaling --platform linux/amd64 .
 
 # 打版本
 $ docker tag wkfe/visual-ddd-signaling  作用域/wkfe/visual-ddd:版本号或latest

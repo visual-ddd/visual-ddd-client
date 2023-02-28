@@ -9,16 +9,26 @@ import { IDisposable } from '@/lib/utils';
 import { DesignerKeyboardBinding } from './DesignerKeyboardBinding';
 import { IDesignerTab } from './IDesignerTab';
 import { IDesigner } from './IDesigner';
+import { DesignerAwareness } from './DesignerAwareness';
+
+export interface BaseDesignerModelOptions {
+  name: string;
+  id: string;
+  readonly?: boolean;
+}
 
 /**
  * 设计器模型
  */
-export abstract class BaseDesignerModel<Tab extends string> implements IDisposable, IDesigner {
-  id: string;
+export abstract class BaseDesignerModel<Tab extends string, State extends {} = {}> implements IDisposable, IDesigner {
+  readonly name: string;
+  readonly id: string;
 
   readonly readonly: boolean;
 
   readonly keyboardBinding: DesignerKeyboardBinding;
+
+  readonly awareness: DesignerAwareness<State>;
 
   /**
    * 当前激活的 Tab
@@ -33,6 +43,10 @@ export abstract class BaseDesignerModel<Tab extends string> implements IDisposab
 
   @observable
   error?: Error;
+
+  get awarenessStates() {
+    return this.awareness.remoteStatesInArray;
+  }
 
   readonly ydoc: YDoc;
   protected webrtcProvider?: WebrtcProvider;
@@ -60,17 +74,22 @@ export abstract class BaseDesignerModel<Tab extends string> implements IDisposab
    */
   protected abstract loadVector(params: { id: string }): Promise<ArrayBuffer | undefined>;
 
-  constructor(options: { id: string; readonly?: boolean }) {
-    const { id, readonly = false } = options;
+  constructor(options: BaseDesignerModelOptions) {
+    const { id, name, readonly = false } = options;
+    this.name = name;
     this.id = id;
     this.readonly = readonly;
 
     this.ydoc = new YDoc();
 
     this.keyboardBinding = new DesignerKeyboardBinding({ model: this });
+    this.awareness = new DesignerAwareness({ doc: this.ydoc });
 
     makeAutoBindThis(this);
     makeObservable(this);
+
+    // @ts-expect-error
+    globalThis.__DESIGNER__ = this;
   }
 
   initialize() {
@@ -96,6 +115,14 @@ export abstract class BaseDesignerModel<Tab extends string> implements IDisposab
   }
 
   /**
+   * 配置用户会话状态
+   * @param state
+   */
+  setAwarenessState(state: Partial<State>) {
+    this.awareness.setState(state);
+  }
+
+  /**
    * 数据加载
    */
   @effect('DESIGNER:LOAD')
@@ -117,8 +144,28 @@ export abstract class BaseDesignerModel<Tab extends string> implements IDisposab
       }
 
       // 多人协作
+      // TODO: 提取到工厂
+      // TODO: 自定义信令服务器
       if (!this.readonly) {
-        this.webrtcProvider = new WebrtcProvider(this.id, this.ydoc);
+        const roomName = `visual-ddd-${this.name}-${this.id}`;
+
+        // TODO: 不硬编码
+        // const SELF_HOST = new URL(location.href);
+        // SELF_HOST.protocol = 'wss:';
+        // SELF_HOST.pathname = '/signaling';
+        // SELF_HOST.search = '';
+        const SELF_HOST = 'wss://ddd.wakedt.cn/signaling';
+
+        this.webrtcProvider = new WebrtcProvider(roomName, this.ydoc, {
+          signaling: [
+            SELF_HOST,
+            'wss://signaling.yjs.dev',
+            'wss://y-webrtc-signaling-eu.herokuapp.com',
+            'wss://y-webrtc-signaling-us.herokuapp.com',
+          ],
+          password: 'visual-ddd',
+          awareness: this.awareness.awareness,
+        });
       }
 
       this.setError(undefined);

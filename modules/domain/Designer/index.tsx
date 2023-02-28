@@ -2,7 +2,7 @@ import { observer } from 'mobx-react';
 import { useEffect, useMemo } from 'react';
 import { message } from 'antd';
 import { tryDispose } from '@/lib/utils';
-import { VersionStatus } from '@/lib/core';
+import { IUser, VersionStatus } from '@/lib/core';
 import { CompletionContextProvider } from '@/lib/components/Completion';
 import { DesignerLayout, DesignerTabLabel } from '@/lib/components/DesignerLayout';
 import { usePreventUnload } from '@/lib/hooks';
@@ -48,11 +48,7 @@ export interface DomainDescription {
   /**
    * 当前用户
    */
-  user?: {
-    id: string;
-    name: string;
-    avatar?: string;
-  };
+  user?: IUser;
 }
 
 export interface DomainDesignerProps {
@@ -166,10 +162,15 @@ const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerPro
   useEffect(() => {
     model.initialize();
     model.load();
+    model.setAwarenessState({
+      user: description?.user,
+    });
 
     return () => {
       tryDispose(model);
     };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [model]);
 
   usePreventUnload(!readonly);
@@ -184,6 +185,7 @@ const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerPro
         >
           <DomainDesignerLoading></DomainDesignerLoading>
           <DomainDesignerHeader
+            user={description?.user}
             name={description?.name}
             version={description?.version}
             versionStatus={description?.versionStatus}
