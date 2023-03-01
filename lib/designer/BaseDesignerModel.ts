@@ -3,8 +3,10 @@ import { applyUpdate, Doc as YDoc, encodeStateAsUpdate } from 'yjs';
 import { WebrtcProvider } from 'y-webrtc';
 import { message } from 'antd';
 import Router from 'next/router';
-import { effect, makeAutoBindThis, mutation } from '@/lib/store';
+import { derive, effect, makeAutoBindThis, mutation } from '@/lib/store';
 import { IDisposable } from '@/lib/utils';
+import { booleanPredicate } from '@wakeapp/utils';
+import unionBy from 'lodash/unionBy';
 
 import { DesignerKeyboardBinding } from './DesignerKeyboardBinding';
 import { IDesignerTab } from './IDesignerTab';
@@ -52,6 +54,14 @@ export abstract class BaseDesignerModel<
 
   get awarenessStates() {
     return this.awareness.remoteStatesInArray;
+  }
+
+  /**
+   * 参与协作的用户
+   */
+  @derive
+  get awarenessUsers() {
+    return unionBy(this.awarenessStates.map(i => i.user).filter(booleanPredicate), i => i.id);
   }
 
   readonly ydoc: YDoc;

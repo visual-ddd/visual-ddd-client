@@ -1,11 +1,9 @@
-import { derive, makeAutoBindThis } from '@/lib/store';
+import { makeAutoBindThis } from '@/lib/store';
 import { makeObservable, observable } from 'mobx';
 import { tryDispose } from '@/lib/utils';
 import { extraRestErrorMessage } from '@/modules/backend-client';
 import { BaseDesignerModel, BaseDesignerAwarenessState } from '@/lib/designer';
-import { booleanPredicate } from '@wakeapp/utils';
 import { BaseEditorAwarenessState } from '@/lib/editor';
-import unionBy from 'lodash/unionBy';
 
 import { YJS_FIELD_NAME } from '../../constants';
 import { DomainEditorModel, createDomainEditorModel } from '../../domain-design';
@@ -30,14 +28,6 @@ export interface DomainDesignerAwarenessState extends BaseDesignerAwarenessState
 export class DomainDesignerModel extends BaseDesignerModel<DomainDesignerTabs, DomainDesignerAwarenessState> {
   @observable
   activeTab: DomainDesignerTabs = DomainDesignerTabs.Vision;
-
-  /**
-   * 参与协作的用户
-   */
-  @derive
-  get awarenessUsers() {
-    return unionBy(super.awarenessStates.map(i => i.user).filter(booleanPredicate), i => i.id);
-  }
 
   /**
    * 统一语言模型

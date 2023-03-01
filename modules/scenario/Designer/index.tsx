@@ -81,15 +81,19 @@ const ScenarioDesigner = observer(function ScenarioDesigner(props: ScenarioDesig
 
   const globalWords = useMemo(() => (words ?? NoopArray).filter(i => !!i.trim()), [words]);
 
-  useEffect(() => {
-    model.initialize();
-    model.load();
-  }, [model]);
-
   const saveTooltip = useMemo(() => {
     const desc = model.keyboardBinding.getReadableKeyBinding('save');
     return `${desc.description}(${desc.key})`;
   }, [model]);
+
+  const awarenessUsers = useMemo(() => {
+    return model.awarenessUsers.map(i => {
+      if (i.id === description?.user?.id) {
+        return { ...i, name: `${i.name}(你)` };
+      }
+      return i;
+    });
+  }, [model.awarenessUsers, description?.user]);
 
   const items = [
     {
@@ -124,9 +128,17 @@ const ScenarioDesigner = observer(function ScenarioDesigner(props: ScenarioDesig
   }, [model.error]);
 
   useEffect(() => {
+    model.initialize();
+    model.load();
+    model.setAwarenessState({
+      user: description?.user,
+    });
+
     return () => {
       tryDispose(model);
     };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [model]);
 
   usePreventUnload(!readonly);
@@ -149,6 +161,7 @@ const ScenarioDesigner = observer(function ScenarioDesigner(props: ScenarioDesig
             saveTooltip={saveTooltip}
             saving={model.saving}
             onSave={() => model.keyboardBinding.trigger('save')}
+            collaborators={awarenessUsers}
           ></DesignerHeader>
         </DesignerLayout>
       </CompletionContextProvider>
