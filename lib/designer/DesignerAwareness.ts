@@ -2,9 +2,20 @@ import { Doc as YDoc } from 'yjs';
 import * as protocol from 'y-protocols/awareness';
 import { IDisposable } from '@/lib/utils';
 import { derive, makeAutoBindThis, mutation } from '@/lib/store';
+import { IUser } from '@/lib/core';
 import { makeObservable, observable } from 'mobx';
 
-export class DesignerAwareness<State extends {}> implements IDisposable {
+export interface BaseDesignerAwarenessState {
+  /**
+   * 唯一 id
+   */
+  id: number;
+  user?: IUser;
+}
+
+export class DesignerAwareness<State extends BaseDesignerAwarenessState = BaseDesignerAwarenessState>
+  implements IDisposable
+{
   readonly awareness: protocol.Awareness;
 
   /**
@@ -34,12 +45,20 @@ export class DesignerAwareness<State extends {}> implements IDisposable {
     makeAutoBindThis(this);
   }
 
+  isLocal(state: State) {
+    return state.id === this.awareness.clientID;
+  }
+
   /**
    * 设置本地状态
    */
   setState(state: Partial<State>) {
     const currentState = this.awareness.getLocalState();
-    this.awareness.setLocalState({ ...currentState, ...state });
+    this.awareness.setLocalState({ id: this.awareness.clientID, ...currentState, ...state });
+  }
+
+  getState(): State | undefined {
+    return this.awareness.getLocalState() as State | undefined;
   }
 
   dispose() {

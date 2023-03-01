@@ -121,7 +121,7 @@ export const EditorToolbar = observer(function EditorToolbar(props: EditorToolba
               tooltip={getDesc('copy').tooltip}
               onClick={getDesc('copy').handler}
               icon={<CopyOutlined />}
-              disabled={!editorViewStore.canRemove}
+              disabled={!editorViewStore.canCopy}
             />
             <Item
               name="paste"

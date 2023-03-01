@@ -70,7 +70,7 @@ export const SourceInput = memo((props: SourceInputProps) => {
             <span>事件</span>{' '}
             <Input
               placeholder="事件名称"
-              disabled={!value?.event.enabled}
+              disabled={!value?.event.enabled ? true : undefined}
               value={value?.event.value ?? ''}
               onChange={handleInputChange('event')}
             />
@@ -83,7 +83,7 @@ export const SourceInput = memo((props: SourceInputProps) => {
             <span>定时任务</span>{' '}
             <Input
               placeholder="cron 表达式"
-              disabled={!value?.schedule.enabled}
+              disabled={!value?.schedule.enabled ? true : undefined}
               value={value?.schedule.value ?? ''}
               onChange={handleInputChange('schedule')}
             />

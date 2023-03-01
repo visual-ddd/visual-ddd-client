@@ -9,8 +9,9 @@ import { IDisposable } from '@/lib/utils';
 import { DesignerKeyboardBinding } from './DesignerKeyboardBinding';
 import { IDesignerTab } from './IDesignerTab';
 import { IDesigner } from './IDesigner';
-import { DesignerAwareness } from './DesignerAwareness';
+import { BaseDesignerAwarenessState, DesignerAwareness } from './DesignerAwareness';
 import { createYjsProvider } from './createYjsProvider';
+import { DesignerAwarenessDelegate } from './DesignerAwarenessDelegate';
 
 export interface BaseDesignerModelOptions {
   name: string;
@@ -21,7 +22,11 @@ export interface BaseDesignerModelOptions {
 /**
  * 设计器模型
  */
-export abstract class BaseDesignerModel<Tab extends string, State extends {} = {}> implements IDisposable, IDesigner {
+export abstract class BaseDesignerModel<
+  Tab extends string,
+  State extends BaseDesignerAwarenessState = BaseDesignerAwarenessState
+> implements IDisposable, IDesigner
+{
   readonly name: string;
   readonly id: string;
 
@@ -236,5 +241,12 @@ export abstract class BaseDesignerModel<Tab extends string, State extends {} = {
     }
 
     return undefined;
+  }
+
+  protected createAwarenessDelegate<Key extends keyof State>(key: Key) {
+    return new DesignerAwarenessDelegate({
+      awareness: this.awareness,
+      key: key,
+    });
   }
 }

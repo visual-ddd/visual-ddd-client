@@ -2,9 +2,9 @@ import { derive, makeAutoBindThis } from '@/lib/store';
 import { makeObservable, observable } from 'mobx';
 import { tryDispose } from '@/lib/utils';
 import { extraRestErrorMessage } from '@/modules/backend-client';
-import { BaseDesignerModel } from '@/lib/designer';
-import { IUser } from '@/lib/core';
+import { BaseDesignerModel, BaseDesignerAwarenessState } from '@/lib/designer';
 import { booleanPredicate } from '@wakeapp/utils';
+import { BaseEditorAwarenessState } from '@/lib/editor';
 import unionBy from 'lodash/unionBy';
 
 import { YJS_FIELD_NAME } from '../../constants';
@@ -17,8 +17,11 @@ import { createMapperEditorModel, MapperEditorModel } from '../../mapper-design'
 import { DomainDesignerTabs } from './constants';
 import { ObjectStore } from './ObjectStore';
 
-export interface DomainDesignerAwarenessState {
-  user?: IUser;
+export interface DomainDesignerAwarenessState extends BaseDesignerAwarenessState {
+  [YJS_FIELD_NAME.DOMAIN]: BaseEditorAwarenessState;
+  [YJS_FIELD_NAME.QUERY]: BaseEditorAwarenessState;
+  [YJS_FIELD_NAME.DATA_OBJECT]: BaseEditorAwarenessState;
+  [YJS_FIELD_NAME.MAPPER]: BaseEditorAwarenessState;
 }
 
 /**
@@ -73,12 +76,23 @@ export class DomainDesignerModel extends BaseDesignerModel<DomainDesignerTabs, D
     const mapperDatabase = doc.getMap(YJS_FIELD_NAME.MAPPER);
     const ubiquitousLanguageDatabase = doc.getArray<any>(YJS_FIELD_NAME.UBIQUITOUS_LANGUAGE);
 
-    this.domainEditorModel = createDomainEditorModel({ datasource: domainDatabase, doc: this.ydoc, readonly });
-    this.queryEditorModel = createQueryEditorModel({ datasource: queryDatabase, doc: this.ydoc, readonly });
+    this.domainEditorModel = createDomainEditorModel({
+      datasource: domainDatabase,
+      doc: this.ydoc,
+      readonly,
+      awarenessRegistry: this.createAwarenessDelegate(YJS_FIELD_NAME.DOMAIN),
+    });
+    this.queryEditorModel = createQueryEditorModel({
+      datasource: queryDatabase,
+      doc: this.ydoc,
+      readonly,
+      awarenessRegistry: this.createAwarenessDelegate(YJS_FIELD_NAME.DOMAIN),
+    });
     this.dataObjectEditorModel = createDataObjectEditorModel({
       datasource: dataObjectDatabase,
       doc: this.ydoc,
       readonly,
+      awarenessRegistry: this.createAwarenessDelegate(YJS_FIELD_NAME.DATA_OBJECT),
     });
     const objectStore = new ObjectStore({
       domainDesignerModel: this,
@@ -91,6 +105,7 @@ export class DomainDesignerModel extends BaseDesignerModel<DomainDesignerTabs, D
       doc: this.ydoc,
       readonly,
       objectStore,
+      awarenessRegistry: this.createAwarenessDelegate(YJS_FIELD_NAME.MAPPER),
     });
     this.ubiquitousLanguageModel = new UbiquitousLanguageModel({
       doc: this.ydoc,

@@ -26,9 +26,10 @@ export const EditorAttributes = observer(function EditorAttributes() {
   }
 
   const formModel = formStore.getFormModel(node)!;
+  const isLocked = viewStore.isFocusingNodeLocked;
 
   return (
-    <EditorForm node={node} readonly={model.readonly}>
+    <EditorForm node={node} readonly={model.readonly || isLocked}>
       {createElement(config.attributeComponent, {
         model: model.editorModel,
         node,

@@ -13,3 +13,18 @@ export interface IUser {
   name: string;
   avatar?: string;
 }
+
+export interface IAwarenessRegistry<T> {
+  /**
+   * 设置状态
+   * @param state
+   */
+  setState(state: T): void;
+
+  getState(): T | undefined;
+
+  /**
+   * 远程状态
+   */
+  readonly remoteStates: { user?: IUser; state?: T }[];
+}

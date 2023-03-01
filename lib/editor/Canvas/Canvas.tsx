@@ -8,6 +8,7 @@ import { GraphBindingProps, GraphBinding, GraphBindingOptions } from '@/lib/g6-b
 import s from './Canvas.module.scss';
 import { Cells } from './Cells';
 import { useCanvasModel } from './CanvasModelContext';
+import { Awareness } from './Awareness';
 
 export interface CanvasProps extends GraphBindingProps {}
 
@@ -60,6 +61,8 @@ export const Canvas = memo((props: CanvasProps) => {
     >
       {/* 绑定到 Store 的节点和边 */}
       <Cells />
+      {/* 协作用户聚焦  */}
+      <Awareness />
       {/* 外部自定义渲染 */}
       {children}
     </GraphBinding>

@@ -1,10 +1,13 @@
 import { Map as YMap, Doc as YDoc } from 'yjs';
+import { IDisposable, tryDispose } from '@/lib/utils';
+import { Noop, NoopArray } from '@wakeapp/utils';
+
 import { BaseEditorStore } from './BaseEditorStore';
 import { BaseEditorCommandHandler } from './BaseEditorCommandHandler';
 import { BaseEditorDatasource } from './BaseEditorDatasource';
 import { BaseEditorEvent } from './BaseEditorEvent';
 import { BaseEditorIndex } from './BaseEditorIndex';
-import { BaseEditorViewStore } from './BaseEditorViewStore';
+import { BaseEditorAwarenessRegistry, BaseEditorViewStore } from './BaseEditorViewStore';
 import { BaseEditorFormStore } from './BaseEditorFormStore';
 import { BaseEditorScope } from './BaseEditorScope';
 
@@ -40,6 +43,11 @@ export interface BaseEditorModelOptions {
   datasource: YMap<any>;
 
   /**
+   * 远程协作状态
+   */
+  awarenessRegistry: BaseEditorAwarenessRegistry;
+
+  /**
    * yjs 文档
    */
   doc: YDoc;
@@ -51,11 +59,19 @@ declare global {
   }
 }
 
+const DEFAULT_AWARENESS_REGISTRY: BaseEditorAwarenessRegistry = {
+  setState: Noop,
+  remoteStates: NoopArray,
+  getState() {
+    return undefined;
+  },
+};
+
 /**
  * 编辑器模型入口
  * TODO: 销毁
  */
-export class BaseEditorModel {
+export class BaseEditorModel implements IDisposable {
   readonly readonly: boolean;
   readonly whitelist: string[];
   readonly shapeList: string[];
@@ -127,7 +143,16 @@ export class BaseEditorModel {
   }
 
   constructor(options: BaseEditorModelOptions) {
-    const { datasource, doc, scopeId, activeScope = true, whitelist, shapeList, readonly = false } = options;
+    const {
+      datasource,
+      doc,
+      scopeId,
+      activeScope = true,
+      awarenessRegistry = DEFAULT_AWARENESS_REGISTRY,
+      whitelist,
+      shapeList,
+      readonly = false,
+    } = options;
 
     this.readonly = readonly;
     this.shapeList = shapeList;
@@ -143,7 +168,12 @@ export class BaseEditorModel {
       datasource,
       doc,
     });
-    this.viewStore = new BaseEditorViewStore({ datasource: this.datasource, event: this.event });
+    this.viewStore = new BaseEditorViewStore({
+      datasource: this.datasource,
+      event: this.event,
+      index: this.index,
+      awarenessRegistry,
+    });
     this.formStore = new BaseEditorFormStore({ event: this.event, store: this.store, editorModel: this });
     this.commandHandler = new BaseEditorCommandHandler({
       event: this.event,
@@ -173,5 +203,16 @@ export class BaseEditorModel {
    */
   validate() {
     return this.formStore.validate();
+  }
+
+  dispose() {
+    tryDispose(this.scope);
+    tryDispose(this.event);
+    tryDispose(this.index);
+    tryDispose(this.store);
+    tryDispose(this.datasource);
+    tryDispose(this.viewStore);
+    tryDispose(this.formStore);
+    tryDispose(this.commandHandler);
   }
 }

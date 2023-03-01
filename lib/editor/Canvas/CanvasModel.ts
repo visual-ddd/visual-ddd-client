@@ -465,6 +465,15 @@ export class CanvasModel {
   });
 
   /**
+   * 获取节点的关注状态
+   * @param nodeId
+   * @returns
+   */
+  getNodeAwarenessState(nodeId: string) {
+    return this.editorViewStore.remoteFocusing.find(i => i.node.id === nodeId);
+  }
+
+  /**
    * 设置图形的可见性
    *
    * @note 可见性不会持久化

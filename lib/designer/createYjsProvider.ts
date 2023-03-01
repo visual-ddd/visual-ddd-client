@@ -24,10 +24,11 @@ export function createYjsProvider(options: { id: string; doc: YDoc; awareness: A
     signaling: [
       SELF_HOST.href,
 
+      // y-webrtc 会尝试同时连接这些服务器
       // yjs 默认
-      'wss://signaling.yjs.dev',
-      'wss://y-webrtc-signaling-eu.herokuapp.com',
-      'wss://y-webrtc-signaling-us.herokuapp.com',
+      // 'wss://signaling.yjs.dev',
+      // 'wss://y-webrtc-signaling-eu.herokuapp.com',
+      // 'wss://y-webrtc-signaling-us.herokuapp.com',
     ],
     password: 'visual-ddd',
     awareness: awareness,

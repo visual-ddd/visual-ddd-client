@@ -1,12 +1,20 @@
 import { makeObservable, observable, reaction } from 'mobx';
 import { makeAutoBindThis, derive, mutation } from '@/lib/store';
+import { IAwarenessRegistry, IUser } from '@/lib/core';
+import { IDisposable } from '@/lib/utils';
 
 import { BaseEditorDatasource } from './BaseEditorDatasource';
 import { BaseNode } from './BaseNode';
 import { BaseEditorEvent } from './BaseEditorEvent';
+import { Disposer } from '@wakeapp/utils';
+import { BaseEditorIndex } from './BaseEditorIndex';
 
 export interface BaseEditorViewState {
+  /**
+   * 组件库是否折叠
+   */
   shapeLibraryFolded: boolean;
+
   /**
    * 鼠标拖拽的模式
    * select 框选
@@ -26,11 +34,37 @@ export interface BaseEditorViewState {
 }
 
 /**
+ * 多人协作交互状态
+ */
+export interface BaseEditorAwarenessState {
+  focusingNodeId?: string;
+  /**
+   * 聚焦的时间，用于判断占用的逻辑
+   */
+  focusingStartAt?: number;
+}
+
+/**
+ * 远程协作状态
+ */
+export interface BaseEditorAwarenessRemoteState {
+  user: IUser;
+  state: BaseEditorAwarenessState;
+}
+
+/**
+ * 协作交互状态设置
+ */
+export interface BaseEditorAwarenessRegistry extends IAwarenessRegistry<BaseEditorAwarenessState> {}
+
+/**
  * 这里放置非核心的视图状态
  */
-export class BaseEditorViewStore {
+export class BaseEditorViewStore implements IDisposable {
   private datasource: BaseEditorDatasource;
   private event: BaseEditorEvent;
+  private awarenessRegistry: BaseEditorAwarenessRegistry;
+  private index: BaseEditorIndex;
 
   /**
    * 编辑器视图状态
@@ -77,30 +111,76 @@ export class BaseEditorViewStore {
   }
 
   @derive
-  get canRemove() {
+  get canCopy() {
     return !!this.selectedNodes.length;
   }
 
-  constructor(inject: { datasource: BaseEditorDatasource; event: BaseEditorEvent }) {
+  @derive
+  get canRemove() {
+    return !!this.selectedNodes.length && this.selectedNodes.every(i => !this.isNodeFocusing(i));
+  }
+
+  /**
+   * 远程协作者当前聚焦的节点和信息
+   */
+  @derive
+  get remoteFocusing(): { user: IUser; node: BaseNode; timestamp: number }[] {
+    return this.awarenessRegistry.remoteStates
+      .filter(i => i.state?.focusingNodeId && this.index.getNodeById(i.state.focusingNodeId) && i.user)
+      .map(i => {
+        return {
+          user: i.user!,
+          node: this.index.getNodeById(i.state!.focusingNodeId!)!,
+          timestamp: i.state!.focusingStartAt!,
+        };
+      });
+  }
+
+  /**
+   * 聚焦的节点是否锁定了
+   */
+  @derive
+  get isFocusingNodeLocked() {
+    return !!(this.focusingNode && this.isNodeLocked(this.focusingNode));
+  }
+
+  protected disposer = new Disposer();
+
+  constructor(inject: {
+    datasource: BaseEditorDatasource;
+    event: BaseEditorEvent;
+    index: BaseEditorIndex;
+    awarenessRegistry: BaseEditorAwarenessRegistry;
+  }) {
+    this.index = inject.index;
+    this.awarenessRegistry = inject.awarenessRegistry;
     this.datasource = inject.datasource;
     this.event = inject.event;
 
     makeObservable(this);
     makeAutoBindThis(this);
 
-    reaction(
-      () => this.focusingNode,
-      (node, preNode) => {
-        if (node) {
-          this.event.emit('NODE_ACTIVE', { node });
-        }
+    this.disposer.push(
+      reaction(
+        () => this.focusingNode,
+        (node, preNode) => {
+          if (node) {
+            this.event.emit('NODE_ACTIVE', { node });
+            this.awarenessRegistry.setState({ focusingNodeId: node.id, focusingStartAt: Date.now() });
+          }
 
-        if (preNode) {
-          this.event.emit('NODE_UNACTIVE', { node: preNode });
-        }
-      },
-      { name: 'VIEW_STORE:WATCH_FOCUSING_NODE' }
+          if (preNode) {
+            this.event.emit('NODE_UNACTIVE', { node: preNode });
+            this.awarenessRegistry.setState({ focusingNodeId: undefined, focusingStartAt: undefined });
+          }
+        },
+        { name: 'VIEW_STORE:WATCH_FOCUSING_NODE' }
+      )
     );
+  }
+
+  dispose() {
+    this.disposer.release();
   }
 
   @mutation('VIEW_STORE:SET_SELECTED')
@@ -113,5 +193,37 @@ export class BaseEditorViewStore {
     const { key, value } = params;
 
     this.viewState[key] = value;
+  }
+
+  protected isNodeFocusing(node: BaseNode) {
+    return this.remoteFocusing.some(i => i.node.id === node.id);
+  }
+
+  protected isNodeLocked(node: BaseNode) {
+    const localState = this.awarenessRegistry.getState();
+    return this.remoteFocusing.some(i => {
+      const isSameNode = i.node.id === node.id;
+
+      if (!isSameNode) {
+        return false;
+      }
+
+      if (localState == null) {
+        // 被占用
+        return true;
+      }
+
+      // 同时占用一个节点
+      // 根据占用时间比对, 谁先占用谁先编辑
+      if (
+        localState.focusingNodeId === node.id &&
+        localState.focusingStartAt &&
+        localState.focusingStartAt < i.timestamp
+      ) {
+        return false;
+      }
+
+      return true;
+    });
   }
 }
