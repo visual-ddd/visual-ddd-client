@@ -58,6 +58,13 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 - node edit
 - label edit
 
+# 本地开发
+
+```
+# 需要指定后端服务器地址，注意不能是 nextjs 服务地址
+BACKEND=http://172.26.57.49:8080 pnpm dev
+```
+
 # 部署配置
 
 环境变量

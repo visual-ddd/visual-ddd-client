@@ -9,6 +9,9 @@ import { mergeCookie } from './merge-cookie';
  * 接口代理
  *
  * **生产环境可以使用 nginx 或者 k8s ingress 代理转发**
+ *
+ * 不能使用 middleware 二次转发，比如 本地 middleware 请求远程 middleware, 远程 middleware 再 fetch
+ * 这种情况， 远程 middleware 会直接跳过
  */
 export const proxyMiddleware: Middleware = async (req, next) => {
   const url = req.nextUrl;

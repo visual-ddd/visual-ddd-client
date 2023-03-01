@@ -10,7 +10,7 @@ export function createYjsProvider(options: { id: string; doc: YDoc; awareness: A
 
   if (process.env.NODE_ENV === 'development') {
     // 开发环境直接转发到 BACKEND
-    SELF_HOST = new URL(process.env.BACKEND ?? 'https://ddd.wakedt.cn');
+    SELF_HOST = new URL('https://ddd.wakedt.cn');
   } else {
     // 生产环境，在同一个域下
     SELF_HOST = new URL(location.href);
