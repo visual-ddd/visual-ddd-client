@@ -1,8 +1,21 @@
 import { Editor } from '@tiptap/core';
 import { Toolbar } from '@antv/x6-react-components';
-import { BoldOutlined, ItalicOutlined, UnderlineOutlined, StrikethroughOutlined } from '@ant-design/icons';
+import {
+  BoldOutlined,
+  ItalicOutlined,
+  UnderlineOutlined,
+  StrikethroughOutlined,
+  UndoOutlined,
+  RedoOutlined,
+  UnorderedListOutlined,
+  OrderedListOutlined,
+  AlignLeftOutlined,
+  AlignCenterOutlined,
+  AlignRightOutlined,
+} from '@ant-design/icons';
 import { useReadableKeyBinding } from '@/lib/hooks';
 import { CodeIcon } from './CodeIcon';
+import { JustifyIcon } from './JustifyIcon';
 
 export interface WYSIWYGEditorToolbarProps {
   editor: Editor | null;
@@ -25,6 +38,24 @@ export const WYSIWYGEditorToolbar = function WYSIWYGEditorToolbar(props: WYSIWYG
 
   return (
     <Toolbar {...other}>
+      <Group>
+        <Item
+          name="undo"
+          icon={<UndoOutlined />}
+          active={editor.isActive('undo')}
+          tooltip={`撤销 (${getReadableKeyBinding({ macos: 'command+z', other: 'ctrl+z' })})`}
+          onClick={() => editor.chain().focus().undo().run()}
+          disabled={!editor.can().chain().focus().undo().run()}
+        ></Item>
+        <Item
+          name="redo"
+          icon={<RedoOutlined />}
+          active={editor.isActive('redo')}
+          tooltip={`重做 (${getReadableKeyBinding({ macos: 'command+shift+z', other: 'ctrl+shift+z' })})`}
+          onClick={() => editor.chain().focus().redo().run()}
+          disabled={!editor.can().chain().focus().redo().run()}
+        ></Item>
+      </Group>
       <Group>
         <Item
           name="bold"
@@ -65,6 +96,58 @@ export const WYSIWYGEditorToolbar = function WYSIWYGEditorToolbar(props: WYSIWYG
           tooltip={`代码 (${getReadableKeyBinding({ macos: 'command+e', other: 'ctrl+e' })})`}
           onClick={() => editor.chain().focus().toggleCode().run()}
           disabled={!editor.can().chain().focus().toggleCode().run()}
+        ></Item>
+      </Group>
+      <Group>
+        <Item
+          name="left"
+          icon={<AlignLeftOutlined />}
+          active={editor.isActive({ textAlign: 'left' })}
+          tooltip={`左对齐 (${getReadableKeyBinding({ macos: 'command+shift+L', other: 'ctrl+shift+L' })})`}
+          onClick={() => editor.chain().focus().setTextAlign('left').run()}
+          disabled={!editor.can().chain().focus().setTextAlign('left').run()}
+        ></Item>
+        <Item
+          name="center"
+          icon={<AlignCenterOutlined />}
+          active={editor.isActive({ textAlign: 'center' })}
+          tooltip={`居中对齐 (${getReadableKeyBinding({ macos: 'command+shift+E', other: 'ctrl+shift+E' })})`}
+          onClick={() => editor.chain().focus().setTextAlign('center').run()}
+          disabled={!editor.can().chain().focus().setTextAlign('center').run()}
+        ></Item>
+        <Item
+          name="right"
+          icon={<AlignRightOutlined />}
+          active={editor.isActive({ textAlign: 'right' })}
+          tooltip={`右对齐 (${getReadableKeyBinding({ macos: 'command+shift+R', other: 'ctrl+shift+R' })})`}
+          onClick={() => editor.chain().focus().setTextAlign('right').run()}
+          disabled={!editor.can().chain().focus().setTextAlign('right').run()}
+        ></Item>
+        <Item
+          name="justify"
+          icon={<JustifyIcon />}
+          active={editor.isActive({ textAlign: 'justify' })}
+          tooltip={`两端对齐 (${getReadableKeyBinding({ macos: 'command+shift+J', other: 'ctrl+shift+J' })})`}
+          onClick={() => editor.chain().focus().setTextAlign('justify').run()}
+          disabled={!editor.can().chain().focus().setTextAlign('justify').run()}
+        ></Item>
+      </Group>
+      <Group>
+        <Item
+          name="bulletList"
+          icon={<UnorderedListOutlined />}
+          active={editor.isActive('bulletList')}
+          tooltip={`无序列表 (${getReadableKeyBinding({ macos: 'command+shift+8', other: 'ctrl+shift+8' })})`}
+          onClick={() => editor.chain().focus().toggleBulletList().run()}
+          disabled={!editor.can().chain().focus().toggleBulletList().run()}
+        ></Item>
+        <Item
+          name="orderedList"
+          icon={<OrderedListOutlined />}
+          active={editor.isActive('orderedList')}
+          tooltip={`有序列表 (${getReadableKeyBinding({ macos: 'command+shift+7', other: 'ctrl+shift+7' })})`}
+          onClick={() => editor.chain().focus().toggleOrderedList().run()}
+          disabled={!editor.can().chain().focus().toggleOrderedList().run()}
         ></Item>
       </Group>
     </Toolbar>

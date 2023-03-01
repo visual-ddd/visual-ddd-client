@@ -5,6 +5,7 @@ import { Awareness } from 'y-protocols/awareness';
 import StarterKit from '@tiptap/starter-kit';
 import Collaboration from '@tiptap/extension-collaboration';
 import CollaborationCursor from '@tiptap/extension-collaboration-cursor';
+import TextAlign from '@tiptap/extension-text-align';
 import Underline from '@tiptap/extension-underline';
 import classNames from 'classnames';
 import { IUser } from '@/lib/core';
@@ -56,6 +57,10 @@ export const WYSIWYGEditor = (props: WYSIWYGEditorProps) => {
         document: doc,
         field,
       }),
+
+      TextAlign.configure({
+        types: ['heading', 'paragraph'],
+      }) as any,
 
       !!awareness &&
         !!user &&
