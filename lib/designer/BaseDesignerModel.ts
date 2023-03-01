@@ -38,6 +38,10 @@ export abstract class BaseDesignerModel<
 
   readonly awareness: DesignerAwareness<State>;
 
+  get rawAwareness() {
+    return this.awareness.awareness;
+  }
+
   /**
    * 当前激活的 Tab
    */

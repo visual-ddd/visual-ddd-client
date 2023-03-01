@@ -90,7 +90,15 @@ const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerPro
     {
       label: DomainDesignerTabsMap[DomainDesignerTabs.Product],
       key: DomainDesignerTabs.Product,
-      children: <ProductDesign doc={model.ydoc} field={YJS_FIELD_NAME.PRODUCT} readonly={model.readonly} />,
+      children: (
+        <ProductDesign
+          doc={model.ydoc}
+          field={YJS_FIELD_NAME.PRODUCT}
+          readonly={model.readonly}
+          awareness={model.rawAwareness}
+          user={description?.user}
+        />
+      ),
     },
     {
       label: DomainDesignerTabsMap[DomainDesignerTabs.Vision],
