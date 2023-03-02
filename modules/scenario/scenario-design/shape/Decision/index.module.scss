@@ -1,4 +1,4 @@
-$width: 60px;
+$width: 75px;
 
 .root {
   width: $width;
@@ -19,7 +19,4 @@ $width: 60px;
   text-align: center;
   transform: rotate(-45deg);
   color: var(--vd-color-gray-800);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }

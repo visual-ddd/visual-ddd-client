@@ -6,6 +6,9 @@ import { SelectNodePlease } from '../SelectNodePlease';
 import { EditorForm } from '../Form';
 import { getShape } from '../../Shape';
 
+import s from './index.module.scss';
+import { Button } from 'antd';
+
 /**
  * 属性编辑器
  */
@@ -26,10 +29,34 @@ export const EditorAttributes = observer(function EditorAttributes() {
   }
 
   const formModel = formStore.getFormModel(node)!;
+
+  // 已锁定
   const isLocked = viewStore.isFocusingNodeLocked;
+
+  // 是否被协作者锁定
+  const isLockedByCollaborator = isLocked && !node.isHierarchyLocked;
+
+  // 被父级节点锁定
+  const isLockedByHierarchy = node.isHierarchyLocked && !node.locked;
 
   return (
     <EditorForm node={node} readonly={model.readonly || isLocked}>
+      {!!(isLocked && !model.readonly) && (
+        <div className={s.lockInfo}>
+          {isLockedByCollaborator ? (
+            '其他协作者正在编辑中，暂时禁止编辑'
+          ) : isLockedByHierarchy ? (
+            '父节点已锁定，禁止编辑'
+          ) : (
+            <>
+              <div>节点已锁定</div>
+              <Button onClick={() => model.handleUnLockNode({ node })} disabled={false}>
+                解锁
+              </Button>
+            </>
+          )}
+        </div>
+      )}
       {createElement(config.attributeComponent, {
         model: model.editorModel,
         node,

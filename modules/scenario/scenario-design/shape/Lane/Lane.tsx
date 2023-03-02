@@ -173,7 +173,9 @@ export const Lane = observer(function Lane(props: LaneProps) {
         )}
       </aside>
       <main className={s.container}></main>
-      <div className={`${s.resizerHorizontal} ${s.resizerBottom}`} onMouseDown={laneDrag.handleStart}></div>
+      {!readonly && (
+        <div className={`${s.resizerHorizontal} ${s.resizerBottom}`} onMouseDown={laneDrag.handleStart}></div>
+      )}
     </section>
   );
 });

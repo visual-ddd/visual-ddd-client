@@ -1,4 +1,5 @@
-import { defineShape } from '@/lib/editor';
+import { defineShape, EdgeLabelComponentProps } from '@/lib/editor';
+import { observer } from 'mobx-react';
 
 import { createLabelEdge, LabelEdgeDSL, ScenarioObjectName } from '../../dsl';
 import { EdgeComponent } from '../NormalEdge';
@@ -12,11 +13,13 @@ defineShape({
   name: ScenarioObjectName.LabelEdge,
   title: '标签边',
   shapeType: 'edge',
-  edgeLabelComponent: ({ node, model }) => {
+  edgeLabelComponent: observer(({ node, model }: EdgeLabelComponentProps) => {
     const properties = node.properties as unknown as LabelEdgeDSL;
+    const isLocked = model.readonly || model.viewStore.isNodeLocked(node);
 
     return (
       <Label
+        disabled={isLocked}
         onChange={(value: string) => {
           model.commandHandler.updateNodeProperty({ node, path: 'label', value });
         }}
@@ -24,7 +27,7 @@ defineShape({
         {properties.label}
       </Label>
     );
-  },
+  }),
   initialProps: () => {
     return {
       zIndex: 1,

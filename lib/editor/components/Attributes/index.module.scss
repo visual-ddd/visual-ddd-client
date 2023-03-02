@@ -1,0 +1,18 @@
+.root {
+}
+
+.lockInfo {
+  display: flex;
+  flex-direction: column;
+  padding: var(--vd-spacing-sm);
+  margin: var(--vd-spacing-xs);
+  background-color: var(--vd-color-warning-100);
+  color: var(--vd-color-warning-900);
+  border-radius: 4px;
+  align-items: center;
+  font-weight: bold;
+
+  :global(.ant-btn) {
+    margin-top: var(--vd-spacing-xs);
+  }
+}

@@ -22,6 +22,7 @@ export interface LaneShapeProps {
 
 export const LaneShape = observer(function LaneShape(props: LaneShapeProps) {
   const { dsl, formModel, graph, node, editorModel } = props;
+  const readonly = editorModel.readonly;
   const lanesDrag = useLanesDrag({
     direction: 'vertical',
     /**
@@ -158,7 +159,7 @@ export const LaneShape = observer(function LaneShape(props: LaneShapeProps) {
       {dsl.panes.map((i, idx) => {
         return (
           <Lane
-            readonly={editorModel.readonly}
+            readonly={readonly}
             onSizeChange={handleLaneSizeChange}
             key={i.uuid}
             index={idx}
@@ -171,7 +172,9 @@ export const LaneShape = observer(function LaneShape(props: LaneShapeProps) {
           ></Lane>
         );
       })}
-      <div className={`${s.resizerVertical} ${s.resizerRight}`} onMouseDown={lanesDrag.handleStart}></div>
+      {!readonly && (
+        <div className={`${s.resizerVertical} ${s.resizerRight}`} onMouseDown={lanesDrag.handleStart}></div>
+      )}
     </div>
   );
 });

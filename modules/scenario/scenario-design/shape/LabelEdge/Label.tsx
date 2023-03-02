@@ -4,6 +4,7 @@ import s from './Label.module.scss';
 export interface LabelEdgeProps {
   children: string;
   onChange?: (content: string) => void;
+  disabled?: boolean;
 }
 
 export const Label = (props: LabelEdgeProps) => {
@@ -11,8 +12,13 @@ export const Label = (props: LabelEdgeProps) => {
   const instanceRef = useRef<HTMLDivElement>(null);
 
   const handleDoubleClick = () => {
+    if (props.disabled) {
+      return;
+    }
+
     setEditing(true);
   };
+
   const handleBlur = () => {
     setEditing(false);
     const content = instanceRef.current?.textContent;
