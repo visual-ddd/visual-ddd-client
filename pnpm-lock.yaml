@@ -5,6 +5,7 @@ specifiers:
   '@ant-design/pro-components': ^2.3.58
   '@antv/x6': ^2.5.1
   '@antv/x6-plugin-clipboard': ^2.1.4
+  '@antv/x6-plugin-export': ^2.1.5
   '@antv/x6-plugin-keyboard': ^2.2.0
   '@antv/x6-plugin-minimap': ^2.0.2
   '@antv/x6-plugin-scroller': ^2.0.8
@@ -99,6 +100,7 @@ dependencies:
   '@ant-design/pro-components': 2.3.58_3puf7nbiersam4wo7g43mvq6fy
   '@antv/x6': 2.5.1
   '@antv/x6-plugin-clipboard': 2.1.4_@antv+x6@2.5.1
+  '@antv/x6-plugin-export': 2.1.5_@antv+x6@2.5.1
   '@antv/x6-plugin-keyboard': 2.2.0_@antv+x6@2.5.1
   '@antv/x6-plugin-minimap': 2.0.2_@antv+x6@2.5.1
   '@antv/x6-plugin-scroller': 2.0.8_@antv+x6@2.5.1
@@ -571,6 +573,15 @@ packages:
   /@antv/x6-plugin-clipboard/2.1.4_@antv+x6@2.5.1:
     resolution:
       { integrity: sha512-iP3dA/Cl4Rf5sQuA8sOaja2nU+ziDhc78FCMJTatJGxWjKX7BdL67RZPWXuOSCUHwZd1TJJ7/wUgMR390Q2ZHg== }
+    peerDependencies:
+      '@antv/x6': ^2.x
+    dependencies:
+      '@antv/x6': 2.5.1
+    dev: false
+
+  /@antv/x6-plugin-export/2.1.5_@antv+x6@2.5.1:
+    resolution:
+      { integrity: sha512-VvwpaVnAEnqoOf6ePotDg3CJPO89pmRp/Nm9Q5qkADaJIsiLZPv3DMdh9ndA+f61WISxl8CYAi4c2pCvGAk0qg== }
     peerDependencies:
       '@antv/x6': ^2.x
     dependencies:

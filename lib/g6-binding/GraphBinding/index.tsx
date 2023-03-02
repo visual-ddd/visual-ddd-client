@@ -8,6 +8,7 @@ import { Transform } from '@antv/x6-plugin-transform';
 import { Snapline } from '@antv/x6-plugin-snapline';
 import { Scroller } from '@antv/x6-plugin-scroller';
 import { MiniMap } from '@antv/x6-plugin-minimap';
+import { Export } from '@antv/x6-plugin-export';
 import type { Options } from '@antv/x6/lib/graph/options';
 import { Noop, NoopArray } from '@wakeapp/utils';
 import { useDisposer } from '@wakeapp/hooks';
@@ -76,6 +77,13 @@ export interface GraphBindingProps {
    * @returns
    */
   onScale?: (evt: EventArgs['scale']) => void;
+
+  /**
+   * 画布右键菜单
+   * @param evt
+   * @returns
+   */
+  onBlank$Contextmenu?: (evt: EventArgs['blank:contextmenu']) => void;
 
   /**
    * 开启嵌入，在开始拖动节点时触发
@@ -195,6 +203,13 @@ export interface GraphBindingProps {
    * @returns
    */
   onCell$Change$ZIndex?: (evt: EventArgs['cell:change:zIndex']) => void;
+
+  /**
+   * 节点右键菜单
+   * @param evt
+   * @returns
+   */
+  onCell$Contextmenu?: (evt: EventArgs['cell:contextmenu']) => void;
 
   /**
    * visible 变动
@@ -524,6 +539,9 @@ export const GraphBinding = memo((props: GraphBindingProps) => {
           })
         );
       }
+
+      // 导出插件
+      graph.use(new Export());
     }
 
     // 通知就绪

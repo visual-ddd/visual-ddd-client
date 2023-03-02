@@ -1,6 +1,6 @@
 import { Graph, PointLike, Node, Cell, Edge } from '@antv/x6';
 import { Transform } from '@antv/x6-plugin-transform';
-import { booleanPredicate, debounce, Disposer } from '@wakeapp/utils';
+import { booleanPredicate, debounce, Disposer, NoopArray } from '@wakeapp/utils';
 import { message } from 'antd';
 import memoize from 'lodash/memoize';
 
@@ -13,6 +13,8 @@ import { NormalizedAutoResizeGroup, ShapeRegistry } from '../Shape';
 import { assertShapeInfo } from '../Shape';
 import { copy, paste } from './ClipboardUtils';
 import { CanvasKeyboardBinding } from './KeyboardBinding';
+import { ContextMenuController } from './ContextMenuController';
+import { IDisposable } from '@/lib/utils';
 
 const ResizingOptionsWithDefault: [keyof Transform.ResizingRaw, any][] = [
   ['minWidth', 0],
@@ -44,7 +46,7 @@ export interface CanvasModelOptions {
  * 这个模型是无状态的，核心状态保存在 EditorModel
  * 这里主要是为了几种处理画布(View)相关逻辑, 会耦合 UI
  */
-export class CanvasModel {
+export class CanvasModel implements IDisposable {
   private static indexInstanceByGraph = new WeakMap<Graph, CanvasModel>();
   static registerModel(graph: Graph, model: CanvasModel) {
     this.indexInstanceByGraph.set(graph, model);
@@ -68,6 +70,11 @@ export class CanvasModel {
    * 快捷键管理器
    */
   keyboardBinding: CanvasKeyboardBinding;
+
+  /**
+   * 右键菜单控制器
+   */
+  contextMenuController: ContextMenuController;
 
   /**
    * 编辑器模型
@@ -145,6 +152,12 @@ export class CanvasModel {
     const shapeRegistry = (this.shapeRegistry = new ShapeRegistry({ editorModel: inject.editorModel }));
     this.editorModel.scope.registerScopeMember('canvasModel', this);
     const readonly = this.readonly;
+    this.contextMenuController = new ContextMenuController({
+      canvasModel: this,
+      getContextMenuForTarget() {
+        return [];
+      },
+    });
 
     let resizing: Resizing = false;
 
@@ -435,7 +448,8 @@ export class CanvasModel {
       }),
       this.editorModel.event.on('CMD_FOCUS_NODE', params => {
         this.handleSelect({ cellIds: [params.node.id] });
-      })
+      }),
+      this.contextMenuController.dispose
     );
   }
 
@@ -463,6 +477,68 @@ export class CanvasModel {
   getCommandDescription = memoize((name: string) => {
     return this.keyboardBinding.getReadableKeyBinding(name);
   });
+
+  /**
+   * 是否支持复制
+   * 如果没有传递参数，则表示处理已选中元素
+   */
+  canCopy(): boolean;
+  canCopy(cell: Cell): boolean;
+  canCopy(cell: BaseNode): boolean;
+  canCopy(cell?: BaseNode | Cell): boolean {
+    const canCopyNode = (model: BaseNode): boolean => {
+      return this.shapeRegistry.isCopyable({ model });
+    };
+
+    if (cell == null) {
+      if (!this.editorViewStore.selectedNodes.length) {
+        return false;
+      }
+
+      return this.editorViewStore.selectedNodes.every(canCopyNode);
+    }
+
+    const model = cell instanceof BaseNode ? cell : this.shapeRegistry.getModelByCell(cell);
+
+    if (model == null) {
+      return false;
+    }
+
+    return canCopyNode(model);
+  }
+
+  /**
+   * 是否支持删除
+   * 如果没有传递参数，则表示处理已选中元素
+   */
+  canRemove(): boolean;
+  canRemove(cell: Cell): boolean;
+  canRemove(cell: BaseNode): boolean;
+  canRemove(cell?: BaseNode | Cell): boolean {
+    const canRemoveNode = (model: BaseNode): boolean => {
+      return !this.hasUnremovableNode(model);
+    };
+
+    if (this.readonly) {
+      return false;
+    }
+
+    if (cell == null) {
+      if (!this.editorViewStore.selectedNodes.length) {
+        return false;
+      }
+
+      return this.editorViewStore.selectedNodes.every(canRemoveNode);
+    }
+
+    const model = cell instanceof BaseNode ? cell : this.shapeRegistry.getModelByCell(cell);
+
+    if (model == null) {
+      return false;
+    }
+
+    return canRemoveNode(model);
+  }
 
   /**
    * 获取节点的关注状态
@@ -513,6 +589,27 @@ export class CanvasModel {
 
   handleMouseLeave = () => {
     this.graphHovering = true;
+  };
+
+  handleBlankContextMenu: GraphBindingProps['onBlank$Contextmenu'] = evt => {
+    const { e } = evt;
+    this.contextMenuController.trigger({ event: e as unknown as MouseEvent });
+  };
+
+  /**
+   * 节点右键菜单
+   * @param evt
+   */
+  handleCellContextMenu: GraphBindingProps['onCell$Contextmenu'] = evt => {
+    const { cell, e } = evt;
+
+    const model = this.shapeRegistry.getModelByCell(cell);
+
+    if (model == null) {
+      return;
+    }
+
+    this.contextMenuController.trigger({ event: e as unknown as MouseEvent, target: { cell, model } });
   };
 
   /**
@@ -863,11 +960,16 @@ export class CanvasModel {
     }
 
     const selected = graph.getSelectedCells();
+    this.handleCopyCells(selected);
+  };
+
+  handleCopyCells = (cells: Cell[]) => {
+    const graph = this.graph!;
     // 过滤可以拷贝的cell
-    const filteredSelected = selected.map(i => this.shapeRegistry.getModelByCell(i)).filter(booleanPredicate);
-    if (filteredSelected.length) {
+    const filteredCells = cells.map(i => this.shapeRegistry.getModelByCell(i)).filter(booleanPredicate);
+    if (filteredCells.length) {
       // X6 在这里已经处理了一些逻辑，必须选中父节点，递归包含子节点、包含子节点之间的连线、修改 id 等等
-      graph.copy(selected, { deep: true });
+      graph.copy(cells, { deep: true });
 
       // 放入剪切板
       copy(graph.getCellsInClipboard());
@@ -985,6 +1087,48 @@ export class CanvasModel {
   };
 
   /**
+   * 新增选择项
+   * @param params
+   */
+  handleAddSelect = (params: { cellIds: string[] }) => {
+    this.graph?.select(params.cellIds);
+  };
+
+  handleIncrementZIndex = (params: { cell: Cell; value?: number }) => {
+    const { cell, value = 1 } = params;
+
+    const incrementZIndex = (cell: Cell) => {
+      const current = cell.getZIndex() ?? 1;
+      const next = current + value;
+
+      // 不能小于1
+      if (next < 1) {
+        return;
+      }
+
+      cell.setZIndex(next);
+
+      const children = cell.getChildren();
+
+      if (children?.length) {
+        for (const child of children) {
+          incrementZIndex(child);
+        }
+      }
+    };
+
+    incrementZIndex(cell);
+  };
+
+  handleToFront = (params: { cell: Cell }) => {
+    params.cell.toFront({ deep: true });
+  };
+
+  handleToBack = (params: { cell: Cell }) => {
+    params.cell.toBack({ deep: true });
+  };
+
+  /**
    * 节点选择
    * @param params
    */
@@ -1003,6 +1147,22 @@ export class CanvasModel {
         this.graph?.centerCell(cells[0]);
       }
     }
+  };
+
+  /**
+   * 全选
+   */
+  handleSelectAll = () => {
+    const cells = this.graph?.getCells() ?? NoopArray;
+    this.graph?.select(cells);
+  };
+
+  /**
+   * 拷贝为图片
+   */
+  handleExportAsImage = () => {
+    // FIXME: 会出现样式错乱，后面使用其他方案
+    this.graph?.exportSVG(undefined, { copyStyles: true });
   };
 
   /**
@@ -1157,8 +1317,20 @@ export class CanvasModel {
     }
   }, 300);
 
+  /**
+   * 是否包含不能删除的节点
+   * @param node
+   * @returns
+   */
   protected hasUnremovableNode = (node: BaseNode): boolean => {
     if (!this.shapeRegistry.isRemovable({ model: node })) {
+      return true;
+    }
+
+    /**
+     * 节点锁定
+     */
+    if (this.editorViewStore.isNodeLocked(node)) {
       return true;
     }
 

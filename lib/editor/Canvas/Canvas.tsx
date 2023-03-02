@@ -9,6 +9,7 @@ import s from './Canvas.module.scss';
 import { Cells } from './Cells';
 import { useCanvasModel } from './CanvasModelContext';
 import { Awareness } from './Awareness';
+import { ContextMenu } from './ContextMenu';
 
 export interface CanvasProps extends GraphBindingProps {}
 
@@ -35,11 +36,13 @@ export const Canvas = memo((props: CanvasProps) => {
       onMouseEnter={canvasModel.handleMouseEnter}
       onMouseLeave={canvasModel.handleMouseLeave}
       onGraphReady={canvasModel.handleGraphReady}
+      onBlank$Contextmenu={canvasModel.handleBlankContextMenu}
       // 通用
       onCell$Change$ZIndex={canvasModel.handleZIndexChange}
       onCell$Change$Parent={canvasModel.handleParentChange}
       onCell$Change$Children={canvasModel.handleChildrenChange}
       onCell$Change$Visible={canvasModel.handleVisibleChange}
+      onCell$Contextmenu={canvasModel.handleCellContextMenu}
       // 节点
       onNode$Move={canvasModel.handleNodeMove}
       onNode$Change$Position={canvasModel.handleNodeChangePosition}
@@ -63,6 +66,7 @@ export const Canvas = memo((props: CanvasProps) => {
       <Cells />
       {/* 协作用户聚焦  */}
       <Awareness />
+      <ContextMenu />
       {/* 外部自定义渲染 */}
       {children}
     </GraphBinding>

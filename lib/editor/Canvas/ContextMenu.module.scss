@@ -1,0 +1,11 @@
+.root {
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.danger {
+  :global(.x6-menu-item-text) {
+    color: var(--vd-color-danger);
+  }
+}

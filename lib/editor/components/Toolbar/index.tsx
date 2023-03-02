@@ -121,7 +121,7 @@ export const EditorToolbar = observer(function EditorToolbar(props: EditorToolba
               tooltip={getDesc('copy').tooltip}
               onClick={getDesc('copy').handler}
               icon={<CopyOutlined />}
-              disabled={!editorViewStore.canCopy}
+              disabled={!model.canCopy()}
             />
             <Item
               name="paste"
@@ -134,7 +134,7 @@ export const EditorToolbar = observer(function EditorToolbar(props: EditorToolba
               tooltip={getDesc('delete').tooltip}
               onClick={getDesc('delete').handler}
               icon={<DeleteOutlined />}
-              disabled={!editorViewStore.canRemove}
+              disabled={!model.canRemove()}
             />
           </Group>
         </>

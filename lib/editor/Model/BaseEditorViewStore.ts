@@ -110,16 +110,6 @@ export class BaseEditorViewStore implements IDisposable {
     return this.datasource.canRedo;
   }
 
-  @derive
-  get canCopy() {
-    return !!this.selectedNodes.length;
-  }
-
-  @derive
-  get canRemove() {
-    return !!this.selectedNodes.length && this.selectedNodes.every(i => !this.isNodeFocusing(i));
-  }
-
   /**
    * 远程协作者当前聚焦的节点和信息
    */
@@ -195,11 +185,11 @@ export class BaseEditorViewStore implements IDisposable {
     this.viewState[key] = value;
   }
 
-  protected isNodeFocusing(node: BaseNode) {
+  isNodeFocusing(node: BaseNode) {
     return this.remoteFocusing.some(i => i.node.id === node.id);
   }
 
-  protected isNodeLocked(node: BaseNode) {
+  isNodeLocked(node: BaseNode) {
     const localState = this.awarenessRegistry.getState();
     return this.remoteFocusing.some(i => {
       const isSameNode = i.node.id === node.id;

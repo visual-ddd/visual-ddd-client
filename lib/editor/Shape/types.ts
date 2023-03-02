@@ -215,6 +215,11 @@ export interface ShapeConfiguration {
   removable?: boolean | ((context: { model: BaseNode; graph: Graph }) => boolean);
 
   /**
+   * 是否支持拷贝, 默认为 true
+   */
+  copyable?: boolean | ((context: { model: BaseNode; graph: Graph }) => boolean);
+
+  /**
    * 是否支持移动, 默认 true
    */
   movable?: boolean | ((context: { model: BaseNode; graph: Graph }) => boolean);

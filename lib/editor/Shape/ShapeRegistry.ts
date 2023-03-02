@@ -338,6 +338,21 @@ export class ShapeRegistry {
   };
 
   /**
+   * 是否支持拷贝, 默认 true
+   * @param context
+   * @returns
+   */
+  isCopyable = (context: { model: BaseNode }) => {
+    const conf = this.getConfigurationByModel(context.model);
+
+    if (typeof conf?.copyable === 'function') {
+      return conf.copyable({ graph: this.graph, model: context.model }) ?? true;
+    }
+
+    return conf?.copyable ?? true;
+  };
+
+  /**
    * 是否支持移动
    * @param context
    * @returns

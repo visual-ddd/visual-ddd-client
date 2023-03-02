@@ -32,7 +32,16 @@ defineShape({
   group: true,
   embeddable: true,
   droppable: true,
+
+  /**
+   * 不允许选择
+   */
   selectable: false,
+
+  /**
+   * 不允许复制
+   */
+  copyable: false,
 
   /**
    * 不允许删除
