@@ -56,7 +56,7 @@ export function withWakedataRequestSsr<
         const code = err.code;
         if (code === UNAUTH_CODE) {
           return {
-            redirect: { permanent: false, destination: `/login?from=${req.url}` },
+            redirect: { permanent: false, destination: `/login?from=${req.url}&flash=true` },
           };
         }
       }

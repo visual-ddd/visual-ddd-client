@@ -17,6 +17,7 @@ export function Login() {
   const [loading, setLoading] = useState(false);
   const cleanSWRCache = useCleanRequestCache();
   const from = router.query.from as string | undefined;
+  const showFlash = router.query.flash as string | undefined;
 
   // 登录
   const handleLogin = async (values: LoginPayload) => {
@@ -43,10 +44,15 @@ export function Login() {
   };
 
   useEffect(() => {
-    if (from) {
+    if (from && showFlash) {
       message.warning('会话失效，请重新登录');
+
+      // 清理掉 flash 标记
+      const url = new URL(router.asPath, globalThis.location.href);
+      url.searchParams.delete('flash');
+      router.replace(url, undefined, { shallow: true });
     }
-  }, [from]);
+  }, [from, showFlash, router]);
 
   return (
     <Layout title="登录">

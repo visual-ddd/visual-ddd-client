@@ -10,6 +10,7 @@ export function gotoLogin() {
   console.debug('跳转到登录页面');
   const url = new URL('/login', globalThis.location.href);
   url.searchParams.append('from', router.route);
+  url.searchParams.append('flash', 'true');
 
   router.push(url);
 }
