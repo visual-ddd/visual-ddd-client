@@ -170,10 +170,10 @@ export class ContextMenuController implements IDisposable {
 
     makeObservable(this);
 
-    document.addEventListener('click', this.hideIfNeed);
+    document.addEventListener('click', this.hideIfNeed, { capture: true });
 
     this.disposer.push(() => {
-      document.removeEventListener('click', this.hideIfNeed);
+      document.removeEventListener('click', this.hideIfNeed, { capture: true });
     });
   }
 
@@ -255,8 +255,10 @@ export class ContextMenuController implements IDisposable {
   }
 
   protected hideIfNeed = () => {
-    if (this.menu) {
-      this.hideMenu();
-    }
+    setTimeout(() => {
+      if (this.menu) {
+        this.hideMenu();
+      }
+    }, 0);
   };
 }

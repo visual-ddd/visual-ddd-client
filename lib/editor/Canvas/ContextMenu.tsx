@@ -1,13 +1,32 @@
 import { observer } from 'mobx-react';
 import { Menu } from '@antv/x6-react-components';
+import classNames from 'classnames';
+import { useEffect, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 
 import { useCanvasModel } from './CanvasModelContext';
 import s from './ContextMenu.module.scss';
 import { EditorContextMenuItem, isDivider } from './ContextMenuController';
-import classNames from 'classnames';
+import { NoopArray } from '@wakeapp/utils';
 
+// TODO: 溢出空间计算
 export const ContextMenu = observer(function ContextMenu() {
   const { model } = useCanvasModel();
+
+  const root = useMemo(() => {
+    const el = document.createElement('div');
+    el.className = 'vd-context-menu';
+    return el;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, NoopArray);
+
+  useEffect(() => {
+    document.body.appendChild(root);
+
+    return () => {
+      root.remove();
+    };
+  }, [root]);
 
   const menu = model.contextMenuController.menu;
   const visible = model.contextMenuController.visible;
@@ -24,7 +43,7 @@ export const ContextMenu = observer(function ContextMenu() {
     return null;
   }
 
-  return (
+  return createPortal(
     <div
       className={s.root}
       style={{
@@ -50,6 +69,7 @@ export const ContextMenu = observer(function ContextMenu() {
           );
         })}
       </Menu>
-    </div>
+    </div>,
+    root
   );
 });

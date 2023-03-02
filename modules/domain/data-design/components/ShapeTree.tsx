@@ -9,11 +9,11 @@ import { NoopArray } from '@wakeapp/utils';
 
 export interface ShapeTreeProps {}
 
-const renderTitle = (item: DataObject) => {
+const renderTitle = (item: DataObject, handleContextMenu: (evt: React.MouseEvent<HTMLDivElement>) => void) => {
   return (
     <Observer>
       {() => (
-        <div className={classNames('vd-shape-tree-item', s.item)}>
+        <div className={classNames('vd-shape-tree-item', s.item)} onContextMenu={handleContextMenu}>
           <div className={classNames('vd-shape-tree-item__body', s.itemBody)}>
             <span>{item.readableTitle}</span>
           </div>
@@ -27,23 +27,31 @@ export const ShapeTree = observer(function ShapeTree(props: ShapeTreeProps) {
   const { model } = useEditorModel<DataObjectEditorModel>();
   const { model: canvasModel } = useCanvasModel();
 
-  const store = useLocalObservable(() => ({
-    get treeData(): TreeDataNode[] {
-      return model.dataObjectStore.objectsInArray.map(i => {
-        return {
-          key: i.id,
-          title: () => renderTitle(i),
-        };
-      });
-    },
-    get selected(): string[] {
-      const focusing = model.viewStore.focusingNode;
-      return focusing ? [focusing.id] : NoopArray;
-    },
-    handleSelect(selected: string[]) {
-      canvasModel.handleSelect({ cellIds: selected });
-    },
-  }));
+  const store = useLocalObservable(() => {
+    const handleContextMenu = (item: DataObject) => (e: React.MouseEvent<HTMLDivElement>) => {
+      e.stopPropagation();
+      e.preventDefault();
+      canvasModel.handleTriggerContextMenu({ node: item.node, event: e.nativeEvent });
+    };
+
+    return {
+      get treeData(): TreeDataNode[] {
+        return model.dataObjectStore.objectsInArray.map(i => {
+          return {
+            key: i.id,
+            title: () => renderTitle(i, handleContextMenu(i)),
+          };
+        });
+      },
+      get selected(): string[] {
+        const focusing = model.viewStore.focusingNode;
+        return focusing ? [focusing.id] : NoopArray;
+      },
+      handleSelect(selected: string[]) {
+        canvasModel.handleSelect({ cellIds: selected });
+      },
+    };
+  });
 
   return (
     <EditorPanel title="组件树" className={classNames('vd-shape-tree', s.root)}>

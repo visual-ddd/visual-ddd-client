@@ -613,6 +613,21 @@ export class CanvasModel implements IDisposable {
   };
 
   /**
+   * 触发右键菜单
+   * @param params
+   */
+  handleTriggerContextMenu = (params: { node: BaseNode | Cell; event: MouseEvent }) => {
+    const { node, event } = params;
+    const cell: Cell = node instanceof BaseNode ? this.graph!.getCellById(node.id)! : node;
+    const model = node instanceof BaseNode ? node : this.shapeRegistry.getModelByCell(cell)!;
+
+    this.contextMenuController.trigger({
+      event: event,
+      target: { cell, model },
+    });
+  };
+
+  /**
    * 放大
    */
   handleZoomIn = () => {

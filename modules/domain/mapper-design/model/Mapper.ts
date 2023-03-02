@@ -11,7 +11,8 @@ import { IFieldMapper } from './IFieldMapper';
 import { MapperStore } from './MapperStore';
 
 export class Mapper {
-  private node: BaseNode;
+  readonly node: BaseNode;
+
   private mapperStore: MapperStore;
   private commandHandler: BaseEditorCommandHandler;
 
