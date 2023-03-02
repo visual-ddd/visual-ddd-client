@@ -33,6 +33,7 @@ specifiers:
   '@types/react': 18.0.28
   '@types/react-color': ^3.0.6
   '@types/react-dom': 18.0.11
+  '@types/semver': ^7.3.13
   '@types/uuid': ^9.0.1
   '@wakeadmin/docker-build': ^0.1.9
   '@wakeapp/framework-core': ^1.0.5
@@ -84,6 +85,7 @@ specifiers:
   react-sortable-hoc: ^2.0.0
   reflect-metadata: ^0.1.13
   sass: ^1.58.3
+  semver: ^7.3.8
   sharp: ^0.31.3
   swr: ^2.0.4
   typescript: 4.9.5
@@ -157,6 +159,7 @@ dependencies:
   react-is: 18.2.0
   react-sortable-hoc: 2.0.0_biqbaboplfbrettd7655fr4n2y
   reflect-metadata: 0.1.13
+  semver: 7.3.8
   sharp: 0.31.3
   swr: 2.0.4_react@18.2.0
   uuid: 9.0.0
@@ -179,6 +182,7 @@ devDependencies:
   '@types/react': 18.0.28
   '@types/react-color': 3.0.6
   '@types/react-dom': 18.0.11
+  '@types/semver': 7.3.13
   '@types/uuid': 9.0.1
   '@wakeadmin/docker-build': 0.1.9
   eslint: 8.35.0
@@ -2451,6 +2455,11 @@ packages:
   /@types/scheduler/0.16.2:
     resolution:
       { integrity: sha512-hppQEBDmlwhFAXKJX2KnWLYu5yMfi91yazPb2l+lbJiwW+wdo1gNeRA+3RgNSO39WYX2euey41KEwnqesU2Jew== }
+    dev: true
+
+  /@types/semver/7.3.13:
+    resolution:
+      { integrity: sha512-21cFJr9z3g5dW8B0CVI9g2O9beqaThGQ6ZFBqHfwhzLDKUxaqTIy3vnfah/UPkfOiF2pLq+tGz+W8RyCskuslw== }
     dev: true
 
   /@types/serve-static/1.15.1:

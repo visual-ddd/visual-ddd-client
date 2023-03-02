@@ -8,6 +8,7 @@ import { useRouter } from 'next/router';
 import { AppCreatePayload } from '../types';
 import { useTeamLayoutModel } from '../TeamLayout';
 import { useLazyFalsy } from '@/lib/hooks';
+import { isValidVersion } from '@/lib/components/validator';
 
 export interface CreateAppRef {
   open(): void;
@@ -61,7 +62,7 @@ export const CreateApp = forwardRef<CreateAppRef, CreateAppProps>((props, ref) =
       onOpenChange={setVisible}
       title="新建应用"
       layout="horizontal"
-      labelCol={{ span: 5 }}
+      labelCol={{ span: 6 }}
       width="500px"
     >
       <ProFormText
@@ -77,13 +78,16 @@ export const CreateApp = forwardRef<CreateAppRef, CreateAppProps>((props, ref) =
         name="startVersion"
         label="起始版本号"
         placeholder="major.minor.patch"
-        rules={[
-          { required: true, message: '请输入版本号' },
-          {
-            pattern: /^\d+\.\d+\.\d+$/,
-            message: '版本号格式不正确，应为 major.minor.patch',
-          },
-        ]}
+        tooltip={
+          <span>
+            版本号需要遵循
+            <a href="https://semver.org/lang/zh-CN/" target="_blank" className="u-link">
+              语义化版本规范
+            </a>
+            , 格式如 <code>MAJOR.MINOR.PATCH</code>
+          </span>
+        }
+        rules={[{ required: true, message: '请输入版本号' }, isValidVersion]}
       ></ProFormText>
       <ProFormText
         name="packageName"

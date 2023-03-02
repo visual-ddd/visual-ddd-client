@@ -3,6 +3,8 @@ import { ConfigProvider } from 'antd';
 import { configure } from 'mobx';
 import { NextPage } from 'next';
 import type { ReactElement, ReactNode } from 'react';
+import { SWRConfig } from 'swr';
+import Head from 'next/head';
 // 由于 antd 组件的默认文案是英文，所以需要修改为中文
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
@@ -11,8 +13,7 @@ import 'antd/dist/reset.css';
 
 import '../styles/theme.css';
 import '../styles/globals.css';
-import { SWRConfig } from 'swr';
-import Head from 'next/head';
+import '../styles/override.css';
 
 configure({
   enforceActions: 'always',

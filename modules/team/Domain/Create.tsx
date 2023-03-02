@@ -8,6 +8,7 @@ import { useRouter } from 'next/router';
 import { DomainCreatePayload } from '../types';
 import { useTeamLayoutModel } from '../TeamLayout';
 import { useLazyFalsy } from '@/lib/hooks';
+import { isValidVersion } from '@/lib/components/validator';
 
 export interface CreateDomainRef {
   open(): void;
@@ -61,7 +62,7 @@ export const CreateDomain = forwardRef<CreateDomainRef, CreateDomainProps>((prop
       onOpenChange={setVisible}
       title="新建业务域"
       layout="horizontal"
-      labelCol={{ span: 5 }}
+      labelCol={{ span: 6 }}
       width="500px"
     >
       <ProFormText
@@ -77,13 +78,16 @@ export const CreateDomain = forwardRef<CreateDomainRef, CreateDomainProps>((prop
         name="startVersion"
         label="起始版本号"
         placeholder="major.minor.patch"
-        rules={[
-          { required: true, message: '请输入版本号' },
-          {
-            pattern: /^\d+\.\d+\.\d+$/,
-            message: '版本号格式不正确，应为 major.minor.patch',
-          },
-        ]}
+        tooltip={
+          <span>
+            版本号需要遵循
+            <a href="https://semver.org/lang/zh-CN/" target="_blank">
+              语义化版本规范
+            </a>
+            , 格式如 <code>MAJOR.MINOR.PATCH</code>
+          </span>
+        }
+        rules={[{ required: true, message: '请输入版本号' }, isValidVersion]}
       ></ProFormText>
       <ProFormTextArea name="description" label="描述" placeholder="业务域描述"></ProFormTextArea>
     </ModalForm>

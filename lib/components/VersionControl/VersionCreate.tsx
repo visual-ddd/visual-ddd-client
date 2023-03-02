@@ -1,8 +1,10 @@
 import { useLazyFalsy } from '@/lib/hooks';
+import { ignoreFalse } from '@/lib/utils';
 import { ModalForm, ProFormText, ProFormTextArea } from '@ant-design/pro-components';
-import { Form, message } from 'antd';
-import Input from 'antd/es/input/Input';
+import { Form, message, Input } from 'antd';
 import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
+import { isGreaterThanVersion, isValidVersion } from '@/lib/components/validator';
+
 import { IVersion, VersionCreatePayload } from './types';
 
 export interface VersionCreateProps {
@@ -53,7 +55,7 @@ export const VersionCreate = forwardRef<VersionCreateRef, VersionCreateProps>((p
       open={visible}
       onOpenChange={setVisible}
       layout="horizontal"
-      labelCol={{ span: 5 }}
+      labelCol={{ span: 6 }}
       width="380px"
       onFinish={handleFinish}
     >
@@ -65,13 +67,20 @@ export const VersionCreate = forwardRef<VersionCreateRef, VersionCreateProps>((p
       <ProFormText
         name="currentVersion"
         label="新版本"
+        tooltip={
+          <span>
+            版本号需要遵循
+            <a href="https://semver.org/lang/zh-CN/" target="_blank">
+              语义化版本规范
+            </a>
+            , 格式如 <code>MAJOR.MINOR.PATCH</code>
+          </span>
+        }
         rules={[
           { required: true, message: '请输入版本号' },
-          {
-            pattern: /^\d+\.\d+\.\d+$/,
-            message: '格式不正确，应为 major.minor.patch',
-          },
-        ]}
+          isValidVersion,
+          !!startVersion && isGreaterThanVersion(startVersion.currentVersion),
+        ].filter(ignoreFalse)}
       ></ProFormText>
       <ProFormTextArea name="description" label="描述" placeholder="描述"></ProFormTextArea>
     </ModalForm>

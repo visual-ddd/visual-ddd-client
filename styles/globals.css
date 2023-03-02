@@ -80,7 +80,7 @@ a {
 }
 
 .u-link {
-  color: var(--vd-color-link);
+  color: var(--vd-color-link) !important;
   cursor: pointer;
 }
 
