@@ -53,6 +53,24 @@ export class BaseNode {
   readonly properties: BaseNodeProperties;
 
   /**
+   * 是否锁定
+   */
+  @observable
+  locked: boolean = false;
+
+  /**
+   * 层次锁定，即父节点锁定了，下级节点也会被锁定
+   */
+  @derive
+  get isHierarchyLocked() {
+    if (this.locked) {
+      return true;
+    }
+
+    return !!this.parent?.locked;
+  }
+
+  /**
    * 节点深度
    */
   @derive
@@ -80,6 +98,23 @@ export class BaseNode {
     };
 
     makeObservable(this);
+  }
+
+  lock() {
+    if (!this.locked) {
+      this.locked = true;
+      return true;
+    }
+
+    return false;
+  }
+
+  unlock() {
+    if (this.locked) {
+      this.locked = false;
+      return true;
+    }
+    return false;
   }
 
   /**

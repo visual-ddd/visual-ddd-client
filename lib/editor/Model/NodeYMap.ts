@@ -23,6 +23,9 @@ export class NodeYMap {
     map.set('id', node.id);
     map.set('parent', node.parent);
 
+    // 锁定状态
+    map.set('locked', node.locked);
+
     const children = new YMap<never>(node.children.map(c => [c, 1]));
     map.set('children', children);
 
@@ -59,6 +62,14 @@ export class NodeYMap {
     return this.map.get('properties');
   }
 
+  get locked(): boolean | undefined {
+    return this.map.get('locked');
+  }
+
+  set locked(value: boolean | undefined) {
+    this.map.set('locked', value);
+  }
+
   addChild(child: string) {
     if (!this.children.has(child)) {
       this.children.set(child, 1 as never);
@@ -87,6 +98,7 @@ export class NodeYMap {
     return {
       id: this.id,
       parent: this.parent,
+      locked: this.locked,
       children: Array.from(this.children.keys()),
       properties: fromPairs(Array.from(this.properties.entries())) as BaseNodeProperties,
     };

@@ -479,6 +479,21 @@ export class CanvasModel implements IDisposable {
   });
 
   /**
+   * 是否支持选中
+   * @param node
+   * @returns
+   */
+  canSelect(node: Cell | BaseNode): boolean {
+    const cell = node instanceof BaseNode ? this.graph?.getCellById(node.id) : node;
+
+    if (!cell) {
+      return false;
+    }
+
+    return this.shapeRegistry.isSelectable({ cell });
+  }
+
+  /**
    * 是否支持复制
    * 如果没有传递参数，则表示处理已选中元素
    */
@@ -935,6 +950,22 @@ export class CanvasModel implements IDisposable {
     const model = this.shapeRegistry.getModelByCell(edge);
     if (model) {
       this.editorCommandHandler.removeNode({ node: model });
+    }
+  };
+
+  handleLockNode = (params: { node: BaseNode }) => {
+    this.editorCommandHandler.lock({ node: params.node });
+  };
+
+  handleUnLockNode = (params: { node: BaseNode }) => {
+    this.editorCommandHandler.unlock({ node: params.node });
+  };
+
+  handleToggleLock = (params: { node: BaseNode }) => {
+    if (params.node.locked) {
+      this.handleUnLockNode(params);
+    } else {
+      this.handleLockNode(params);
     }
   };
 

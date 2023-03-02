@@ -101,6 +101,9 @@ const DEFAULT_CELL_CONTEXT_MENU: EditorContextMenu = [
   {
     key: 'select',
     label: '选中',
+    visible: ({ canvasModel, target }) => {
+      return canvasModel.canSelect(target!.cell);
+    },
     handler: ({ canvasModel, target }) => {
       return canvasModel.handleAddSelect({ cellIds: [target!.cell.id] });
     },
@@ -131,6 +134,22 @@ const DEFAULT_CELL_CONTEXT_MENU: EditorContextMenu = [
     label: '置于底层',
     handler: ({ canvasModel, target }) => {
       canvasModel.handleToBack({ cell: target!.cell });
+    },
+  },
+  {
+    key: 'lock',
+    label: ({ target }) => {
+      if (target!.model.locked) {
+        return '解锁';
+      } else {
+        return '锁定';
+      }
+    },
+    visible: ({ canvasModel }) => {
+      return !canvasModel.readonly;
+    },
+    handler: ({ canvasModel, target }) => {
+      return canvasModel.handleToggleLock({ node: target!.model });
     },
   },
   { type: 'divider' },

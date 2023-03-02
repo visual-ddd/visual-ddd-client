@@ -29,6 +29,11 @@ export interface NodePO {
   children: string[];
 
   /**
+   * 是否锁定
+   */
+  locked?: boolean;
+
+  /**
    * 属性
    */
   properties: BaseNodeProperties;

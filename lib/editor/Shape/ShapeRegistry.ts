@@ -380,7 +380,7 @@ export class ShapeRegistry {
    * @param context
    * @returns
    */
-  isSelectable(context: { cell: Cell; graph: Graph }): boolean {
+  isSelectable(context: { cell: Cell; graph?: Graph }): boolean {
     const { cell, graph } = context;
     this.bindGraphIfNeed(graph);
 
@@ -556,7 +556,11 @@ export class ShapeRegistry {
     return false;
   }
 
-  private bindGraphIfNeed(graph: Graph) {
+  private bindGraphIfNeed(graph?: Graph) {
+    if (graph == null) {
+      return;
+    }
+
     if (this._graph == null || this._graph !== graph) {
       this._graph = graph;
     }

@@ -45,6 +45,32 @@ export class BaseEditorStore {
     makeAutoBindThis(this);
   }
 
+  /**
+   * 锁定
+   * @param params
+   */
+  @mutation('LOCK')
+  lock(params: { node: BaseNode }) {
+    const { node } = params;
+
+    if (node.lock()) {
+      this.event.emit('NODE_LOCKED', { node });
+    }
+  }
+
+  /**
+   * 解锁
+   * @param params
+   */
+  @mutation('UNLOCK')
+  unlock(params: { node: BaseNode }) {
+    const { node } = params;
+
+    if (node.unlock()) {
+      this.event.emit('NODE_UNLOCKED', { node });
+    }
+  }
+
   @mutation('APPEND_CHILD')
   appendChild(params: { child: BaseNode; parent?: BaseNode }) {
     const { child, parent } = params;
@@ -71,7 +97,7 @@ export class BaseEditorStore {
   }
 
   @mutation('CREATE_NODE')
-  createNode(params: { name: string; type: ShapeType; id?: string; properties: Properties }) {
+  createNode(params: { name: string; type: ShapeType; id?: string; properties: Properties; locked?: boolean }) {
     // 忽略根节点, 根节点默认创建
     if (params.id === ROOT_ID && this.root) {
       return this.root;
@@ -80,6 +106,11 @@ export class BaseEditorStore {
     const node = this.nodeFactory(params.name, params.id, params.type);
 
     Object.assign(node.properties, params.properties);
+
+    if (params.locked) {
+      node.lock();
+    }
+
     this.event.emit('NODE_CREATED', { node });
 
     return node;

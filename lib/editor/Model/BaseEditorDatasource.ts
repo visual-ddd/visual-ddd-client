@@ -15,7 +15,6 @@ import { BaseEditorIndex } from './BaseEditorIndex';
 
 /**
  * yjs 数据库
- * TODO: 初始化
  * TODO: 离线编辑
  */
 export class BaseEditorDatasource {
@@ -183,6 +182,30 @@ export class BaseEditorDatasource {
     });
   }
 
+  @push('NODE_LOCKED')
+  protected lockNode(params: { node: BaseNode }) {
+    this.doUpdate(() => {
+      const { node } = params;
+
+      const nodeMap = NodeYMap.fromYMap(this.datasource.get(node.id));
+      if (nodeMap) {
+        nodeMap.locked = true;
+      }
+    });
+  }
+
+  @push('NODE_UNLOCKED')
+  protected unlockNode(params: { node: BaseNode }) {
+    this.doUpdate(() => {
+      const { node } = params;
+
+      const nodeMap = NodeYMap.fromYMap(this.datasource.get(node.id));
+      if (nodeMap) {
+        nodeMap.locked = false;
+      }
+    });
+  }
+
   @pull('ADD_NODE')
   protected handleAddNode(params: { node: NodePO }) {
     const { node } = params;
@@ -191,6 +214,7 @@ export class BaseEditorDatasource {
       name: node.properties.__node_name__,
       type: node.properties.__node_type__,
       properties: node.properties,
+      locked: node.locked,
     });
   }
 
@@ -258,6 +282,24 @@ export class BaseEditorDatasource {
     }
   }
 
+  @pull('LOCK_NODE')
+  protected handleLockNode(param: { node: NodePO }) {
+    const { node } = param;
+    const model = this.index.getNodeById(node.id);
+    if (model) {
+      this.store.lock({ node: model });
+    }
+  }
+
+  @pull('UNLOCK_NODE')
+  protected handleUnlockNode(param: { node: NodePO }) {
+    const { node } = param;
+    const model = this.index.getNodeById(node.id);
+    if (model) {
+      this.store.unlock({ node: model });
+    }
+  }
+
   /**
    * 创建根节点
    * @returns
@@ -281,6 +323,8 @@ export class BaseEditorDatasource {
     this.event.on('NODE_REMOVE_CHILD', this.removeChild);
     this.event.on('NODE_UPDATE_PROPERTY', this.updateNodeProperty);
     this.event.on('NODE_DELETE_PROPERTY', this.deleteNodeProperty);
+    this.event.on('NODE_LOCKED', this.lockNode);
+    this.event.on('NODE_UNLOCKED', this.unlockNode);
   }
 
   private watchUndoManager() {
@@ -349,20 +393,34 @@ export class BaseEditorDatasource {
             }
           }
         } else if (this.isNodeMap(target)) {
-          const nodePo = NodeYMap.fromYMap(target);
+          const nodeYMap = NodeYMap.fromYMap(target);
+          if (nodeYMap == null) {
+            console.warn(`nodeYMap is null`);
+            continue;
+          }
+
           // 节点内容变动，这里只可能是 parent 变动，这里也做处理，在 children 那里也会处理, 需要进行去重
           // 某些比较极端的场景 children 变更可能不会触发
           for (const [key] of evt.keys) {
             switch (key) {
               case 'parent': {
-                if (nodePo?.parent) {
-                  this.postPullQueue.set(`ADD_CHILD:${nodePo.parent},${nodePo.id}`, () => {
+                if (nodeYMap.parent) {
+                  this.postPullQueue.set(`ADD_CHILD:${nodeYMap.parent},${nodeYMap.id}`, () => {
                     this.handleAddChild({
-                      parentId: nodePo.parent!,
-                      childId: nodePo.id,
+                      parentId: nodeYMap.parent!,
+                      childId: nodeYMap.id,
                     });
                   });
                 }
+                break;
+              }
+              case 'locked': {
+                if (nodeYMap.locked) {
+                  this.handleLockNode({ node: nodeYMap.toNodePO() });
+                } else {
+                  this.handleUnlockNode({ node: nodeYMap.toNodePO() });
+                }
+
                 break;
               }
             }

@@ -47,6 +47,16 @@ export class BaseEditorCommandHandler {
     this.datasource.redo();
   }
 
+  @command('LOCK')
+  lock(params: PickParams<BaseEditorStore['lock']>) {
+    this.store.lock(params);
+  }
+
+  @command('UNLOCK')
+  unlock(params: PickParams<BaseEditorStore['unlock']>) {
+    this.store.unlock(params);
+  }
+
   @command('SET_SELECTED')
   setSelected(params: PickParams<BaseEditorViewStore['setSelected']>) {
     this.viewStore.setSelected(params);
