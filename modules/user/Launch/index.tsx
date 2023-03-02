@@ -4,55 +4,18 @@ import classNames from 'classnames';
 import { VDSessionEntry, VDSessionState } from '@/modules/session/server';
 import { request } from '@/modules/backend-client';
 import { Alert, Button, Space } from 'antd';
-import { useMemo } from 'react';
-import { NoopArray } from '@wakeapp/utils';
+import { useSession } from '@/modules/session';
 
 import s from './index.module.scss';
 import { Layout } from '../Login/Layout';
 import { SystemIcon } from './SystemIcon';
 import { OrganizationIcon } from './OrganizationIcon';
 import { TeamIcon } from './TeamIcon';
-import { useSession } from '@/modules/session';
+import { LaunchInfo } from './types';
+import { createRedirectUrl } from './utils';
 
-interface TeamDTO {
-  id: number;
-  createTime: string;
-  updateTime: string;
-  createBy: string;
-  updateBy: string;
-  organizationId: number;
-  name: string;
-  description: string;
-  teamManagerId: number;
-}
-
-interface TeamDTOList {
-  teamDTO: TeamDTO;
-  isTeamAdmin: boolean;
-}
-
-interface OrganizationDTO {
-  id: number;
-  createTime: string;
-  updateTime: string;
-  createBy: string;
-  updateBy: string;
-  organizationManagerId: number;
-  name: string;
-  description: string;
-}
-
-interface AccountOrganizationInfoList {
-  organizationDTO: OrganizationDTO;
-  isOrganizationAdmin: boolean;
-}
-
-export interface LaunchInfo {
-  id: number;
-  isSysAdmin: boolean;
-  teamDTOList: TeamDTOList[];
-  accountOrganizationInfoList: AccountOrganizationInfoList[];
-}
+export * from './types';
+export * from './utils';
 
 export interface LaunchProps {
   data: LaunchInfo;
@@ -65,9 +28,7 @@ export interface LaunchProps {
 export function Launch({ data }: LaunchProps) {
   const router = useRouter();
   const session = useSession();
-  const organizations = useMemo(() => {
-    return (data.accountOrganizationInfoList ?? NoopArray).filter(item => item.isOrganizationAdmin);
-  }, [data.accountOrganizationInfoList]);
+  const organizations = data.accountOrganizationInfoList;
   const isEmpty = !data.isSysAdmin && !organizations.length && !data.teamDTOList.length;
 
   const handleRefresh = () => {
@@ -84,18 +45,8 @@ export function Launch({ data }: LaunchProps) {
     await request.requestByPost('/api/update-entry', params);
 
     session.reload();
-
-    switch (params.entry) {
-      case VDSessionEntry.System:
-        router.push(`/system`);
-        break;
-      case VDSessionEntry.Organization:
-        router.push(`/organization/${params.entryId}`);
-        break;
-      case VDSessionEntry.Team:
-        router.push(`/team/${params.entryId}`);
-        break;
-    }
+    const url = createRedirectUrl(params);
+    router.push(url);
   };
 
   return (
@@ -136,7 +87,7 @@ export function Launch({ data }: LaunchProps) {
             </div>
           )}
 
-          {!!organizations.length && (
+          {!!organizations?.length && (
             <>
               <div className={s.head}>
                 <span className={s.logo}>
