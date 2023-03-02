@@ -159,6 +159,7 @@ export class CanvasModel implements IDisposable {
       },
     });
 
+    const self = this;
     let resizing: Resizing = false;
 
     // 尺寸变换配置
@@ -292,7 +293,7 @@ export class CanvasModel implements IDisposable {
         ? false
         : {
             nodeMovable(view) {
-              return shapeRegistry.isMovable({ cell: view.cell, graph: this });
+              return self.canMove(view.cell);
             },
             edgeMovable: true,
             // TODO: 暂时不支持标签移动
@@ -520,6 +521,26 @@ export class CanvasModel implements IDisposable {
     }
 
     return canCopyNode(model);
+  }
+
+  /**
+   * 是否支持移动
+   * @param cell
+   */
+  canMove(node: Cell | BaseNode) {
+    const model = node instanceof BaseNode ? node : this.shapeRegistry.getModelByCell(node);
+
+    if (model && model.isHierarchyLocked) {
+      return false;
+    }
+
+    const cell = node instanceof BaseNode ? this.graph?.getCellById(node.id) : node;
+
+    if (cell) {
+      return this.shapeRegistry.isMovable({ cell });
+    }
+
+    return false;
   }
 
   /**

@@ -163,6 +163,7 @@ export class ShapeRegistry {
     }
 
     const model = this.getModelByCell(cell);
+
     const conf = this.getConfigurationByCell(cell);
 
     if (conf == null) {
@@ -357,7 +358,7 @@ export class ShapeRegistry {
    * @param context
    * @returns
    */
-  isMovable = (context: { cell: Cell; graph: Graph }): boolean => {
+  isMovable = (context: { cell: Cell; graph?: Graph }): boolean => {
     const { cell, graph } = context;
     this.bindGraphIfNeed(graph);
 
@@ -366,7 +367,7 @@ export class ShapeRegistry {
 
     if (conf?.movable != null) {
       if (typeof conf.movable === 'function') {
-        return conf.movable({ model, graph });
+        return conf.movable({ model, graph: this.graph });
       }
 
       return conf.movable ?? true;

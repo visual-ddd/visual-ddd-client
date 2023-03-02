@@ -190,6 +190,10 @@ export class BaseEditorViewStore implements IDisposable {
   }
 
   isNodeLocked(node: BaseNode) {
+    if (node.isHierarchyLocked) {
+      return true;
+    }
+
     const localState = this.awarenessRegistry.getState();
     return this.remoteFocusing.some(i => {
       const isSameNode = i.node.id === node.id;
