@@ -6,12 +6,15 @@ import { ObjectNameInput } from '@/modules/domain/domain-design/dsl/components/O
 import { TitleInput } from '@/modules/domain/domain-design/dsl/components/TitleInput';
 import { NameTooltip, UntitledInUpperCamelCase } from '@/modules/domain/domain-design/dsl/constants';
 import { NameInput } from '@/modules/domain/domain-design/dsl';
+import { useDynamicSlot } from '@/lib/components/DynamicSlot';
 import { PropertiesEditor } from './PropertiesEditor';
 import { IndexesEditor } from './IndexesEditor';
 
 const DEFAULT_ACTIVE = ['base', 'properties', 'indexes'];
 
 export const DataObjectEditor = () => {
+  const propertiesSlot = useDynamicSlot();
+
   return (
     <EditorFormCollapse defaultActiveKey={DEFAULT_ACTIVE}>
       <EditorFormCollapsePanel header="基础信息" key="base">
@@ -60,8 +63,8 @@ export const DataObjectEditor = () => {
           }}
         </EditorFormConsumer>
       </EditorFormCollapsePanel>
-      <EditorFormCollapsePanel header="属性" key="properties" path="properties">
-        <PropertiesEditor />
+      <EditorFormCollapsePanel header="属性" key="properties" path="properties" extra={propertiesSlot.content}>
+        <PropertiesEditor actionSlot={propertiesSlot.render} />
       </EditorFormCollapsePanel>
       <EditorFormCollapsePanel header="索引" key="indexes" path="indexes">
         <IndexesEditor />

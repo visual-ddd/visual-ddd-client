@@ -16,8 +16,7 @@ import { reactifyProperty } from '../../reactify';
 import { ReferenceTypeProvider, ReferenceTypeProviderProps, TypeInput } from '../TypeInput';
 import { TitleInput } from '../TitleInput';
 import { DomainObject, DomainObjectFactory } from '../../../model';
-import { replaceLastPathToPattern } from '@/lib/utils';
-import { Clipboard } from './Clipboard';
+import { replaceLastPathToPattern, Clipboard } from '@/lib/utils';
 
 export interface PropertiesEditorProps {
   /**

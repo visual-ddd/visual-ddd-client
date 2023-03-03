@@ -2,7 +2,8 @@ import { useEditorFormContext, EditorFormItem, EditorFormConsumer, EditorFormIte
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
 import snakeCase from 'lodash/snakeCase';
-import { InputNumber, Select, Switch } from 'antd';
+import { InputNumber, message, Select, Space, Switch } from 'antd';
+import { replaceLastPathToPattern, Clipboard } from '@/lib/utils';
 
 import { NameTooltip, UntitledInCamelCase } from '@/modules/domain/domain-design/dsl/constants';
 import { NameInput } from '@/modules/domain/domain-design/dsl/components/NameInput';
@@ -25,13 +26,20 @@ import {
 import { reactifyProperty } from './reactify';
 import { PropertyDefaultValue } from './PropertyDefaultValue';
 import { ReferenceEditor } from './ReferenceEditor';
-import { replaceLastPathToPattern } from '@/lib/utils';
+import s from './PropertiesEditor.module.scss';
 
 export interface PropertiesEditorProps {
   /**
    * 属性列表的路径， 默认是 properties
    */
   path?: string;
+
+  /**
+   * 操作渲染插槽
+   * @param children
+   * @returns
+   */
+  actionSlot?: (children: React.ReactNode) => void;
 }
 
 const renderItem = (value: DataObjectPropertyDSL) => {
@@ -201,11 +209,13 @@ const renderEditor = (path: string) => {
   );
 };
 
+const CLIPBOARD = new Clipboard<DataObjectPropertyDSL>();
+
 /**
  * 属性编辑器
  */
 export const PropertiesEditor = observer(function PropertiesEditor(props: PropertiesEditorProps) {
-  const { path = 'properties' } = props;
+  const { path = 'properties', actionSlot } = props;
   const { formModel } = useEditorFormContext()!;
   const properties = formModel.getProperty(path);
 
@@ -221,7 +231,7 @@ export const PropertiesEditor = observer(function PropertiesEditor(props: Proper
   };
 
   return (
-    <MemberList
+    <MemberList<DataObjectPropertyDSL>
       className="vd-data-properties-editor"
       path={path}
       showError
@@ -233,6 +243,73 @@ export const PropertiesEditor = observer(function PropertiesEditor(props: Proper
       renderItem={renderItem}
       renderEditor={renderEditor}
       editorTitle="属性编辑"
+      // eslint-disable-next-line react/no-children-prop
+      children={
+        !!actionSlot &&
+        (context => {
+          if (context.readonly) {
+            return null;
+          }
+
+          actionSlot(
+            <Space size="small" className={s.actions}>
+              {context.selecting ? (
+                <>
+                  <span
+                    className="u-link"
+                    onClick={() => {
+                      if (context.selected) {
+                        CLIPBOARD.save(context.selected);
+                        message.success('已复制');
+                      }
+                    }}
+                  >
+                    复制
+                  </span>
+                  <span className="u-link" onClick={context.handleUnselectAll}>
+                    清空
+                  </span>
+                  <span className="u-link" onClick={context.handleSelectAll}>
+                    全选
+                  </span>
+                  <span className="u-link" onClick={context.handleToggleSelecting}>
+                    取消
+                  </span>
+                </>
+              ) : (
+                <>
+                  {!CLIPBOARD.isEmpty && (
+                    <span
+                      className="u-link"
+                      onClick={() => {
+                        context.handleConcat(CLIPBOARD.get());
+                      }}
+                    >
+                      粘贴
+                    </span>
+                  )}
+                  <span
+                    className="u-link"
+                    onClick={() => {
+                      if (context.list.length) {
+                        CLIPBOARD.save(context.list);
+                        message.success('已复制所有属性');
+                      }
+                    }}
+                  >
+                    复制
+                  </span>
+                  <span className="u-link" onClick={context.handleToggleSelecting}>
+                    编辑
+                  </span>
+                </>
+              )}
+            </Space>
+          );
+
+          return null;
+        })
+      }
     />
   );
 });
