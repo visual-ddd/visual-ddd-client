@@ -63,7 +63,7 @@ export const DesignerHeader = observer(function DesignerHeader(props: DesignerHe
           <Avatar.Group maxCount={7} className={s.collaborators}>
             {collaborators.map(i => {
               return (
-                <Tooltip title={i.name} key={i.id}>
+                <Tooltip title={i.name} key={i.id} placement="rightBottom">
                   <Avatar size="small" src={i.avatar}>
                     {i.name}
                   </Avatar>

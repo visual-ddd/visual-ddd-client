@@ -1,6 +1,7 @@
 import { Collapse } from 'antd';
 import classNames from 'classnames';
 import s from './FormCollapse.module.scss';
+import { EditorFormRevalidateSpin } from './FormRevalidateSpin';
 import { EditorFormTooltip } from './FormTooltip';
 
 export interface EditorFormCollapseProps {
@@ -52,6 +53,7 @@ export const EditorFormCollapsePanel = (props: EditorFormCollapsePanelProps) => 
       <>
         {header}
         <EditorFormTooltip path={path} aggregated className="u-ml-xs" tooltip={tooltip} />
+        <EditorFormRevalidateSpin path={path} />
       </>
     );
   }
