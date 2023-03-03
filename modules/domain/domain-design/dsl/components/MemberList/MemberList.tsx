@@ -117,6 +117,8 @@ export interface MemberListContext<T extends IDDSL> {
    */
   readonly selected: T[];
 
+  readonly list: T[];
+
   /**
    * 编辑
    * @param item
@@ -386,6 +388,9 @@ export const MemberList = observer(function MemberList<T extends IDDSL>(props: M
       },
       get readonly() {
         return store.readonly;
+      },
+      get list() {
+        return propsRef.current.value ?? NoopArray;
       },
       isSelected(item: T) {
         return store.selected.findIndex(i => i.uuid === item.uuid) !== -1;

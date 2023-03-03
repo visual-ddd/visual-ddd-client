@@ -1,4 +1,5 @@
 import { EditorFormCollapse, EditorFormCollapsePanel, EditorFormItem } from '@/lib/editor';
+import { useDynamicSlot } from '@/lib/components/DynamicSlot';
 
 import { NameTooltip } from '../../constants';
 import { PropertiesEditor } from '../PropertiesEditor';
@@ -10,6 +11,8 @@ import { ObjectNameInput } from '../ObjectNameInput';
 const DEFAULT_ACTIVE = ['base', 'properties', 'methods'];
 
 export const ValueObjectEditor = () => {
+  const propertiesActionSlot = useDynamicSlot();
+
   return (
     <EditorFormCollapse defaultActiveKey={DEFAULT_ACTIVE}>
       <EditorFormCollapsePanel header="基础信息" key="base">
@@ -35,8 +38,8 @@ export const ValueObjectEditor = () => {
           <DescriptionInput />
         </EditorFormItem>
       </EditorFormCollapsePanel>
-      <EditorFormCollapsePanel header="属性" key="properties" path="properties">
-        <PropertiesEditor />
+      <EditorFormCollapsePanel header="属性" key="properties" path="properties" extra={propertiesActionSlot.content}>
+        <PropertiesEditor actionSlot={propertiesActionSlot.render} />
       </EditorFormCollapsePanel>
       <EditorFormCollapsePanel header="方法" key="methods" path="methods">
         <MethodsEditor />

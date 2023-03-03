@@ -1,7 +1,7 @@
 import { useEditorFormContext, EditorFormItem } from '@/lib/editor';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
-import { Button, Space } from 'antd';
+import { message, Space } from 'antd';
 
 import { NameDSL, PropertyDSL } from '../../dsl';
 import { NameTooltip } from '../../constants';
@@ -121,6 +121,17 @@ export const PropertiesEditor = observer(function PropertiesEditor(props: Proper
               <Space size="small" className={s.actions}>
                 {context.selecting ? (
                   <>
+                    <span
+                      className="u-link"
+                      onClick={() => {
+                        if (context.selected) {
+                          CLIPBOARD.save(context.selected);
+                          message.success('已复制');
+                        }
+                      }}
+                    >
+                      复制
+                    </span>
                     <span className="u-link" onClick={context.handleUnselectAll}>
                       清空
                     </span>
@@ -143,6 +154,17 @@ export const PropertiesEditor = observer(function PropertiesEditor(props: Proper
                         粘贴
                       </span>
                     )}
+                    <span
+                      className="u-link"
+                      onClick={() => {
+                        if (context.list.length) {
+                          CLIPBOARD.save(context.list);
+                          message.success('已复制所有属性');
+                        }
+                      }}
+                    >
+                      复制
+                    </span>
                     <span className="u-link" onClick={context.handleToggleSelecting}>
                       编辑
                     </span>
@@ -150,20 +172,6 @@ export const PropertiesEditor = observer(function PropertiesEditor(props: Proper
                 )}
               </Space>
             );
-
-            if (context.selecting) {
-              return (
-                <Button
-                  disabled={!context.selected.length}
-                  block
-                  onClick={() => {
-                    CLIPBOARD.save(context.selected);
-                  }}
-                >
-                  复制
-                </Button>
-              );
-            }
 
             return null;
           })

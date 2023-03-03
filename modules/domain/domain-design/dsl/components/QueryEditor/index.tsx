@@ -9,6 +9,7 @@ import {
 import { observer, useLocalObservable } from 'mobx-react';
 import { Select, Switch } from 'antd';
 import diff from 'lodash/difference';
+import { useDynamicSlot } from '@/lib/components/DynamicSlot';
 
 import { DomainEditorModel, DomainObjectFactory, DomainObjectQuery, DomainObjectRule } from '../../../model';
 
@@ -68,6 +69,8 @@ const RulesSelect = observer(function RulesSelect() {
 });
 
 export const QueryEditor = () => {
+  const propertiesActionSlot = useDynamicSlot();
+
   return (
     <EditorFormCollapse defaultActiveKey={DEFAULT_ACTIVE}>
       <EditorFormCollapsePanel header="基础信息" key="base">
@@ -95,8 +98,8 @@ export const QueryEditor = () => {
           <RulesSelect />
         </EditorFormItemStatic>
       </EditorFormCollapsePanel>
-      <EditorFormCollapsePanel header="属性" key="properties" path="properties">
-        <PropertiesEditor referenceTypeFilter={DomainObjectFactory.isDTO} />
+      <EditorFormCollapsePanel header="属性" key="properties" path="properties" extra={propertiesActionSlot.content}>
+        <PropertiesEditor actionSlot={propertiesActionSlot.render} referenceTypeFilter={DomainObjectFactory.isDTO} />
       </EditorFormCollapsePanel>
     </EditorFormCollapse>
   );

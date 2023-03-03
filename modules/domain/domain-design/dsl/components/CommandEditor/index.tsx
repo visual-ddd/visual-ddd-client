@@ -9,6 +9,7 @@ import {
 import { observer, useLocalObservable } from 'mobx-react';
 import { Select, Switch } from 'antd';
 import diff from 'lodash/difference';
+import { useDynamicSlot } from '@/lib/components/DynamicSlot';
 
 import type { DomainEditorModel, DomainObjectCommand, DomainObjectRule } from '../../../model';
 
@@ -70,6 +71,9 @@ const RulesSelect = observer(function RulesSelect() {
 });
 
 export const CommandEditor = () => {
+  const propertiesActionSlot = useDynamicSlot();
+  const eventPropertiesActionSlot = useDynamicSlot();
+
   return (
     <EditorFormCollapse defaultActiveKey={DEFAULT_ACTIVE}>
       <EditorFormCollapsePanel header="基础信息" key="base">
@@ -117,16 +121,17 @@ export const CommandEditor = () => {
           <RulesSelect />
         </EditorFormItemStatic>
       </EditorFormCollapsePanel>
-      <EditorFormCollapsePanel header="属性" key="properties" path="properties">
-        <PropertiesEditor />
+      <EditorFormCollapsePanel header="属性" extra={propertiesActionSlot.content} key="properties" path="properties">
+        <PropertiesEditor actionSlot={propertiesActionSlot.render} />
       </EditorFormCollapsePanel>
       <EditorFormCollapsePanel
         header="事件属性"
         key="eventProperties"
         path="eventProperties"
         tooltip="事件默认会继承命令的属性"
+        extra={eventPropertiesActionSlot.content}
       >
-        <PropertiesEditor path="eventProperties" />
+        <PropertiesEditor path="eventProperties" actionSlot={eventPropertiesActionSlot.render} />
       </EditorFormCollapsePanel>
     </EditorFormCollapse>
   );

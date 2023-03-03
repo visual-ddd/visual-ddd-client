@@ -1,4 +1,5 @@
 import { EditorFormCollapse, EditorFormCollapsePanel, EditorFormItem } from '@/lib/editor';
+import { useDynamicSlot } from '@/lib/components/DynamicSlot';
 
 import { DomainObjectFactory } from '../../../model';
 import { NameTooltip } from '../../constants';
@@ -10,6 +11,8 @@ import { ObjectNameInput } from '../ObjectNameInput';
 const DEFAULT_ACTIVE = ['base', 'properties'];
 
 export const DTOEditor = () => {
+  const propertiesActionSlot = useDynamicSlot();
+
   return (
     <EditorFormCollapse defaultActiveKey={DEFAULT_ACTIVE}>
       <EditorFormCollapsePanel header="基础信息" key="base">
@@ -35,8 +38,8 @@ export const DTOEditor = () => {
           <DescriptionInput />
         </EditorFormItem>
       </EditorFormCollapsePanel>
-      <EditorFormCollapsePanel header="属性" key="properties" path="properties">
-        <PropertiesEditor referenceTypeFilter={DomainObjectFactory.isDTO} />
+      <EditorFormCollapsePanel header="属性" extra={propertiesActionSlot.content} key="properties" path="properties">
+        <PropertiesEditor actionSlot={propertiesActionSlot.render} referenceTypeFilter={DomainObjectFactory.isDTO} />
       </EditorFormCollapsePanel>
     </EditorFormCollapse>
   );
