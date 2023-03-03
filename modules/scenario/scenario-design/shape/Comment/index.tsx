@@ -18,19 +18,22 @@ import { Input } from 'antd';
 
 const CommentReactShapeComponent = (props: ReactComponentProps) => {
   const { node } = props;
-  const { properties, updateProperty } = useShapeModel(node);
-  const dsl = properties as unknown as CommentDSL;
+  const { properties, updateProperty } = useShapeModel<CommentDSL>(node);
 
   const handleChange = (value: string) => {
     updateProperty('content', value);
   };
+
+  if (properties == null) {
+    return null;
+  }
 
   return (
     <div className={s.root}>
       <div className={s.icon}>
         <MessageOutlined />
       </div>
-      <ContentEditable className={s.content} value={dsl.content} onChange={handleChange} />
+      <ContentEditable className={s.content} value={properties.content} onChange={handleChange} />
     </div>
   );
 };

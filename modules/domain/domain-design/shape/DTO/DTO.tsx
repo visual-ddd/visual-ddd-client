@@ -15,7 +15,11 @@ import {
 import icon from './dto.png';
 
 const DTOReactShapeComponent = (props: ReactComponentProps) => {
-  const properties = useShapeModel(props.node).properties as unknown as DTODSL;
+  const properties = useShapeModel<DTODSL>(props.node).properties;
+
+  if (properties == null) {
+    return null;
+  }
 
   return <ClassShape dsl={properties} type="DTO" style={{ backgroundColor: '#f0f0f0' }} />;
 };

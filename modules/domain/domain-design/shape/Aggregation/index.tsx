@@ -15,7 +15,11 @@ import { DomainObjectAggregation } from '../../model';
 import icon from './aggregation.png';
 
 const AggregationReactShapeComponent = (props: ReactComponentProps) => {
-  const properties = useShapeModel(props.node).properties as unknown as AggregationDSL;
+  const properties = useShapeModel<AggregationDSL>(props.node).properties;
+
+  if (properties == null) {
+    return null;
+  }
 
   return <AggregationShape dsl={properties} />;
 };

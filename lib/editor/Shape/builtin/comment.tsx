@@ -11,9 +11,9 @@ import s from './comment.module.scss';
 import { BuiltinShapeName } from './constants';
 
 registerReactComponent('comment', props => {
-  const properties = useShapeModel(props.node).properties as unknown as { content: string };
+  const properties = useShapeModel<{ content: string }>(props.node).properties;
 
-  return <div className={classNames('vd-shape-comment', s.root)}>{properties.content}</div>;
+  return <div className={classNames('vd-shape-comment', s.root)}>{properties?.content}</div>;
 });
 
 defineShape({

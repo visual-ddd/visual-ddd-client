@@ -29,6 +29,7 @@ export class DomainObjectStore {
   /**
    * 即将移除的对象
    */
+  @observable.shallow
   protected objectsWillRemoved: Map<string, DomainObject<NameDSL>> = new Map();
 
   /**

@@ -22,6 +22,7 @@ export class DataObjectStore {
   /**
    * 即将移除的对象
    */
+  @observable.shallow
   protected objectsWillRemoved: Map<string, DataObject> = new Map();
 
   /**

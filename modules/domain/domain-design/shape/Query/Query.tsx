@@ -16,7 +16,11 @@ import {
 import icon from './query.png';
 
 const QueryReactShapeComponent = (props: ReactComponentProps) => {
-  const properties = useShapeModel(props.node).properties as unknown as QueryDSL;
+  const properties = useShapeModel<QueryDSL>(props.node).properties;
+
+  if (properties == null) {
+    return null;
+  }
 
   return (
     <ClassShape

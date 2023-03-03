@@ -55,6 +55,7 @@ export class MapperStore {
   /**
    * 即将移除的映射
    */
+  @observable.shallow
   protected mappersWillRemoved: Map<string, Mapper> = new Map();
 
   /**

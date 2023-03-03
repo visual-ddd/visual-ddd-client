@@ -9,9 +9,13 @@ import { ActivityEditor } from './ActivityEditor';
 import { checkDomainId, checkDomainServiceId, checkServiceId, checkVersionId } from './validate';
 
 const ActivityReactShapeComponent = (props: ReactComponentProps) => {
-  const { properties } = useShapeModel(props.node);
+  const { properties } = useShapeModel<ActivityDSL>(props.node);
 
-  return <ActivityShape dsl={properties as unknown as ActivityDSL} />;
+  if (properties == null) {
+    return null;
+  }
+
+  return <ActivityShape dsl={properties} />;
 };
 
 const ActivityShapeComponent = (props: ShapeComponentProps) => {

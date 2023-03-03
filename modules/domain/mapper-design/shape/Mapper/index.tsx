@@ -15,9 +15,13 @@ import {
 } from './validator';
 
 const MapperReactShapeComponent = (props: ReactComponentProps) => {
-  const { properties, model } = useShapeModel(props.node);
+  const { properties, model } = useShapeModel<MapperObjectDSL>(props.node);
 
-  return <MapperShape model={model} dsl={properties as unknown as MapperObjectDSL} />;
+  if (model == null) {
+    return null;
+  }
+
+  return <MapperShape model={model} dsl={properties!} />;
 };
 
 registerReactComponent(MapperObjectName.MapperObject, MapperReactShapeComponent);

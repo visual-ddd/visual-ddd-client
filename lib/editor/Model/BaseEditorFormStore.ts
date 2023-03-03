@@ -26,6 +26,7 @@ export class BaseEditorFormStore {
   @observable.shallow
   private formModels: Map<string, FormModel> = new Map();
 
+  @observable.shallow
   private formModelsWillRemove: Map<string, FormModel> = new Map();
 
   @derive

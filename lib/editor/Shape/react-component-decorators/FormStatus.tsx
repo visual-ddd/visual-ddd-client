@@ -19,7 +19,7 @@ export const FormStatus: ReactDecorator = Input => {
       <>
         <Observer>
           {() => {
-            if (!formModel.hasIssue) {
+            if (!formModel?.hasIssue) {
               return null;
             }
 

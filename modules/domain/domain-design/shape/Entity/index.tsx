@@ -18,7 +18,11 @@ import { getPrefixPath } from '@/lib/utils';
 import icon from './entity.png';
 
 const EntityReactShapeComponent = (props: ReactComponentProps) => {
-  const properties = useShapeModel(props.node).properties as unknown as EntityDSL;
+  const properties = useShapeModel<EntityDSL>(props.node).properties;
+
+  if (properties == null) {
+    return null;
+  }
 
   return (
     <ClassShape

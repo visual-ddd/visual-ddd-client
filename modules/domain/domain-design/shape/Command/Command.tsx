@@ -20,7 +20,11 @@ import {
 import icon from './command.png';
 
 const CommandReactShapeComponent = (props: ReactComponentProps) => {
-  const properties = useShapeModel(props.node).properties as unknown as CommandDSL;
+  const properties = useShapeModel<CommandDSL>(props.node).properties;
+
+  if (properties == null) {
+    return null;
+  }
 
   return <CommandShape dsl={properties} />;
 };

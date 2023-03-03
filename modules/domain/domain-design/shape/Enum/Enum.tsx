@@ -16,7 +16,11 @@ import {
 import icon from './enum.png';
 
 const EnumReactShapeComponent = (props: ReactComponentProps) => {
-  const properties = useShapeModel(props.node).properties as unknown as EnumDSL;
+  const properties = useShapeModel<EnumDSL>(props.node).properties;
+
+  if (properties == null) {
+    return null;
+  }
 
   return <EnumShape dsl={properties} />;
 };

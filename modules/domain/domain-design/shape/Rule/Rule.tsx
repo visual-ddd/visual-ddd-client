@@ -14,7 +14,11 @@ import {
 import icon from './rule.png';
 
 const RuleReactShapeComponent = (props: ReactComponentProps) => {
-  const properties = useShapeModel(props.node).properties as unknown as RuleDSL;
+  const properties = useShapeModel<RuleDSL>(props.node).properties;
+
+  if (properties == null) {
+    return null;
+  }
 
   return <RuleShape dsl={properties} />;
 };

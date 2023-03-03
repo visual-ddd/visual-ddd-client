@@ -5,17 +5,13 @@ import { LaneShape } from './LaneShape';
 
 const LaneReactShapeComponent = (props: ReactComponentProps) => {
   const { graph, node } = props;
-  const { formModel, properties, editorModel } = useShapeModel(props.node);
+  const { formModel, properties, editorModel } = useShapeModel<LanesDSL>(props.node);
 
-  return (
-    <LaneShape
-      dsl={properties as unknown as LanesDSL}
-      formModel={formModel}
-      graph={graph}
-      node={node}
-      editorModel={editorModel}
-    />
-  );
+  if (formModel == null || properties == null) {
+    return null;
+  }
+
+  return <LaneShape dsl={properties} formModel={formModel} graph={graph} node={node} editorModel={editorModel} />;
 };
 
 const LaneShapeComponent = (props: ShapeComponentProps) => {

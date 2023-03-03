@@ -15,12 +15,15 @@ import { PORTS } from '../shared';
 import { TitleInput } from '@/lib/components/TitleInput';
 
 const DecisionReactShapeComponent = (props: ReactComponentProps) => {
-  const { properties } = useShapeModel(props.node);
-  const dsl = properties as unknown as DecisionDSL;
+  const { properties } = useShapeModel<DecisionDSL>(props.node);
+
+  if (properties == null) {
+    return null;
+  }
 
   return (
     <div className={s.root}>
-      <span className={s.name}>{dsl.title || '决策'}</span>
+      <span className={s.name}>{properties.title || '决策'}</span>
     </div>
   );
 };

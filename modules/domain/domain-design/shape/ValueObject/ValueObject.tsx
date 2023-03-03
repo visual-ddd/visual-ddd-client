@@ -18,7 +18,11 @@ import {
 import icon from './value-object.png';
 
 const ValueObjectReactShapeComponent = (props: ReactComponentProps) => {
-  const properties = useShapeModel(props.node).properties as unknown as ValueObjectDSL;
+  const properties = useShapeModel<ValueObjectDSL>(props.node).properties;
+
+  if (properties == null) {
+    return null;
+  }
 
   return <ClassShape dsl={properties} type="值对象" style={{ backgroundColor: '#BAE7FF' }} />;
 };

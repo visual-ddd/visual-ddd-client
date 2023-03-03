@@ -14,7 +14,11 @@ import {
 import { checkPropertyName } from '@/modules/domain/domain-design/dsl/validators';
 
 const DataObjectReactShapeComponent = (props: ReactComponentProps) => {
-  const properties = useShapeModel(props.node).properties as unknown as DataObjectDSL;
+  const properties = useShapeModel<DataObjectDSL>(props.node).properties;
+
+  if (properties == null) {
+    return null;
+  }
 
   return <DataObjectShape dsl={properties}></DataObjectShape>;
 };
