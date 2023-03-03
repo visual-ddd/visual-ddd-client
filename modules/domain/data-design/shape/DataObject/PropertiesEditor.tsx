@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { observer } from 'mobx-react';
 import snakeCase from 'lodash/snakeCase';
 import { InputNumber, message, Select, Space, Switch } from 'antd';
-import { replaceLastPathToPattern, Clipboard } from '@/lib/utils';
+import { replaceLastPathToPattern, Clipboard, elseUndefined } from '@/lib/utils';
 
 import { NameTooltip, UntitledInCamelCase } from '@/modules/domain/domain-design/dsl/constants';
 import { NameInput } from '@/modules/domain/domain-design/dsl/components/NameInput';
@@ -128,7 +128,7 @@ const renderEditor = (path: string) => {
                 {({ value }) =>
                   value ? (
                     <EditorFormItemStatic label="非空" tooltip="如果是主键，将默认强制开启">
-                      <Switch disabled={value} checked></Switch>
+                      <Switch disabled={elseUndefined(value)} checked></Switch>
                     </EditorFormItemStatic>
                   ) : (
                     <EditorFormItem
@@ -137,7 +137,7 @@ const renderEditor = (path: string) => {
                       tooltip="如果是主键，将默认强制开启"
                       valuePropName="checked"
                     >
-                      <Switch disabled={value}></Switch>
+                      <Switch disabled={elseUndefined(value)}></Switch>
                     </EditorFormItem>
                   )
                 }
@@ -248,6 +248,7 @@ export const PropertiesEditor = observer(function PropertiesEditor(props: Proper
         !!actionSlot &&
         (context => {
           if (context.readonly) {
+            actionSlot(null);
             return null;
           }
 

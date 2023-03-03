@@ -275,7 +275,7 @@ export class ContextMenuController implements IDisposable {
 
   protected hideIfNeed = () => {
     setTimeout(() => {
-      if (this.menu) {
+      if (this.visible) {
         this.hideMenu();
       }
     }, 0);

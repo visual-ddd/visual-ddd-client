@@ -527,13 +527,13 @@ export const MemberList = observer(function MemberList<T extends IDDSL>(props: M
         <Button
           className={classNames('vd-member-list__add', s.add)}
           onClick={context.handleCreate}
-          disabled={disabled}
+          disabled={disabled || readonly}
           block
         >
           {addText ?? '添加属性'}
         </Button>
         {!!context.selecting && (
-          <Button danger block disabled={!context.selected.length} onClick={context.handleRemoveSelected}>
+          <Button danger block disabled={!context.selected.length || readonly} onClick={context.handleRemoveSelected}>
             删除
           </Button>
         )}

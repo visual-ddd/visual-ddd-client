@@ -113,6 +113,7 @@ export const PropertiesEditor = observer(function PropertiesEditor(props: Proper
           !!actionSlot &&
           (context => {
             if (context.readonly) {
+              actionSlot(null);
               return null;
             }
 

@@ -17,12 +17,12 @@ export interface EditorFormProps {
 
 export const EditorForm = observer(function EditorForm(props: EditorFormProps) {
   const { node, readonly, children } = props;
-  const { formStore, model } = useEditorModel();
-
+  const { formStore } = useEditorModel();
   const formModel = formStore.getFormModel(node)!;
+
   const context = useMemo<EditorFormContext>(() => {
-    return { formModel, readonly: model.readonly };
-  }, [formModel, model]);
+    return { formModel, readonly: !!readonly };
+  }, [formModel, readonly]);
 
   return (
     <EditorFormContextProvider value={context}>

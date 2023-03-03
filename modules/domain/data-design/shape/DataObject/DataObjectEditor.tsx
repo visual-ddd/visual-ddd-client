@@ -1,5 +1,6 @@
 import { EditorFormCollapse, EditorFormCollapsePanel, EditorFormConsumer, EditorFormItem } from '@/lib/editor';
 import snakeCase from 'lodash/snakeCase';
+import { observer } from 'mobx-react';
 
 import { DescriptionInput } from '@/modules/domain/domain-design/dsl/components/DescriptionInput';
 import { ObjectNameInput } from '@/modules/domain/domain-design/dsl/components/ObjectNameInput';
@@ -12,7 +13,7 @@ import { IndexesEditor } from './IndexesEditor';
 
 const DEFAULT_ACTIVE = ['base', 'properties', 'indexes'];
 
-export const DataObjectEditor = () => {
+export const DataObjectEditor = observer(function DataObjectEditor() {
   const propertiesSlot = useDynamicSlot();
 
   return (
@@ -71,4 +72,4 @@ export const DataObjectEditor = () => {
       </EditorFormCollapsePanel>
     </EditorFormCollapse>
   );
-};
+});
