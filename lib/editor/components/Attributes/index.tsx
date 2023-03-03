@@ -40,7 +40,7 @@ export const EditorAttributes = observer(function EditorAttributes() {
   const isLockedByHierarchy = node.isHierarchyLocked && !node.locked;
 
   return (
-    <EditorForm node={node} readonly={model.readonly || isLocked}>
+    <EditorForm key={node.id} node={node} readonly={model.readonly || isLocked}>
       {!!(isLocked && !model.readonly) && (
         <div className={s.lockInfo}>
           {isLockedByCollaborator ? (

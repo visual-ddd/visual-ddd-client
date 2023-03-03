@@ -9,6 +9,7 @@ import { DescriptionInput } from '../DescriptionInput';
 import { PropertyDSL } from '../../dsl';
 import { TitleInput } from '../TitleInput';
 import { ObjectNameInput } from '../ObjectNameInput';
+import { useDynamicSlot } from '@/lib/components/DynamicSlot';
 
 const DEFAULT_ACTIVE = ['base', 'properties', 'methods'];
 
@@ -35,6 +36,8 @@ const IDSelector = observer(function IDSelector(props: IDSelectorProps) {
 });
 
 export const EntityEditor = () => {
+  const propertiesActionSlot = useDynamicSlot();
+
   return (
     <EditorFormCollapse defaultActiveKey={DEFAULT_ACTIVE}>
       <EditorFormCollapsePanel header="基础信息" key="base">
@@ -77,8 +80,8 @@ export const EntityEditor = () => {
           <IDSelector />
         </EditorFormItem>
       </EditorFormCollapsePanel>
-      <EditorFormCollapsePanel header="属性" key="properties" path="properties">
-        <PropertiesEditor />
+      <EditorFormCollapsePanel header="属性" extra={propertiesActionSlot.content} key="properties" path="properties">
+        <PropertiesEditor actionSlot={propertiesActionSlot.render} />
       </EditorFormCollapsePanel>
       <EditorFormCollapsePanel header="方法" key="methods" path="methods">
         <MethodsEditor />

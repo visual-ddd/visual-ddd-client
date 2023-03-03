@@ -17,7 +17,8 @@
   user-select: none;
   font-size: var(--vd-font-size-h6);
 
-  &:global(.editing) {
+  &:global(.editing),
+  &:global(.selected) {
     outline: 2px solid var(--vd-color-primary);
   }
 }
@@ -37,4 +38,8 @@
     padding: 2px 2px;
     cursor: pointer;
   }
+}
+
+.itemCheck {
+  margin-right: var(--vd-spacing-xs);
 }

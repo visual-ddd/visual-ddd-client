@@ -29,6 +29,8 @@ export interface EditorFormCollapsePanelProps {
   children?: React.ReactNode;
   header: React.ReactNode;
 
+  extra?: React.ReactNode;
+
   /**
    * 文案提示
    */

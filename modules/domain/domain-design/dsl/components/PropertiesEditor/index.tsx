@@ -1,6 +1,7 @@
 import { useEditorFormContext, EditorFormItem } from '@/lib/editor';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
+import { Button, Space } from 'antd';
 
 import { NameDSL, PropertyDSL } from '../../dsl';
 import { NameTooltip } from '../../constants';
@@ -16,6 +17,7 @@ import { ReferenceTypeProvider, ReferenceTypeProviderProps, TypeInput } from '..
 import { TitleInput } from '../TitleInput';
 import { DomainObject, DomainObjectFactory } from '../../../model';
 import { replaceLastPathToPattern } from '@/lib/utils';
+import { Clipboard } from './Clipboard';
 
 export interface PropertiesEditorProps {
   /**
@@ -27,6 +29,13 @@ export interface PropertiesEditorProps {
    * 引用类型过滤器，默认只过滤掉 command
    */
   referenceTypeFilter?: ReferenceTypeProviderProps['filter'];
+
+  /**
+   * 操作渲染插槽
+   * @param children
+   * @returns
+   */
+  actionSlot?: (children: React.ReactNode) => void;
 }
 
 const renderItem = (value: PropertyDSL) => {
@@ -65,13 +74,16 @@ const renderEditor = (path: string) => {
   );
 };
 
+const CLIPBOARD = new Clipboard<PropertyDSL>();
+
 /**
  * 属性编辑器
  */
 export const PropertiesEditor = observer(function PropertiesEditor(props: PropertiesEditorProps) {
-  const { path = 'properties', referenceTypeFilter = omitCommand } = props;
+  const { path = 'properties', referenceTypeFilter = omitCommand, actionSlot } = props;
   const { formModel } = useEditorFormContext()!;
-  const properties = formModel.getProperty(path);
+  const properties = formModel.getProperty(path) as PropertyDSL[];
+
   const handleChange = (list: PropertyDSL[]) => {
     formModel.setProperty(path, list);
   };
@@ -85,7 +97,7 @@ export const PropertiesEditor = observer(function PropertiesEditor(props: Proper
 
   return (
     <ReferenceTypeProvider filter={referenceTypeFilter}>
-      <MemberList
+      <MemberList<PropertyDSL>
         className="vd-properties-editor"
         path={path}
         showError
@@ -97,7 +109,66 @@ export const PropertiesEditor = observer(function PropertiesEditor(props: Proper
         renderItem={renderItem}
         renderEditor={renderEditor}
         editorTitle="属性编辑"
-      />
+        // eslint-disable-next-line react/no-children-prop
+        children={
+          !!actionSlot &&
+          (context => {
+            if (context.readonly) {
+              return null;
+            }
+
+            actionSlot(
+              <Space size="small" className={s.actions}>
+                {context.selecting ? (
+                  <>
+                    <span className="u-link" onClick={context.handleUnselectAll}>
+                      清空
+                    </span>
+                    <span className="u-link" onClick={context.handleSelectAll}>
+                      全选
+                    </span>
+                    <span className="u-link" onClick={context.handleToggleSelecting}>
+                      取消
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    {!CLIPBOARD.isEmpty && (
+                      <span
+                        className="u-link"
+                        onClick={() => {
+                          context.handleConcat(CLIPBOARD.get());
+                        }}
+                      >
+                        粘贴
+                      </span>
+                    )}
+                    <span className="u-link" onClick={context.handleToggleSelecting}>
+                      编辑
+                    </span>
+                  </>
+                )}
+              </Space>
+            );
+
+            if (context.selecting) {
+              return (
+                <Button
+                  disabled={!context.selected.length}
+                  block
+                  onClick={() => {
+                    CLIPBOARD.save(context.selected);
+                  }}
+                >
+                  复制
+                </Button>
+              );
+            }
+
+            return null;
+          })
+        }
+      ></MemberList>
     </ReferenceTypeProvider>
   );
 });
