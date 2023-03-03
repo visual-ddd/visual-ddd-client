@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Button, Popover } from 'antd';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
@@ -161,6 +161,7 @@ const Member = observer(function Member<T extends IDDSL>(props: {
   index: number;
 }) {
   const { value, context, index } = props;
+  const [popoverOpen, setPopoverOpen] = useState(false);
   const readonly = context.readonly;
   const popoverEdit = context.getEditorDisplayType() === 'popover';
   const path = context.getPath();
@@ -170,6 +171,9 @@ const Member = observer(function Member<T extends IDDSL>(props: {
 
   const handleEdit = () => {
     context.handleEdit(value);
+    if (popoverEdit) {
+      setPopoverOpen(true);
+    }
   };
   const handleRemove = () => {
     context.handleRemove(value);
@@ -187,7 +191,9 @@ const Member = observer(function Member<T extends IDDSL>(props: {
             trigger="click"
             title={context.getEditorTitle()}
             destroyTooltipOnHide
+            open={popoverOpen}
             onOpenChange={v => {
+              setPopoverOpen(v);
               if (!v) {
                 context.handleEditHided();
               } else {
