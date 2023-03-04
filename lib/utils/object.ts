@@ -20,15 +20,23 @@ export const getPrefixPath = memoize(
   }
 );
 
-export const getPaths = memoize(path => {
+export const getPaths = memoize((path: string): readonly string[] => {
+  if (process.env.NODE_ENV !== 'production') {
+    return Object.freeze(toPath(path));
+  }
+
   return toPath(path);
+});
+
+export const normalizePaths = memoize((path: string) => {
+  return getPaths(path).join('.');
 });
 
 /**
  * 将最后一个路径替换为 *
  */
 export const replaceLastPathToPattern = memoize(path => {
-  const paths = getPaths(path);
+  const paths = getPaths(path).slice(0);
   paths[paths.length - 1] = '*';
 
   return paths.join('.');

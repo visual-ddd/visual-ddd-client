@@ -1,4 +1,9 @@
 /**
+ * 销毁函数
+ */
+export type DisposerFunction = () => void;
+
+/**
  * 标识符命名规则
  */
 export type NameCase = 'CamelCase' | 'camelCase' | 'SNAKE_CASE' | 'snake_case';
