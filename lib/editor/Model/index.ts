@@ -10,3 +10,4 @@ export * from './BaseEditorModel';
 export * from './BaseEditorEvent';
 export * from './BaseEditorScope';
 export * from './BaseEditorValidateManager';
+export * from './BaseEditorPropertyLocationObserver';

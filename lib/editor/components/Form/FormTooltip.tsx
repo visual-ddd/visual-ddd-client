@@ -98,7 +98,7 @@ export const EditorFormTooltip = observer(function EditFormTooltip(props: Editor
           content={
             <div className={classNames('vd-form-tooltip__content', s.content)}>
               {!!tooltip && <div className={classNames('vd-form-tooltip__tooltip', s.tooltip)}>{tooltip}</div>}
-              <EditorFormIssues issues={store.status!} />
+              <EditorFormIssues formModel={formModel} issues={store.status!} />
             </div>
           }
           title="告警"

@@ -14,6 +14,26 @@ describe('BaseEditorPropertyLocationObserver', () => {
     expect(observer.peek()).toBe(undefined);
   });
 
+  test('touch', () => {
+    const observer = new BaseEditorPropertyLocationObserver();
+
+    expect(observer.isTouched('path')).toBeFalsy();
+    expect(observer.isTouched('')).toBeFalsy();
+
+    observer.emit({ nodeId: 'nodeId', path: 'path' });
+
+    expect(observer.isTouched('path')).toBeFalsy();
+
+    observer.touch('path');
+    observer.touch('');
+    expect(observer.isTouched('path')).toBeTruthy();
+    expect(observer.isTouched('')).toBeTruthy();
+
+    // new location
+    observer.emit({ nodeId: 'nodeId', path: 'path' });
+    expect(observer.isTouched('path')).toBeFalsy();
+  });
+
   test('satisfy', () => {
     const observer = new BaseEditorPropertyLocationObserver();
 
@@ -287,5 +307,15 @@ describe('BaseEditorPropertyLocationObserver', () => {
     expect(pathListener).toBeCalledTimes(1);
     expect(nodeListener).toBeCalledTimes(1);
     expect(anonymousListener).toBeCalledTimes(1);
+
+    // 重新监听应该可以正常触发
+    observer.subscribePath('nodeId', 'path', pathListener);
+    observer.subscribeNode('nodeId', nodeListener);
+    observer.subscribeAnonymous(anonymousListener);
+    expect(observer.emit({ nodeId: 'nodeId', path: 'path' })).toBeFalsy();
+
+    expect(pathListener).toBeCalledTimes(2);
+    expect(nodeListener).toBeCalledTimes(2);
+    expect(anonymousListener).toBeCalledTimes(2);
   });
 });

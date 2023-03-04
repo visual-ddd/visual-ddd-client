@@ -20,6 +20,10 @@ export const getPrefixPath = memoize(
   }
 );
 
+/**
+ * Returns an array of path segments.
+ * If the path is a string, the array will be frozen in development mode.
+ */
 export const getPaths = memoize((path: string): readonly string[] => {
   if (process.env.NODE_ENV !== 'production') {
     return Object.freeze(toPath(path));
@@ -27,6 +31,14 @@ export const getPaths = memoize((path: string): readonly string[] => {
 
   return toPath(path);
 });
+
+export function getPathLength(path: string) {
+  return getPaths(path).length;
+}
+
+export function getPathSegmentByIndex(path: string, index: number) {
+  return getPaths(path).at(index);
+}
 
 export const normalizePaths = memoize((path: string) => {
   return getPaths(path).join('.');

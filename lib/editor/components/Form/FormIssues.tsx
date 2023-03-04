@@ -2,12 +2,14 @@ import { CloseCircleOutlined, WarningOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
 
-import { FormItemValidateStatus, ROOT_FIELD } from '../../Model';
+import { usePropertyLocationNavigate } from '../../hooks';
+import { FormItemValidateStatus, FormModel, ROOT_FIELD } from '../../Model';
 
 import s from './FormIssues.module.scss';
 
 export interface EditorFormIssuesProps {
   issues: FormItemValidateStatus | FormItemValidateStatus[];
+  formModel: FormModel;
   className?: string;
   style?: React.CSSProperties;
 }
@@ -20,7 +22,8 @@ const PATH_NAME: Record<string, string> = {
  * 告警信息渲染
  */
 export const EditorFormIssues = observer(function EditorFormIssues(props: EditorFormIssuesProps) {
-  const { issues, className, style } = props;
+  const { issues, formModel, className, style } = props;
+  const openProperty = usePropertyLocationNavigate();
 
   const renderItem = (
     item: FormItemValidateStatus,
@@ -52,9 +55,17 @@ export const EditorFormIssues = observer(function EditorFormIssues(props: Editor
     return (
       <ul className={classNames('vd-editor-form-issues-group', s.group, className)} style={style}>
         {issues.map(i => {
+          const handleClick = (evt: React.MouseEvent) => {
+            evt.preventDefault();
+            evt.stopPropagation();
+            openProperty({ nodeId: formModel.id, path: i.path });
+          };
+
           return (
             <li key={i.path} className={classNames('vd-editor-form-issues-group__item', s.groupItem)}>
-              <div className={classNames('vd-editor-form-issues-group__name')}>{PATH_NAME[i.path] || i.path}</div>
+              <div className={classNames('vd-editor-form-issues-group__name', 'u-link')} onClick={handleClick}>
+                {PATH_NAME[i.path] || i.path}
+              </div>
               <div className={classNames('vd-editor-form-issues-group__body', s.groupBody)}>{renderItem(i)}</div>
             </li>
           );

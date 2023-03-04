@@ -28,7 +28,7 @@ export const FormStatus: ReactDecorator = Input => {
                 <Popover
                   content={
                     <div>
-                      <EditorFormIssues issues={formModel.errorInArray}></EditorFormIssues>
+                      <EditorFormIssues formModel={formModel} issues={formModel.errorInArray}></EditorFormIssues>
                     </div>
                   }
                   title="告警"

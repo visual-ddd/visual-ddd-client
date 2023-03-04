@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
 import { useCanvasModel } from '../../Canvas';
+import { usePropertyLocationNavigate } from '../../hooks';
 import { useEditorConfiguration } from '../Configuration';
 import { EditorFormIssues } from '../Form/FormIssues';
 import { SelectNodePlease } from '../SelectNodePlease';
@@ -12,6 +13,7 @@ export const EditorProblems = observer(function EditorProblems() {
   const formStore = model.editorFormStore;
   const config = useEditorConfiguration();
   const node = viewStore.focusingNode;
+  const propertyNavigate = usePropertyLocationNavigate();
 
   // 全局告警
   if (node == null) {
@@ -24,7 +26,7 @@ export const EditorProblems = observer(function EditorProblems() {
         <ul className={classNames('vd-editor-problems__list', s.list)}>
           {formStore.nodesHasIssue.map(node => {
             const handleClick = () => {
-              model.handleSelect({ cellIds: [node.id] });
+              propertyNavigate({ nodeId: node.id });
             };
 
             return (
@@ -35,6 +37,7 @@ export const EditorProblems = observer(function EditorProblems() {
                 <EditorFormIssues
                   className={classNames('vd-editor-problems__item-body', s.itemBody)}
                   issues={node.errorInArray}
+                  formModel={node}
                 />
               </li>
             );
@@ -53,7 +56,7 @@ export const EditorProblems = observer(function EditorProblems() {
 
   return (
     <div className={classNames('vd-editor-problems', s.root)}>
-      <EditorFormIssues issues={formModel.errorInArray} />
+      <EditorFormIssues formModel={formModel} issues={formModel.errorInArray} />
     </div>
   );
 });

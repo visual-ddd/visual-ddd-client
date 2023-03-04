@@ -9,7 +9,20 @@ import { BaseEditorEvent } from './BaseEditorEvent';
 import { Disposer } from '@wakeapp/utils';
 import { BaseEditorIndex } from './BaseEditorIndex';
 
+/**
+ * 图形查看 tab
+ */
+export enum EditorInspectTab {
+  Attributes = 'attributes',
+  Problems = 'problems',
+}
+
 export interface BaseEditorViewState {
+  /**
+   * 图形详情 Tab
+   */
+  inspectTab: EditorInspectTab;
+
   /**
    * 组件库是否折叠
    */
@@ -71,6 +84,7 @@ export class BaseEditorViewStore implements IDisposable {
    */
   @observable
   viewState: BaseEditorViewState = {
+    inspectTab: EditorInspectTab.Attributes,
     shapeLibraryFolded: false,
     mouseDragMode: 'panning',
   };

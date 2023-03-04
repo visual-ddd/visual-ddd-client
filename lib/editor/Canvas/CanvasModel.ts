@@ -108,6 +108,10 @@ export class CanvasModel implements IDisposable {
     return this.editorModel.formStore;
   }
 
+  get editorPropertyLocationObserver() {
+    return this.editorModel.propertyLocationObserver;
+  }
+
   /**
    * X6 画布对象
    */
@@ -450,7 +454,11 @@ export class CanvasModel implements IDisposable {
       this.editorModel.event.on('CMD_FOCUS_NODE', params => {
         this.handleSelect({ cellIds: [params.node.id] });
       }),
-      this.contextMenuController.dispose
+      this.contextMenuController.dispose,
+      // 监听节点定位
+      this.editorPropertyLocationObserver.subscribeAnonymous(evt => {
+        this.handleSelect({ cellIds: [evt.nodeId] });
+      })
     );
   }
 

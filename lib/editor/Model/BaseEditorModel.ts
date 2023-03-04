@@ -10,6 +10,7 @@ import { BaseEditorIndex } from './BaseEditorIndex';
 import { BaseEditorAwarenessRegistry, BaseEditorViewStore } from './BaseEditorViewStore';
 import { BaseEditorFormStore } from './BaseEditorFormStore';
 import { BaseEditorScope } from './BaseEditorScope';
+import { BaseEditorPropertyLocationObserver } from './BaseEditorPropertyLocationObserver';
 
 export interface BaseEditorModelOptions {
   /**
@@ -112,6 +113,11 @@ export class BaseEditorModel implements IDisposable {
   readonly scope: BaseEditorScope;
 
   /**
+   * 屬性定位監聽器
+   */
+  readonly propertyLocationObserver: BaseEditorPropertyLocationObserver;
+
+  /**
    * 模型状态数据源
    */
   protected datasource: BaseEditorDatasource;
@@ -182,6 +188,7 @@ export class BaseEditorModel implements IDisposable {
       datasource: this.datasource,
       index: this.index,
     });
+    this.propertyLocationObserver = new BaseEditorPropertyLocationObserver();
 
     this.scope.registerScopeMember('editorModel', this);
 

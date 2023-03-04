@@ -1,4 +1,5 @@
 import { DisposerFunction } from '@/lib/core';
+import { command } from '@/lib/store';
 import { getPaths, normalizePaths } from '@/lib/utils';
 
 /**
@@ -49,12 +50,15 @@ type Resolved = boolean;
 export class BaseEditorPropertyLocationObserver {
   private location: EditorPropertyLocation | undefined;
   private subscriber: Map<NodeId, Map<Path, EditorPropertyLocationListener[]>> = new Map();
+  // 用于记录已经处理过的节点，避免重复处理
+  private touchStatus: WeakMap<EditorPropertyLocation, Set<Path>> = new WeakMap();
 
   /**
    * 定位节点
    * @param params
    * @returns 返回 true 表示已经处理
    */
+  @command('PROPERTY_NAVIGATE')
   emit(params: EditorPropertyLocation): Resolved {
     const location = this.setLocation(params);
     const { nodeId, path } = location;
@@ -136,6 +140,33 @@ export class BaseEditorPropertyLocationObserver {
 
   isResolved(): boolean {
     return this.location == null;
+  }
+
+  touch(path: string) {
+    if (this.location == null) {
+      return false;
+    }
+
+    let set = this.touchStatus.get(this.location);
+    if (set == null) {
+      set = new Set();
+      this.touchStatus.set(this.location, set);
+    }
+
+    set.add(path);
+  }
+
+  isTouched(path: string) {
+    if (this.location == null) {
+      return false;
+    }
+
+    const set = this.touchStatus.get(this.location);
+    if (set == null) {
+      return false;
+    }
+
+    return set.has(path);
   }
 
   /**

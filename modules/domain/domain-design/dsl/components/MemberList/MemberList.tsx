@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { Button, Checkbox, Popover, Space } from 'antd';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
@@ -7,8 +7,9 @@ import { action, observable } from 'mobx';
 import { useRefValue } from '@wakeapp/hooks';
 import { NoopArray } from '@wakeapp/utils';
 import { v4 } from 'uuid';
-
-import { EditorFormTooltip, useEditorFormContext } from '@/lib/editor';
+import { getPathSegmentByIndex, getPathLength } from '@/lib/utils';
+import { EditorFormTooltip, useEditorFormContext, usePropertyLocationSatisfy } from '@/lib/editor';
+import { scrollIntoView } from '@/lib/dom';
 import { DragHandle, SortableList } from '@/lib/components/SortableList';
 
 import { IDDSL } from '../../dsl';
@@ -217,7 +218,6 @@ const Member = observer(function Member<T extends IDDSL>(props: {
   index: number;
 }) {
   const { value, context, index } = props;
-  const [popoverOpen, setPopoverOpen] = useState(false);
   const readonly = context.readonly;
   const popoverEdit = context.getEditorDisplayType() === 'popover';
   const path = context.getPath();
@@ -233,9 +233,6 @@ const Member = observer(function Member<T extends IDDSL>(props: {
     }
 
     context.handleEdit(value);
-    if (popoverEdit) {
-      setPopoverOpen(true);
-    }
   };
 
   const handleRemove = () => {
@@ -259,6 +256,7 @@ const Member = observer(function Member<T extends IDDSL>(props: {
       title={selecting ? '点击选择' : '双击编辑'}
       onDoubleClick={handleEdit}
       onClickCapture={handleSelectedChange}
+      data-member-id={value.uuid}
     >
       {selecting ? (
         <Checkbox
@@ -279,9 +277,8 @@ const Member = observer(function Member<T extends IDDSL>(props: {
               trigger="click"
               title={context.getEditorTitle()}
               destroyTooltipOnHide
-              open={popoverOpen}
+              open={editing}
               onOpenChange={v => {
-                setPopoverOpen(v);
                 if (!v) {
                   context.handleEditHided();
                 } else {
@@ -513,6 +510,32 @@ export const MemberList = observer(function MemberList<T extends IDDSL>(props: M
   useEffect(() => {
     setReadonly(readonly);
   }, [readonly, setReadonly]);
+
+  usePropertyLocationSatisfy({
+    nodeId: formModel.id,
+    path,
+    onSatisfy: evt => {
+      if (evt.location.path === path) {
+        return;
+      }
+
+      // 获取子项索引
+      const index = getPathSegmentByIndex(evt.location.path!, getPathLength(path));
+      if (index == null) {
+        return;
+      }
+
+      // 打开子项
+      const item = props.value?.[Number(index)];
+      if (item) {
+        context.handleEdit(item);
+        // 滚动显示
+        requestAnimationFrame(() => {
+          scrollIntoView(`[data-member-id='${item.uuid}']`);
+        });
+      }
+    },
+  });
 
   return (
     <div className={classNames('vd-member-list', s.root, className)} style={style}>
