@@ -1,6 +1,8 @@
-import React, { FC, memo } from 'react';
+import React, { FC } from 'react';
 import { observer } from 'mobx-react';
 import classNames from 'classnames';
+import { NoopArray } from '@wakeapp/utils';
+import { usePropertyLocationNavigate } from '@/lib/editor';
 
 import { PropertyDSL, MethodDSL, ClassDSL } from '../../dsl';
 import { reactifyMethod, reactifyProperty } from '../../reactify';
@@ -8,7 +10,7 @@ import { UntitledInHumanReadable, UntitledInUpperCamelCase } from '../../constan
 
 import s from './ClassShape.module.scss';
 
-export interface ClassShapePropertyBaseProps {
+export interface ClassShapePropertyBaseProps extends React.HTMLAttributes<HTMLDivElement> {
   name?: React.ReactNode;
   comment?: string;
   className?: string;
@@ -18,7 +20,7 @@ export interface ClassShapePropertyBaseProps {
 /**
  * 基础列表项
  */
-export const ClassShapePropertyBase = memo((props: ClassShapePropertyBaseProps) => {
+export const ClassShapePropertyBase = (props: ClassShapePropertyBaseProps) => {
   const { name, comment, className, ...other } = props;
   return (
     <div className={classNames('shape-class-property', s.property, className)} {...other}>
@@ -28,9 +30,7 @@ export const ClassShapePropertyBase = memo((props: ClassShapePropertyBaseProps) 
       </span>
     </div>
   );
-});
-
-ClassShapePropertyBase.displayName = 'ClassShapePropertyBase';
+};
 
 /**
  * 列表项容器
@@ -41,15 +41,20 @@ export const ClassShapeCells = (props: React.HTMLProps<HTMLDivElement>) => {
   return <div {...props} className={classNames('shape-class__cells', s.cells, props.className)}></div>;
 };
 
+export interface ClassShapePropertyProps extends React.HTMLAttributes<HTMLDivElement> {
+  value: PropertyDSL;
+  isClassMember?: boolean;
+}
+
 /**
  * 属性渲染
  */
-export const ClassShapeProperty = observer(function Property(props: { value: PropertyDSL; isClassMember?: boolean }) {
-  const { value, isClassMember } = props;
+export const ClassShapeProperty = observer(function Property(props: ClassShapePropertyProps) {
+  const { value, isClassMember, className, ...other } = props;
   const { title, description } = value;
 
   return (
-    <div className={classNames('shape-class-property', s.property)}>
+    <div className={classNames('shape-class-property', s.property, className)} {...other}>
       <span
         className={classNames('shape-class-property__name', s.propertyName, { class: isClassMember })}
         title={title}
@@ -63,15 +68,20 @@ export const ClassShapeProperty = observer(function Property(props: { value: Pro
   );
 });
 
+export interface ClassShapeMethodProps extends React.HTMLAttributes<HTMLDivElement> {
+  value: MethodDSL;
+  isClassMember?: boolean;
+}
+
 /**
  * 方法渲染
  */
-export const ClassShapeMethod = observer(function Method(props: { value: MethodDSL; isClassMember?: boolean }) {
-  const { value, isClassMember } = props;
+export const ClassShapeMethod = observer(function Method(props: ClassShapeMethodProps) {
+  const { value, isClassMember, className, ...other } = props;
   const { title, abstract, description } = value;
 
   return (
-    <div className={classNames('shape-class-method', s.method)}>
+    <div className={classNames('shape-class-method', s.method, className)} {...other}>
       <span
         className={classNames('shape-class-method__name', s.methodName, { abstract, class: isClassMember })}
         title={title}
@@ -120,9 +130,11 @@ export interface ClassShapeBaseProps {
 
   properties?: PropertyDSL[];
   classProperties?: PropertyDSL[];
+  onPropertyFocus?: (evt: { item: PropertyDSL; type: 'properties' | 'classProperties' }) => void;
 
   methods?: MethodDSL[];
   classMethods?: MethodDSL[];
+  onMethodFocus?: (evt: { item: MethodDSL; type: 'methods' | 'classMethods' }) => void;
 
   header?: React.ReactNode;
   children?: React.ReactNode;
@@ -131,7 +143,7 @@ export interface ClassShapeBaseProps {
 /**
  * 类 UML 基础渲染
  */
-export const ClassShapeBase: FC<ClassShapeBaseProps> = observer(function ClassShapeBase(props) {
+export const ClassShapeBase = observer(function ClassShapeBase(props: ClassShapeBaseProps) {
   const {
     className,
     style,
@@ -142,13 +154,29 @@ export const ClassShapeBase: FC<ClassShapeBaseProps> = observer(function ClassSh
     abstract,
     properties,
     classProperties,
+    onPropertyFocus,
     methods,
     classMethods,
+    onMethodFocus,
     children,
     header,
   } = props;
   const hasProperties = !!(properties?.length || classProperties?.length);
   const hasMethods = !!(methods?.length || classMethods?.length);
+
+  const handlePropertyClick = (isClassMember: boolean, property: PropertyDSL) => (evt: React.MouseEvent) => {
+    evt.stopPropagation();
+    evt.preventDefault();
+
+    onPropertyFocus?.({ item: property, type: isClassMember ? 'classProperties' : 'properties' });
+  };
+
+  const handleMethodClick = (isClassMember: boolean, method: MethodDSL) => (evt: React.MouseEvent) => {
+    evt.stopPropagation();
+    evt.preventDefault();
+
+    onMethodFocus?.({ item: method, type: isClassMember ? 'classMethods' : 'methods' });
+  };
 
   return (
     <div className={classNames('shape-class', s.root, className)} style={style}>
@@ -164,20 +192,42 @@ export const ClassShapeBase: FC<ClassShapeBaseProps> = observer(function ClassSh
       {hasProperties && (
         <div className={classNames('shape-class__cells', s.cells)}>
           {classProperties?.map(i => {
-            return <ClassShapeProperty key={i.uuid} value={i} isClassMember></ClassShapeProperty>;
+            return (
+              <ClassShapeProperty
+                key={i.uuid}
+                value={i}
+                isClassMember
+                onDoubleClick={handlePropertyClick(true, i)}
+              ></ClassShapeProperty>
+            );
           })}
           {properties?.map(i => {
-            return <ClassShapeProperty key={i.uuid} value={i}></ClassShapeProperty>;
+            return (
+              <ClassShapeProperty
+                key={i.uuid}
+                value={i}
+                onDoubleClick={handlePropertyClick(false, i)}
+              ></ClassShapeProperty>
+            );
           })}
         </div>
       )}
       {hasMethods && (
         <div className={classNames('shape-class__cells', s.cells)}>
           {classMethods?.map(i => {
-            return <ClassShapeMethod key={i.uuid} value={i} isClassMember></ClassShapeMethod>;
+            return (
+              <ClassShapeMethod
+                key={i.uuid}
+                value={i}
+                isClassMember
+                onDoubleClick={handleMethodClick(true, i)}
+              ></ClassShapeMethod>
+            );
           })}
           {methods?.map(i => {
-            return <ClassShapeMethod key={i.uuid} value={i}></ClassShapeMethod>;
+            return (
+              <ClassShapeMethod key={i.uuid} value={i} onDoubleClick={handleMethodClick(false, i)}></ClassShapeMethod>
+            );
           })}
         </div>
       )}
@@ -186,8 +236,29 @@ export const ClassShapeBase: FC<ClassShapeBaseProps> = observer(function ClassSh
   );
 });
 
+/**
+ * 通用类图形
+ */
 export const ClassShape: FC<ClassShapeProps> = observer(function ClassShape(props) {
   const { dsl, type, className, style } = props;
+  const openProperty = usePropertyLocationNavigate();
+
+  const handlePropertyFocus: ClassShapeBaseProps['onPropertyFocus'] = evt => {
+    const list = dsl[evt.type] ?? NoopArray;
+    const index = list.findIndex(i => i.uuid === evt.item.uuid);
+
+    if (index === -1) {
+      return;
+    }
+
+    openProperty({
+      nodeId: dsl.uuid,
+      path: `${evt.type}[${index}]`,
+    });
+  };
+
+  // @ts-expect-error 直接通过 type 取字段，因此是兼容的
+  const handleMethodFocus: ClassShapeBaseProps['onMethodFocus'] = handlePropertyFocus;
 
   return (
     <ClassShapeBase
@@ -199,8 +270,10 @@ export const ClassShape: FC<ClassShapeProps> = observer(function ClassShape(prop
       abstract={dsl.abstract}
       properties={dsl.properties}
       classProperties={dsl.classProperties}
+      onPropertyFocus={handlePropertyFocus}
       methods={dsl.methods}
       classMethods={dsl.classMethods}
+      onMethodFocus={handleMethodFocus}
     />
   );
 });

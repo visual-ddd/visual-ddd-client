@@ -1,4 +1,4 @@
-import { BaseNode, useEditorModel } from '@/lib/editor';
+import { BaseNode, useEditorModel, usePropertyLocationNavigate } from '@/lib/editor';
 import { ClassShapeBase, ClassShapeCells, ClassShapePropertyBase } from '@/modules/domain/domain-design/dsl';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
@@ -16,9 +16,17 @@ export interface MapperShapeProps {
 }
 
 export const MapperShape = observer(function MapperShape(props: MapperShapeProps) {
-  const { model } = props;
+  const { model, dsl } = props;
   const { model: editorModel } = useEditorModel<MapperEditorModel>();
   const mapper = editorModel.mapperStore.getMapperById(model.id)!;
+  const open = usePropertyLocationNavigate();
+
+  const handleMemberClick = (index: number) => (event: React.MouseEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    open({ nodeId: dsl.uuid, path: `mappers[${index}]` });
+  };
 
   return (
     <ClassShapeBase
@@ -36,12 +44,13 @@ export const MapperShape = observer(function MapperShape(props: MapperShapeProps
     >
       {mapper.mappers.length > 0 && (
         <ClassShapeCells>
-          {mapper.mappers.map(i => {
+          {mapper.mappers.map((i, index) => {
             return (
               <ClassShapePropertyBase
                 className={s.property}
                 key={i.uuid}
                 name={reactifyMapper(i.source, i.target, mapper)}
+                onDoubleClick={handleMemberClick(index)}
               ></ClassShapePropertyBase>
             );
           })}

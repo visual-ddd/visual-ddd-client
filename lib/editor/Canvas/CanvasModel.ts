@@ -457,7 +457,9 @@ export class CanvasModel implements IDisposable {
       this.contextMenuController.dispose,
       // 监听节点定位
       this.editorPropertyLocationObserver.subscribeAnonymous(evt => {
-        this.handleSelect({ cellIds: [evt.nodeId] });
+        if (this.editorViewStore.focusingNode?.id !== evt.nodeId) {
+          this.handleSelect({ cellIds: [evt.nodeId] });
+        }
       })
     );
   }
