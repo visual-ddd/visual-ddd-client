@@ -4,6 +4,7 @@
   background-color: white;
   border: 2px solid var(--vd-color-gray-900);
   border-radius: 8px;
+  overflow: hidden;
 }
 
 .header {
@@ -60,6 +61,10 @@
   font-size: var(--vd-font-size-h6);
   width: 100%;
   overflow: hidden;
+
+  &:hover {
+    background-color: #ffffffb8;
+  }
 }
 
 .propertyName,
