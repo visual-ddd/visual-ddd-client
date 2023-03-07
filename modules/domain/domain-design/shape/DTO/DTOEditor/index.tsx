@@ -1,16 +1,16 @@
 import { EditorFormCollapse, EditorFormCollapsePanel, EditorFormItem } from '@/lib/editor';
 import { useDynamicSlot } from '@/lib/components/DynamicSlot';
 
-import { NameTooltip } from '../../constants';
-import { PropertiesEditor } from '../PropertiesEditor';
-import { MethodsEditor } from '../MethodsEditor';
-import { DescriptionInput } from '../DescriptionInput';
-import { TitleInput } from '../TitleInput';
-import { ObjectNameInput } from '../ObjectNameInput';
+import { DomainObjectFactory } from '../../../model';
+import { NameTooltip } from '../../../dsl/constants';
+import { PropertiesEditor } from '../../../dsl/components/PropertiesEditor';
+import { DescriptionInput } from '../../../dsl/components/DescriptionInput';
+import { TitleInput } from '../../../dsl/components/TitleInput';
+import { ObjectNameInput } from '../../../dsl/components/ObjectNameInput';
 
-const DEFAULT_ACTIVE = ['base', 'properties', 'methods'];
+const DEFAULT_ACTIVE = ['base', 'properties'];
 
-export const ValueObjectEditor = () => {
+export const DTOEditor = () => {
   const propertiesActionSlot = useDynamicSlot();
 
   return (
@@ -22,7 +22,7 @@ export const ValueObjectEditor = () => {
           tooltip={
             <>
               <div>- {NameTooltip['CamelCase']}</div>
-              <div>- 同一个聚合下，不能和其他实体、值对象、枚举冲突</div>
+              <div>- 不能和其他 DTO 冲突</div>
               <div>
                 - 谨慎变更，可以<b>双击进行编辑</b>
               </div>
@@ -38,11 +38,8 @@ export const ValueObjectEditor = () => {
           <DescriptionInput />
         </EditorFormItem>
       </EditorFormCollapsePanel>
-      <EditorFormCollapsePanel header="属性" key="properties" path="properties" extra={propertiesActionSlot.content}>
-        <PropertiesEditor actionSlot={propertiesActionSlot.render} />
-      </EditorFormCollapsePanel>
-      <EditorFormCollapsePanel header="方法" key="methods" path="methods">
-        <MethodsEditor />
+      <EditorFormCollapsePanel header="属性" extra={propertiesActionSlot.content} key="properties" path="properties">
+        <PropertiesEditor actionSlot={propertiesActionSlot.render} referenceTypeFilter={DomainObjectFactory.isDTO} />
       </EditorFormCollapsePanel>
     </EditorFormCollapse>
   );

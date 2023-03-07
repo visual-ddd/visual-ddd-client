@@ -2,13 +2,13 @@ import { EditorFormCollapse, EditorFormCollapsePanel, EditorFormConsumer, Editor
 import { Select, SelectProps, Switch } from 'antd';
 import { observer } from 'mobx-react';
 
-import { NameTooltip, UntitledInCamelCase, UntitledInHumanReadable } from '../../constants';
-import { PropertiesEditor } from '../PropertiesEditor';
-import { MethodsEditor } from '../MethodsEditor';
-import { DescriptionInput } from '../DescriptionInput';
-import { PropertyDSL } from '../../dsl';
-import { TitleInput } from '../TitleInput';
-import { ObjectNameInput } from '../ObjectNameInput';
+import { NameTooltip, UntitledInCamelCase, UntitledInHumanReadable } from '../../../dsl/constants';
+import { PropertiesEditor } from '../../../dsl/components/PropertiesEditor';
+import { MethodsEditor } from '../../../dsl/components/MethodsEditor';
+import { DescriptionInput } from '../../../dsl/components/DescriptionInput';
+import { PropertyDSL } from '../../../dsl/dsl';
+import { TitleInput } from '../../../dsl/components/TitleInput';
+import { ObjectNameInput } from '../../../dsl/components/ObjectNameInput';
 import { useDynamicSlot } from '@/lib/components/DynamicSlot';
 
 const DEFAULT_ACTIVE = ['base', 'properties', 'methods'];

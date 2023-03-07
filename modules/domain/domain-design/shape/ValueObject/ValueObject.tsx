@@ -12,8 +12,9 @@ import {
   createValueObject,
   DomainObjectName,
   ValueObjectDSL,
-  ValueObjectEditor,
 } from '../../dsl';
+
+import { ValueObjectEditor } from './ValueObjectEditor';
 
 import icon from './value-object.png';
 

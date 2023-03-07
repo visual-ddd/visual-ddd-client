@@ -7,11 +7,12 @@ import {
   QueryDSL,
   ClassShape,
   ClassDSL,
-  QueryEditor,
   checkDomainObjectNameConflict,
   checkPropertyName,
   checkReferenceError,
 } from '../../dsl';
+
+import { QueryEditor } from './QueryEditor';
 
 import icon from './query.png';
 

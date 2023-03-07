@@ -1,11 +1,11 @@
 import { EditorFormCollapse, EditorFormCollapsePanel, EditorFormItem } from '@/lib/editor';
 
-import { NameTooltip } from '../../constants';
-import { DescriptionInput } from '../DescriptionInput';
-import { TitleInput } from '../TitleInput';
-import { ObjectNameInput } from '../ObjectNameInput';
+import { NameTooltip } from '../../../dsl/constants';
+import { DescriptionInput } from '../../../dsl/components/DescriptionInput';
+import { TitleInput } from '../../../dsl/components/TitleInput';
+import { ObjectNameInput } from '../../../dsl/components/ObjectNameInput';
 import { Select } from 'antd';
-import { EnumMembersEditor } from '../EnumMembersEditor';
+import { EnumMembersEditor } from './EnumMembersEditor';
 
 const DEFAULT_ACTIVE = ['base', 'members'];
 

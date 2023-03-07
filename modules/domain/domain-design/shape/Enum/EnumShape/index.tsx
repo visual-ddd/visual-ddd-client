@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 
 import { EnumDSL } from '../../../dsl/dsl';
 import { reactifyEnumMember } from '../../../dsl/reactify';
-import { ClassShapeBase, ClassShapeCells, ClassShapePropertyBase } from '../../../dsl/shape-components/ClassShape';
+import { ClassShapeBase, ClassShapeCells, ClassShapePropertyBase } from '../../../dsl/components/ClassShape';
 
 import s from './index.module.scss';
 

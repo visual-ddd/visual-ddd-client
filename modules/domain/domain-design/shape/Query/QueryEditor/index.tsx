@@ -13,14 +13,14 @@ import { useDynamicSlot } from '@/lib/components/DynamicSlot';
 
 import { DomainEditorModel, DomainObjectFactory, DomainObjectQuery, DomainObjectRule } from '../../../model';
 
-import { NameTooltip } from '../../constants';
+import { NameTooltip } from '../../../dsl/constants';
 
-import { PropertiesEditor } from '../PropertiesEditor';
-import { DescriptionInput } from '../DescriptionInput';
-import { TitleInput } from '../TitleInput';
-import { SourceInput } from '../SourceInput';
-import { ReferenceTypeProvider, TypeInput } from '../TypeInput';
-import { ObjectNameInput } from '../ObjectNameInput';
+import { PropertiesEditor } from '../../../dsl/components/PropertiesEditor';
+import { DescriptionInput } from '../../../dsl/components/DescriptionInput';
+import { TitleInput } from '../../../dsl/components/TitleInput';
+import { SourceInput } from '../../../dsl/components/SourceInput';
+import { ReferenceTypeProvider, TypeInput } from '../../../dsl/components/TypeInput';
+import { ObjectNameInput } from '../../../dsl/components/ObjectNameInput';
 
 const DEFAULT_ACTIVE = ['base', 'properties', 'eventProperties'];
 

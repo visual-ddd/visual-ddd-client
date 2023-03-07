@@ -1,10 +1,12 @@
 import { defineShape, FormRuleReportType, ROOT_FIELD, ShapeComponentProps, useShapeModel } from '@/lib/editor';
 import { ReactComponentBinding, ReactComponentProps, registerReactComponent } from '@/lib/g6-binding';
+import { Tooltip } from 'antd';
+import { QuestionCircleFilled } from '@ant-design/icons';
+import { getPrefixPath } from '@/lib/utils';
 
 import {
   ClassShape,
   createEntity,
-  EntityEditor,
   EntityDSL,
   DomainObjectName,
   checkDomainObjectNameConflict,
@@ -13,11 +15,10 @@ import {
   checkSameAggregationReference,
   checkReferenceError,
 } from '../../dsl';
-import { getPrefixPath } from '@/lib/utils';
+
+import { EntityEditor } from './EntityEditor';
 
 import icon from './entity.png';
-import { Tooltip } from 'antd';
-import { QuestionCircleFilled } from '@ant-design/icons';
 
 const EntityReactShapeComponent = (props: ReactComponentProps) => {
   const properties = useShapeModel<EntityDSL>(props.node).properties;

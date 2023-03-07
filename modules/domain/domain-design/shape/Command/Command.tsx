@@ -7,7 +7,6 @@ import {
   CommandDSL,
   createCommand,
   DomainObjectName,
-  CommandEditor,
   checkUnderPackage,
   checkSameAggregationReference,
   checkDomainObjectNameConflict,
@@ -17,6 +16,7 @@ import {
 } from '../../dsl';
 
 import { CommandShape } from './CommandShape';
+import { CommandEditor } from './CommandEditor';
 
 import icon from './command.png';
 

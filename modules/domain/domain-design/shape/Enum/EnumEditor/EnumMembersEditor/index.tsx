@@ -3,16 +3,16 @@ import classNames from 'classnames';
 import { observer } from 'mobx-react';
 import { Input } from 'antd';
 
-import { EnumMemberDSL, PropertyDSL } from '../../dsl';
-import { NameTooltip } from '../../constants';
-import { createEnumMember } from '../../factory';
-import { MemberList } from '../MemberList';
-import { NameInput } from '../NameInput';
+import { EnumMemberDSL, PropertyDSL } from '../../../../dsl/dsl';
+import { NameTooltip } from '../../../../dsl/constants';
+import { createEnumMember } from '../../../../dsl/factory';
+import { MemberList } from '../../../../dsl/components/MemberList';
+import { NameInput } from '../../../../dsl/components/NameInput';
 
 import s from './index.module.scss';
-import { DescriptionInput } from '../DescriptionInput';
-import { reactifyEnumMember } from '../../reactify';
-import { TitleInput } from '../TitleInput';
+import { DescriptionInput } from '../../../../dsl/components/DescriptionInput';
+import { reactifyEnumMember } from '../../../../dsl/reactify';
+import { TitleInput } from '../../../../dsl/components/TitleInput';
 import { replaceLastPathToPattern } from '@/lib/utils';
 
 export interface EnumMembersEditorProps {

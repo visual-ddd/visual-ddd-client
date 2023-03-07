@@ -5,7 +5,6 @@ import {
   createEnum,
   DomainObjectName,
   EnumDSL,
-  EnumEditor,
   checkUnderPackage,
   checkDomainObjectNameConflict,
   checkPropertyName,
@@ -13,6 +12,7 @@ import {
 } from '../../dsl';
 
 import { EnumShape } from './EnumShape';
+import { EnumEditor } from './EnumEditor';
 
 import icon from './enum.png';
 

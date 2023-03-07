@@ -1,10 +1,10 @@
 import { EditorFormContainer, EditorFormItem } from '@/lib/editor';
 
-import { NameTooltip } from '../../constants';
-import { DescriptionInput } from '../DescriptionInput';
-import { TitleInput } from '../TitleInput';
-import { CommandOrQuerySelect } from '../CommandOrQuerySelect';
-import { ObjectNameInput } from '../ObjectNameInput';
+import { NameTooltip } from '../../../dsl/constants';
+import { DescriptionInput } from '../../../dsl/components/DescriptionInput';
+import { TitleInput } from '../../../dsl/components/TitleInput';
+import { CommandOrQuerySelect } from '../../../dsl/components/CommandOrQuerySelect';
+import { ObjectNameInput } from '../../../dsl/components/ObjectNameInput';
 
 export const RuleEditor = () => {
   return (

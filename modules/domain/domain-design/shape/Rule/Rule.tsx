@@ -1,16 +1,10 @@
 import { defineShape, FormRuleReportType, ROOT_FIELD, ShapeComponentProps, useShapeModel } from '@/lib/editor';
 import { ReactComponentBinding, ReactComponentProps, registerReactComponent } from '@/lib/g6-binding';
 
-import {
-  RuleEditor,
-  DomainObjectName,
-  createRule,
-  RuleDSL,
-  checkUnderPackage,
-  checkDomainObjectNameConflict,
-} from '../../dsl';
+import { DomainObjectName, createRule, RuleDSL, checkUnderPackage, checkDomainObjectNameConflict } from '../../dsl';
 
 import { RuleShape } from './RuleShape';
+import { RuleEditor } from './RuleEditor';
 
 import icon from './rule.png';
 

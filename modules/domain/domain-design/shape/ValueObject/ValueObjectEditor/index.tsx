@@ -1,16 +1,16 @@
 import { EditorFormCollapse, EditorFormCollapsePanel, EditorFormItem } from '@/lib/editor';
 import { useDynamicSlot } from '@/lib/components/DynamicSlot';
 
-import { DomainObjectFactory } from '../../../model';
-import { NameTooltip } from '../../constants';
-import { PropertiesEditor } from '../PropertiesEditor';
-import { DescriptionInput } from '../DescriptionInput';
-import { TitleInput } from '../TitleInput';
-import { ObjectNameInput } from '../ObjectNameInput';
+import { NameTooltip } from '../../../dsl/constants';
+import { PropertiesEditor } from '../../../dsl/components/PropertiesEditor';
+import { MethodsEditor } from '../../../dsl/components/MethodsEditor';
+import { DescriptionInput } from '../../../dsl/components/DescriptionInput';
+import { TitleInput } from '../../../dsl/components/TitleInput';
+import { ObjectNameInput } from '../../../dsl/components/ObjectNameInput';
 
-const DEFAULT_ACTIVE = ['base', 'properties'];
+const DEFAULT_ACTIVE = ['base', 'properties', 'methods'];
 
-export const DTOEditor = () => {
+export const ValueObjectEditor = () => {
   const propertiesActionSlot = useDynamicSlot();
 
   return (
@@ -22,7 +22,7 @@ export const DTOEditor = () => {
           tooltip={
             <>
               <div>- {NameTooltip['CamelCase']}</div>
-              <div>- 不能和其他 DTO 冲突</div>
+              <div>- 同一个聚合下，不能和其他实体、值对象、枚举冲突</div>
               <div>
                 - 谨慎变更，可以<b>双击进行编辑</b>
               </div>
@@ -38,8 +38,11 @@ export const DTOEditor = () => {
           <DescriptionInput />
         </EditorFormItem>
       </EditorFormCollapsePanel>
-      <EditorFormCollapsePanel header="属性" extra={propertiesActionSlot.content} key="properties" path="properties">
-        <PropertiesEditor actionSlot={propertiesActionSlot.render} referenceTypeFilter={DomainObjectFactory.isDTO} />
+      <EditorFormCollapsePanel header="属性" key="properties" path="properties" extra={propertiesActionSlot.content}>
+        <PropertiesEditor actionSlot={propertiesActionSlot.render} />
+      </EditorFormCollapsePanel>
+      <EditorFormCollapsePanel header="方法" key="methods" path="methods">
+        <MethodsEditor />
       </EditorFormCollapsePanel>
     </EditorFormCollapse>
   );

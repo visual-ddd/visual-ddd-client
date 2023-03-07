@@ -3,7 +3,6 @@ import { ReactComponentBinding, ReactComponentProps, registerReactComponent } fr
 
 import {
   AggregationDSL,
-  AggregationEditor,
   checkDomainObjectNameConflict,
   createAggregation,
   DomainObjectName,
@@ -12,6 +11,7 @@ import {
 import { DomainObjectAggregation } from '../../model';
 
 import { AggregationShape } from './AggregationShape';
+import { AggregationEditor } from './AggregationEditor';
 
 import icon from './aggregation.png';
 

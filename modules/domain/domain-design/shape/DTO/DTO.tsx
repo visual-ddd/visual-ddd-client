@@ -9,8 +9,9 @@ import {
   createDTO,
   DomainObjectName,
   DTODSL,
-  DTOEditor,
 } from '../../dsl';
+
+import { DTOEditor } from './DTOEditor';
 
 import icon from './dto.png';
 

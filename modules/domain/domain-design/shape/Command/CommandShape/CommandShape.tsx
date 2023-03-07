@@ -5,7 +5,7 @@ import { usePropertyLocationNavigate } from '@/lib/editor';
 import { NoopArray } from '@wakeapp/utils';
 
 import { CommandDSL } from '../../../dsl/dsl';
-import { ClassShapeBase, ClassShapeBaseProps } from '../../../dsl/shape-components/ClassShape';
+import { ClassShapeBase, ClassShapeBaseProps } from '../../../dsl/components/ClassShape';
 
 import s from './CommandShape.module.scss';
 

@@ -13,16 +13,16 @@ import { useDynamicSlot } from '@/lib/components/DynamicSlot';
 
 import type { DomainEditorModel, DomainObjectCommand, DomainObjectRule } from '../../../model';
 
-import { NameTooltip } from '../../constants';
+import { NameTooltip } from '../../../dsl/constants';
 
-import { PropertiesEditor } from '../PropertiesEditor';
-import { DescriptionInput } from '../DescriptionInput';
-import { TitleInput } from '../TitleInput';
-import { SourceInput } from '../SourceInput';
-import { TypeInput } from '../TypeInput';
-import { AggregationSelect } from '../AggregationSelect';
-import { ObjectNameInput } from '../ObjectNameInput';
-import { NameInput } from '../NameInput';
+import { PropertiesEditor } from '../../../dsl/components/PropertiesEditor';
+import { DescriptionInput } from '../../../dsl/components/DescriptionInput';
+import { TitleInput } from '../../../dsl/components/TitleInput';
+import { SourceInput } from '../../../dsl/components/SourceInput';
+import { TypeInput } from '../../../dsl/components/TypeInput';
+import { AggregationSelect } from '../../../dsl/components/AggregationSelect';
+import { ObjectNameInput } from '../../../dsl/components/ObjectNameInput';
+import { NameInput } from '../../../dsl/components/NameInput';
 
 const DEFAULT_ACTIVE = ['base', 'properties', 'eventProperties'];
 

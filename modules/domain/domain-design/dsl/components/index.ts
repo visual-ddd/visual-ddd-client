@@ -11,14 +11,6 @@ export * from './MemberList';
 export * from './PropertiesEditor';
 export * from './MethodsEditor';
 export * from './ParameterEditor';
-export * from './EnumMembersEditor';
 
-// 图形编辑器
-export * from './EntityEditor';
-export * from './ValueObjectEditor';
-export * from './AggregationEditor';
-export * from './CommandEditor';
-export * from './RuleEditor';
-export * from './EnumEditor';
-export * from './DTOEditor';
-export * from './QueryEditor';
+// 基础图形
+export * from './ClassShape';
