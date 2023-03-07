@@ -1,12 +1,10 @@
-import React from 'react';
 import { makeAutoBindThis } from '@/lib/store';
 import { makeObservable, observable } from 'mobx';
 import { tryDispose } from '@/lib/utils';
 import { extraRestErrorMessage } from '@/modules/backend-client';
 import { BaseDesignerModel, BaseDesignerAwarenessState } from '@/lib/designer';
 import { BaseEditorAwarenessState, BaseNode } from '@/lib/editor';
-import { message, notification } from 'antd';
-import { delay } from '@wakeapp/utils';
+import { message } from 'antd';
 
 import { YJS_FIELD_NAME } from '../../constants';
 import { DomainEditorModel, createDomainEditorModel } from '../../domain-design';
@@ -22,6 +20,7 @@ import { createMapperEditorModel, MapperEditorModel } from '../../mapper-design'
 import { DomainDesignerTabs } from './constants';
 import { ObjectStore } from './ObjectStore';
 import { IDomainGeneratorHandler, domainObjectGenerate } from '../../generator';
+import { DomainDesignerEvent } from './DomainDesignerEvent';
 
 export interface DomainDesignerAwarenessState extends BaseDesignerAwarenessState {
   [YJS_FIELD_NAME.DOMAIN]: BaseEditorAwarenessState;
@@ -37,6 +36,11 @@ export class DomainDesignerModel
   extends BaseDesignerModel<DomainDesignerTabs, DomainDesignerAwarenessState>
   implements IDomainGeneratorHandler
 {
+  /**
+   * 设计器事件
+   */
+  event = new DomainDesignerEvent();
+
   @observable
   activeTab: DomainDesignerTabs = DomainDesignerTabs.Vision;
 
@@ -224,13 +228,12 @@ export class DomainDesignerModel
       // 解决办法：
       // - Tab item 加上 forceRender, 在隐藏时强制渲染 Dom，这样可以获取到已有节点的数据
       // - 预估节点大小，见上文
-      await delay(100);
+      await message.info('正在生成查询模型...', 0.8);
 
       this.queryEditorModel.event.emit('CMD_RE_LAYOUT');
       this.dataObjectEditorModel.event.emit('CMD_RE_LAYOUT');
       this.mapperObjectEditorModel.event.emit('CMD_RE_LAYOUT');
 
-      await message.info('正在生成查询模型...', 0.8);
       await message.info('正在生成数据模型...', 0.5);
       await message.info('正在生成对象映射...', 0.5);
 
@@ -241,33 +244,7 @@ export class DomainDesignerModel
         this.mapperObjectEditorModel.commandHandler.removeNode({ node: mapperNode });
       };
 
-      // FIXME: 不要在 Model 层放置 UI 逻辑
-      const NOTIFICATION_KEY = 'domainGenerate';
-      notification.success({
-        key: NOTIFICATION_KEY,
-        message: '生成成功',
-        description: React.createElement(
-          'div',
-          {},
-          '生成成功，可以点击下面‘查询模型’、‘数据模型’、‘对象结构映射’，查看生成结果',
-          React.createElement(
-            'div',
-            {},
-            React.createElement(
-              'button',
-              {
-                className: 'u-mt-xs',
-                onClick: () => {
-                  notification.destroy(NOTIFICATION_KEY);
-                  revoke();
-                },
-              },
-              '撤销'
-            )
-          )
-        ),
-        duration: 5,
-      });
+      this.event.emit('DOMAIN_OBJECT_AUTO_GENERATED', { revoke });
     } catch (err) {
       message.error(`自动生成生成失败：${(err as Error).message}`);
     } finally {

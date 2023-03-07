@@ -1,11 +1,11 @@
 import { observer } from 'mobx-react';
 import { useEffect, useMemo } from 'react';
-import { message } from 'antd';
+import { Button, message, notification } from 'antd';
 import { tryDispose } from '@/lib/utils';
 import { IUser, VersionStatus } from '@/lib/core';
 import { CompletionContextProvider } from '@/lib/components/Completion';
 import { DesignerLayout, DesignerTabLabel } from '@/lib/components/DesignerLayout';
-import { usePreventUnload } from '@/lib/hooks';
+import { useEventBusListener, usePreventUnload } from '@/lib/hooks';
 import { NoopArray } from '@wakeapp/utils';
 
 import { DomainEditor } from '../domain-design';
@@ -79,6 +79,7 @@ export interface DomainDesignerProps {
 const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerProps) {
   const { id, readonly, description, words } = props;
   const model = useMemo(() => new DomainDesignerModel({ id, readonly }), [id, readonly]);
+  const [notify, notifyContextHolder] = notification.useNotification();
 
   const globalWords = useMemo(() => (words ?? NoopArray).filter(i => !!i.trim()), [words]);
 
@@ -169,6 +170,61 @@ const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerPro
     }
   }, [model.error]);
 
+  useEventBusListener(model.event, on => {
+    // 对象创建成功
+    on('DOMAIN_OBJECT_AUTO_GENERATED', ({ revoke }) => {
+      const NOTIFICATION_KEY = 'domainGenerate';
+      notify.success({
+        key: NOTIFICATION_KEY,
+        message: '生成成功',
+        description: (
+          <div>
+            生成成功，可以点击下面
+            <span
+              className="u-link"
+              onClick={() => {
+                model.setActiveTab({ tab: DomainDesignerTabs.QueryModel });
+              }}
+            >
+              查询模型
+            </span>
+            、
+            <span
+              className="u-link"
+              onClick={() => {
+                model.setActiveTab({ tab: DomainDesignerTabs.DataModel });
+              }}
+            >
+              数据模型
+            </span>
+            、
+            <span
+              className="u-link"
+              onClick={() => {
+                model.setActiveTab({ tab: DomainDesignerTabs.Mapper });
+              }}
+            >
+              对象结构映射
+            </span>
+            ，查看生成结果
+            <div>
+              <Button
+                className="u-mt-xs"
+                onClick={() => {
+                  notify.destroy(NOTIFICATION_KEY);
+                  revoke();
+                }}
+              >
+                撤销
+              </Button>
+            </div>
+          </div>
+        ),
+        duration: 5,
+      });
+    });
+  });
+
   // 加载和销毁
   useEffect(() => {
     model.initialize();
@@ -194,6 +250,7 @@ const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerPro
           activeKey={model.activeTab}
           onActiveKeyChange={tab => model.setActiveTab({ tab: tab as DomainDesignerTabs })}
         >
+          {notifyContextHolder}
           <DomainDesignerLoading></DomainDesignerLoading>
           <DomainDesignerHeader
             user={description?.user}

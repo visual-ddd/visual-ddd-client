@@ -16,7 +16,7 @@ export class EventBus<
   /**
    * 模型层事件
    */
-  private eventBus: EventEmitter = new EventEmitter();
+  protected eventBus: EventEmitter = new EventEmitter();
 
   /**
    * 事件订阅
