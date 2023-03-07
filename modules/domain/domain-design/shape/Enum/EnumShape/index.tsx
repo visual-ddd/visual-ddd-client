@@ -2,9 +2,9 @@ import { usePropertyLocationNavigate } from '@/lib/editor';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
 
-import { EnumDSL } from '../../dsl';
-import { reactifyEnumMember } from '../../reactify';
-import { ClassShapeBase, ClassShapeCells, ClassShapePropertyBase } from '../ClassShape';
+import { EnumDSL } from '../../../dsl/dsl';
+import { reactifyEnumMember } from '../../../dsl/reactify';
+import { ClassShapeBase, ClassShapeCells, ClassShapePropertyBase } from '../../../dsl/shape-components/ClassShape';
 
 import s from './index.module.scss';
 

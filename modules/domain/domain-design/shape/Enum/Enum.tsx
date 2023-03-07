@@ -5,13 +5,14 @@ import {
   createEnum,
   DomainObjectName,
   EnumDSL,
-  EnumShape,
   EnumEditor,
   checkUnderPackage,
   checkDomainObjectNameConflict,
   checkPropertyName,
   EnumBaseType,
 } from '../../dsl';
+
+import { EnumShape } from './EnumShape';
 
 import icon from './enum.png';
 

@@ -4,13 +4,14 @@ import { ReactComponentBinding, ReactComponentProps, registerReactComponent } fr
 import {
   AggregationDSL,
   AggregationEditor,
-  AggregationShape,
   checkDomainObjectNameConflict,
   createAggregation,
   DomainObjectName,
   getDomainObjectFromValidatorContext,
 } from '../../dsl';
 import { DomainObjectAggregation } from '../../model';
+
+import { AggregationShape } from './AggregationShape';
 
 import icon from './aggregation.png';
 

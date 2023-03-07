@@ -2,7 +2,6 @@ import { defineShape, FormRuleReportType, ROOT_FIELD, ShapeComponentProps, useSh
 import { ReactComponentBinding, ReactComponentProps, registerReactComponent } from '@/lib/g6-binding';
 
 import {
-  RuleShape,
   RuleEditor,
   DomainObjectName,
   createRule,
@@ -10,6 +9,8 @@ import {
   checkUnderPackage,
   checkDomainObjectNameConflict,
 } from '../../dsl';
+
+import { RuleShape } from './RuleShape';
 
 import icon from './rule.png';
 

@@ -1,8 +1,9 @@
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
-import { UntitledInHumanReadable, UntitledInUpperCamelCase } from '../../constants';
 
-import { RuleDSL } from '../../dsl';
+import { UntitledInHumanReadable, UntitledInUpperCamelCase } from '../../../dsl/constants';
+import { RuleDSL } from '../../../dsl/dsl';
+
 import s from './index.module.scss';
 
 export interface RuleShapeProps {

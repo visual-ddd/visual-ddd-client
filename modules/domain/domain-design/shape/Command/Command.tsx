@@ -5,7 +5,6 @@ import memoize from 'lodash/memoize';
 
 import {
   CommandDSL,
-  CommandShape,
   createCommand,
   DomainObjectName,
   CommandEditor,
@@ -16,6 +15,8 @@ import {
   SourceDSL,
   checkReferenceError,
 } from '../../dsl';
+
+import { CommandShape } from './CommandShape';
 
 import icon from './command.png';
 
