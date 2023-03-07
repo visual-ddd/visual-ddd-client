@@ -112,38 +112,47 @@ export enum TypeType {
 }
 
 /**
+ * 基础类型
+ */
+export interface BaseTypeDSL {
+  type: TypeType.Base;
+  name: BaseType;
+}
+
+/**
+ *  容器数据
+ */
+export interface ContainerTypeDSL {
+  type: TypeType.Container;
+  name: ContainerType;
+
+  /**
+   * 泛型变量, 默认为 Void
+   */
+  params: { [key: string]: TypeDSL | undefined };
+}
+
+/**
+ * 引用数据
+ */
+export interface ReferenceTypeDSL {
+  type: TypeType.Reference;
+  /**
+   * 引用 ID, 这个通常是不变的
+   */
+  referenceId: string;
+
+  // 冗余字段，方便回显, 并不可靠
+  name: string;
+}
+
+/**
  * 类型应用的表示
  * 基础类型: String, Integer, Long, Double, Float, Date, Boolean, BigDecimal, Char, Byte, Short, Void
  * 集合类型：List<T>, Set<T>, Map<K, V>
  * 引用类型：
  */
-export type TypeDSL =
-  | {
-      // 基础类型
-      type: TypeType.Base;
-      name: BaseType;
-    }
-  | {
-      // 容器数据
-      type: TypeType.Container;
-      name: ContainerType;
-
-      /**
-       * 泛型变量, 默认为 Void
-       */
-      params: { [key: string]: TypeDSL | undefined };
-    }
-  | {
-      // 引用数据
-      type: TypeType.Reference;
-      /**
-       * 引用 ID, 这个通常是不变的
-       */
-      referenceId: string;
-
-      // 冗余字段，方便回显, 并不可靠
-      name: string;
-    };
+export type TypeDSL = BaseTypeDSL | ContainerTypeDSL | ReferenceTypeDSL;
 
 /**
  * 访问控制
@@ -251,7 +260,7 @@ export interface EntityDSL extends ClassDSL {
   isAggregationRoot?: boolean;
 
   /**
-   * 声明实体 id uuid
+   * 声明实体 id(唯一标识符字段) uuid
    */
   id: UUID;
 }

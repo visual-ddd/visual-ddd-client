@@ -1,10 +1,11 @@
 import { observer, useLocalObservable } from 'mobx-react';
 import { NameDSL } from '@/modules/domain/domain-design/dsl';
-
-import { ObjectReferenceDSL } from '../../dsl';
-import { Title } from './Title';
 import { Cascader } from 'antd';
 import { useMemo } from 'react';
+
+import { ObjectReferenceDSL, ObjectReferenceSource } from '../../dsl';
+
+import { Title } from './Title';
 
 export interface IObjectGroup {
   key: string;
@@ -54,7 +55,7 @@ export const ObjectSelect = observer(function ObjectSelect(props: ObjectSelectPr
   const handleChange = (newValue: string[]) => {
     if (newValue?.length === 2) {
       onChange?.({
-        source: newValue[0],
+        source: newValue[0] as ObjectReferenceSource,
         referenceId: newValue[1],
       });
     } else {

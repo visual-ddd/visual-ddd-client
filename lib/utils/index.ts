@@ -7,6 +7,7 @@ export * from './filter';
 export * from './color';
 export * from './url';
 export * from './Clipboard';
+export * from './assert';
 
 export function makeSet(contentSplitByComma: string) {
   return new Set<string>(contentSplitByComma.split(',').map(i => i.trim()));

@@ -5,6 +5,7 @@ import { delay } from '@wakeapp/utils';
 import { DataObjectEditorModel } from '../../data-design';
 import { DomainEditorModel } from '../../domain-design';
 import { IObjectStore, ISourceObject, ITargetObject } from '../../mapper-design';
+import { ObjectReferenceSource } from '../../mapper-design/dsl/dsl';
 
 import { DomainDesignerTabs } from './constants';
 import { DomainDesignerModel } from './DomainDesignerModel';
@@ -58,12 +59,12 @@ export class ObjectStore implements IObjectStore {
   get sourceObjectGroups() {
     return [
       {
-        key: 'domain',
+        key: ObjectReferenceSource.Domain,
         label: '领域对象',
         list: this.entities.concat(this.valueObjects),
       },
       {
-        key: 'struct',
+        key: ObjectReferenceSource.Struct,
         label: '结构对象',
         list: this.dtos,
       },
@@ -74,7 +75,7 @@ export class ObjectStore implements IObjectStore {
   get targetObjectGroup() {
     return [
       {
-        key: 'data',
+        key: ObjectReferenceSource.Data,
         label: '数据对象',
         list: this.dataObjects,
       },

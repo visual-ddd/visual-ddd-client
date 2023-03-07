@@ -1,0 +1,75 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FromValueObjectDSLGenerator toDTO properties 1`] = `
+{
+  "abstract": false,
+  "classMethods": [],
+  "classProperties": [],
+  "description": "用于未命名的数据传输对象",
+  "extends": undefined,
+  "implements": [],
+  "meta": [],
+  "methods": [],
+  "name": "UntitledDTO",
+  "properties": [
+    {
+      "access": "public",
+      "description": "基础类型属性的描述",
+      "meta": [],
+      "name": "baseTypeProperty",
+      "title": "基础类型属性",
+      "type": {
+        "name": "String",
+        "type": "base",
+      },
+      "uuid": "uuid-10",
+    },
+    {
+      "access": "public",
+      "description": "",
+      "meta": [],
+      "name": "containerTypeProperty",
+      "title": "未命名",
+      "type": {
+        "name": "List",
+        "params": {
+          "item": {
+            "name": "Boolean",
+            "type": "base",
+          },
+        },
+        "type": "container",
+      },
+      "uuid": "uuid-11",
+    },
+    {
+      "access": "public",
+      "description": "",
+      "meta": [],
+      "name": "referenceTypePropertyForEnum",
+      "title": "未命名",
+      "type": {
+        "name": "enumName",
+        "referenceId": "enum",
+        "type": "reference",
+      },
+      "uuid": "uuid-12",
+    },
+    {
+      "access": "public",
+      "description": "",
+      "meta": [],
+      "name": "referenceTypePropertyForValueObject",
+      "title": "未命名",
+      "type": {
+        "name": "valueObjectName",
+        "referenceId": "valueObject",
+        "type": "reference",
+      },
+      "uuid": "uuid-13",
+    },
+  ],
+  "title": "未命名数据传输对象",
+  "uuid": "uuid-7",
+}
+`;

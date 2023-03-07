@@ -1,0 +1,265 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FromAggregationRootDSLGenerator generate 1`] = `
+{
+  "dataObject": {
+    "description": "我的实体描述",
+    "indexes": [],
+    "meta": [],
+    "name": "MyEntityDO",
+    "properties": [
+      {
+        "description": "基础类型属性的描述",
+        "meta": [],
+        "name": "baseTypeProperty",
+        "notNull": true,
+        "primaryKey": true,
+        "propertyName": undefined,
+        "title": "基础类型属性",
+        "type": {
+          "type": "String",
+        },
+        "uuid": "uuid-38",
+      },
+      {
+        "description": "基础类型属性的描述2",
+        "meta": [],
+        "name": "baseType2Property",
+        "notNull": false,
+        "primaryKey": false,
+        "propertyName": undefined,
+        "title": "基础类型属性2",
+        "type": {
+          "type": "Long",
+        },
+        "uuid": "uuid-39",
+      },
+      {
+        "description": "",
+        "meta": [],
+        "name": "referenceTypePropertyForEnum",
+        "notNull": false,
+        "primaryKey": false,
+        "propertyName": undefined,
+        "title": "未命名",
+        "type": {
+          "type": "Integer",
+        },
+        "uuid": "uuid-42",
+      },
+    ],
+    "tableName": undefined,
+    "title": "我的实体",
+    "uuid": "uuid-36",
+  },
+  "dtos": [
+    {
+      "abstract": false,
+      "classMethods": [],
+      "classProperties": [],
+      "description": "用于值对象的数据传输对象",
+      "extends": undefined,
+      "implements": [],
+      "meta": [],
+      "methods": [],
+      "name": "valueObjectNameDTO",
+      "properties": [
+        {
+          "access": "public",
+          "description": "",
+          "meta": [],
+          "name": "untitled",
+          "title": "未命名",
+          "type": {
+            "name": "String",
+            "type": "base",
+          },
+          "uuid": "uuid-25",
+        },
+      ],
+      "title": "值对象数据传输对象",
+      "uuid": "uuid-22",
+    },
+    {
+      "abstract": false,
+      "classMethods": [],
+      "classProperties": [],
+      "description": "用于实体的数据传输对象",
+      "extends": undefined,
+      "implements": [],
+      "meta": [],
+      "methods": [],
+      "name": "entityNameDTO",
+      "properties": [
+        {
+          "access": "public",
+          "description": "",
+          "meta": [],
+          "name": "id",
+          "title": "实体唯一标识符",
+          "type": {
+            "name": "Long",
+            "type": "base",
+          },
+          "uuid": "uuid-34",
+        },
+        {
+          "access": "public",
+          "description": "",
+          "meta": [],
+          "name": "untitled",
+          "title": "未命名",
+          "type": {
+            "name": "String",
+            "type": "base",
+          },
+          "uuid": "uuid-35",
+        },
+      ],
+      "title": "实体数据传输对象",
+      "uuid": "uuid-31",
+    },
+  ],
+  "mapper": {
+    "description": "用于将聚合根(我的实体)映射为我的实体(数据对象)",
+    "mappers": [
+      {
+        "source": "uuid-4",
+        "target": "uuid-38",
+        "uuid": "uuid-51",
+      },
+      {
+        "source": "uuid-5",
+        "target": "uuid-39",
+        "uuid": "uuid-52",
+      },
+      {
+        "source": "uuid-7",
+        "target": "uuid-42",
+        "uuid": "uuid-53",
+      },
+    ],
+    "meta": [],
+    "name": "MyEntityToMyEntityDO",
+    "source": {
+      "name": "MyEntity",
+      "referenceId": "uuid-0",
+      "source": "domain",
+    },
+    "target": {
+      "name": "MyEntityDO",
+      "referenceId": "uuid-36",
+      "source": "data",
+    },
+    "title": "我的实体数据对象映射",
+    "uuid": "uuid-50",
+  },
+  "query": {
+    "description": "用于查询我的实体的查询对象",
+    "meta": [],
+    "name": "MyEntityQuery",
+    "pagination": false,
+    "properties": [
+      {
+        "access": "public",
+        "description": "基础类型属性的描述",
+        "meta": [],
+        "name": "baseTypeProperty",
+        "title": "基础类型属性",
+        "type": {
+          "name": "String",
+          "type": "base",
+        },
+        "uuid": "uuid-12",
+      },
+      {
+        "access": "public",
+        "description": "基础类型属性的描述2",
+        "meta": [],
+        "name": "baseType2Property",
+        "title": "基础类型属性2",
+        "type": {
+          "name": "Long",
+          "type": "base",
+        },
+        "uuid": "uuid-13",
+      },
+      {
+        "access": "public",
+        "description": "",
+        "meta": [],
+        "name": "containerTypeProperty",
+        "title": "未命名",
+        "type": {
+          "name": "List",
+          "params": {
+            "item": {
+              "name": "Boolean",
+              "type": "base",
+            },
+          },
+          "type": "container",
+        },
+        "uuid": "uuid-14",
+      },
+      {
+        "access": "public",
+        "description": "",
+        "meta": [],
+        "name": "referenceTypePropertyForEnum",
+        "title": "未命名",
+        "type": {
+          "name": "Integer",
+          "type": "base",
+        },
+        "uuid": "uuid-15",
+      },
+      {
+        "access": "public",
+        "description": "",
+        "meta": [],
+        "name": "referenceTypePropertyForValueObject",
+        "title": "未命名",
+        "type": {
+          "name": "valueObjectNameDTO",
+          "referenceId": "uuid-22",
+          "type": "reference",
+        },
+        "uuid": "uuid-18",
+      },
+      {
+        "access": "public",
+        "description": "",
+        "meta": [],
+        "name": "referenceTypePropertyForEntity",
+        "title": "未命名",
+        "type": {
+          "name": "entityNameDTO",
+          "referenceId": "uuid-31",
+          "type": "reference",
+        },
+        "uuid": "uuid-26",
+      },
+    ],
+    "result": undefined,
+    "source": {
+      "event": {
+        "enabled": false,
+        "value": "",
+      },
+      "http": {
+        "enabled": true,
+      },
+      "rpc": {
+        "enabled": true,
+      },
+      "schedule": {
+        "enabled": false,
+        "value": "",
+      },
+    },
+    "title": "我的实体查询对象",
+    "uuid": "uuid-10",
+  },
+}
+`;

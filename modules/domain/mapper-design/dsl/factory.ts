@@ -1,13 +1,12 @@
-import { createNameDSL } from '@/modules/domain/domain-design/dsl/factory';
-import { v4 } from 'uuid';
+import { createNameDSL, createIDDSL } from '@/modules/domain/domain-design/dsl/factory';
 
 import { FieldMapperDSL, MapperObjectDSL } from './dsl';
 
 export function createFieldMapperDSL(): FieldMapperDSL {
   return {
+    ...createIDDSL(),
     source: undefined,
     target: undefined,
-    uuid: v4(),
   };
 }
 

@@ -9,27 +9,30 @@ import {
 import {
   AggregationDSL,
   BaseType,
+  BaseTypeDSL,
   ClassDSL,
   CommandDSL,
   ContainerType,
+  ContainerTypeDSL,
   DTODSL,
   EntityDSL,
   EnumBaseType,
   EnumDSL,
+  IDDSL,
   MethodDSL,
   NameCase,
   NameDSL,
   ParameterDSL,
   PropertyDSL,
   QueryDSL,
+  ReferenceTypeDSL,
   RuleDSL,
   SourceDSL,
-  TypeDSL,
   TypeType,
   ValueObjectDSL,
 } from './dsl';
 
-export function createBaseType(type: BaseType): TypeDSL {
+export function createBaseType(type: BaseType): BaseTypeDSL {
   return { type: TypeType.Base, name: type };
 }
 
@@ -37,7 +40,7 @@ export function createVoidClass() {
   return createBaseType('Void');
 }
 
-export function createContainerType(container: ContainerType): TypeDSL {
+export function createContainerType(container: ContainerType): ContainerTypeDSL {
   return {
     type: TypeType.Container,
     name: container,
@@ -45,7 +48,7 @@ export function createContainerType(container: ContainerType): TypeDSL {
   };
 }
 
-export function createReferenceType(id: string, name: string): TypeDSL {
+export function createReferenceType(id: string, name: string): ReferenceTypeDSL {
   return {
     type: TypeType.Reference,
     referenceId: id,
@@ -53,10 +56,16 @@ export function createReferenceType(id: string, name: string): TypeDSL {
   };
 }
 
+export function createIDDSL(): IDDSL {
+  return {
+    uuid: v4(),
+  };
+}
+
 export function createNameDSL(options: { wordCase?: NameCase; title?: boolean } = NoopObject): NameDSL {
   const { wordCase = 'CamelCase', title } = options;
   return {
-    uuid: v4(),
+    ...createIDDSL(),
     name:
       wordCase === 'CamelCase'
         ? UntitledInUpperCamelCase

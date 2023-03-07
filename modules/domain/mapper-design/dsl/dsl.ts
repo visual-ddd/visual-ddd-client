@@ -2,18 +2,38 @@ import { IDDSL, NameDSL, ReferenceDSL } from '@/modules/domain/domain-design/dsl
 
 export type { NameDSL };
 
+export enum ObjectReferenceSource {
+  /**
+   * 领域对象
+   */
+  Domain = 'domain',
+
+  /**
+   * 结构化对象
+   */
+  Struct = 'struct',
+
+  /**
+   * 数据对象
+   */
+  Data = 'data',
+}
+
 export interface ObjectReferenceDSL extends ReferenceDSL {
-  source?: string;
+  /**
+   * 对象的来源，ObjectSelect 依赖它进行回显
+   */
+  source?: ObjectReferenceSource;
 }
 
 export interface FieldMapperDSL extends IDDSL {
   /**
-   * 来源字段, 必填
+   * 来源字段 uuid, 必填
    */
   source?: string;
 
   /**
-   * 目标字段，必填
+   * 目标字段 uuid，必填
    */
   target?: string;
 }
