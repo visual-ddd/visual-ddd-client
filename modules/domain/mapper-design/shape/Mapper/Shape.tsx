@@ -18,7 +18,7 @@ export interface MapperShapeProps {
 export const MapperShape = observer(function MapperShape(props: MapperShapeProps) {
   const { model, dsl } = props;
   const { model: editorModel } = useEditorModel<MapperEditorModel>();
-  const mapper = editorModel.mapperStore.getMapperById(model.id)!;
+  const mapper = editorModel.mapperStore.getMapperById(model.id);
   const open = usePropertyLocationNavigate();
 
   const handleMemberClick = (index: number) => (event: React.MouseEvent<HTMLDivElement>) => {
@@ -27,6 +27,10 @@ export const MapperShape = observer(function MapperShape(props: MapperShapeProps
 
     open({ nodeId: dsl.uuid, path: `mappers[${index}]` });
   };
+
+  if (mapper == null) {
+    return null;
+  }
 
   return (
     <ClassShapeBase

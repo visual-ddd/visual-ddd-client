@@ -3,6 +3,7 @@ lockfileVersion: 5.4
 specifiers:
   '@ant-design/icons': ^5.0.1
   '@ant-design/pro-components': ^2.3.58
+  '@antv/layout': ^0.3.13
   '@antv/x6': ^2.5.1
   '@antv/x6-plugin-clipboard': ^2.1.4
   '@antv/x6-plugin-export': ^2.1.5
@@ -100,6 +101,7 @@ specifiers:
 dependencies:
   '@ant-design/icons': 5.0.1_biqbaboplfbrettd7655fr4n2y
   '@ant-design/pro-components': 2.3.58_3puf7nbiersam4wo7g43mvq6fy
+  '@antv/layout': 0.3.13
   '@antv/x6': 2.5.1
   '@antv/x6-plugin-clipboard': 2.1.4_@antv+x6@2.5.1
   '@antv/x6-plugin-export': 2.1.5_@antv+x6@2.5.1
@@ -559,6 +561,56 @@ packages:
       react: 18.2.0
       resize-observer-polyfill: 1.5.1
       throttle-debounce: 5.0.0
+    dev: false
+
+  /@antv/g-webgpu-core/0.7.2:
+    resolution:
+      { integrity: sha512-xUMmop7f3Rs34zFYKXLqHhDR1CQTeDl/7vI7Sn3X/73BqJc3X3HIIRvm83Fg2CjVACaOzw4WeLRXNaOCp9fz9w== }
+    dependencies:
+      eventemitter3: 4.0.7
+      gl-matrix: 3.4.3
+      lodash: 4.17.21
+      probe.gl: 3.6.0
+    dev: false
+
+  /@antv/g-webgpu-engine/0.7.2:
+    resolution:
+      { integrity: sha512-lx8Y93IW2cnJvdoDRKyMmTdYqSC1pOmF0nyG3PGGyA0NI9vBYVgO0KTF6hkyWjdTWVq7XDZyf/h8CJridLh3lg== }
+    dependencies:
+      '@antv/g-webgpu-core': 0.7.2
+      gl-matrix: 3.4.3
+      lodash: 4.17.21
+      regl: 1.7.0
+    dev: false
+
+  /@antv/g-webgpu/0.7.2:
+    resolution:
+      { integrity: sha512-kw+oYGsdvj5qeUfy5DPb/jztZBV+2fmqBd3Vv8NlKatfBmv8AirYX/CCW74AUSdWm99rEiLyxFB1VdRZ6b/wnQ== }
+    dependencies:
+      '@antv/g-webgpu-core': 0.7.2
+      '@antv/g-webgpu-engine': 0.7.2
+      gl-matrix: 3.4.3
+      gl-vec2: 1.3.0
+      lodash: 4.17.21
+    dev: false
+
+  /@antv/graphlib/1.2.0:
+    resolution:
+      { integrity: sha512-hhJOMThec51nU4Fe5p/viLlNIL71uDEgYFzKPajWjr2715SFG1HAgiP6AVylIeqBcAZ04u3Lw7usjl/TuI5RuQ== }
+    dev: false
+
+  /@antv/layout/0.3.13:
+    resolution:
+      { integrity: sha512-N5dNTH3EW2B1/gNUg38OuOvc7jtHMjvY8i5+BDZn4ejYAovyhPJeIvhIhdjOir6UTXWhvtzVYYDXYfpr8/mQtQ== }
+    dependencies:
+      '@antv/g-webgpu': 0.7.2
+      '@antv/graphlib': 1.2.0
+      d3-force: 2.1.1
+      d3-quadtree: 2.0.0
+      dagre-compound: 0.0.11
+      ml-matrix: 6.10.4
+    transitivePeerDependencies:
+      - dagre
     dev: false
 
   /@antv/x6-common/2.0.10:
@@ -1648,6 +1700,28 @@ packages:
   /@popperjs/core/2.11.6:
     resolution:
       { integrity: sha512-50/17A98tWUfQ176raKiOGXuYpLyyVMkxxG6oylzL3BPOlA6ADGdK7EYunSa4I064xerltq9TGXs8HmOk5E+vw== }
+    dev: false
+
+  /@probe.gl/env/3.6.0:
+    resolution:
+      { integrity: sha512-4tTZYUg/8BICC3Yyb9rOeoKeijKbZHRXBEKObrfPmX4sQmYB15ZOUpoVBhAyJkOYVAM8EkPci6Uw5dLCwx2BEQ== }
+    dependencies:
+      '@babel/runtime': 7.21.0
+    dev: false
+
+  /@probe.gl/log/3.6.0:
+    resolution:
+      { integrity: sha512-hjpyenpEvOdowgZ1qMeCJxfRD4JkKdlXz0RC14m42Un62NtOT+GpWyKA4LssT0+xyLULCByRAtG2fzZorpIAcA== }
+    dependencies:
+      '@babel/runtime': 7.21.0
+      '@probe.gl/env': 3.6.0
+    dev: false
+
+  /@probe.gl/stats/3.6.0:
+    resolution:
+      { integrity: sha512-JdALQXB44OP4kUBN/UrQgzbJe4qokbVF4Y8lkIA8iVCFnjVowWIgkD/z/0QO65yELT54tTrtepw1jScjKB+rhQ== }
+    dependencies:
+      '@babel/runtime': 7.21.0
     dev: false
 
   /@rc-component/context/1.3.0_biqbaboplfbrettd7655fr4n2y:
@@ -3436,6 +3510,38 @@ packages:
     resolution:
       { integrity: sha512-DJR/VvkAvSZW9bTouZue2sSxDwdTN92uHjqeKVm+0dAqdfNykRzQ95tay8aXMBAAPpUiq4Qcug2L7neoRh2Egw== }
 
+  /d3-dispatch/2.0.0:
+    resolution:
+      { integrity: sha512-S/m2VsXI7gAti2pBoLClFFTMOO1HTtT0j99AuXLoGFKO6deHDdnv6ZGTxSTTUTgO1zVcv82fCOtDjYK4EECmWA== }
+    dev: false
+
+  /d3-force/2.1.1:
+    resolution:
+      { integrity: sha512-nAuHEzBqMvpFVMf9OX75d00OxvOXdxY+xECIXjW6Gv8BRrXu6gAWbv/9XKrvfJ5i5DCokDW7RYE50LRoK092ew== }
+    dependencies:
+      d3-dispatch: 2.0.0
+      d3-quadtree: 2.0.0
+      d3-timer: 2.0.0
+    dev: false
+
+  /d3-quadtree/2.0.0:
+    resolution:
+      { integrity: sha512-b0Ed2t1UUalJpc3qXzKi+cPGxeXRr4KU9YSlocN74aTzp6R/Ud43t79yLLqxHRWZfsvWXmbDWPpoENK1K539xw== }
+    dev: false
+
+  /d3-timer/2.0.0:
+    resolution:
+      { integrity: sha512-TO4VLh0/420Y/9dO3+f9abDEFYeCUr2WZRlxJvbp4HPTQcSylXNiL6yZa9FIUvV1yRiFufl1bszTCLDqv9PWNA== }
+    dev: false
+
+  /dagre-compound/0.0.11:
+    resolution:
+      { integrity: sha512-UrSgRP9LtOZCYb9e5doolZXpc7xayyszgyOs7uakTK4n4KsLegLVTRRtq01GpQd/iZjYw5fWMapx9ed+c80MAQ== }
+    engines: { node: '>=6.0.0' }
+    peerDependencies:
+      dagre: ^0.8.5
+    dev: false
+
   /damerau-levenshtein/1.0.8:
     resolution:
       { integrity: sha512-sdQSFB7+llfUcQHUQO3+B8ERRj0Oa4w9POWMI/puGtuf7gFywGmkaLCElnudfTiKZV+NvHqL0ifzdrI8Ro7ESA== }
@@ -4128,6 +4234,11 @@ packages:
     engines: { node: '>=0.10.0' }
     dev: true
 
+  /eventemitter3/4.0.7:
+    resolution:
+      { integrity: sha512-8guHBZCwKnFhYdHr2ysuRWErTwhoN2X8XELRlrRwpmfeY2jjuUN4taQMsULKUVo1K4DvZl+0pgfyoysHxvmvEw== }
+    dev: false
+
   /execa/4.1.0:
     resolution:
       { integrity: sha512-j5W0//W7f8UxAn8hXVnwG8tLwdiUy4FJLcSupCg6maBYZDpyBvTApK7KyuI4bKj8KOh1r2YH+6ucuYtJv1bTZA== }
@@ -4430,6 +4541,16 @@ packages:
   /github-from-package/0.0.0:
     resolution:
       { integrity: sha512-SyHy3T1v2NUXn29OsWdxmK6RwHD+vkj3v8en8AOBZ1wBQ/hCAQ5bAQTD02kW4W9tUp/3Qh6J8r9EvntiyCmOOw== }
+    dev: false
+
+  /gl-matrix/3.4.3:
+    resolution:
+      { integrity: sha512-wcCp8vu8FT22BnvKVPjXa/ICBWRq/zjFfdofZy1WSpQZpphblv12/bOQLBC1rMM7SGOFS9ltVmKOHil5+Ml7gA== }
+    dev: false
+
+  /gl-vec2/1.3.0:
+    resolution:
+      { integrity: sha512-YiqaAuNsheWmUV0Sa8k94kBB0D6RWjwZztyO+trEYS8KzJ6OQB/4686gdrf59wld4hHFIvaxynO3nRxpk1Ij/A== }
     dev: false
 
   /glob-parent/5.1.2:
@@ -4817,6 +4938,11 @@ packages:
       { integrity: sha512-YPdCvjFMOBjXaYuDj5tiHst5CEk6Xw84Jo8Y2+jzhMceclAnb3+vNPP/CTtb5fO2ZEuXEaO4N+w62Vfko757KA== }
     dependencies:
       buffer: 6.0.3
+    dev: false
+
+  /is-any-array/2.0.0:
+    resolution:
+      { integrity: sha512-WdPV58rT3aOWXvvyuBydnCq4S2BM1Yz8shKxlEpk/6x+GX202XRvXOycEFtNgnHVLoc46hpexPFx8Pz1/sMS0w== }
     dev: false
 
   /is-arguments/1.1.1:
@@ -5998,6 +6124,37 @@ packages:
       { integrity: sha512-gKLcREMhtuZRwRAfqP3RFW+TK4JqApVBtOIftVgjuABpAtpxhPGaDcfvbhNvD0B8iD1oUr/txX35NjcaY6Ns/A== }
     dev: false
 
+  /ml-array-max/1.2.4:
+    resolution:
+      { integrity: sha512-BlEeg80jI0tW6WaPyGxf5Sa4sqvcyY6lbSn5Vcv44lp1I2GR6AWojfUvLnGTNsIXrZ8uqWmo8VcG1WpkI2ONMQ== }
+    dependencies:
+      is-any-array: 2.0.0
+    dev: false
+
+  /ml-array-min/1.2.3:
+    resolution:
+      { integrity: sha512-VcZ5f3VZ1iihtrGvgfh/q0XlMobG6GQ8FsNyQXD3T+IlstDv85g8kfV0xUG1QPRO/t21aukaJowDzMTc7j5V6Q== }
+    dependencies:
+      is-any-array: 2.0.0
+    dev: false
+
+  /ml-array-rescale/1.3.7:
+    resolution:
+      { integrity: sha512-48NGChTouvEo9KBctDfHC3udWnQKNKEWN0ziELvY3KG25GR5cA8K8wNVzracsqSW1QEkAXjTNx+ycgAv06/1mQ== }
+    dependencies:
+      is-any-array: 2.0.0
+      ml-array-max: 1.2.4
+      ml-array-min: 1.2.3
+    dev: false
+
+  /ml-matrix/6.10.4:
+    resolution:
+      { integrity: sha512-rUyEhfNPzqFsltYwvjNeYQXlYEaVea3KgzcJKJteQUj2WVAGFx9fLNRjtMR9mg2B6bd5buxlmkZmxM4hmO+SKg== }
+    dependencies:
+      is-any-array: 2.0.0
+      ml-array-rescale: 1.3.7
+    dev: false
+
   /mobx-react-lite/3.4.0_woojb62cqeyk443mbl7msrwu2e:
     resolution:
       { integrity: sha512-bRuZp3C0itgLKHu/VNxi66DN/XVkQG7xtoBVWxpvC5FhAqbOCP21+nPhULjnzEqd7xBMybp6KwytdUpZKEgpIQ== }
@@ -6543,6 +6700,16 @@ packages:
       ansi-styles: 5.2.0
       react-is: 18.2.0
     dev: true
+
+  /probe.gl/3.6.0:
+    resolution:
+      { integrity: sha512-19JydJWI7+DtR4feV+pu4Mn1I5TAc0xojuxVgZdXIyfmTLfUaFnk4OloWK1bKbPtkgGKLr2lnbnCXmpZEcEp9g== }
+    dependencies:
+      '@babel/runtime': 7.21.0
+      '@probe.gl/env': 3.6.0
+      '@probe.gl/log': 3.6.0
+      '@probe.gl/stats': 3.6.0
+    dev: false
 
   /prompts/2.4.2:
     resolution:
@@ -7546,6 +7713,11 @@ packages:
       { integrity: sha512-pq2bWo9mVD43nbts2wGv17XLiNLya+GklZ8kaDLV2Z08gDCsGpnKn9BFMepvWuHCbyVvY7J5o5+BVvoQbmlJLg== }
     engines: { node: '>=8' }
     dev: true
+
+  /regl/1.7.0:
+    resolution:
+      { integrity: sha512-bEAtp/qrtKucxXSJkD4ebopFZYP0q1+3Vb2WECWv/T8yQEgKxDxJ7ztO285tAMaYZVR6mM1GgI6CCn8FROtL1w== }
+    dev: false
 
   /require-directory/2.1.1:
     resolution:

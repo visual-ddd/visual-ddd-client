@@ -1,14 +1,16 @@
-import { BaseEditorModelOptions, BuiltinShapeName } from '@/lib/editor';
+import { BuiltinShapeName } from '@/lib/editor';
 
 import { DomainObjectName } from './dsl';
-import { DomainEditorModel } from './model';
+import { DomainEditorModel, DomainEditorModelOptions } from './model';
 
 /**
  * 模型构造
  * @param options
  * @returns
  */
-export function createDomainEditorModel(options: Omit<BaseEditorModelOptions, 'shapeList' | 'whitelist' | 'scopeId'>) {
+export function createDomainEditorModel(
+  options: Omit<DomainEditorModelOptions, 'shapeList' | 'whitelist' | 'scopeId'>
+) {
   const shapeList = [
     DomainObjectName.Entity,
     DomainObjectName.ValueObject,

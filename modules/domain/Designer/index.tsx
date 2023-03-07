@@ -128,6 +128,7 @@ const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerPro
         </DesignerTabLabel>
       ),
       key: DomainDesignerTabs.QueryModel,
+      forceRender: true,
       children: (
         <DomainEditor model={model.queryEditorModel} active={model.activeTab === DomainDesignerTabs.QueryModel} />
       ),
@@ -139,6 +140,7 @@ const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerPro
         </DesignerTabLabel>
       ),
       key: DomainDesignerTabs.DataModel,
+      forceRender: true,
       children: (
         <DataObjectEditor
           model={model.dataObjectEditorModel}
@@ -152,6 +154,7 @@ const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerPro
           {DomainDesignerTabsMap[DomainDesignerTabs.Mapper]}
         </DesignerTabLabel>
       ),
+      forceRender: true,
       key: DomainDesignerTabs.Mapper,
       children: (
         <MapperEditor model={model.mapperObjectEditorModel} active={model.activeTab === DomainDesignerTabs.Mapper} />

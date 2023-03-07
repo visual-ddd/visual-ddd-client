@@ -15,6 +15,7 @@ import {
   checkSameAggregationReference,
   checkReferenceError,
 } from '../../dsl';
+import { DomainEditorModel } from '../../model';
 
 import { EntityEditor } from './EntityEditor';
 
@@ -179,7 +180,15 @@ defineShape({
       visible: ({ canvasModel, target }) => {
         return !canvasModel.readonly && (target?.model.properties as unknown as EntityDSL).isAggregationRoot;
       },
-      handler() {},
+      handler(context) {
+        const { canvasModel, target } = context;
+        if (!target) {
+          return;
+        }
+        (canvasModel.editorModel as DomainEditorModel).domainGenerator?.domainGenerate(
+          target.model.properties as unknown as EntityDSL
+        );
+      },
     },
   ],
   component: EntityShapeComponent,

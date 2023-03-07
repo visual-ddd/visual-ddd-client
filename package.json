@@ -17,6 +17,7 @@
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
     "@ant-design/pro-components": "^2.3.58",
+    "@antv/layout": "^0.3.13",
     "@antv/x6": "^2.5.1",
     "@antv/x6-plugin-clipboard": "^2.1.4",
     "@antv/x6-plugin-export": "^2.1.5",

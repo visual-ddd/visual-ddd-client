@@ -6,6 +6,7 @@ import { DataObjectEditorModel } from '../../data-design';
 import { DomainEditorModel } from '../../domain-design';
 import { IObjectStore, ISourceObject, ITargetObject } from '../../mapper-design';
 import { ObjectReferenceSource } from '../../mapper-design/dsl/dsl';
+import { DomainObjectDefinition, IDomainObjectStore } from '../../generator';
 
 import { DomainDesignerTabs } from './constants';
 import { DomainDesignerModel } from './DomainDesignerModel';
@@ -13,7 +14,7 @@ import { DomainDesignerModel } from './DomainDesignerModel';
 /**
  * 统一对象存储
  */
-export class ObjectStore implements IObjectStore {
+export class ObjectStore implements IObjectStore, IDomainObjectStore {
   protected domainDesignerModel: DomainDesignerModel;
   protected domainEditorModel: DomainEditorModel;
   protected dataObjectEditorModel: DataObjectEditorModel;
@@ -97,6 +98,19 @@ export class ObjectStore implements IObjectStore {
 
     makeObservable(this);
   }
+
+  getObjectById: IDomainObjectStore['getObjectById'] = id => {
+    const object = this.domainEditorModel.domainObjectStore.getObjectById(id);
+
+    if (object == null) {
+      return;
+    }
+
+    return {
+      type: object.shapeName,
+      value: object.dsl,
+    } as DomainObjectDefinition;
+  };
 
   getSourceObjectById(id: string): ISourceObject | undefined {
     // 查询对象

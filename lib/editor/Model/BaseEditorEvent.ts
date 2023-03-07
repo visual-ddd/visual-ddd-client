@@ -27,6 +27,10 @@ export interface BaseEditorEventDefinitions {
    * 聚焦节点
    */
   CMD_FOCUS_NODE: { node: BaseNode };
+  /**
+   * 重新布局节点
+   */
+  CMD_RE_LAYOUT: never;
 }
 
 export type BaseEditorEventsWithoutArg = EventsWithoutArg<BaseEditorEventDefinitions>;

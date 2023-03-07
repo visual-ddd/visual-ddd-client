@@ -6,6 +6,7 @@ import memoize from 'lodash/memoize';
 
 import { wrapPreventListenerOptions } from '@/lib/g6-binding/hooks';
 import { GraphBindingOptions, GraphBindingProps } from '@/lib/g6-binding';
+import { IDisposable } from '@/lib/utils';
 
 import { CanvasEvent } from './CanvasEvent';
 import { BaseEditorModel, BaseNode } from '../Model';
@@ -14,7 +15,7 @@ import { assertShapeInfo } from '../Shape';
 import { copy, paste } from './ClipboardUtils';
 import { CanvasKeyboardBinding } from './KeyboardBinding';
 import { ContextMenuController } from './ContextMenuController';
-import { IDisposable } from '@/lib/utils';
+import { autoLayout } from './layout';
 
 const ResizingOptionsWithDefault: [keyof Transform.ResizingRaw, any][] = [
   ['minWidth', 0],
@@ -455,6 +456,9 @@ export class CanvasModel implements IDisposable {
       }),
       this.editorModel.event.on('CMD_FOCUS_NODE', params => {
         this.handleSelect({ cellIds: [params.node.id] });
+      }),
+      this.editorModel.event.on('CMD_RE_LAYOUT', () => {
+        this.handleLayout();
       }),
       this.contextMenuController.dispose,
       // 监听节点定位
@@ -1242,6 +1246,20 @@ export class CanvasModel implements IDisposable {
   handleExportAsImage = () => {
     // FIXME: 会出现样式错乱，后面使用其他方案
     this.graph?.exportSVG(undefined, { copyStyles: true });
+  };
+
+  /**
+   * 重新布局
+   */
+  handleLayout = () => {
+    const changedNodes = autoLayout(this.graph!);
+
+    for (const node of changedNodes) {
+      const cell = this.graph?.getCellById(node.id);
+      if (cell && cell.isNode()) {
+        cell.setPosition({ x: node.x, y: node.y });
+      }
+    }
   };
 
   /**

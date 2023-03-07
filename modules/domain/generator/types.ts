@@ -1,27 +1,6 @@
-import { DomainObjectName } from '../domain-design/dsl';
-import {
-  ValueObjectDSL,
-  EntityDSL,
-  EnumDSL,
-  CommandDSL,
-  AggregationDSL,
-  DTODSL,
-  NameDSL,
-  TypeDSL,
-} from '../domain-design/dsl/dsl';
+import { DTODSL, NameDSL, TypeDSL } from '../domain-design/dsl/dsl';
 
-export interface IDomainObjectStore {
-  getObjectById(id: string):
-    | { type: DomainObjectName.ValueObject; value: ValueObjectDSL }
-    | {
-        type: DomainObjectName.Entity;
-        value: EntityDSL;
-      }
-    | { type: DomainObjectName.Enum; value: EnumDSL }
-    | { type: DomainObjectName.Command; value: CommandDSL }
-    | { type: DomainObjectName.Aggregation; value: AggregationDSL }
-    | undefined;
-}
+export * from './public-types';
 
 type SourceObjectUUID = string;
 

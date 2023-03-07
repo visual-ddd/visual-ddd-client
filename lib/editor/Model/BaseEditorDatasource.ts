@@ -78,6 +78,20 @@ export class BaseEditorDatasource {
   }
 
   /**
+   * 重置上一次入栈的时间，这也意味着，在接下来的 captureTimeout 时间内，发生的时间会合并到上一个
+   */
+  mergeCapturing() {
+    this.undoManager.lastChange = Date.now();
+  }
+
+  /**
+   * 强制另起一个栈
+   */
+  stopCapturing() {
+    this.undoManager.stopCapturing();
+  }
+
+  /**
    * 添加节点
    * @param params
    */
