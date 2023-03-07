@@ -2,7 +2,7 @@ import { BaseEditorEvent, BaseEditorModel, BaseNode } from '@/lib/editor';
 import { command, derive, makeAutoBindThis } from '@/lib/store';
 import { tryDispose } from '@/lib/utils';
 import { debounce } from '@wakeapp/utils';
-import { makeObservable, observable } from 'mobx';
+import { makeObservable, observable, runInAction } from 'mobx';
 import { DataObjectName, DataObjectReferenceCardinalityReversed } from '../dsl';
 
 import { DataObject, DataObjectEdgeDeclaration } from './DataObject';
@@ -127,7 +127,9 @@ export class DataObjectStore {
   }
 
   private gc = debounce(() => {
-    this.objectsWillRemoved.forEach(i => tryDispose(i));
-    this.objectsWillRemoved.clear();
+    runInAction(() => {
+      this.objectsWillRemoved.forEach(i => tryDispose(i));
+      this.objectsWillRemoved.clear();
+    });
   });
 }

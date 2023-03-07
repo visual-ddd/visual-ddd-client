@@ -1,4 +1,4 @@
-import { observable } from 'mobx';
+import { observable, runInAction } from 'mobx';
 import { debounce } from '@wakeapp/utils';
 import { tryDispose } from '@/lib/utils';
 
@@ -67,7 +67,9 @@ export class BaseEditorIndex {
   };
 
   private gc = debounce(() => {
-    this.nodeWillBeRemoved.forEach(m => tryDispose(m));
-    this.nodeWillBeRemoved.clear();
+    runInAction(() => {
+      this.nodeWillBeRemoved.forEach(m => tryDispose(m));
+      this.nodeWillBeRemoved.clear();
+    });
   }, 2000);
 }

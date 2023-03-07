@@ -2,7 +2,7 @@ import { BaseEditorCommandHandler, BaseEditorEvent } from '@/lib/editor';
 import { derive, makeAutoBindThis } from '@/lib/store';
 import { tryDispose } from '@/lib/utils';
 import { debounce } from '@wakeapp/utils';
-import { makeObservable, observable } from 'mobx';
+import { makeObservable, observable, runInAction } from 'mobx';
 import { MapperObjectName } from '../dsl';
 
 import { ISourceObject, ISourceObjectGroup } from './ISourceObject';
@@ -154,7 +154,9 @@ export class MapperStore {
   }
 
   private gc = debounce(() => {
-    this.mappersWillRemoved.forEach(i => tryDispose(i));
-    this.mappersWillRemoved.clear();
+    runInAction(() => {
+      this.mappersWillRemoved.forEach(i => tryDispose(i));
+      this.mappersWillRemoved.clear();
+    });
   }, 100);
 }

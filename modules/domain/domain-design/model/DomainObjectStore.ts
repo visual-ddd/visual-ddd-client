@@ -2,7 +2,7 @@ import { BaseEditorEvent, BaseEditorModel, BaseNode } from '@/lib/editor';
 import { command, derive, makeAutoBindThis } from '@/lib/store';
 import { tryDispose } from '@/lib/utils';
 import { booleanPredicate, debounce } from '@wakeapp/utils';
-import { makeObservable, observable } from 'mobx';
+import { makeObservable, observable, runInAction } from 'mobx';
 
 import { NameDSL } from '../dsl';
 import { DomainObject } from './DomainObject';
@@ -259,7 +259,9 @@ export class DomainObjectStore {
   }
 
   private gc = debounce(() => {
-    this.objectsWillRemoved.forEach(i => tryDispose(i));
-    this.objectsWillRemoved.clear();
+    runInAction(() => {
+      this.objectsWillRemoved.forEach(i => tryDispose(i));
+      this.objectsWillRemoved.clear();
+    });
   });
 }
