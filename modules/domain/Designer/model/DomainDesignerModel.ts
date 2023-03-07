@@ -230,6 +230,12 @@ export class DomainDesignerModel
       // - 预估节点大小，见上文
       await message.info('正在生成查询模型...', 0.8);
 
+      // 过了 0.8 秒后，已经错过了 undoManager 的合并时间，需要手动合并
+      // 这意味着无法进行一键撤销, 因此，这里显式要求这些编辑器对接下来的变更进行合并
+      this.queryEditorModel.mergeUndoCapturing();
+      this.dataObjectEditorModel.mergeUndoCapturing();
+      this.mapperObjectEditorModel.mergeUndoCapturing();
+
       this.queryEditorModel.event.emit('CMD_RE_LAYOUT');
       this.dataObjectEditorModel.event.emit('CMD_RE_LAYOUT');
       this.mapperObjectEditorModel.event.emit('CMD_RE_LAYOUT');

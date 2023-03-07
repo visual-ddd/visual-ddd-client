@@ -206,7 +206,7 @@ export class BaseEditorModel implements IDisposable {
     // HACK:
     // 一些放在在 Tab 中的编辑器，通常都是 display: none 隐藏的，
     // 这意味着，一旦标签激活，可能会有一些因为 DOM 事件而触发的事件合并进来，这些可以统一合入到上一个 undo 栈中
-    this.datasource.mergeCapturing();
+    this.mergeUndoCapturing();
   }
 
   /**
@@ -215,6 +215,14 @@ export class BaseEditorModel implements IDisposable {
    */
   validate() {
     return this.formStore.validate();
+  }
+
+  mergeUndoCapturing() {
+    this.datasource.mergeCapturing();
+  }
+
+  stopUndoCapturing() {
+    this.datasource.stopCapturing();
   }
 
   dispose() {
