@@ -510,6 +510,18 @@ export class ShapeRegistry {
     };
   }
 
+  /**
+   * 获取节点右键菜单配置
+   * @param context
+   */
+  getContextMenu(context: { cell: Cell }) {
+    const { cell } = context;
+
+    const conf = this.getConfigurationByCell(cell);
+
+    return conf?.contextMenu;
+  }
+
   getModelByCell(node: { id: string }) {
     return this.editorModel.index.getNodeById(node.id);
   }

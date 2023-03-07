@@ -219,7 +219,7 @@ export class ContextMenuController implements IDisposable {
     } else {
       const m = this.getContextMenuForTarget(context);
       if (m) {
-        menus = this.buildContextMenu([...DEFAULT_CELL_CONTEXT_MENU, ...m], context);
+        menus = this.buildContextMenu([...m, ...DEFAULT_CELL_CONTEXT_MENU], context);
       }
     }
 

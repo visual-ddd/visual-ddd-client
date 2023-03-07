@@ -158,8 +158,10 @@ export class CanvasModel implements IDisposable {
     const readonly = this.readonly;
     this.contextMenuController = new ContextMenuController({
       canvasModel: this,
-      getContextMenuForTarget() {
-        return [];
+      getContextMenuForTarget(context) {
+        if (context.target?.cell) {
+          return shapeRegistry.getContextMenu({ cell: context.target.cell });
+        }
       },
     });
 

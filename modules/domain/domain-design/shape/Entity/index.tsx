@@ -16,6 +16,8 @@ import {
 import { getPrefixPath } from '@/lib/utils';
 
 import icon from './entity.png';
+import { Tooltip } from 'antd';
+import { QuestionCircleFilled } from '@ant-design/icons';
 
 const EntityReactShapeComponent = (props: ReactComponentProps) => {
   const properties = useShapeModel<EntityDSL>(props.node).properties;
@@ -162,6 +164,23 @@ defineShape({
   copyFactory({ payload }) {
     return { uuid: payload.id };
   },
+  contextMenu: [
+    {
+      key: 'generator',
+      label: (
+        <span>
+          自动生成对象
+          <Tooltip title="自动根据聚合根生成查询、数据对象、数据映射" placement="right">
+            <QuestionCircleFilled className="u-ml-xs u-gray-500" />
+          </Tooltip>
+        </span>
+      ),
+      visible: ({ canvasModel, target }) => {
+        return !canvasModel.readonly && (target?.model.properties as unknown as EntityDSL).isAggregationRoot;
+      },
+      handler() {},
+    },
+  ],
   component: EntityShapeComponent,
   attributeComponent: EntityAttributesComponent,
 });

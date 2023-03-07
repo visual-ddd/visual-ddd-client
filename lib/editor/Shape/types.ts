@@ -1,11 +1,12 @@
 import React from 'react';
 import type { Node, Graph, Size, PointLike, Cell, Edge, Markup } from '@antv/x6';
 import type { Transform } from '@antv/x6-plugin-transform';
+import { StaticImageData } from 'next/image';
 
 import { BaseEditorModel, BaseNode, Properties, ShapeType } from '../Model';
 import { CopyPayload } from '../Canvas/ClipboardUtils';
+import { EditorContextMenu } from '../Canvas/ContextMenuController';
 import { FormModel, FormRules } from '../Model/FormModel';
-import { StaticImageData } from 'next/image';
 
 export interface ShapeCoreInfo {
   type: string;
@@ -259,6 +260,11 @@ export interface ShapeConfiguration {
   allowMagnetCreateEdge?:
     | boolean
     | ((context: { graph: Graph; cell: Cell; magnet?: Element; model: BaseNode }) => boolean);
+
+  /**
+   * 右键菜单配置
+   */
+  contextMenu?: EditorContextMenu;
 
   /**
    * 组件渲染定义
