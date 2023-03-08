@@ -10,22 +10,41 @@
   flex: 1;
   position: relative;
 
-  :global(.ant-tabs-nav) {
+  & :global(> .ant-tabs-nav) {
     margin-top: 0;
     padding-left: 1em;
   }
 
-  :global(.ant-tabs-content-holder) {
+  & :global(> .ant-tabs-content-holder) {
     flex: 1;
     position: relative;
-  }
 
-  :global(.ant-tabs-content) {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
+    & :global(> .ant-tabs-content) {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+
+      /**
+       * 这里强制渲染 Tab 内容
+       * 因为在 DisplayNone 的情况下，x6 可能无法正常计算大小，导致一些样式错乱
+       */
+      & :global(> .ant-tabs-tabpane) {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        display: block !important;
+        transform: translateX(-200vw);
+      }
+
+      & :global(> .ant-tabs-tabpane-active) {
+        transform: translateX(0);
+      }
+    }
   }
 }
