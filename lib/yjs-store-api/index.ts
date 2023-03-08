@@ -3,14 +3,16 @@ import { NextApiRequest } from 'next';
 import LRUCache from 'lru-cache';
 import { withWakedataRequestApiRoute } from '@/modules/session/api-helper';
 
-import { readBuffer, createDocFromUpdate } from './utils';
 import { allowMethod } from '../api';
+
+import { readBuffer, createDocFromUpdate } from './utils';
+import { RawYjsData, readRawData, toRawData } from './raw';
 
 export function createYjsStore(options: {
   transformYDocToDSL: (doc: YDoc) => any;
   createYDoc: () => YDoc;
-  onSave: (params: { id: string; dsl: string; raw: string; request: NextApiRequest }) => Promise<void>;
-  onRequest: (params: { id: string; request: NextApiRequest }) => Promise<{ raw?: string }>;
+  onSave: (params: { id: string; dsl: string; raw: RawYjsData; request: NextApiRequest }) => Promise<void>;
+  onRequest: (params: { id: string; request: NextApiRequest }) => Promise<{ raw?: RawYjsData }>;
 }) {
   const { transformYDocToDSL, createYDoc, onSave, onRequest } = options;
 
@@ -47,6 +49,11 @@ export function createYjsStore(options: {
     return buffer;
   }
 
+  function addCacheWithRaw(id: string, raw: RawYjsData) {
+    const data = readRawData(raw);
+    return addCacheWithBuffer(id, data);
+  }
+
   /**
    * 保存数据
    * @param req
@@ -60,7 +67,7 @@ export function createYjsStore(options: {
     await onSave({
       id,
       dsl: JSON.stringify(dsl),
-      raw: data.toString('base64'),
+      raw: toRawData(data),
       request: req,
     });
 
@@ -90,7 +97,7 @@ export function createYjsStore(options: {
         return buf;
       } else {
         // 转换为二进制
-        const buf = addCacheWithBase64(id, detail.raw);
+        const buf = addCacheWithRaw(id, detail.raw);
 
         return buf;
       }
@@ -174,6 +181,7 @@ export function createYjsStore(options: {
     addCacheWithBase64,
     addCacheWithBase64IfNeed,
     addCacheWithBuffer,
+    addCacheWithRaw,
     handleGet,
     handleGetBase64,
     handleGetVector,

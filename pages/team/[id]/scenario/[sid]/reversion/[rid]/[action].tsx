@@ -4,7 +4,7 @@ import { withWakedataRequestSsr } from '@/modules/session/ssr-helper';
 import { ScenarioDetailPayload, ScenarioVersion, VersionStatus } from '@/modules/team/types';
 import type { ScenarioDescription } from '@/modules/scenario/Designer';
 import { getSession } from '@/modules/session/api';
-import { addCacheWithBase64IfNeed } from '@/modules/scenario/api';
+import { addCacheWithRaw } from '@/modules/scenario/api';
 import { useGlobalUbiquitousLanguage } from '@/modules/team/UbiquitousLanguage/useGlobalUbiquitousLanguage';
 
 const DynamicDesigner = dynamic(() => import('@/modules/scenario/Designer'), { ssr: false });
@@ -62,7 +62,7 @@ export const getServerSideProps = withWakedataRequestSsr<DesignerProps>(async co
   ]);
 
   if (version.graphDsl) {
-    addCacheWithBase64IfNeed(rid, version.graphDsl);
+    addCacheWithRaw(rid, version.graphDsl);
   }
 
   return {

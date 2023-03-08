@@ -3,15 +3,7 @@ import { createYjsStore } from '@/lib/yjs-store-api';
 
 import { transformToDSL, createDoc } from './dsl';
 
-const {
-  addCacheWithBase64,
-  addCacheWithBase64IfNeed,
-  addCacheWithBuffer,
-  handleGet,
-  handleGetBase64,
-  handleGetVector,
-  handleSave,
-} = createYjsStore({
+const { addCacheWithRaw, handleGet, handleGetBase64, handleGetVector, handleSave } = createYjsStore({
   transformYDocToDSL: doc => {
     return transformToDSL(doc);
   },
@@ -36,12 +28,4 @@ const {
   },
 });
 
-export {
-  addCacheWithBase64,
-  addCacheWithBase64IfNeed,
-  addCacheWithBuffer,
-  handleGet,
-  handleGetBase64,
-  handleGetVector,
-  handleSave,
-};
+export { addCacheWithRaw, handleGet, handleGetBase64, handleGetVector, handleSave };
