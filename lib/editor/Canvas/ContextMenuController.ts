@@ -1,7 +1,7 @@
 import { mutation } from '@/lib/store';
 import { IDisposable } from '@/lib/utils';
 import type { Cell } from '@antv/x6';
-import { Disposer } from '@wakeapp/utils';
+import { Disposer, NoopArray } from '@wakeapp/utils';
 import { makeObservable, observable } from 'mobx';
 import type { BaseNode } from '../Model';
 import type { CanvasModel } from './CanvasModel';
@@ -218,9 +218,7 @@ export class ContextMenuController implements IDisposable {
       menus = this.buildContextMenu(DEFAULT_CONTEXT_MENU, context);
     } else {
       const m = this.getContextMenuForTarget(context);
-      if (m) {
-        menus = this.buildContextMenu([...m, ...DEFAULT_CELL_CONTEXT_MENU], context);
-      }
+      menus = this.buildContextMenu([...(m ?? NoopArray), ...DEFAULT_CELL_CONTEXT_MENU], context);
     }
 
     if (menus) {
