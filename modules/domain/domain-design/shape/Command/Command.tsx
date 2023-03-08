@@ -13,6 +13,7 @@ import {
   checkPropertyName,
   SourceDSL,
   checkReferenceError,
+  checkAggregationRootReference,
 } from '../../dsl';
 
 import { CommandShape } from './CommandShape';
@@ -73,6 +74,7 @@ defineShape({
             async validator(value, context) {
               checkSameAggregationReference(context);
               checkReferenceError(context);
+              checkAggregationRootReference(context);
             },
           },
         ],

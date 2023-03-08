@@ -14,6 +14,7 @@ import {
   checkUnderPackage,
   checkSameAggregationReference,
   checkReferenceError,
+  checkAggregationRootReference,
 } from '../../dsl';
 import { DomainEditorModel } from '../../model';
 
@@ -72,6 +73,7 @@ defineShape({
             async validator(value, context) {
               checkSameAggregationReference(context);
               checkReferenceError(context);
+              checkAggregationRootReference(context);
             },
           },
         ],

@@ -3,6 +3,7 @@ import { ReactComponentBinding, ReactComponentProps, registerReactComponent } fr
 import { getPrefixPath } from '@/lib/utils';
 
 import {
+  checkAggregationRootReference,
   checkDomainObjectNameConflict,
   checkPropertyName,
   checkReferenceError,
@@ -64,6 +65,7 @@ defineShape({
             async validator(value, context) {
               checkSameAggregationReference(context);
               checkReferenceError(context);
+              checkAggregationRootReference(context);
             },
           },
         ],

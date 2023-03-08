@@ -79,6 +79,32 @@ export function checkSameAggregationReference(context: FormValidatorContext) {
 }
 
 /**
+ * 不能引用聚合根
+ * @param context
+ */
+export function checkAggregationRootReference(context: FormValidatorContext) {
+  const model = getDomainObjectFromValidatorContext(context) as DomainObject<NameDSL>;
+
+  const errors: Set<DomainObject<NameDSL>> = new Set();
+  const checkDeps = (deps: DomainObject<NameDSL>[]) => {
+    for (const dep of deps) {
+      if (DomainObjectFactory.isAggregationRoot(dep)) {
+        errors.add(dep);
+      }
+    }
+  };
+
+  checkDeps(model.associations);
+  if (errors.size) {
+    throw new Error(
+      `不能引用聚合根:\n${Array.from(errors)
+        .map(i => `《${i.objectTypeTitle}》${i.readableTitle}`)
+        .join('\n')}`
+    );
+  }
+}
+
+/**
  * 检查聚合内领域对象的命名重复
  * @param value
  * @param context

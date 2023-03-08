@@ -82,9 +82,8 @@ export const ReferenceTypeProvider = observer(function ReferenceTypeProvider(pro
           return {
             value: i.id,
             get disabled() {
-              const current = model.viewStore.focusingNode;
               // 禁用聚合根
-              return current && current.id !== i.id && DomainObjectFactory.isAggregationRoot(i) ? true : undefined;
+              return DomainObjectFactory.isAggregationRoot(i) ? true : undefined;
             },
             get label() {
               return `${i.objectTypeTitle}-${i.readableTitle}`;
@@ -178,6 +177,7 @@ const TypeSelect = observer(function TypeSelect(props: { value?: TypeDSL; onChan
       placeholder="选择类型"
       onChange={handleChange as any}
       expandTrigger="hover"
+      autoFocus
       allowClear={false}
     ></Cascader>
   );
