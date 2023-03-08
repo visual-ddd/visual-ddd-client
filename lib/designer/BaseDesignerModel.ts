@@ -86,8 +86,7 @@ export abstract class BaseDesignerModel<
    * 保存数据
    * @param params
    */
-  protected abstract saveData(params: { id: string; data: Uint8Array }): Promise<void>;
-
+  protected abstract saveData(params: { id: string; data: Uint8Array; isDiff: boolean }): Promise<void>;
   /**
    * 加载保存向量
    * @param params
@@ -205,7 +204,7 @@ export abstract class BaseDesignerModel<
 
       const update = encodeStateAsUpdate(this.ydoc, vector);
 
-      await this.saveData({ id: this.id, data: update });
+      await this.saveData({ id: this.id, data: update, isDiff: !!vector });
 
       this.setError(undefined);
       message.success('保存成功');

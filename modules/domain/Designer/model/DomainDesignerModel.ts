@@ -271,9 +271,9 @@ export class DomainDesignerModel
     return await response.arrayBuffer();
   }
 
-  protected async saveData(params: { id: string; data: Uint8Array }): Promise<void> {
-    const { id, data } = params;
-    const response = await fetch(`/api/rest/domain/${id}`, { method: 'PUT', body: data });
+  protected async saveData(params: { id: string; data: Uint8Array; isDiff: boolean }): Promise<void> {
+    const { id, data, isDiff } = params;
+    const response = await fetch(`/api/rest/domain/${id}?diff=${!!isDiff}`, { method: 'PUT', body: data });
 
     if (!response.ok) {
       const message = await extraRestErrorMessage(response);

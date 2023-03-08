@@ -139,24 +139,35 @@ export function createYjsStore(options: {
 
   const handleSave = withWakedataRequestApiRoute(async (req, res) => {
     const id = req.query.id as string;
+    const isDiff = req.query.diff === 'true';
     const diff = await readBuffer(req);
 
     let update: Uint8Array;
 
-    if (!cache.has(id)) {
+    if (isDiff) {
+      // 增量保存
+      const data = await getData(req);
+      update = mergeUpdates([data, diff]);
+    } else {
       // 全量保存
       update = diff;
-    } else {
-      // 增量保存
-      const data = cache.get(id)!;
-      update = mergeUpdates([data, diff]);
     }
 
-    const buff = addCacheWithBuffer(id, Buffer.from(update));
+    let old = cache.get(id);
+    try {
+      const buff = addCacheWithBuffer(id, Buffer.from(update));
 
-    const dsl = await save(req, id, buff);
+      const dsl = await save(req, id, buff);
 
-    res.status(200).json(dsl);
+      res.status(200).json(dsl);
+    } catch (err) {
+      // 恢复旧数据
+      if (old) {
+        cache.set(id, old);
+      }
+
+      throw err;
+    }
   });
 
   return {
