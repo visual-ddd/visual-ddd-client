@@ -101,6 +101,7 @@ function isMapperObjectValid(context: FormValidatorContext) {
  * @returns
  */
 export function checkFieldCompatible(context: FormValidatorContext) {
+  const store = getMapperStoreFromFormValidatorContext(context);
   const fullField = context.rawRule.fullField!;
   const mapperPath = getParentPath(fullField);
   const fieldMapper = context.model.getProperty(mapperPath) as FieldMapperDSL;
@@ -120,7 +121,11 @@ export function checkFieldCompatible(context: FormValidatorContext) {
   }
 
   // 类型兼容性检查
-  if (!isCompatible(sourceField.type || createBaseType('Void'), targetField.type)) {
+  if (
+    !isCompatible(sourceField.type || createBaseType('Void'), targetField.type, {
+      getReferenceStorageType: store.getReferenceStorageType.bind(store),
+    })
+  ) {
     throw new Error(`字段类型不兼容`);
   }
 }

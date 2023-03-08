@@ -159,6 +159,15 @@ export function createEnum(): EnumDSL {
   };
 }
 
+/**
+ * 转换枚举为基础类型
+ * @param e
+ * @returns
+ */
+export function enumToTypeDSL(e: EnumDSL) {
+  return createBaseType(e.baseType === 'number' ? 'Integer' : 'String');
+}
+
 export function createSourceDSL(): SourceDSL {
   return {
     http: { enabled: true },

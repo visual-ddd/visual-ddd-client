@@ -32,8 +32,8 @@ export const autoLayout = (graph: Graph) => {
   const layout = new DagreLayout({
     type: 'dagre',
     rankdir: 'TB',
-    nodesep: 40,
-    ranksep: 60,
+    nodesep: 30,
+    ranksep: 40,
   });
 
   const input: { nodes: NodeBBox[]; edges: EdgeModel[] } = {

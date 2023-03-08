@@ -117,6 +117,7 @@ const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerPro
           {DomainDesignerTabsMap[DomainDesignerTabs.DomainModel]}
         </DesignerTabLabel>
       ),
+      forceRender: true,
       key: DomainDesignerTabs.DomainModel,
       children: (
         <DomainEditor model={model.domainEditorModel} active={model.activeTab === DomainDesignerTabs.DomainModel} />

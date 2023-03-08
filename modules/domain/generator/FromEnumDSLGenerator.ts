@@ -1,4 +1,5 @@
-import { EnumDSL, TypeDSL, TypeType } from '../domain-design/dsl/dsl';
+import { enumToTypeDSL } from '../domain-design/dsl';
+import { EnumDSL, TypeDSL } from '../domain-design/dsl/dsl';
 
 export class FromEnumDSLGenerator {
   private enum: EnumDSL;
@@ -8,17 +9,6 @@ export class FromEnumDSLGenerator {
   }
 
   toTypeDSL(): TypeDSL {
-    switch (this.enum.baseType) {
-      case 'string':
-        return {
-          type: TypeType.Base,
-          name: 'String',
-        };
-      case 'number':
-        return {
-          type: TypeType.Base,
-          name: 'Integer',
-        };
-    }
+    return enumToTypeDSL(this.enum);
   }
 }

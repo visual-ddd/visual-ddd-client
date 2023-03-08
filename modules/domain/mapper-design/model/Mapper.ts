@@ -131,7 +131,11 @@ export class Mapper {
       return NoopArray;
     }
 
-    return targetFields.filter(i => isCompatible(sourceField.type!, i.type));
+    return targetFields.filter(i =>
+      isCompatible(sourceField.type!, i.type, {
+        getReferenceStorageType: this.mapperStore.getReferenceStorageType.bind(this.mapperStore),
+      })
+    );
   }
 
   /**
@@ -142,7 +146,9 @@ export class Mapper {
       return;
     }
 
-    const mappers = autoMapper(this.sourceObject, this.targetObject);
+    const mappers = autoMapper(this.sourceObject, this.targetObject, {
+      getReferenceStorageType: this.mapperStore.getReferenceStorageType.bind(this.mapperStore),
+    });
 
     const list: FieldMapperDSL[] = [];
 

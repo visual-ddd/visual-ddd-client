@@ -5,45 +5,10 @@ import { debounce } from '@wakeapp/utils';
 import { makeObservable, observable, runInAction } from 'mobx';
 import { MapperObjectName } from '../dsl';
 
-import { ISourceObject, ISourceObjectGroup } from './ISourceObject';
-import { ITargetObject, ITargetObjectGroup } from './ITargetObject';
+import { ISourceObject } from './ISourceObject';
+import { ITargetObject } from './ITargetObject';
+import { IObjectStore } from './IObjectStore';
 import { Mapper } from './Mapper';
-
-export interface IObjectStore {
-  /**
-   * 来源对象列表
-   */
-  sourceObjectGroups: ISourceObjectGroup[];
-
-  /**
-   * 目标对象列表
-   */
-  targetObjectGroup: ITargetObjectGroup[];
-
-  /**
-   * 获取来源对象
-   * @param id
-   */
-  getSourceObjectById(id: string): ISourceObject | undefined;
-
-  /**
-   * 获取目标对象
-   * @param id
-   */
-  getTargetObjectById(id: string): ITargetObject | undefined;
-
-  /**
-   * 聚焦节点
-   * @param id
-   */
-  focusObject(id: string): void;
-
-  /**
-   * 获取节点的类型
-   * @param id
-   */
-  getObjectType(id: string): { type: string; label: string } | undefined;
-}
 
 export class MapperStore {
   protected event: BaseEditorEvent;
@@ -105,6 +70,15 @@ export class MapperStore {
    */
   getObjectType(id: string) {
     return this.objectStore.getObjectType(id);
+  }
+
+  /**
+   * 获取引用的底层类型
+   * @param id
+   * @returns
+   */
+  getReferenceStorageType(id: string) {
+    return this.objectStore.getReferenceStorageType(id);
   }
 
   /**

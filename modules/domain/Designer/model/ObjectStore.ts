@@ -4,6 +4,8 @@ import { delay } from '@wakeapp/utils';
 
 import { DataObjectEditorModel } from '../../data-design';
 import { DomainEditorModel } from '../../domain-design';
+import { DomainObjectName } from '../../domain-design/dsl/constants';
+import { enumToTypeDSL } from '../../domain-design/dsl/factory';
 import { IObjectStore, ISourceObject, ITargetObject } from '../../mapper-design';
 import { ObjectReferenceSource } from '../../mapper-design/dsl/dsl';
 import { DomainObjectDefinition, IDomainObjectStore } from '../../generator';
@@ -112,6 +114,15 @@ export class ObjectStore implements IObjectStore, IDomainObjectStore {
     } as DomainObjectDefinition;
   };
 
+  getReferenceStorageType: IObjectStore['getReferenceStorageType'] = id => {
+    // 目前仅支持枚举类型有底层村塾类型
+    const object = this.getObjectById(id);
+
+    if (object?.type === DomainObjectName.Enum) {
+      return enumToTypeDSL(object.value);
+    }
+  };
+
   getSourceObjectById(id: string): ISourceObject | undefined {
     // 查询对象
     let object = this.queryEditorModel.domainObjectStore.getObjectById(id);
@@ -144,7 +155,7 @@ export class ObjectStore implements IObjectStore, IDomainObjectStore {
     object = this.domainEditorModel.domainObjectStore.getObjectById(id);
 
     if (object != null) {
-      return { type: 'domain', label: '查询' };
+      return { type: 'domain', label: '领域' };
     }
 
     object = this.dataObjectEditorModel.dataObjectStore.getObjectById(id);

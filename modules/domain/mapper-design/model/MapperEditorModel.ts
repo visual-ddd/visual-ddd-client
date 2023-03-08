@@ -1,6 +1,7 @@
 import { BaseEditorModel, BaseEditorModelOptions } from '@/lib/editor';
-import { MapperStore, IObjectStore } from './MapperStore';
+import { MapperStore } from './MapperStore';
 import { MapperValidateManager } from './MapperValidateManager';
+import { IObjectStore } from './IObjectStore';
 
 export interface MapperEditorModelOptions extends BaseEditorModelOptions {
   objectStore: IObjectStore;

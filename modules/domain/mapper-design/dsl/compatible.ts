@@ -1,5 +1,5 @@
 import { DataObjectTypeDSL, DataObjectTypeName } from '../../data-design/dsl';
-import type { BaseType, TypeDSL } from '../../domain-design/dsl/dsl';
+import { BaseType, TypeDSL, TypeType } from '../../domain-design/dsl/dsl';
 
 /**
  * 兼容性声明
@@ -28,10 +28,30 @@ export const BaseTypeCompatibleMap: Record<BaseType, DataObjectTypeName[]> = {
  * @param target
  * @returns
  */
-export function isCompatible(source: SourceFieldType, target: TargetFieldType): boolean {
-  if (source.type === 'base') {
+export function isCompatible(
+  source: SourceFieldType,
+  target: TargetFieldType,
+  inject: {
+    getReferenceStorageType: (id: string) => TypeDSL | undefined;
+  }
+): boolean {
+  const { getReferenceStorageType } = inject;
+
+  if (source.type === TypeType.Reference) {
+    // 获取底层的存储数据, 比如美剧
+    const storageType = getReferenceStorageType(source.referenceId);
+    if (!storageType) {
+      return false;
+    }
+
+    source = storageType;
+  }
+
+  if (source.type === TypeType.Base) {
     return BaseTypeCompatibleMap[source.name].includes(target.type);
-  } else if (target.type === DataObjectTypeName.JSON) {
+  }
+
+  if (target.type === DataObjectTypeName.JSON) {
     // 对象类型、集合类型支持转换为 JSON
     return true;
   }
