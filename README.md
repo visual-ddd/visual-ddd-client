@@ -35,15 +35,9 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 ## TODO
 
-- 业务场景关联
-- 接入团队和组织统一语言
-- 对象结构映射标记类型
-- 对象字段定位
 - NodeYMap 单元测试
 - rule 包含 label, 更好的信息提示
 - 引用关系支持可见性控制
-- 表单告警信息定位
-- 右键菜单, 画布，节点，组件树
 - layout 支持折叠
 - edge/node selected 状态高亮
 - 组件树换行优化

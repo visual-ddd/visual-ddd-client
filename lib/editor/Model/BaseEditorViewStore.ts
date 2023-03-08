@@ -1,13 +1,15 @@
-import { makeObservable, observable, reaction } from 'mobx';
+import { makeObservable, observable, reaction, runInAction, toJS } from 'mobx';
 import { makeAutoBindThis, derive, mutation } from '@/lib/store';
 import { IAwarenessRegistry, IUser } from '@/lib/core';
 import { IDisposable } from '@/lib/utils';
+import localforage from 'localforage';
+import { debounce, Disposer } from '@wakeapp/utils';
 
 import { BaseEditorDatasource } from './BaseEditorDatasource';
 import { BaseNode } from './BaseNode';
 import { BaseEditorEvent } from './BaseEditorEvent';
-import { Disposer } from '@wakeapp/utils';
 import { BaseEditorIndex } from './BaseEditorIndex';
+import { BaseEditorScope } from './BaseEditorScope';
 
 /**
  * 图形查看 tab
@@ -22,6 +24,16 @@ export interface BaseEditorViewState {
    * 图形详情 Tab
    */
   inspectTab: EditorInspectTab;
+
+  /**
+   * 属性查看栏大小
+   */
+  inspectPanelWidth?: number;
+
+  /**
+   * 侧边栏大小
+   */
+  sidebarPanelWidth?: number;
 
   /**
    * 组件库是否折叠
@@ -78,6 +90,10 @@ export class BaseEditorViewStore implements IDisposable {
   private event: BaseEditorEvent;
   private awarenessRegistry: BaseEditorAwarenessRegistry;
   private index: BaseEditorIndex;
+  private scope: BaseEditorScope;
+  private get cacheKey() {
+    return `VIEW_STORE:${this.scope.scopeId}:viewState`;
+  }
 
   /**
    * 编辑器视图状态
@@ -153,6 +169,7 @@ export class BaseEditorViewStore implements IDisposable {
   constructor(inject: {
     datasource: BaseEditorDatasource;
     event: BaseEditorEvent;
+    scope: BaseEditorScope;
     index: BaseEditorIndex;
     awarenessRegistry: BaseEditorAwarenessRegistry;
   }) {
@@ -160,9 +177,12 @@ export class BaseEditorViewStore implements IDisposable {
     this.awarenessRegistry = inject.awarenessRegistry;
     this.datasource = inject.datasource;
     this.event = inject.event;
+    this.scope = inject.scope;
 
     makeObservable(this);
     makeAutoBindThis(this);
+
+    this.initial();
 
     this.disposer.push(
       reaction(
@@ -187,6 +207,15 @@ export class BaseEditorViewStore implements IDisposable {
     this.disposer.release();
   }
 
+  async initial() {
+    const state = await localforage.getItem<BaseEditorViewState>(this.cacheKey);
+    if (state) {
+      runInAction(() => {
+        Object.assign(this.viewState, state);
+      });
+    }
+  }
+
   @mutation('VIEW_STORE:SET_SELECTED')
   setSelected(params: { selected: BaseNode[] }) {
     this.selectedNodes = params.selected;
@@ -197,6 +226,8 @@ export class BaseEditorViewStore implements IDisposable {
     const { key, value } = params;
 
     this.viewState[key] = value;
+
+    this.saveViewState();
   }
 
   isNodeFocusing(node: BaseNode) {
@@ -234,4 +265,8 @@ export class BaseEditorViewStore implements IDisposable {
       return true;
     });
   }
+
+  protected saveViewState = debounce(() => {
+    localforage.setItem(this.cacheKey, toJS(this.viewState));
+  });
 }

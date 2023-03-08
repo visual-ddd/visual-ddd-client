@@ -19,7 +19,7 @@ export class DomainEditorModel extends BaseEditorModel {
     super(options);
 
     this.domainObjectStore = new DomainObjectStore({ event: this.event, editorModel: this });
-    this.domainEditorViewModel = new DomainEditorViewModel();
+    this.domainEditorViewModel = new DomainEditorViewModel({ scope: this.scope });
     this.domainGenerator = options.domainGenerator;
   }
 }

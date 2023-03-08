@@ -179,6 +179,7 @@ export class BaseEditorModel implements IDisposable {
       event: this.event,
       index: this.index,
       awarenessRegistry,
+      scope: this.scope,
     });
     this.formStore = new BaseEditorFormStore({ event: this.event, store: this.store, editorModel: this });
     this.commandHandler = new BaseEditorCommandHandler({

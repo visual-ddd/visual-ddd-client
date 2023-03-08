@@ -1,5 +1,7 @@
 import { SplitBox } from '@antv/x6-react-components';
 import classNames from 'classnames';
+import { observer } from 'mobx-react';
+import { useEditorModel } from '../../Model';
 import { EditorFormPortalContextProvider } from '../Form';
 
 import s from './index.module.scss';
@@ -32,11 +34,20 @@ const SIDE_WIDTH = 230;
 const MIN_SIDE_WIDTH = SIDE_WIDTH;
 const MAX_SIDE_WIDTH = SIDE_WIDTH * 1.5;
 
-// TODO: 记忆
-export const EditorLayout = (props: EditorLayoutProps) => {
+export const EditorLayout = observer(function EditorLayout(props: EditorLayoutProps) {
   const { left, children, toolbar, right } = props;
+  const { model } = useEditorModel();
+
   const content = (
-    <SplitBox primary="second" defaultSize={SIDE_WIDTH} minSize={MIN_SIDE_WIDTH} maxSize={MAX_SIDE_WIDTH}>
+    <SplitBox
+      primary="second"
+      size={model.viewStore.viewState.inspectPanelWidth ?? SIDE_WIDTH}
+      onResizeEnd={newSize => {
+        model.commandHandler.setViewState({ key: 'inspectPanelWidth', value: newSize });
+      }}
+      minSize={MIN_SIDE_WIDTH}
+      maxSize={MAX_SIDE_WIDTH}
+    >
       <div className={classNames('vd-editor-layout__body', s.body)}>
         {toolbar && <div className={classNames('vd-editor-layout__toolbar', s.toolbar)}>{toolbar}</div>}
         <div className={classNames('vd-editor-layout__canvas', s.canvas)}>{children}</div>
@@ -51,7 +62,15 @@ export const EditorLayout = (props: EditorLayoutProps) => {
       target=".vd-editor-layout__canvas"
     >
       {left ? (
-        <SplitBox split="vertical" defaultSize={SIDE_WIDTH} minSize={MIN_SIDE_WIDTH} maxSize={MAX_SIDE_WIDTH}>
+        <SplitBox
+          split="vertical"
+          size={model.viewStore.viewState.sidebarPanelWidth ?? SIDE_WIDTH}
+          onResizeEnd={newSize => {
+            model.commandHandler.setViewState({ key: 'sidebarPanelWidth', value: newSize });
+          }}
+          minSize={MIN_SIDE_WIDTH}
+          maxSize={MAX_SIDE_WIDTH}
+        >
           <div className={classNames('vd-editor-layout__left-side', s.left)}>{left}</div>
           {content}
         </SplitBox>
@@ -60,4 +79,4 @@ export const EditorLayout = (props: EditorLayoutProps) => {
       )}
     </EditorFormPortalContextProvider>
   );
-};
+});
