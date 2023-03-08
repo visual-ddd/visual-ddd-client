@@ -31,7 +31,7 @@ export const EnumShape = observer(function EnumShape(props: EnumShapeProps) {
       style={style}
       type="枚举"
       title={dsl.title}
-      name={dsl.name}
+      name={`${dsl.name}:${dsl.baseType.toUpperCase()}`}
     >
       {!!dsl.members.length && (
         <ClassShapeCells>

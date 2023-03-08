@@ -39,7 +39,7 @@ export const MapperShape = observer(function MapperShape(props: MapperShapeProps
       showName={false}
       header={
         <>
-          <div className="u-bold">{mapper.readableTitle}</div>
+          <div className="u-bold u-tc">{mapper.readableTitle}</div>
           <div>
             <ObjectMapperDisplay mapper={mapper} />
           </div>
