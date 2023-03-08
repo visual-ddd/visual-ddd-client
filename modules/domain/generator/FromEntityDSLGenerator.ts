@@ -1,4 +1,3 @@
-import { assert } from '@/lib/utils';
 import { DTODSL, EntityDSL, ReferenceTypeDSL, TypeType } from '../domain-design/dsl/dsl';
 import { createDTO, createIDDSL } from '../domain-design/dsl/factory';
 
@@ -15,8 +14,6 @@ export class FromEntityDSLGenerator {
     queryTypeDSLTransformer: IQueryTypeDSLTransformer;
   }) {
     const { entity, dtoGeneratorState, queryTypeDSLTransformer } = inject;
-
-    assert(!entity.isAggregationRoot, '聚合根不能转换为DTO');
 
     this.dtoGeneratorState = dtoGeneratorState;
     this.entity = entity;

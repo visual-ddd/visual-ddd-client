@@ -169,19 +169,34 @@ export class DomainDesignerModel
     const loadingDestroy = message.loading('正在生成对象...', 0);
 
     try {
-      const { query, dtos, dataObject, mapper } = domainObjectGenerate({
+      const {
+        query: { detailQuery, pageQuery },
+        dtos,
+        dataObject,
+        mapper,
+      } = domainObjectGenerate({
         aggregationRoot: root,
         domainObjectStore: this.objectStore,
       });
 
       // 查询模型注入
-      const queryNode = this.queryEditorModel.commandHandler.createNode({
-        id: query.uuid,
+      const detailQueryNode = this.queryEditorModel.commandHandler.createNode({
+        id: detailQuery.uuid,
         name: DomainObjectName.Query,
         type: 'node',
         properties: {
-          ...query,
-          size: this.guestSize(query.properties.length),
+          ...detailQuery,
+          size: this.guestSize(detailQuery.properties.length),
+        },
+      });
+
+      const pageQueryNode = this.queryEditorModel.commandHandler.createNode({
+        id: pageQuery.uuid,
+        name: DomainObjectName.Query,
+        type: 'node',
+        properties: {
+          ...pageQuery,
+          size: this.guestSize(pageQuery.properties.length),
         },
       });
 
@@ -244,7 +259,8 @@ export class DomainDesignerModel
       await message.info('正在生成对象映射...', 0.5);
 
       const revoke = () => {
-        this.queryEditorModel.commandHandler.removeNode({ node: queryNode });
+        this.queryEditorModel.commandHandler.removeNode({ node: detailQueryNode });
+        this.queryEditorModel.commandHandler.removeNode({ node: pageQueryNode });
         this.queryEditorModel.commandHandler.removeBatched({ nodes: dtoNodes });
         this.dataObjectEditorModel.commandHandler.removeNode({ node: dataObjectNode });
         this.mapperObjectEditorModel.commandHandler.removeNode({ node: mapperNode });

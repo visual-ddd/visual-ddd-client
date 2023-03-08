@@ -19,7 +19,7 @@ exports[`FromAggregationRootDSLGenerator generate 1`] = `
         "type": {
           "type": "String",
         },
-        "uuid": "uuid-38",
+        "uuid": "uuid-44",
       },
       {
         "description": "基础类型属性的描述2",
@@ -32,7 +32,7 @@ exports[`FromAggregationRootDSLGenerator generate 1`] = `
         "type": {
           "type": "Long",
         },
-        "uuid": "uuid-39",
+        "uuid": "uuid-45",
       },
       {
         "description": "",
@@ -45,14 +45,109 @@ exports[`FromAggregationRootDSLGenerator generate 1`] = `
         "type": {
           "type": "Integer",
         },
-        "uuid": "uuid-42",
+        "uuid": "uuid-48",
       },
     ],
     "tableName": undefined,
     "title": "我的实体",
-    "uuid": "uuid-36",
+    "uuid": "uuid-42",
   },
   "dtos": [
+    {
+      "abstract": false,
+      "classMethods": [],
+      "classProperties": [],
+      "description": "用于我的实体的数据传输对象",
+      "extends": undefined,
+      "implements": [],
+      "meta": [],
+      "methods": [],
+      "name": "MyEntityDTO",
+      "properties": [
+        {
+          "access": "public",
+          "description": "基础类型属性的描述",
+          "meta": [],
+          "name": "baseTypeProperty",
+          "title": "基础类型属性",
+          "type": {
+            "name": "String",
+            "type": "base",
+          },
+          "uuid": "uuid-13",
+        },
+        {
+          "access": "public",
+          "description": "基础类型属性的描述2",
+          "meta": [],
+          "name": "baseType2Property",
+          "title": "基础类型属性2",
+          "type": {
+            "name": "Long",
+            "type": "base",
+          },
+          "uuid": "uuid-14",
+        },
+        {
+          "access": "public",
+          "description": "",
+          "meta": [],
+          "name": "containerTypeProperty",
+          "title": "未命名",
+          "type": {
+            "name": "List",
+            "params": {
+              "item": {
+                "name": "Boolean",
+                "type": "base",
+              },
+            },
+            "type": "container",
+          },
+          "uuid": "uuid-15",
+        },
+        {
+          "access": "public",
+          "description": "",
+          "meta": [],
+          "name": "referenceTypePropertyForEnum",
+          "title": "未命名",
+          "type": {
+            "name": "Integer",
+            "type": "base",
+          },
+          "uuid": "uuid-16",
+        },
+        {
+          "access": "public",
+          "description": "",
+          "meta": [],
+          "name": "referenceTypePropertyForValueObject",
+          "title": "未命名",
+          "type": {
+            "name": "valueObjectNameDTO",
+            "referenceId": "uuid-23",
+            "type": "reference",
+          },
+          "uuid": "uuid-19",
+        },
+        {
+          "access": "public",
+          "description": "",
+          "meta": [],
+          "name": "referenceTypePropertyForEntity",
+          "title": "未命名",
+          "type": {
+            "name": "entityNameDTO",
+            "referenceId": "uuid-32",
+            "type": "reference",
+          },
+          "uuid": "uuid-27",
+        },
+      ],
+      "title": "我的实体数据传输对象",
+      "uuid": "uuid-10",
+    },
     {
       "abstract": false,
       "classMethods": [],
@@ -74,11 +169,11 @@ exports[`FromAggregationRootDSLGenerator generate 1`] = `
             "name": "String",
             "type": "base",
           },
-          "uuid": "uuid-25",
+          "uuid": "uuid-26",
         },
       ],
       "title": "值对象数据传输对象",
-      "uuid": "uuid-22",
+      "uuid": "uuid-23",
     },
     {
       "abstract": false,
@@ -101,7 +196,7 @@ exports[`FromAggregationRootDSLGenerator generate 1`] = `
             "name": "Long",
             "type": "base",
           },
-          "uuid": "uuid-34",
+          "uuid": "uuid-35",
         },
         {
           "access": "public",
@@ -113,11 +208,11 @@ exports[`FromAggregationRootDSLGenerator generate 1`] = `
             "name": "String",
             "type": "base",
           },
-          "uuid": "uuid-35",
+          "uuid": "uuid-36",
         },
       ],
       "title": "实体数据传输对象",
-      "uuid": "uuid-31",
+      "uuid": "uuid-32",
     },
   ],
   "mapper": {
@@ -125,18 +220,18 @@ exports[`FromAggregationRootDSLGenerator generate 1`] = `
     "mappers": [
       {
         "source": "uuid-4",
-        "target": "uuid-38",
-        "uuid": "uuid-51",
+        "target": "uuid-44",
+        "uuid": "uuid-57",
       },
       {
         "source": "uuid-5",
-        "target": "uuid-39",
-        "uuid": "uuid-52",
+        "target": "uuid-45",
+        "uuid": "uuid-58",
       },
       {
         "source": "uuid-7",
-        "target": "uuid-42",
-        "uuid": "uuid-53",
+        "target": "uuid-48",
+        "uuid": "uuid-59",
       },
     ],
     "meta": [],
@@ -148,118 +243,86 @@ exports[`FromAggregationRootDSLGenerator generate 1`] = `
     },
     "target": {
       "name": "MyEntityDO",
-      "referenceId": "uuid-36",
+      "referenceId": "uuid-42",
       "source": "data",
     },
     "title": "我的实体数据对象映射",
-    "uuid": "uuid-50",
+    "uuid": "uuid-56",
   },
   "query": {
-    "description": "用于查询我的实体的查询对象",
-    "meta": [],
-    "name": "MyEntityQuery",
-    "pagination": false,
-    "properties": [
-      {
-        "access": "public",
-        "description": "基础类型属性的描述",
-        "meta": [],
-        "name": "baseTypeProperty",
-        "title": "基础类型属性",
-        "type": {
-          "name": "String",
-          "type": "base",
-        },
-        "uuid": "uuid-12",
-      },
-      {
-        "access": "public",
-        "description": "基础类型属性的描述2",
-        "meta": [],
-        "name": "baseType2Property",
-        "title": "基础类型属性2",
-        "type": {
-          "name": "Long",
-          "type": "base",
-        },
-        "uuid": "uuid-13",
-      },
-      {
-        "access": "public",
-        "description": "",
-        "meta": [],
-        "name": "containerTypeProperty",
-        "title": "未命名",
-        "type": {
-          "name": "List",
-          "params": {
-            "item": {
-              "name": "Boolean",
-              "type": "base",
-            },
+    "detailQuery": {
+      "description": "查询我的实体详情",
+      "meta": [],
+      "name": "MyEntityQuery",
+      "pagination": false,
+      "properties": [
+        {
+          "access": "public",
+          "description": "基础类型属性的描述",
+          "meta": [],
+          "name": "baseTypeProperty",
+          "title": "基础类型属性",
+          "type": {
+            "name": "String",
+            "type": "base",
           },
-          "type": "container",
+          "uuid": "uuid-37",
         },
-        "uuid": "uuid-14",
+      ],
+      "result": {
+        "name": "MyEntityDTO",
+        "referenceId": "uuid-10",
+        "type": "reference",
       },
-      {
-        "access": "public",
-        "description": "",
-        "meta": [],
-        "name": "referenceTypePropertyForEnum",
-        "title": "未命名",
-        "type": {
-          "name": "Integer",
-          "type": "base",
+      "source": {
+        "event": {
+          "enabled": false,
+          "value": "",
         },
-        "uuid": "uuid-15",
-      },
-      {
-        "access": "public",
-        "description": "",
-        "meta": [],
-        "name": "referenceTypePropertyForValueObject",
-        "title": "未命名",
-        "type": {
-          "name": "valueObjectNameDTO",
-          "referenceId": "uuid-22",
-          "type": "reference",
+        "http": {
+          "enabled": true,
         },
-        "uuid": "uuid-18",
-      },
-      {
-        "access": "public",
-        "description": "",
-        "meta": [],
-        "name": "referenceTypePropertyForEntity",
-        "title": "未命名",
-        "type": {
-          "name": "entityNameDTO",
-          "referenceId": "uuid-31",
-          "type": "reference",
+        "rpc": {
+          "enabled": true,
         },
-        "uuid": "uuid-26",
+        "schedule": {
+          "enabled": false,
+          "value": "",
+        },
       },
-    ],
-    "result": undefined,
-    "source": {
-      "event": {
-        "enabled": false,
-        "value": "",
-      },
-      "http": {
-        "enabled": true,
-      },
-      "rpc": {
-        "enabled": true,
-      },
-      "schedule": {
-        "enabled": false,
-        "value": "",
-      },
+      "title": "我的实体详情查询对象",
+      "uuid": "uuid-38",
     },
-    "title": "我的实体查询对象",
-    "uuid": "uuid-10",
+    "pageQuery": {
+      "description": "分页查询我的实体",
+      "meta": [],
+      "name": "MyEntityPageQuery",
+      "pagination": false,
+      "properties": [],
+      "result": {
+        "name": "MyEntityDTO",
+        "referenceId": "uuid-10",
+        "type": "reference",
+      },
+      "source": {
+        "event": {
+          "enabled": false,
+          "value": "",
+        },
+        "http": {
+          "enabled": true,
+        },
+        "rpc": {
+          "enabled": true,
+        },
+        "schedule": {
+          "enabled": false,
+          "value": "",
+        },
+      },
+      "title": "我的实体分页查询对象",
+      "uuid": "uuid-40",
+    },
   },
 }
 `;

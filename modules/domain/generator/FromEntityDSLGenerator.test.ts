@@ -31,24 +31,6 @@ describe('FromEntityDSLGenerator', () => {
     mockedUuidModule.reset();
   });
 
-  it('should throw error, if entity is aggregation root', () => {
-    const entity = createEntity();
-    entity.isAggregationRoot = true;
-    const state = new BaseGeneratorState<DTODSL>();
-
-    expect(() => {
-      new FromEntityDSLGenerator({
-        entity,
-        dtoGeneratorState: state,
-        queryTypeDSLTransformer: {
-          transformQueryTypeDSL(type) {
-            return type;
-          },
-        },
-      });
-    }).toThrowError();
-  });
-
   it('toDTO baseInfo', () => {
     const entity = createEntity();
     const state = new BaseGeneratorState<DTODSL>();

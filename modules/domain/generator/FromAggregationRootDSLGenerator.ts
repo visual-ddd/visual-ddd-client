@@ -10,6 +10,7 @@ import { BaseGenerator } from './BaseGenerator';
 import { BaseGeneratorState } from './BaseGeneratorState';
 import { DTOGeneratorState, IDomainObjectStore } from './types';
 import { transformTypeDSLToDataObjectTypeDSL } from './transform';
+import { FromEntityDSLGenerator } from './FromEntityDSLGenerator';
 
 /**
  * 聚合根自动生成
@@ -47,25 +48,38 @@ export class FromAggregationRootDSLGenerator extends BaseGenerator {
    * 转换为查询对象
    * @param entity
    */
-  protected toQuery(): QueryDSL {
+  protected toQuery(): { detailQuery: QueryDSL; pageQuery: QueryDSL } {
     const root = this.root;
 
-    const query = createQuery();
-    query.name = `${root.name}Query`;
-    query.title = `${root.title}查询对象`;
-    query.description = `用于查询${root.title}的查询对象`;
-    query.properties = [];
+    const dtoTypeDSL = new FromEntityDSLGenerator({
+      entity: root,
+      dtoGeneratorState: this.dtoGeneratorState,
+      queryTypeDSLTransformer: this,
+    }).toDTOTypeDSL();
 
-    // 属性转换
-    for (const property of root.properties) {
-      query.properties.push({
-        ...property,
-        ...createIDDSL(),
-        type: property.type && this.transformQueryTypeDSL(property.type),
-      });
-    }
+    const entityIdProperty = root.properties.find(i => i.uuid === root.id)!;
+    const id = {
+      ...entityIdProperty,
+      ...createIDDSL(),
+      type: entityIdProperty.type && this.transformQueryTypeDSL(entityIdProperty.type),
+    };
 
-    return query;
+    // 详情查询
+    const detailQuery = createQuery();
+    detailQuery.name = `${root.name}Query`;
+    detailQuery.title = `${root.title}详情查询对象`;
+    detailQuery.description = `查询${root.title}详情`;
+    detailQuery.properties = [id];
+    detailQuery.result = dtoTypeDSL;
+
+    const pageQuery = createQuery();
+    pageQuery.name = `${root.name}PageQuery`;
+    pageQuery.title = `${root.title}分页查询对象`;
+    pageQuery.description = `分页查询${root.title}`;
+    pageQuery.properties = [];
+    pageQuery.result = dtoTypeDSL;
+
+    return { detailQuery, pageQuery };
   }
 
   /**
