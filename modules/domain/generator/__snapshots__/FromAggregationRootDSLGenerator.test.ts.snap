@@ -297,7 +297,7 @@ exports[`FromAggregationRootDSLGenerator generate 1`] = `
       "description": "分页查询我的实体",
       "meta": [],
       "name": "MyEntityPageQuery",
-      "pagination": false,
+      "pagination": true,
       "properties": [],
       "result": {
         "name": "MyEntityDTO",

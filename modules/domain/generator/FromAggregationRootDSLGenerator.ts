@@ -78,6 +78,7 @@ export class FromAggregationRootDSLGenerator extends BaseGenerator {
     pageQuery.description = `分页查询${root.title}`;
     pageQuery.properties = [];
     pageQuery.result = dtoTypeDSL;
+    pageQuery.pagination = true;
 
     return { detailQuery, pageQuery };
   }
