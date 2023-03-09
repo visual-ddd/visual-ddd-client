@@ -71,6 +71,12 @@ const nextConfig = {
     'rc-tooltip',
   ],
   experimental: {},
+  sentry: {
+    // 禁止 sentry source map 上传
+    hideSourcemaps: false,
+    disableServerWebpackPlugin: true,
+    disableClientWebpackPlugin: true,
+  },
 };
 
-module.exports = withSentryConfig(nextConfig, { silent: true }, { hideSourcemaps: true });
+module.exports = withSentryConfig(nextConfig);
