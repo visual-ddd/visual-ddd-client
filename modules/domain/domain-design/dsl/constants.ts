@@ -1,6 +1,13 @@
 import { RelationShipDSL } from './dsl';
 
-export { NameTooltip, NameTooltipSimple } from '@/lib/core';
+export {
+  NameTooltip,
+  NameTooltipSimple,
+  UntitledInCamelCase,
+  UntitledInHumanReadable,
+  UntitledInUpperCamelCase,
+  UntitledInUpperCase,
+} from '@/lib/core';
 
 /**
  * Java 中 Void, 用于注解空 (null) 的值
@@ -11,11 +18,6 @@ export const VoidClass = 'Void';
  * Java 中 void 关键字
  */
 export const Void = 'void';
-
-export const UntitledInCamelCase = 'untitled';
-export const UntitledInUpperCamelCase = 'Untitled';
-export const UntitledInUpperCase = 'UNTITLED';
-export const UntitledInHumanReadable = '未命名';
 
 export const RelativeShipMap = {
   [RelationShipDSL.Aggregation]: '聚合',

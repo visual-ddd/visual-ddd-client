@@ -23,6 +23,7 @@ import { TypeInput } from '../../../dsl/components/TypeInput';
 import { AggregationSelect } from '../../../dsl/components/AggregationSelect';
 import { ObjectNameInput } from '../../../dsl/components/ObjectNameInput';
 import { NameInput } from '../../../dsl/components/NameInput';
+import { useAutoCompleteUbiquitousLanguageFromFormModel } from '../../../hooks';
 
 const DEFAULT_ACTIVE = ['base', 'properties', 'eventProperties'];
 
@@ -73,12 +74,14 @@ const RulesSelect = observer(function RulesSelect() {
 export const CommandEditor = () => {
   const propertiesActionSlot = useDynamicSlot();
   const eventPropertiesActionSlot = useDynamicSlot();
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const handleMatchUbiquitousLanguage = useAutoCompleteUbiquitousLanguageFromFormModel({ path: '' });
 
   return (
     <EditorFormCollapse defaultActiveKey={DEFAULT_ACTIVE}>
       <EditorFormCollapsePanel header="基础信息" key="base">
         <EditorFormItem path="name" label="标识符" tooltip={NameTooltip['CamelCase']}>
-          <ObjectNameInput />
+          <ObjectNameInput onMatchUbiquitousLanguage={handleMatchUbiquitousLanguage} />
         </EditorFormItem>
         <EditorFormItem path="title" label="标题">
           <TitleInput />

@@ -27,6 +27,7 @@ import { reactifyProperty } from './reactify';
 import { PropertyDefaultValue } from './PropertyDefaultValue';
 import { ReferenceEditor } from './ReferenceEditor';
 import s from './PropertiesEditor.module.scss';
+import { useAutoCompleteUbiquitousLanguageFromFormModel } from '@/modules/domain/domain-design/hooks/useAutoCompleteUbiquitousLanguageFromFormModel';
 
 export interface PropertiesEditorProps {
   /**
@@ -57,6 +58,8 @@ const renderEditor = (path: string) => {
   const p = (cp: string) => `${path}.${cp}`;
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const { formModel } = useEditorFormContext()!;
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const handleMatchUbiquitousLanguage = useAutoCompleteUbiquitousLanguageFromFormModel({ path });
 
   const handleTypeChange = (value: DataObjectTypeName) => {
     if (!value) {
@@ -77,7 +80,7 @@ const renderEditor = (path: string) => {
         // 通知同一层级的命名检查
         notify={replaceLastPathToPattern(path) + '.name'}
       >
-        <NameInput nameCase="camelCase" />
+        <NameInput nameCase="camelCase" onMatchUbiquitousLanguage={handleMatchUbiquitousLanguage} />
       </EditorFormItem>
       <EditorFormItem path={p('title')} label="标题">
         <TitleInput />

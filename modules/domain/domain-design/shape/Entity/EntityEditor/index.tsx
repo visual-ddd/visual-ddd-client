@@ -10,6 +10,7 @@ import { PropertyDSL } from '../../../dsl/dsl';
 import { TitleInput } from '../../../dsl/components/TitleInput';
 import { ObjectNameInput } from '../../../dsl/components/ObjectNameInput';
 import { useDynamicSlot } from '@/lib/components/DynamicSlot';
+import { useAutoCompleteUbiquitousLanguageFromFormModel } from '../../../hooks';
 
 const DEFAULT_ACTIVE = ['base', 'properties', 'methods'];
 
@@ -38,6 +39,9 @@ const IDSelector = observer(function IDSelector(props: IDSelectorProps) {
 export const EntityEditor = () => {
   const propertiesActionSlot = useDynamicSlot();
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const handleMatchUbiquitousLanguage = useAutoCompleteUbiquitousLanguageFromFormModel({ path: '' });
+
   return (
     <EditorFormCollapse defaultActiveKey={DEFAULT_ACTIVE}>
       <EditorFormCollapsePanel header="基础信息" key="base">
@@ -54,7 +58,7 @@ export const EntityEditor = () => {
             </>
           }
         >
-          <ObjectNameInput />
+          <ObjectNameInput onMatchUbiquitousLanguage={handleMatchUbiquitousLanguage} />
         </EditorFormItem>
         <EditorFormItem path="title" label="标题" tooltip="用统一语言来描述">
           <TitleInput />

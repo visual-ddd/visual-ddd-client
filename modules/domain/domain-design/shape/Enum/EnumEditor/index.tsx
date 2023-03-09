@@ -6,10 +6,14 @@ import { TitleInput } from '../../../dsl/components/TitleInput';
 import { ObjectNameInput } from '../../../dsl/components/ObjectNameInput';
 import { Select } from 'antd';
 import { EnumMembersEditor } from './EnumMembersEditor';
+import { useAutoCompleteUbiquitousLanguageFromFormModel } from '../../../hooks';
 
 const DEFAULT_ACTIVE = ['base', 'members'];
 
 export const EnumEditor = () => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const handleMatchUbiquitousLanguage = useAutoCompleteUbiquitousLanguageFromFormModel({ path: '' });
+
   return (
     <EditorFormCollapse defaultActiveKey={DEFAULT_ACTIVE}>
       <EditorFormCollapsePanel header="基础信息" key="base">
@@ -26,7 +30,7 @@ export const EnumEditor = () => {
             </>
           }
         >
-          <ObjectNameInput />
+          <ObjectNameInput onMatchUbiquitousLanguage={handleMatchUbiquitousLanguage} />
         </EditorFormItem>
         <EditorFormItem path="title" label="标题">
           <TitleInput />

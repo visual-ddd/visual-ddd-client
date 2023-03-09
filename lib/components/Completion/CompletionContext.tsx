@@ -1,5 +1,7 @@
 import { NameCase } from '@/lib/core';
-import { createContext, useContext, useEffect, useMemo, useRef } from 'react';
+import { NoopArray } from '@wakeapp/utils';
+import { reaction } from 'mobx';
+import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import {
   CompletionImplement,
   CompletionImplementIdentifierLowerCamelCase,
@@ -19,9 +21,11 @@ export function useCompletionContext() {
 
 export interface CompletionContextProviderProps {
   /**
-   * 所有单词
+   * 所有单词, 注意
+   * - 这个应该是不可变的, 这个函数变化会触发重新监听
+   * - 这个函数应该是 observable
    */
-  words: string[];
+  words: () => string[];
 
   children: React.ReactNode;
 }
@@ -34,9 +38,10 @@ export interface CompletionContextProviderProps {
 export const CompletionContextProvider = (props: CompletionContextProviderProps) => {
   const { words, children } = props;
   const completionImplements = useRef<Map<NameCase | 'any', CompletionImplement> | undefined>();
+  const [list, setList] = useState<string[]>(NoopArray);
 
   const value = useMemo<CompletionContextValue>(() => {
-    const identifiers = extraIdentifiersFromWords(words);
+    const identifiers = extraIdentifiersFromWords(list);
 
     const getCompletion = (key: NameCase | 'any') => {
       if (completionImplements.current == null) {
@@ -70,7 +75,7 @@ export const CompletionContextProvider = (props: CompletionContextProviderProps)
       }
 
       if (key === 'any') {
-        instance.setCandidate(words);
+        instance.setCandidate(list);
       } else {
         instance.setCandidate(identifiers);
       }
@@ -80,10 +85,10 @@ export const CompletionContextProvider = (props: CompletionContextProviderProps)
       return instance;
     };
 
-    return { words, identifiers, getCompletion };
-  }, [words]);
+    return { words: list, identifiers, getCompletion };
+  }, [list]);
 
-  // 更新獲選
+  // 更新候选
   useEffect(() => {
     if (!completionImplements.current) {
       return;
@@ -101,6 +106,22 @@ export const CompletionContextProvider = (props: CompletionContextProviderProps)
       }
     }
   }, [value]);
+
+  useEffect(() => {
+    return reaction(
+      words,
+      results => {
+        setList(results ?? NoopArray);
+      },
+      {
+        requiresObservable: true,
+        name: 'WATCH_COMPLETION_WORDS',
+        fireImmediately: true,
+        // 不需要实时刷新
+        delay: 2000,
+      }
+    );
+  }, [words]);
 
   return <CONTEXT.Provider value={value}>{children}</CONTEXT.Provider>;
 };

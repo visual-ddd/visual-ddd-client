@@ -41,7 +41,7 @@ export const EnumShape = observer(function EnumShape(props: EnumShapeProps) {
                 onDoubleClick={handleMemberNavigate(index)}
                 key={i.uuid}
                 name={reactifyEnumMember(i)}
-                comment={i.description}
+                comment={i.title}
               ></ClassShapePropertyBase>
             );
           })}

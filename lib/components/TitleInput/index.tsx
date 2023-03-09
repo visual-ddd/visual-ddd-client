@@ -8,6 +8,7 @@ export interface TitleInputProps extends AutoCompleteProps {}
 
 /**
  * 标题输入
+ * FIXME: 异常警告
  * @param props
  * @returns
  */
@@ -24,6 +25,7 @@ export const TitleInput = (props: TitleInputProps) => {
     <AutoComplete
       className={classNames('vd-name-input', 'u-fw')}
       options={options}
+      virtual={false}
       backfill
       onSearch={handleSearch}
       placeholder="使用统一语言(业务术语)起个标题"

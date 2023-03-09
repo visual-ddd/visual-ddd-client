@@ -21,6 +21,7 @@ import { TitleInput } from '../../../dsl/components/TitleInput';
 import { SourceInput } from '../../../dsl/components/SourceInput';
 import { ReferenceTypeProvider, TypeInput } from '../../../dsl/components/TypeInput';
 import { ObjectNameInput } from '../../../dsl/components/ObjectNameInput';
+import { useAutoCompleteUbiquitousLanguageFromFormModel } from '../../../hooks';
 
 const DEFAULT_ACTIVE = ['base', 'properties', 'eventProperties'];
 
@@ -71,11 +72,14 @@ const RulesSelect = observer(function RulesSelect() {
 export const QueryEditor = () => {
   const propertiesActionSlot = useDynamicSlot();
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const handleMatchUbiquitousLanguage = useAutoCompleteUbiquitousLanguageFromFormModel({ path: '' });
+
   return (
     <EditorFormCollapse defaultActiveKey={DEFAULT_ACTIVE}>
       <EditorFormCollapsePanel header="基础信息" key="base">
         <EditorFormItem path="name" label="标识符" tooltip={NameTooltip['CamelCase']}>
-          <ObjectNameInput />
+          <ObjectNameInput onMatchUbiquitousLanguage={handleMatchUbiquitousLanguage} />
         </EditorFormItem>
         <EditorFormItem path="title" label="标题">
           <TitleInput />

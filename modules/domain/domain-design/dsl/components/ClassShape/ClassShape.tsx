@@ -62,7 +62,7 @@ export const ClassShapeProperty = observer(function Property(props: ClassShapePr
         {reactifyProperty(value)}
       </span>
       <span className={classNames('shape-class-property__comment', s.propertyComment)} title={description}>
-        {description}
+        {title}
       </span>
     </div>
   );
@@ -89,7 +89,7 @@ export const ClassShapeMethod = observer(function Method(props: ClassShapeMethod
         {reactifyMethod(value)}
       </span>
       <span className={classNames('shape-class-method__comment', s.methodComment)} title={description}>
-        {description}
+        {title}
       </span>
     </div>
   );

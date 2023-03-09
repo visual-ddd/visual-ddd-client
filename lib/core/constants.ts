@@ -1,5 +1,10 @@
 import { NameCase, VersionStatus } from './types';
 
+export const UntitledInCamelCase = 'untitled';
+export const UntitledInUpperCamelCase = 'Untitled';
+export const UntitledInUpperCase = 'UNTITLED';
+export const UntitledInHumanReadable = '未命名';
+
 export const NameTooltip: Record<NameCase, string> = {
   CamelCase: '输入大写驼峰式(CamelCase)标识符，需要符合编程语言规范, 不能包含除数字、字符、$、_ 之外的字符',
   camelCase: '输入小写驼峰式(camelCase)标识符，需要符合编程语言规范, 不能包含除数字、字符、$、_ 之外的字符',

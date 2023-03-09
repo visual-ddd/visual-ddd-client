@@ -7,11 +7,15 @@ import { MethodsEditor } from '../../../dsl/components/MethodsEditor';
 import { DescriptionInput } from '../../../dsl/components/DescriptionInput';
 import { TitleInput } from '../../../dsl/components/TitleInput';
 import { ObjectNameInput } from '../../../dsl/components/ObjectNameInput';
+import { useAutoCompleteUbiquitousLanguageFromFormModel } from '../../../hooks';
 
 const DEFAULT_ACTIVE = ['base', 'properties', 'methods'];
 
 export const ValueObjectEditor = () => {
   const propertiesActionSlot = useDynamicSlot();
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const handleMatchUbiquitousLanguage = useAutoCompleteUbiquitousLanguageFromFormModel({ path: '' });
 
   return (
     <EditorFormCollapse defaultActiveKey={DEFAULT_ACTIVE}>
@@ -29,7 +33,7 @@ export const ValueObjectEditor = () => {
             </>
           }
         >
-          <ObjectNameInput />
+          <ObjectNameInput onMatchUbiquitousLanguage={handleMatchUbiquitousLanguage} />
         </EditorFormItem>
         <EditorFormItem path="title" label="标题" tooltip="用统一语言来描述">
           <TitleInput />

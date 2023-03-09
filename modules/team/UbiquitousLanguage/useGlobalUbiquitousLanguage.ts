@@ -1,3 +1,4 @@
+import type { UbiquitousLanguageCompletionItem } from '@/lib/components/UbiquitousLanguageCompletion';
 import { useRequestByGet } from '@/modules/backend-client';
 import { NoopArray } from '@wakeapp/utils';
 import { useMemo } from 'react';
@@ -19,7 +20,7 @@ export function useGlobalUbiquitousLanguage() {
   const org = getter(LanguageScope.ORGANIZATION_LANGUAGE, data?.organizationId);
   const team = getter(LanguageScope.TEAM_LANGUAGE, teamId);
 
-  const list = useMemo<LanguageItem[]>(() => {
+  const rawList = useMemo<LanguageItem[]>(() => {
     return [...(org.data ?? NoopArray), ...(team.data ?? NoopArray)];
   }, [org.data, team.data]);
 
@@ -33,13 +34,23 @@ export function useGlobalUbiquitousLanguage() {
       }
     };
 
-    for (const item of list) {
+    for (const item of rawList) {
       push(item.conception);
       push(item.englishName);
     }
 
     return Array.from(words);
-  }, [list]);
+  }, [rawList]);
 
-  return { list, words };
+  const list = useMemo<UbiquitousLanguageCompletionItem[]>(() => {
+    return rawList
+      .filter(i => i.englishName && i.conception)
+      .map(item => ({
+        id: item.englishName,
+        title: item.conception,
+        description: item.definition,
+      }));
+  }, [rawList]);
+
+  return { list, rawList, words };
 }

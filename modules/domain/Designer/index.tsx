@@ -1,10 +1,14 @@
 import { observer } from 'mobx-react';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { Button, message, notification } from 'antd';
 import { tryDispose } from '@/lib/utils';
 import { IUser, VersionStatus } from '@/lib/core';
 import { CompletionContextProvider } from '@/lib/components/Completion';
 import { DesignerLayout, DesignerTabLabel } from '@/lib/components/DesignerLayout';
+import {
+  UbiquitousLanguageCompletionItem,
+  UbiquitousLanguageCompletionProvider,
+} from '@/lib/components/UbiquitousLanguageCompletion';
 import { useEventBusListener, usePreventUnload } from '@/lib/hooks';
 import { NoopArray } from '@wakeapp/utils';
 
@@ -71,21 +75,38 @@ export interface DomainDesignerProps {
    * 统一语言单词
    */
   words?: string[];
+
+  /**
+   * 统一语言列表
+   */
+  ubiquitousLanguages?: UbiquitousLanguageCompletionItem[];
 }
 
 /**
  * 领域模型设计器
  */
 const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerProps) {
-  const { id, readonly, description, words } = props;
+  const { id, readonly, description, words, ubiquitousLanguages: globalUbiquitousLanguages } = props;
   const model = useMemo(() => new DomainDesignerModel({ id, readonly }), [id, readonly]);
   const [notify, notifyContextHolder] = notification.useNotification();
 
   const globalWords = useMemo(() => (words ?? NoopArray).filter(i => !!i.trim()), [words]);
 
-  const autoCompletionWords = useMemo(() => {
+  const ubiquitousLanguages = useCallback(() => {
+    return model.ubiquitousLanguageModel.list
+      .map(i => {
+        return {
+          id: i.englishName,
+          title: i.conception,
+          description: i.definition,
+        } as UbiquitousLanguageCompletionItem;
+      })
+      .concat(globalUbiquitousLanguages ?? NoopArray);
+  }, [model.ubiquitousLanguageModel, globalUbiquitousLanguages]);
+
+  const autoCompletionWords = useCallback(() => {
     return globalWords.concat(model.ubiquitousLanguageModel.words);
-  }, [globalWords, model.ubiquitousLanguageModel.words]);
+  }, [globalWords, model.ubiquitousLanguageModel]);
 
   const items = [
     {
@@ -245,22 +266,24 @@ const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerPro
 
   return (
     <DomainDesignerContextProvider value={model}>
-      <CompletionContextProvider words={autoCompletionWords}>
-        <DesignerLayout
-          items={items}
-          activeKey={model.activeTab}
-          onActiveKeyChange={tab => model.setActiveTab({ tab: tab as DomainDesignerTabs })}
-        >
-          {notifyContextHolder}
-          <DomainDesignerLoading></DomainDesignerLoading>
-          <DomainDesignerHeader
-            user={description?.user}
-            name={description?.name}
-            version={description?.version}
-            versionStatus={description?.versionStatus}
-          ></DomainDesignerHeader>
-        </DesignerLayout>
-      </CompletionContextProvider>
+      <UbiquitousLanguageCompletionProvider list={ubiquitousLanguages}>
+        <CompletionContextProvider words={autoCompletionWords}>
+          <DesignerLayout
+            items={items}
+            activeKey={model.activeTab}
+            onActiveKeyChange={tab => model.setActiveTab({ tab: tab as DomainDesignerTabs })}
+          >
+            {notifyContextHolder}
+            <DomainDesignerLoading></DomainDesignerLoading>
+            <DomainDesignerHeader
+              user={description?.user}
+              name={description?.name}
+              version={description?.version}
+              versionStatus={description?.versionStatus}
+            ></DomainDesignerHeader>
+          </DesignerLayout>
+        </CompletionContextProvider>
+      </UbiquitousLanguageCompletionProvider>
     </DomainDesignerContextProvider>
   );
 });

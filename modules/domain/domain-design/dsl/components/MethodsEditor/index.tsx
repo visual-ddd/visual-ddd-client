@@ -2,10 +2,13 @@ import { useEditorFormContext, EditorFormItem } from '@/lib/editor';
 import { Switch } from 'antd';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
+import { replaceLastPathToPattern } from '@/lib/utils';
 
 import { MethodDSL, NameDSL } from '../../dsl';
+import { useAutoCompleteUbiquitousLanguageFromFormModel } from '../../../hooks';
 import { NameTooltip } from '../../constants';
 import { createMethod } from '../../factory';
+import { DomainObject, DomainObjectFactory } from '../../../model';
 import { AccessSelect } from '../AccessSelect';
 import { MemberList } from '../MemberList';
 import { ParameterEditor } from '../ParameterEditor';
@@ -16,8 +19,6 @@ import s from './index.module.scss';
 import { reactifyMethod } from '../../reactify';
 import { ReferenceTypeProvider, TypeInput } from '../TypeInput';
 import { TitleInput } from '../TitleInput';
-import { DomainObject, DomainObjectFactory } from '../../../model';
-import { replaceLastPathToPattern } from '@/lib/utils';
 
 export interface MethodsEditorProps {}
 type Item = MethodDSL;
@@ -37,6 +38,10 @@ const omitCommand = (i: DomainObject<NameDSL>) => {
 
 const renderEditor = (path: string) => {
   const p = (cp: string) => `${path}.${cp}`;
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const handleMatchUbiquitousLanguage = useAutoCompleteUbiquitousLanguageFromFormModel({ path });
+
   return (
     <>
       <EditorFormItem
@@ -45,7 +50,7 @@ const renderEditor = (path: string) => {
         tooltip={NameTooltip['camelCase']}
         notify={replaceLastPathToPattern(path) + '.name'}
       >
-        <NameInput nameCase="camelCase" />
+        <NameInput nameCase="camelCase" onMatchUbiquitousLanguage={handleMatchUbiquitousLanguage} />
       </EditorFormItem>
       <EditorFormItem path={p('title')} label="标题">
         <TitleInput />

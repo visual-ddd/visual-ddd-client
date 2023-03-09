@@ -15,6 +15,7 @@ import { NameTooltip } from '../../../dsl/constants';
 import { DescriptionInput } from '../../../dsl/components/DescriptionInput';
 import { TitleInput } from '../../../dsl/components/TitleInput';
 import { ObjectNameInput } from '../../../dsl/components/ObjectNameInput';
+import { useAutoCompleteUbiquitousLanguageFromFormModel } from '../../../hooks';
 
 interface CommandSelectProps {}
 
@@ -63,10 +64,13 @@ const CommandSelect = observer(function CommandSelect(props: CommandSelectProps)
 });
 
 export const AggregationEditor = () => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const handleMatchUbiquitousLanguage = useAutoCompleteUbiquitousLanguageFromFormModel({ path: '' });
+
   return (
     <EditorFormContainer>
       <EditorFormItem path="name" label="标识符" tooltip={NameTooltip['CamelCase']}>
-        <ObjectNameInput />
+        <ObjectNameInput onMatchUbiquitousLanguage={handleMatchUbiquitousLanguage} />
       </EditorFormItem>
       <EditorFormItem path="title" label="标题">
         <TitleInput />

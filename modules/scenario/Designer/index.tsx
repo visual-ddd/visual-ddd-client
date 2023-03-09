@@ -1,18 +1,21 @@
 import { observer } from 'mobx-react';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { message } from 'antd';
 import { tryDispose } from '@/lib/utils';
 import { VersionStatus } from '@/lib/core';
 import { DesignerHeader, DesignerLayout, DesignerLoading, DesignerTabLabel } from '@/lib/components/DesignerLayout';
 import { NoopArray } from '@wakeapp/utils';
 import { CompletionContextProvider } from '@/lib/components/Completion';
+import {
+  UbiquitousLanguageCompletionItem,
+  UbiquitousLanguageCompletionProvider,
+} from '@/lib/components/UbiquitousLanguageCompletion';
 import { usePreventUnload } from '@/lib/hooks';
 
 import { ScenarioDesignerContextProvider } from './Context';
 import { ScenarioDesignerTabs, ScenarioDesignerTabsMap, ScenarioDesignerModel } from './model';
 import { ScenarioEditor } from '../scenario-design';
 import { DomainEditor } from '../service-design';
-
 export interface ScenarioDescription {
   id: string | number;
 
@@ -66,20 +69,30 @@ export interface ScenarioDesignerProps {
    * 统一语言单词
    */
   words?: string[];
+
+  /**
+   * 统一语言列表
+   */
+  ubiquitousLanguages?: UbiquitousLanguageCompletionItem[];
 }
 
 /**
  * 领域模型设计器
  */
 const ScenarioDesigner = observer(function ScenarioDesigner(props: ScenarioDesignerProps) {
-  const { id, readonly, description, words } = props;
+  const { id, readonly, description, words, ubiquitousLanguages: globalUbiquitousLanguages } = props;
+
+  const ubiquitousLanguages = useCallback(() => {
+    return globalUbiquitousLanguages ?? NoopArray;
+  }, [globalUbiquitousLanguages]);
+
   const model = useMemo(() => {
     const instance = new ScenarioDesignerModel({ id, readonly });
 
     return instance;
   }, [id, readonly]);
 
-  const globalWords = useMemo(() => (words ?? NoopArray).filter(i => !!i.trim()), [words]);
+  const globalWords = useCallback(() => (words ?? NoopArray).filter(i => !!i.trim()), [words]);
 
   const saveTooltip = useMemo(() => {
     const desc = model.keyboardBinding.getReadableKeyBinding('save');
@@ -145,26 +158,28 @@ const ScenarioDesigner = observer(function ScenarioDesigner(props: ScenarioDesig
 
   return (
     <ScenarioDesignerContextProvider value={model}>
-      <CompletionContextProvider words={globalWords}>
-        <DesignerLayout
-          items={items}
-          activeKey={model.activeTab}
-          onActiveKeyChange={tab => model.setActiveTab({ tab: tab as ScenarioDesignerTabs })}
-        >
-          <DesignerLoading loading={model.loading} />
-          <DesignerHeader
-            name={description?.name}
-            version={description?.version}
-            versionStatus={description?.versionStatus}
-            title={ScenarioDesignerTabsMap[model.activeTab]}
-            readonly={model.readonly}
-            saveTooltip={saveTooltip}
-            saving={model.saving}
-            onSave={() => model.keyboardBinding.trigger('save')}
-            collaborators={awarenessUsers}
-          ></DesignerHeader>
-        </DesignerLayout>
-      </CompletionContextProvider>
+      <UbiquitousLanguageCompletionProvider list={ubiquitousLanguages}>
+        <CompletionContextProvider words={globalWords}>
+          <DesignerLayout
+            items={items}
+            activeKey={model.activeTab}
+            onActiveKeyChange={tab => model.setActiveTab({ tab: tab as ScenarioDesignerTabs })}
+          >
+            <DesignerLoading loading={model.loading} />
+            <DesignerHeader
+              name={description?.name}
+              version={description?.version}
+              versionStatus={description?.versionStatus}
+              title={ScenarioDesignerTabsMap[model.activeTab]}
+              readonly={model.readonly}
+              saveTooltip={saveTooltip}
+              saving={model.saving}
+              onSave={() => model.keyboardBinding.trigger('save')}
+              collaborators={awarenessUsers}
+            ></DesignerHeader>
+          </DesignerLayout>
+        </CompletionContextProvider>
+      </UbiquitousLanguageCompletionProvider>
     </ScenarioDesignerContextProvider>
   );
 });

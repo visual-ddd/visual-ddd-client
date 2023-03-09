@@ -21,14 +21,14 @@ export interface DesignerProps {
  */
 export default function Designer(props: DesignerProps) {
   const { id, readonly, description } = props;
-  const { words } = useGlobalUbiquitousLanguage();
+  const { words, list } = useGlobalUbiquitousLanguage();
 
   return (
     <>
       <Head>
         <title>{`${description.name} - 业务域设计器`}</title>
       </Head>
-      <DynamicDesigner id={id} readonly={readonly} description={description} words={words} />
+      <DynamicDesigner id={id} readonly={readonly} description={description} words={words} ubiquitousLanguages={list} />
     </>
   );
 }

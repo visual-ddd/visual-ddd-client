@@ -2,21 +2,22 @@ import { useEditorFormContext, EditorFormItem } from '@/lib/editor';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
 import { message, Space } from 'antd';
+import { replaceLastPathToPattern, Clipboard } from '@/lib/utils';
 
 import { NameDSL, PropertyDSL } from '../../dsl';
 import { NameTooltip } from '../../constants';
 import { createProperty } from '../../factory';
+import { DomainObject, DomainObjectFactory } from '../../../model';
+import { useAutoCompleteUbiquitousLanguageFromFormModel } from '../../../hooks';
+import { reactifyProperty } from '../../reactify';
 import { AccessSelect } from '../AccessSelect';
 import { MemberList } from '../MemberList';
 import { NameInput } from '../NameInput';
-
-import s from './index.module.scss';
 import { DescriptionInput } from '../DescriptionInput';
-import { reactifyProperty } from '../../reactify';
 import { ReferenceTypeProvider, ReferenceTypeProviderProps, TypeInput } from '../TypeInput';
 import { TitleInput } from '../TitleInput';
-import { DomainObject, DomainObjectFactory } from '../../../model';
-import { replaceLastPathToPattern, Clipboard } from '@/lib/utils';
+
+import s from './index.module.scss';
 
 export interface PropertiesEditorProps {
   /**
@@ -47,6 +48,9 @@ const omitCommand = (i: DomainObject<NameDSL>) => {
 
 const renderEditor = (path: string) => {
   const p = (cp: string) => `${path}.${cp}`;
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const handleMatchUbiquitousLanguage = useAutoCompleteUbiquitousLanguageFromFormModel({ path });
+
   return (
     <>
       <EditorFormItem
@@ -55,7 +59,7 @@ const renderEditor = (path: string) => {
         tooltip={NameTooltip['camelCase']}
         notify={replaceLastPathToPattern(path) + '.name'}
       >
-        <NameInput nameCase="camelCase" />
+        <NameInput nameCase="camelCase" onMatchUbiquitousLanguage={handleMatchUbiquitousLanguage} />
       </EditorFormItem>
       <EditorFormItem path={p('title')} label="标题">
         <TitleInput />

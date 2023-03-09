@@ -14,6 +14,7 @@ import { DescriptionInput } from '../../../../dsl/components/DescriptionInput';
 import { reactifyEnumMember } from '../../../../dsl/reactify';
 import { TitleInput } from '../../../../dsl/components/TitleInput';
 import { replaceLastPathToPattern } from '@/lib/utils';
+import { useAutoCompleteUbiquitousLanguageFromFormModel } from '@/modules/domain/domain-design/hooks';
 
 export interface EnumMembersEditorProps {
   /**
@@ -28,6 +29,9 @@ const renderItem = (value: EnumMemberDSL) => {
 
 const renderEditor = (path: string) => {
   const p = (cp: string) => `${path}.${cp}`;
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const handleMatchUbiquitousLanguage = useAutoCompleteUbiquitousLanguageFromFormModel({ path });
+
   return (
     <>
       <EditorFormItem
@@ -36,7 +40,7 @@ const renderEditor = (path: string) => {
         tooltip={NameTooltip['SNAKE_CASE']}
         notify={replaceLastPathToPattern(path) + '.name'}
       >
-        <NameInput nameCase="SNAKE_CASE" />
+        <NameInput nameCase="SNAKE_CASE" onMatchUbiquitousLanguage={handleMatchUbiquitousLanguage} />
       </EditorFormItem>
       <EditorFormItem path={p('title')} label="标题">
         <TitleInput />
