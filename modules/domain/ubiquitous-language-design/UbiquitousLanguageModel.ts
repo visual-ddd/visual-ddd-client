@@ -300,7 +300,7 @@ export class UbiquitousLanguageModel implements IUbiquitousLanguageModel {
   addItem(order: 'push' | 'unshift' = 'push') {
     const item: UbiquitousLanguageItem = {
       uuid: v4(),
-      conception: '请输入概念',
+      conception: '',
       englishName: '',
       definition: '',
       restraint: '',

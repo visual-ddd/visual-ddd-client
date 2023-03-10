@@ -244,7 +244,7 @@ export class LanguageModel implements IUbiquitousLanguageModel {
   async addItem(order: 'push' | 'unshift' = 'push') {
     try {
       const item = await this.props.add({
-        conception: '请输入概念',
+        conception: '',
         englishName: '',
         definition: '',
         restraint: '',

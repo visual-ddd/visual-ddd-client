@@ -1,4 +1,4 @@
-import { Button, Input, Space, Table, TableColumnType } from 'antd';
+import { Button, Input, Popconfirm, Space, Table, TableColumnType } from 'antd';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
 import { useEffect, useMemo, useRef } from 'react';
@@ -25,10 +25,23 @@ const Item = observer(function Item({
   const editing = model.isEditing(item.uuid, name);
   const elementRef = useRef<HTMLDivElement>(null);
   const readonly = model.readonly;
+  const enterEditing = readonly
+    ? undefined
+    : () => {
+        model.setEditing({ id: item.uuid, key: name, editing: true });
+      };
 
   useEffect(() => {
     if (editing) {
       elementRef.current?.focus();
+      const selection = window.getSelection();
+      selection?.removeAllRanges();
+
+      const range = document.createRange();
+      range.selectNodeContents(elementRef.current!);
+      range.collapse();
+
+      selection?.addRange(range);
     }
   }, [editing]);
 
@@ -37,13 +50,8 @@ const Item = observer(function Item({
       ref={elementRef}
       className={classNames('vd-ul-editable', s.item, { editable: !readonly })}
       contentEditable={editing}
-      onClick={
-        readonly
-          ? undefined
-          : () => {
-              model.setEditing({ id: item.uuid, key: name, editing: true });
-            }
-      }
+      tabIndex={1}
+      onFocus={enterEditing}
       onBlur={
         readonly
           ? undefined
@@ -104,11 +112,9 @@ export const UbiquitousLanguage = observer(function UbiquitousLanguage(props: Ub
         width: 100,
         render(_, record) {
           return (
-            <Space>
-              <Button type="link" onClick={() => model.removeItem({ uuid: record.uuid })}>
-                删除
-              </Button>
-            </Space>
+            <Popconfirm title="确认删除?" onConfirm={() => model.removeItem({ uuid: record.uuid })}>
+              <Button type="link">删除</Button>
+            </Popconfirm>
           );
         },
       });
@@ -116,6 +122,8 @@ export const UbiquitousLanguage = observer(function UbiquitousLanguage(props: Ub
 
     return list;
   }, [model]);
+
+  const disabledBatchDelete = !model.selecting.length || readonly;
 
   return (
     <div className={classNames('vd-ul', s.root)}>
@@ -137,9 +145,12 @@ export const UbiquitousLanguage = observer(function UbiquitousLanguage(props: Ub
           >
             新增一行
           </Button>
-          <Button size="small" disabled={!model.selecting.length || readonly} onClick={model.removeSelecting}>
-            批量删除
-          </Button>
+
+          <Popconfirm title="确认删除?" onConfirm={model.removeSelecting} disabled={disabledBatchDelete}>
+            <Button size="small" disabled={disabledBatchDelete}>
+              批量删除
+            </Button>
+          </Popconfirm>
           <Button size="small" disabled={readonly}>
             自动翻译
           </Button>
@@ -182,9 +193,11 @@ export const UbiquitousLanguage = observer(function UbiquitousLanguage(props: Ub
           <Button size="small" onClick={() => model.addItem('push')} disabled={readonly}>
             新增一行
           </Button>
-          <Button size="small" disabled={!model.selecting.length || readonly} onClick={model.removeSelecting}>
-            批量删除
-          </Button>
+          <Popconfirm title="确认删除?" onConfirm={model.removeSelecting} disabled={disabledBatchDelete}>
+            <Button size="small" disabled={disabledBatchDelete}>
+              批量删除
+            </Button>
+          </Popconfirm>
         </Space>
       </div>
     </div>
