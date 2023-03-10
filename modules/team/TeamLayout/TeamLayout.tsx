@@ -43,17 +43,9 @@ export const TeamLayout = observer(function TeamLayout(props: TeamLayoutProps) {
     const list: LayoutAction[] = [];
 
     if (teamInfo) {
-      list.push({
-        type: 'button',
-        name: `当前团队: ${teamInfo.name}`,
-        handler: () => router.push(`/team/${teamId}`),
-      });
-
       if (isTeamManager) {
         list.push({ type: 'button', name: '团队管理', handler: () => updaterRef.current?.open() });
       }
-
-      list.push({ type: 'divider' });
     }
 
     return list;

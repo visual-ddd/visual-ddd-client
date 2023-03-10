@@ -52,7 +52,7 @@ export function Launch({ data }: LaunchProps) {
   return (
     <Layout title="启动">
       <div className={classNames('vd-launch', s.root)}>
-        <Layout.H1>选择入口</Layout.H1>
+        <Layout.H1>选择空间</Layout.H1>
         <div className={s.groups}>
           {isEmpty && (
             <Alert

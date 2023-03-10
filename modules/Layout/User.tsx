@@ -1,4 +1,4 @@
-import { useSession } from '@/modules/session';
+import { useSession, VDSessionEntry, VDSessionState } from '@/modules/session';
 import { useRouter } from 'next/router';
 import { observer } from 'mobx-react';
 import { Avatar, Dropdown, MenuProps } from 'antd';
@@ -13,6 +13,17 @@ import s from './User.module.scss';
 
 export interface UserProps {
   actions: LayoutAction[];
+}
+
+function stringifySessionState(state: VDSessionState) {
+  switch (state.entry) {
+    case VDSessionEntry.System:
+      return '系统管理';
+    case VDSessionEntry.Team:
+      return `团队-${state.entryName}`;
+    case VDSessionEntry.Organization:
+      return `组织-${state.entryName}`;
+  }
 }
 
 export const User = observer(function User(props: UserProps) {
@@ -55,7 +66,12 @@ export const User = observer(function User(props: UserProps) {
     items.push(
       {
         key: 'launch',
-        label: '前往启动页',
+        label: (
+          <span>
+            切换空间
+            {session?.state ? <span className="u-gray-500">(当前：{stringifySessionState(session.state)})</span> : ''}
+          </span>
+        ),
         onClick: async () => {
           router.push('/launch');
         },
