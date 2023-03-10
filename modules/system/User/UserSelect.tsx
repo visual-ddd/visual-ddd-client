@@ -51,6 +51,10 @@ export const UserSelect = memo((props: UserSelectProps) => {
     return options;
   }, [filter, options]);
 
+  const handleBlur = () => {
+    setQuery('');
+  };
+
   const handleSearch = useMemo(
     () =>
       debounce((value: string) => {
@@ -66,6 +70,7 @@ export const UserSelect = memo((props: UserSelectProps) => {
       onSearch={handleSearch}
       filterOption={false}
       showArrow={false}
+      onBlur={handleBlur}
       options={filtered.map(item => ({
         key: item.id,
         label: item.userName,
