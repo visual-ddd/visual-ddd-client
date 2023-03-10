@@ -11,6 +11,8 @@ import {
 } from './config';
 import { VDSessionCore } from './types';
 
+export { SESSION_COOKIE_NAME } from './config';
+
 /**
  * Restful API
  * @param path
@@ -102,6 +104,7 @@ export const pageAuthMiddleware: Middleware = async (req, next) => {
 
   const url = new URL('/login', req.url);
   url.searchParams.append('from', req.url);
+  url.searchParams.append('flash', 'true');
 
   const redirect = NextResponse.redirect(url);
 

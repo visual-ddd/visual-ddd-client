@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { Middleware } from '@/lib/middleware';
-import { getSessionInMiddleware } from '@/modules/session/middleware';
+import { getSessionInMiddleware, SESSION_COOKIE_NAME } from '@/modules/session/middleware';
 
 import { API_PREFIX, BACKEND } from './constants';
 import { mergeCookie } from './merge-cookie';
@@ -20,22 +20,22 @@ export const proxyMiddleware: Middleware = async (req, next) => {
    * 后端接口代理
    */
   if (url.pathname.startsWith(API_PREFIX)) {
-    const url = new URL(req.url);
-    url.protocol = BACKEND.protocol;
-    url.host = BACKEND.host;
-    url.port = BACKEND.port;
+    const proxyUrl = new URL(req.url);
+    proxyUrl.protocol = BACKEND.protocol;
+    proxyUrl.host = BACKEND.host;
+    proxyUrl.port = BACKEND.port;
 
-    const proxyRequest = new Request(url, req);
+    const proxyRequest = new Request(proxyUrl, req);
 
     // 修改 host
-    proxyRequest.headers.set('host', url.host);
+    proxyRequest.headers.set('host', proxyUrl.host);
 
     // cookie 注入
     const session = await getSessionInMiddleware(req);
 
     if (session) {
       const old = proxyRequest.headers.get('cookie');
-      const cookie = mergeCookie(old, session.cookies);
+      const cookie = mergeCookie(old, session.cookies, [SESSION_COOKIE_NAME]);
       proxyRequest.headers.set('Cookie', cookie);
     }
 

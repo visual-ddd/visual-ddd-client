@@ -1,9 +1,11 @@
 import type { IronSessionOptions } from 'iron-session';
 import { VDSessionEntry } from './types';
 
+export const SESSION_COOKIE_NAME = 'vd-session';
+
 export const IRON_SESSION_OPTIONS: IronSessionOptions = {
   password: process.env.SESSION_SECRET ?? 'DEVELOPMENT_ONLY_PLEASE_CHANGE_ME',
-  cookieName: 'vd-session',
+  cookieName: SESSION_COOKIE_NAME,
   cookieOptions: {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
