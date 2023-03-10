@@ -72,6 +72,7 @@ export const UpdateUser = forwardRef<UpdateUserRef, UpdateUserProps>((props, ref
   useImperativeHandle(ref, () => {
     return {
       open(user: UserDetail) {
+        form.resetFields();
         form.setFieldsValue(user);
         setEditing(user);
         setVisible(true);
