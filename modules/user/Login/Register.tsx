@@ -76,7 +76,7 @@ export function Register() {
       >
         <Layout.H1>欢迎注册使用 Visual DDD</Layout.H1>
         <Form.Item name="userName" label="昵称" rules={[{ required: true, message: '请输入昵称' }]}>
-          <Input placeholder="输入昵称" />
+          <Input placeholder="输入昵称" autoComplete="off" />
         </Form.Item>
 
         <Form.Item
@@ -87,12 +87,12 @@ export function Register() {
             { type: 'email', message: '邮箱格式错误' },
           ]}
         >
-          <Input placeholder="输入邮箱" />
+          <Input placeholder="输入邮箱" autoComplete="username" />
         </Form.Item>
 
         <Form.Item label="验证码">
           <Form.Item noStyle name="code" rules={[{ required: true, message: '请输入验证码' }]}>
-            <Input placeholder="输入验证码" className={s.code} />
+            <Input placeholder="输入验证码" className={s.code} autoComplete="off" />
           </Form.Item>
 
           <Button
@@ -107,7 +107,7 @@ export function Register() {
         </Form.Item>
 
         <Form.Item name="password" label="密码" rules={[{ required: true, message: '请输入密码' }]}>
-          <Input type="password" placeholder="输入密码" />
+          <Input type="password" placeholder="输入密码" autoComplete="new-password" />
         </Form.Item>
 
         <Form.Item
@@ -125,7 +125,7 @@ export function Register() {
             }),
           ]}
         >
-          <Input type="password" placeholder="输入确认密码" />
+          <Input type="password" placeholder="输入确认密码" autoComplete="new-password" />
         </Form.Item>
 
         <Space className="u-fw u-mt-sm" direction="vertical">
