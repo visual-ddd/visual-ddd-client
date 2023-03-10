@@ -1,5 +1,5 @@
 import { NameDSL } from '@/modules/domain/domain-design/dsl/dsl';
-import { MapTypeRoot } from '@/lib/editor/Model/NodeYMap';
+import { MapTypeRoot } from '@/lib/editor/Model/Yjs/NodeYMap';
 
 export interface CoreProperties {
   __node_name__: string;

@@ -8,45 +8,7 @@ import pick from 'lodash/pick';
 import { IUbiquitousLanguageModel, UbiquitousLanguageItem } from './types';
 import { UbiquitousLanguageEvent } from './UbiquitousLanguageEvents';
 import { UbiquitousLanguageFuseStore } from './UbiquitousLanguageFuseStore';
-
-class ItemWrapper {
-  static from(item: UbiquitousLanguageItem) {
-    const instance = new ItemWrapper(new YMap());
-    const keys = Object.keys(item) as (keyof UbiquitousLanguageItem)[];
-
-    for (const key of keys) {
-      instance.setField(key, item[key]);
-    }
-
-    return instance;
-  }
-
-  static fromMap(map: YMap<string>) {
-    return new ItemWrapper(map);
-  }
-
-  readonly map: YMap<string>;
-
-  get uuid() {
-    return this.map.get('uuid')!;
-  }
-
-  private constructor(map: YMap<string>) {
-    this.map = map;
-  }
-
-  getField(fieldName: keyof UbiquitousLanguageItem): string {
-    return this.map.get(fieldName)!;
-  }
-
-  setField(fieldName: keyof UbiquitousLanguageItem, value: string) {
-    this.map.set(fieldName, value);
-  }
-
-  toJSON(): UbiquitousLanguageItem {
-    return this.map.toJSON() as UbiquitousLanguageItem;
-  }
-}
+import { ItemWrapper } from './Yjs';
 
 const VALID_FIELDS: (keyof UbiquitousLanguageItem)[] = [
   'conception',

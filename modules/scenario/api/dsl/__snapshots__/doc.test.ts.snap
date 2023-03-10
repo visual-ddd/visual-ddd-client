@@ -1,0 +1,65 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`createDoc 1`] = `
+{
+  "scenario": {
+    "__ROOT__": {
+      "__NODE__": true,
+      "children": {
+        "uuid-0": 1,
+      },
+      "id": "__ROOT__",
+      "locked": undefined,
+      "parent": undefined,
+      "properties": {
+        "__PROPERTY__": true,
+        "__node_name__": "__ROOT__",
+        "__node_type__": "node",
+      },
+    },
+    "uuid-0": {
+      "__NODE__": true,
+      "children": {},
+      "id": "uuid-0",
+      "locked": undefined,
+      "parent": "__ROOT__",
+      "properties": {
+        "__PROPERTY__": true,
+        "__node_name__": "s-lane",
+        "__node_type__": "node",
+        "description": "",
+        "meta": [],
+        "name": "lane",
+        "panes": [
+          {
+            "height": 300,
+            "title": "未命名泳道",
+            "uuid": "uuid-1",
+          },
+        ],
+        "position": {
+          "x": 10,
+          "y": 10,
+        },
+        "title": "泳道",
+        "uuid": "uuid-0",
+        "width": 1200,
+      },
+    },
+  },
+  "service": {
+    "__ROOT__": {
+      "__NODE__": true,
+      "children": {},
+      "id": "__ROOT__",
+      "locked": undefined,
+      "parent": undefined,
+      "properties": {
+        "__PROPERTY__": true,
+        "__node_name__": "__ROOT__",
+        "__node_type__": "node",
+      },
+    },
+  },
+}
+`;

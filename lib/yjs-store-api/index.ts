@@ -8,11 +8,17 @@ import { allowMethod } from '../api';
 import { readBuffer, createDocFromUpdate } from './utils';
 import { RawYjsData, readRawData, toRawData } from './raw';
 
+export interface YjsDocMetaInfo {
+  name: string;
+  title: string;
+  description?: string;
+}
+
 export function createYjsStore(options: {
   transformYDocToDSL: (doc: YDoc) => any;
-  createYDoc: () => YDoc;
+  createYDoc: (params: YjsDocMetaInfo) => YDoc;
   onSave: (params: { id: string; dsl: string; raw: RawYjsData; request: NextApiRequest }) => Promise<void>;
-  onRequest: (params: { id: string; request: NextApiRequest }) => Promise<{ raw?: RawYjsData }>;
+  onRequest: (params: { id: string; request: NextApiRequest }) => Promise<{ raw?: RawYjsData; meta: YjsDocMetaInfo }>;
 }) {
   const { transformYDocToDSL, createYDoc, onSave, onRequest } = options;
 
@@ -86,7 +92,7 @@ export function createYjsStore(options: {
 
       if (!detail.raw) {
         // 创建模板
-        const doc = createYDoc();
+        const doc = createYDoc(detail.meta);
         const update = encodeStateAsUpdate(doc);
         const buf = Buffer.from(update);
         addCacheWithBuffer(id, buf);

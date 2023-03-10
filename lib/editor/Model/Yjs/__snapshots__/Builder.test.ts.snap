@@ -1,0 +1,273 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`buildEditorYjs initial State 1`] = `
+{
+  "test": {
+    "__ROOT__": {
+      "__NODE__": true,
+      "children": {},
+      "id": "__ROOT__",
+      "locked": undefined,
+      "parent": undefined,
+      "properties": {
+        "__PROPERTY__": true,
+        "__node_name__": "__ROOT__",
+        "__node_type__": "node",
+      },
+    },
+  },
+}
+`;
+
+exports[`buildEditorYjs with children 1`] = `
+{
+  "test": {
+    "__ROOT__": {
+      "__NODE__": true,
+      "children": {
+        "uuid-0": 1,
+        "uuid-4": 1,
+      },
+      "id": "__ROOT__",
+      "locked": undefined,
+      "parent": undefined,
+      "properties": {
+        "__PROPERTY__": true,
+        "__node_name__": "__ROOT__",
+        "__node_type__": "node",
+      },
+    },
+    "uuid-0": {
+      "__NODE__": true,
+      "children": {
+        "uuid-1": 1,
+        "uuid-2": 1,
+      },
+      "id": "uuid-0",
+      "locked": undefined,
+      "parent": "__ROOT__",
+      "properties": {
+        "__PROPERTY__": true,
+        "__node_name__": "a",
+        "__node_type__": "node",
+      },
+    },
+    "uuid-1": {
+      "__NODE__": true,
+      "children": {},
+      "id": "uuid-1",
+      "locked": undefined,
+      "parent": "uuid-0",
+      "properties": {
+        "__PROPERTY__": true,
+        "__node_name__": "b",
+        "__node_type__": "node",
+      },
+    },
+    "uuid-2": {
+      "__NODE__": true,
+      "children": {
+        "uuid-3": 1,
+      },
+      "id": "uuid-2",
+      "locked": undefined,
+      "parent": "uuid-0",
+      "properties": {
+        "__PROPERTY__": true,
+        "__node_name__": "c",
+        "__node_type__": "node",
+        "foo": "bar",
+      },
+    },
+    "uuid-3": {
+      "__NODE__": true,
+      "children": {},
+      "id": "uuid-3",
+      "locked": undefined,
+      "parent": "uuid-2",
+      "properties": {
+        "__PROPERTY__": true,
+        "__node_name__": "d",
+        "__node_type__": "node",
+      },
+    },
+    "uuid-4": {
+      "__NODE__": true,
+      "children": {},
+      "id": "uuid-4",
+      "locked": undefined,
+      "parent": "__ROOT__",
+      "properties": {
+        "__PROPERTY__": true,
+        "__node_name__": "edge",
+        "__node_type__": "edge",
+        "source": {
+          "cell": "uuid-0",
+        },
+        "target": {
+          "cell": "uuid-3",
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`buildEditorYjs with edges 1`] = `
+{
+  "test": {
+    "__ROOT__": {
+      "__NODE__": true,
+      "children": {
+        "uuid-0": 1,
+        "uuid-1": 1,
+        "uuid-2": 1,
+        "uuid-3": 1,
+      },
+      "id": "__ROOT__",
+      "locked": undefined,
+      "parent": undefined,
+      "properties": {
+        "__PROPERTY__": true,
+        "__node_name__": "__ROOT__",
+        "__node_type__": "node",
+      },
+    },
+    "uuid-0": {
+      "__NODE__": true,
+      "children": {},
+      "id": "uuid-0",
+      "locked": undefined,
+      "parent": "__ROOT__",
+      "properties": {
+        "__PROPERTY__": true,
+        "__node_name__": "a",
+        "__node_type__": "node",
+      },
+    },
+    "uuid-1": {
+      "__NODE__": true,
+      "children": {},
+      "id": "uuid-1",
+      "locked": undefined,
+      "parent": "__ROOT__",
+      "properties": {
+        "__PROPERTY__": true,
+        "__node_name__": "b",
+        "__node_type__": "node",
+      },
+    },
+    "uuid-2": {
+      "__NODE__": true,
+      "children": {},
+      "id": "uuid-2",
+      "locked": undefined,
+      "parent": "__ROOT__",
+      "properties": {
+        "__PROPERTY__": true,
+        "__node_name__": "my-edge-a",
+        "__node_type__": "edge",
+        "source": {
+          "cell": "uuid-0",
+        },
+        "target": {
+          "cell": "uuid-1",
+        },
+      },
+    },
+    "uuid-3": {
+      "__NODE__": true,
+      "children": {},
+      "id": "uuid-3",
+      "locked": undefined,
+      "parent": "__ROOT__",
+      "properties": {
+        "__PROPERTY__": true,
+        "__node_name__": "my-edge-b",
+        "__node_type__": "edge",
+        "source": {
+          "cell": "uuid-1",
+        },
+        "target": {
+          "cell": "keep-it",
+          "port": "port-a",
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`buildEditorYjs with nodes 1`] = `
+{
+  "test": {
+    "__ROOT__": {
+      "__NODE__": true,
+      "children": {
+        "keep-it": 1,
+        "uuid-0": 1,
+      },
+      "id": "__ROOT__",
+      "locked": undefined,
+      "parent": undefined,
+      "properties": {
+        "__PROPERTY__": true,
+        "__node_name__": "__ROOT__",
+        "__node_type__": "node",
+      },
+    },
+    "keep-it": {
+      "__NODE__": true,
+      "children": {},
+      "id": "keep-it",
+      "locked": undefined,
+      "parent": "__ROOT__",
+      "properties": {
+        "__PROPERTY__": true,
+        "__node_name__": "my-node",
+        "__node_type__": "node",
+        "a": 1,
+        "b": 2,
+      },
+    },
+    "uuid-0": {
+      "__NODE__": true,
+      "children": {},
+      "id": "uuid-0",
+      "locked": undefined,
+      "parent": "__ROOT__",
+      "properties": {
+        "__PROPERTY__": true,
+        "__node_name__": "foo",
+        "__node_type__": "node",
+        "b": 1,
+        "c": 2,
+        "d": "uuid-0",
+      },
+    },
+  },
+}
+`;
+
+exports[`createRoot 1`] = `
+{
+  "test": {
+    "root": {
+      "__NODE__": true,
+      "children": {
+        "1": 1,
+        "2": 1,
+        "3": 1,
+      },
+      "id": "__ROOT__",
+      "locked": undefined,
+      "parent": undefined,
+      "properties": {
+        "__PROPERTY__": true,
+        "__node_name__": "__ROOT__",
+        "__node_type__": "node",
+      },
+    },
+  },
+}
+`;

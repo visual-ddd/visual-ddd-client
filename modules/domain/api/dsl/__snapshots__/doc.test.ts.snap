@@ -1,0 +1,498 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`createDoc 1`] = `
+{
+  "data-object": {
+    "__ROOT__": {
+      "__NODE__": true,
+      "children": {},
+      "id": "__ROOT__",
+      "locked": undefined,
+      "parent": undefined,
+      "properties": {
+        "__PROPERTY__": true,
+        "__node_name__": "__ROOT__",
+        "__node_type__": "node",
+      },
+    },
+  },
+  "domain": {
+    "__ROOT__": {
+      "__NODE__": true,
+      "children": {
+        "uuid-0": 1,
+        "uuid-1": 1,
+        "uuid-10": 1,
+        "uuid-13": 1,
+        "uuid-15": 1,
+        "uuid-16": 1,
+        "uuid-2": 1,
+        "uuid-3": 1,
+        "uuid-7": 1,
+      },
+      "id": "__ROOT__",
+      "locked": undefined,
+      "parent": undefined,
+      "properties": {
+        "__PROPERTY__": true,
+        "__node_name__": "__ROOT__",
+        "__node_type__": "node",
+      },
+    },
+    "uuid-0": {
+      "__NODE__": true,
+      "children": {},
+      "id": "uuid-0",
+      "locked": undefined,
+      "parent": "__ROOT__",
+      "properties": {
+        "__PROPERTY__": true,
+        "__node_name__": "activity",
+        "__node_type__": "node",
+        "label": "新增你好",
+        "position": {
+          "x": 171,
+          "y": 181,
+        },
+        "size": {
+          "height": 75,
+          "width": 120,
+        },
+      },
+    },
+    "uuid-1": {
+      "__NODE__": true,
+      "children": {},
+      "id": "uuid-1",
+      "locked": undefined,
+      "parent": "__ROOT__",
+      "properties": {
+        "__PROPERTY__": true,
+        "__node_name__": "activity",
+        "__node_type__": "node",
+        "label": "编辑你好",
+        "position": {
+          "x": 443,
+          "y": 183.5,
+        },
+        "size": {
+          "height": 75,
+          "width": 120,
+        },
+      },
+    },
+    "uuid-10": {
+      "__NODE__": true,
+      "children": {},
+      "id": "uuid-10",
+      "locked": undefined,
+      "parent": "__ROOT__",
+      "properties": {
+        "__PROPERTY__": true,
+        "__node_name__": "command",
+        "__node_type__": "node",
+        "aggregation": {
+          "referenceId": "uuid-3",
+        },
+        "category": "modify",
+        "description": "",
+        "eventProperties": [],
+        "eventSendable": false,
+        "meta": [],
+        "name": "HelloModify",
+        "position": {
+          "x": 425,
+          "y": 350,
+        },
+        "properties": [
+          {
+            "access": "public",
+            "description": "",
+            "meta": [],
+            "name": "id",
+            "title": "你好 ID",
+            "type": {
+              "name": "Long",
+              "type": "base",
+            },
+            "uuid": "uuid-11",
+          },
+          {
+            "access": "public",
+            "description": "",
+            "meta": [],
+            "name": "name",
+            "title": "名称",
+            "type": {
+              "name": "String",
+              "type": "base",
+            },
+            "uuid": "uuid-12",
+          },
+        ],
+        "repository": "modify",
+        "size": {
+          "height": 183.671875,
+          "width": 200,
+        },
+        "source": {
+          "event": {
+            "enabled": false,
+            "value": "",
+          },
+          "http": {
+            "enabled": true,
+          },
+          "rpc": {
+            "enabled": true,
+          },
+          "schedule": {
+            "enabled": false,
+            "value": "",
+          },
+        },
+        "title": "编辑你好",
+        "uuid": "uuid-10",
+        "zIndex": 2,
+      },
+    },
+    "uuid-13": {
+      "__NODE__": true,
+      "children": {},
+      "id": "uuid-13",
+      "locked": undefined,
+      "parent": "__ROOT__",
+      "properties": {
+        "__PROPERTY__": true,
+        "__node_name__": "command",
+        "__node_type__": "node",
+        "aggregation": {
+          "referenceId": "uuid-3",
+        },
+        "category": "remove",
+        "description": "",
+        "eventProperties": [],
+        "eventSendable": false,
+        "meta": [],
+        "name": "HelloRemove",
+        "position": {
+          "x": 743,
+          "y": 350,
+        },
+        "properties": [
+          {
+            "access": "public",
+            "description": "",
+            "meta": [],
+            "name": "id",
+            "title": "你好 ID",
+            "type": {
+              "name": "Long",
+              "type": "base",
+            },
+            "uuid": "uuid-14",
+          },
+        ],
+        "repository": "remove",
+        "size": {
+          "height": 129.96875,
+          "width": 200,
+        },
+        "source": {
+          "event": {
+            "enabled": false,
+            "value": "",
+          },
+          "http": {
+            "enabled": true,
+          },
+          "rpc": {
+            "enabled": true,
+          },
+          "schedule": {
+            "enabled": false,
+            "value": "",
+          },
+        },
+        "title": "删除你好",
+        "uuid": "uuid-13",
+        "zIndex": 2,
+      },
+    },
+    "uuid-15": {
+      "__NODE__": true,
+      "children": {},
+      "id": "uuid-15",
+      "locked": undefined,
+      "parent": "__ROOT__",
+      "properties": {
+        "__PROPERTY__": true,
+        "__node_name__": "edge",
+        "__node_type__": "edge",
+        "source": {
+          "cell": "uuid-0",
+          "port": "right",
+        },
+        "target": {
+          "cell": "uuid-1",
+          "port": "left",
+        },
+      },
+    },
+    "uuid-16": {
+      "__NODE__": true,
+      "children": {},
+      "id": "uuid-16",
+      "locked": undefined,
+      "parent": "__ROOT__",
+      "properties": {
+        "__PROPERTY__": true,
+        "__node_name__": "edge",
+        "__node_type__": "edge",
+        "source": {
+          "cell": "uuid-1",
+          "port": "right",
+        },
+        "target": {
+          "cell": "uuid-2",
+          "port": "left",
+        },
+      },
+    },
+    "uuid-2": {
+      "__NODE__": true,
+      "children": {},
+      "id": "uuid-2",
+      "locked": undefined,
+      "parent": "__ROOT__",
+      "properties": {
+        "__PROPERTY__": true,
+        "__node_name__": "activity",
+        "__node_type__": "node",
+        "label": "删除你好",
+        "position": {
+          "x": 743,
+          "y": 183.5,
+        },
+        "size": {
+          "height": 70,
+          "width": 120,
+        },
+      },
+    },
+    "uuid-3": {
+      "__NODE__": true,
+      "children": {
+        "uuid-4": 1,
+      },
+      "id": "uuid-3",
+      "locked": undefined,
+      "parent": "__ROOT__",
+      "properties": {
+        "__PROPERTY__": true,
+        "__node_name__": "aggregation",
+        "__node_type__": "node",
+        "__prevent_auto_resize__": true,
+        "color": "#D9F7BE",
+        "description": "你好世界",
+        "meta": [],
+        "name": "Hello",
+        "position": {
+          "x": 171,
+          "y": 715,
+        },
+        "size": {
+          "height": 500,
+          "width": 500,
+        },
+        "title": "你好",
+        "uuid": "uuid-3",
+        "zIndex": 1,
+      },
+    },
+    "uuid-4": {
+      "__NODE__": true,
+      "children": {},
+      "id": "uuid-4",
+      "locked": undefined,
+      "parent": "uuid-3",
+      "properties": {
+        "__PROPERTY__": true,
+        "__node_name__": "entity",
+        "__node_type__": "node",
+        "abstract": false,
+        "classMethods": [],
+        "classProperties": [],
+        "description": "你好世界",
+        "id": "uuid-5",
+        "implements": [],
+        "isAggregationRoot": true,
+        "meta": [],
+        "methods": [],
+        "name": "Hello",
+        "position": {
+          "x": 231,
+          "y": 775,
+        },
+        "properties": [
+          {
+            "access": "public",
+            "description": "",
+            "meta": [],
+            "name": "id",
+            "title": "你好 ID",
+            "type": {
+              "name": "Long",
+              "type": "base",
+            },
+            "uuid": "uuid-5",
+          },
+          {
+            "access": "public",
+            "description": "",
+            "meta": [],
+            "name": "name",
+            "title": "名称",
+            "type": {
+              "name": "String",
+              "type": "base",
+            },
+            "uuid": "uuid-6",
+          },
+        ],
+        "size": {
+          "height": 144.828125,
+          "width": 200,
+        },
+        "title": "你好",
+        "uuid": "uuid-4",
+        "zIndex": 2,
+      },
+    },
+    "uuid-7": {
+      "__NODE__": true,
+      "children": {},
+      "id": "uuid-7",
+      "locked": undefined,
+      "parent": "__ROOT__",
+      "properties": {
+        "__PROPERTY__": true,
+        "__node_name__": "command",
+        "__node_type__": "node",
+        "aggregation": {
+          "referenceId": "uuid-3",
+        },
+        "category": "create",
+        "description": "",
+        "eventProperties": [
+          {
+            "access": "public",
+            "description": "",
+            "meta": [],
+            "name": "id",
+            "title": "你好 ID",
+            "type": {
+              "name": "Long",
+              "type": "base",
+            },
+            "uuid": "uuid-9",
+          },
+        ],
+        "eventSendable": false,
+        "meta": [],
+        "name": "HelloCreate",
+        "position": {
+          "x": 106,
+          "y": 350,
+        },
+        "properties": [
+          {
+            "access": "public",
+            "description": "",
+            "meta": [],
+            "name": "name",
+            "title": "名称",
+            "type": {
+              "name": "String",
+              "type": "base",
+            },
+            "uuid": "uuid-8",
+          },
+        ],
+        "repository": "create",
+        "size": {
+          "height": 184.671875,
+          "width": 200,
+        },
+        "source": {
+          "event": {
+            "enabled": false,
+            "value": "",
+          },
+          "http": {
+            "enabled": true,
+          },
+          "rpc": {
+            "enabled": true,
+          },
+          "schedule": {
+            "enabled": false,
+            "value": "",
+          },
+        },
+        "title": "新增你好",
+        "uuid": "uuid-7",
+        "zIndex": 2,
+      },
+    },
+  },
+  "mapper": {
+    "__ROOT__": {
+      "__NODE__": true,
+      "children": {},
+      "id": "__ROOT__",
+      "locked": undefined,
+      "parent": undefined,
+      "properties": {
+        "__PROPERTY__": true,
+        "__node_name__": "__ROOT__",
+        "__node_type__": "node",
+      },
+    },
+  },
+  "product": "<heading level="1">你好产品文档</heading>",
+  "query": {
+    "__ROOT__": {
+      "__NODE__": true,
+      "children": {},
+      "id": "__ROOT__",
+      "locked": undefined,
+      "parent": undefined,
+      "properties": {
+        "__PROPERTY__": true,
+        "__node_name__": "__ROOT__",
+        "__node_type__": "node",
+      },
+    },
+  },
+  "ubiquitous-language": [
+    {
+      "conception": "资源",
+      "definition": "BD进行销售活动的对象",
+      "englishName": "Resource",
+      "example": "",
+      "restraint": "",
+      "uuid": "uuid-17",
+    },
+    {
+      "conception": "公海",
+      "definition": "业务目标限定的模拟资源全集",
+      "englishName": "PublicSea",
+      "example": "业务目标是团购买单合作，限定POI为到餐全国和综合58同城的",
+      "restraint": "与业务目标对应，比如交易公海是为了做交易，推广公海是为了推广",
+      "uuid": "uuid-18",
+    },
+  ],
+  "vision": "",
+}
+`;

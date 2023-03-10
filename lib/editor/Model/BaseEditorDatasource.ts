@@ -9,7 +9,7 @@ import { BaseNode } from './BaseNode';
 
 import { toNodePO } from './mapper';
 import { NodePO } from './types';
-import { NodeYMap, MapTypeNode, MapTypeRoot, MapTypeProperties } from './NodeYMap';
+import { NodeYMap, MapTypeNode, MapTypeRoot, MapTypeProperties } from './Yjs/NodeYMap';
 import { BaseEditorEvent } from './BaseEditorEvent';
 import { BaseEditorIndex } from './BaseEditorIndex';
 

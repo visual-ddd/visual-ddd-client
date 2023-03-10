@@ -3,14 +3,14 @@ import toPairs from 'lodash/toPairs';
 import fromPairs from 'lodash/fromPairs';
 import cloneDeep from 'lodash/cloneDeep';
 
-import { BaseNodeProperties, NodePO } from './types';
-import { ROOT_ID } from './constants';
+import { BaseNodeProperties, NodePO } from '../types';
+import { ROOT_ID } from '../constants';
 
 export const MapTypeNode = '__NODE__';
 export const MapTypeRoot = ROOT_ID;
 export const MapTypeProperties = '__PROPERTY__';
 
-export type { BaseNodeProperties, NodePO } from './types';
+export type { BaseNodeProperties, NodePO } from '../types';
 
 /**
  * 封装对 Node 类型 YMap 的操作
@@ -103,19 +103,4 @@ export class NodeYMap {
       properties: fromPairs(Array.from(this.properties.entries())) as BaseNodeProperties,
     };
   }
-}
-
-/**
- * 创建根节点，需要和 NodeYMap 保持同步
- */
-export function createRoot(children: string[] = []) {
-  return NodeYMap.fromNodePO({
-    id: MapTypeRoot,
-    parent: undefined,
-    children,
-    properties: {
-      __node_name__: MapTypeRoot,
-      __node_type__: 'node',
-    },
-  });
 }

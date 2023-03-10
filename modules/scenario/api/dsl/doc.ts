@@ -1,8 +1,9 @@
 import { Doc as YDoc } from 'yjs';
-import { MapTypeRoot, createRoot, NodeYMap } from '@/lib/editor/Model/NodeYMap';
-import { v4 } from 'uuid';
+import { buildEditorYjs, buildEmptyEditorYjs } from '@/lib/editor/Model/Yjs';
+import { NoopArray } from '@wakeapp/utils';
 
 import { ScenarioObjectName } from '../../scenario-design/dsl/constants';
+import type { LanesDSL } from '../../scenario-design/dsl/dsl';
 import { YJS_FIELD_NAME } from '../../constants';
 
 import { DSLModel } from './model';
@@ -16,40 +17,40 @@ export function createDoc() {
   const doc = new YDoc();
 
   // 初始化业务场景泳道图
-  {
-    const scenarioMap = doc.getMap(YJS_FIELD_NAME.SCENARIO);
+  const scenarioMap = doc.getMap(YJS_FIELD_NAME.SCENARIO);
 
-    const laneId = v4();
-    const lane = NodeYMap.fromNodePO({
-      id: laneId,
-      parent: MapTypeRoot,
-      children: [],
-      properties: {
-        __node_name__: ScenarioObjectName.Lane,
-        __node_type__: 'node',
-        position: { x: 10, y: 10 },
-        uuid: laneId,
-        name: 'lane',
-        title: '泳道',
-        description: '',
-        meta: [],
-        width: 1200,
-        panes: [{ uuid: v4(), title: '未命名泳道', height: 300 }],
-      },
-    });
-
-    const scenarioRoot = createRoot([laneId]);
-
-    scenarioMap.set(MapTypeRoot, scenarioRoot.toYMap());
-    scenarioMap.set(laneId, lane.toYMap());
-  }
+  buildEditorYjs(
+    {
+      nodes: [
+        {
+          id: '{lane}',
+          name: ScenarioObjectName.Lane,
+          properties: helper => {
+            return {
+              position: { x: 10, y: 10 },
+              ...({
+                uuid: helper.getId('lane'),
+                name: 'lane',
+                title: '泳道',
+                description: '',
+                meta: [],
+                width: 1200,
+                panes: [{ uuid: helper.getOrCreateId(), title: '未命名泳道', height: 300 }],
+              } satisfies LanesDSL),
+            };
+          },
+        },
+      ],
+      edges: NoopArray,
+    },
+    scenarioMap
+  );
 
   // 图形编辑器
   // 初始化根节点
   [YJS_FIELD_NAME.SERVICE].forEach(name => {
     const map = doc.getMap(name);
-    const root = createRoot();
-    map.set(MapTypeRoot, root.toYMap());
+    buildEmptyEditorYjs(map);
   });
 
   return doc;
