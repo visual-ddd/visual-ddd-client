@@ -63,11 +63,15 @@ export function Organization() {
       ellipsis: true,
     },
     {
+      title: '描述',
+      dataIndex: 'description',
+      hideInSearch: true,
+    },
+    {
       title: '管理员',
       dataIndex: 'teamManagerName',
       hideInSearch: true,
     },
-
     {
       title: '创建时间',
       dataIndex: 'createTime',
