@@ -18,9 +18,9 @@ export function createRedirectUrl(params: VDSessionState) {
  * @param from
  * @param launchInfo
  */
-export function verifyRedirect(from: string | undefined, launchInfo: LaunchInfo): boolean {
+export function verifyRedirect(from: string | undefined, launchInfo: LaunchInfo): VDSessionState | undefined {
   if (from == null) {
-    return false;
+    return undefined;
   }
 
   try {
@@ -29,21 +29,42 @@ export function verifyRedirect(from: string | undefined, launchInfo: LaunchInfo)
 
     // 系统管理员
     if (path.startsWith('/system') && launchInfo.isSysAdmin) {
-      return true;
+      return { entry: VDSessionEntry.System, entryName: '系统管理', isManager: true };
     }
 
     // 组织管理员
     if (path.startsWith('/organization') && launchInfo.accountOrganizationInfoList?.length) {
-      return launchInfo.accountOrganizationInfoList.some(i => path.startsWith(`/organization/${i.organizationDTO.id}`));
+      const org = launchInfo.accountOrganizationInfoList.find(i =>
+        path.startsWith(`/organization/${i.organizationDTO.id}`)
+      );
+
+      if (org) {
+        return {
+          entry: VDSessionEntry.Organization,
+          entryName: org.organizationDTO.name,
+          entryId: org.organizationDTO.id,
+          isManager: true,
+        };
+      }
     }
 
     // 团队
     if (path.startsWith('/team') && launchInfo.teamDTOList?.length) {
-      return launchInfo.teamDTOList.some(i => path.startsWith(`/team/${i.teamDTO.id}`));
-    }
+      const team = launchInfo.teamDTOList.find(i => path.startsWith(`/team/${i.teamDTO.id}`));
 
-    return false;
-  } catch (err) {
-    return false;
+      if (team) {
+        return {
+          entry: VDSessionEntry.Team,
+          entryName: team.teamDTO.name,
+          entryId: team.teamDTO.id,
+          isManager: !!team.isTeamAdmin,
+        };
+      }
+    }
+  } catch {
+    // url parse error
+    // ignore it
   }
+
+  return undefined;
 }

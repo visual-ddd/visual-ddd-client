@@ -23,6 +23,10 @@ export const getServerSideProps = withWakedataRequestSsr<LaunchProps>(async cont
     const shouldRedirect = verifyRedirect(from, data);
 
     if (shouldRedirect) {
+      context.req.session.content!.state = shouldRedirect;
+
+      await context.req.session.save();
+
       return {
         redirect: { destination: normalizeUrl(from)!, statusCode: 302 },
       };
