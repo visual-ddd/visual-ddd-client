@@ -117,6 +117,8 @@ export abstract class BaseDesignerModel<
       const activeKey = Router.query.tab as Tab | undefined;
       if (activeKey != null) {
         this.setActiveTab({ tab: activeKey });
+      } else if (this.activeTab) {
+        this.setActiveTab({ tab: this.activeTab });
       }
     });
   }
