@@ -88,6 +88,7 @@ export class ScenarioDesignerModel extends BaseDesignerModel<ScenarioDesignerTab
    * 销毁
    */
   override dispose() {
+    super.dispose();
     tryDispose(this.scenarioEditorModel);
   }
 
