@@ -2,18 +2,22 @@ import { useDisposer } from '@wakeapp/hooks';
 import { createContext, useContext, useEffect, useMemo, useRef } from 'react';
 import { useEditorModel } from '../Model';
 import { CanvasEventDefinitions, CanvasEventsWithArg, CanvasEventsWithoutArg } from './CanvasEvent';
-import { CanvasModel } from './CanvasModel';
+import { CanvasModel, CanvasModelOptions } from './CanvasModel';
 
 const CONTEXT = createContext<CanvasModel | undefined>(undefined);
 CONTEXT.displayName = 'CanvasModelContext';
 
 export interface CanvasModelProviderProps {
-  options?: {}; // TODO
+  /**
+   * 模型选项
+   */
+  options?: CanvasModelOptions;
+
   children?: React.ReactNode;
 }
 
 /**
- * TODO: 扩展参数
+ * CanvasModel 上下文和创建器
  * @param props
  * @returns
  */
@@ -21,7 +25,8 @@ export const CanvasModelProvider = (props: CanvasModelProviderProps) => {
   const { model: editorModel } = useEditorModel();
 
   const canvasModel = useMemo(() => {
-    return new CanvasModel({ editorModel });
+    return new CanvasModel({ editorModel, options: props.options });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editorModel]);
 
   useEffect(() => {

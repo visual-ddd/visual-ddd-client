@@ -1,5 +1,6 @@
 import {
   Canvas,
+  CanvasModelOptions,
   CanvasModelProvider,
   EditorConfigurationProvider,
   EditorConfigurationValue,
@@ -21,6 +22,31 @@ export interface ScenarioEditorProps {
   active?: boolean;
 }
 
+const options: CanvasModelOptions = {
+  onOptionsCreated(opts) {
+    opts.highlighting!.embedding = {
+      name: 'className',
+      args: {
+        // 暂时不显示泳道的嵌入高亮
+        className: '',
+      },
+    };
+
+    // 关闭内置的 panning
+    // 使用 scroller 取代
+    opts.panning = false;
+
+    opts.scroller = {
+      enabled: true,
+      // pageBreak: true,
+      // pageVisible: true,
+      pannable: true,
+      padding: 0,
+      // autoResize: true
+    };
+  },
+};
+
 export const ScenarioEditor = observer(function ScenarioEditor(props: ScenarioEditorProps) {
   const { model } = props;
   const readonly = model.readonly;
@@ -35,7 +61,7 @@ export const ScenarioEditor = observer(function ScenarioEditor(props: ScenarioEd
   return (
     <div>
       <EditorModelProvider value={model}>
-        <CanvasModelProvider>
+        <CanvasModelProvider options={options}>
           <EditorConfigurationProvider value={configuration}>
             <EditorLayout
               left={

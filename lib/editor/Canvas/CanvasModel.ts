@@ -40,7 +40,16 @@ type Resizing = GraphBindingOptions['resizing'];
 const DEFAULT_SELECTED_COLOR = '#1890ff';
 
 export interface CanvasModelOptions {
+  /**
+   * 已选择节点、边的高亮颜色
+   */
   selectedColor?: string;
+
+  /**
+   * 选项初始化完毕，可以在这里对选项进行修改
+   * @param options
+   */
+  onOptionsCreated?(options: GraphBindingOptions): void;
 }
 
 /**
@@ -193,7 +202,7 @@ export class CanvasModel implements IDisposable {
     // 默认配置
     this.graphOptions = {
       background: { color: '#f8f8f8' },
-      grid: { size: 25, visible: true },
+      grid: { size: 20, visible: true },
       onEdgeLabelRendered: args => {
         shapeRegistry.renderEdgeLabel(args);
       },
@@ -407,6 +416,9 @@ export class CanvasModel implements IDisposable {
           handler: this.handleRedo,
         });
     }
+
+    // 选项初始化完毕
+    this.options.onOptionsCreated?.(this.graphOptions);
 
     this.keyboardBinding
       .bindKey({

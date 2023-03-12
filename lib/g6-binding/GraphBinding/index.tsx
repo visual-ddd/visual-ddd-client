@@ -31,7 +31,7 @@ export type GraphBindingOptions = Partial<Options.Manual> & {
   resizing?: Transform.Options['resizing'];
   rotating?: Transform.Options['rotating'];
   snapline?: Snapline.Options;
-  scroller?: Scroller.Options;
+  scroller?: Omit<Scroller.Options, 'graph'>;
   minimap?: Omit<MiniMap.Options, 'container'>;
 };
 
@@ -528,6 +528,7 @@ export const GraphBinding = memo((props: GraphBindingProps) => {
       }
 
       if (options?.scroller) {
+        // @ts-expect-error 不需要传递 graph
         graph.use(new Scroller(options.scroller));
       }
 

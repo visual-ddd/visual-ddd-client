@@ -38,7 +38,7 @@ const EdgeConnector: Edge.BaseOptions['connector'] = { name: 'rounded' };
 const EdgeRouter: Edge.BaseOptions['router'] = {
   name: 'manhattan',
   args: {
-    step: 20,
+    step: 10,
   },
 };
 const EdgeAttrs: Edge.BaseOptions['attrs'] = {

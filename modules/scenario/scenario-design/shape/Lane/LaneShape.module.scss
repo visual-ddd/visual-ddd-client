@@ -17,10 +17,11 @@ $ghost-color: var(--vd-color-success-300);
 .container {
   flex: 1;
   position: relative;
-  background-color: rgba(255, 255, 255, 0.4);
+  background-color: rgba(255, 255, 255, 0.7);
   border-radius: $border-radius;
-  border: 2px solid gray;
-  margin-left: 4px;
+  border: 1px solid var(--vd-color-gray-300);
+  margin-left: 2px;
+  box-shadow: 1px 4px 6px -5px #b8b1b1;
 }
 
 .creator {
@@ -50,7 +51,7 @@ $ghost-color: var(--vd-color-success-300);
 
 .aside {
   width: 38px;
-  background-color: #cfd4d9;
+  background-color: var(--vd-color-gray-100);
   color: var(--vd-color-gray-800);
   font-weight: 400;
   display: flex;
@@ -58,8 +59,9 @@ $ghost-color: var(--vd-color-success-300);
   align-items: center;
   justify-content: center;
   border-radius: $border-radius;
+  border: 1px solid var(--vd-color-gray-300);
+  box-shadow: 1px 4px 6px -5px #b8b1b1;
   pointer-events: all;
-  border: 2px solid gray;
 }
 
 .title {
