@@ -391,6 +391,12 @@ export class CanvasModel implements IDisposable {
           handler: this.handleRemoveSelected,
         })
         .bindKey({
+          name: 'lock',
+          title: '锁定/解锁',
+          key: { macos: 'command+shift+l', other: 'ctrl+shift+l' },
+          handler: this.handleToggleSelectedNodeLock,
+        })
+        .bindKey({
           name: 'copy',
           title: '拷贝',
           description: '拷贝选中图形',
@@ -409,6 +415,7 @@ export class CanvasModel implements IDisposable {
           key: { macos: 'command+z', other: 'ctrl+z' },
           handler: this.handleUndo,
         })
+
         .bindKey({
           name: 'redo',
           title: '重做',
@@ -435,6 +442,7 @@ export class CanvasModel implements IDisposable {
         key: { macos: 'shift+command+p', other: 'shift+ctrl+p' },
         handler: this.handleEnableMousePanningMode,
       })
+
       .bindKey({
         name: 'zoomIn',
         title: '放大',
@@ -596,6 +604,38 @@ export class CanvasModel implements IDisposable {
     }
 
     return canRemoveNode(model);
+  }
+
+  /**
+   * 是否可以锁定或解锁
+   * @returns
+   */
+  canLockOrUnlock() {
+    if (this.readonly) {
+      return;
+    }
+
+    return this.editorViewStore.selectedNodes.length === 1;
+  }
+
+  /**
+   * 判断节点是否锁定
+   * 如果没有传递参数，则表示处理已选中元素
+   * @param cell
+   * @returns
+   */
+  isLocked(cell?: Cell | BaseNode): boolean | undefined {
+    if (cell == null && this.editorViewStore.selectedNodes.length === 1) {
+      cell = this.editorViewStore.selectedNodes[0];
+    }
+
+    if (cell == null) {
+      return;
+    }
+
+    const model = cell instanceof BaseNode ? cell : this.shapeRegistry.getModelByCell(cell);
+
+    return model?.locked;
   }
 
   /**
@@ -1008,6 +1048,19 @@ export class CanvasModel implements IDisposable {
     } else {
       this.handleLockNode(params);
     }
+  };
+
+  /**
+   * 切换已选择节点的锁定状态
+   * @returns
+   */
+  handleToggleSelectedNodeLock = () => {
+    const selected = this.editorViewStore.selectedNodes;
+    if (selected.length !== 1) {
+      return;
+    }
+
+    this.handleToggleLock({ node: selected[0] });
   };
 
   /**

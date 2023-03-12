@@ -10,6 +10,7 @@ import Icon, {
   SnippetsOutlined,
   DeleteOutlined,
   ExpandOutlined,
+  LockOutlined,
 } from '@ant-design/icons';
 import memoize from 'lodash/memoize';
 
@@ -44,7 +45,7 @@ export const EditorToolbar = observer(function EditorToolbar(props: EditorToolba
     return memoize((name: string) => {
       const desc = model.getCommandDescription(name);
 
-      return { tooltip: `${desc.description ?? desc.title} (${desc.key})`, handler: desc.handler };
+      return { tooltip: `${desc.description ?? desc.title} (${desc.key.toUpperCase()})`, handler: desc.handler };
     });
   }, [model]);
 
@@ -129,6 +130,14 @@ export const EditorToolbar = observer(function EditorToolbar(props: EditorToolba
               icon={<SnippetsOutlined />}
               onClick={getDesc('paste').handler}
             />
+            <Item
+              name="lock"
+              tooltip={getDesc('lock').tooltip}
+              active={model.isLocked()}
+              icon={<LockOutlined />}
+              disabled={!model.canLockOrUnlock()}
+              onClick={getDesc('lock').handler}
+            ></Item>
             <Item
               name="delete"
               tooltip={getDesc('delete').tooltip}

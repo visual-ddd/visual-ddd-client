@@ -23,11 +23,6 @@ export const EditorAttributes = observer(function EditorAttributes() {
   }
 
   const config = getShape(node.name)!;
-
-  if (config.attributeComponent == null) {
-    return <SelectNodePlease description="当前图形不支持属性编辑" />;
-  }
-
   const formModel = formStore.getFormModel(node)!;
 
   // 已锁定
@@ -39,24 +34,35 @@ export const EditorAttributes = observer(function EditorAttributes() {
   // 被父级节点锁定
   const isLockedByHierarchy = node.isHierarchyLocked && !node.locked;
 
+  const lockTip = !!(isLocked && !model.readonly) && (
+    <div className={s.lockInfo}>
+      {isLockedByCollaborator ? (
+        '其他协作者正在编辑中，暂时禁止编辑'
+      ) : isLockedByHierarchy ? (
+        '父节点已锁定，禁止编辑'
+      ) : (
+        <>
+          <div>节点已锁定</div>
+          <Button onClick={() => model.handleUnLockNode({ node })} disabled={false}>
+            解锁
+          </Button>
+        </>
+      )}
+    </div>
+  );
+
+  if (config.attributeComponent == null) {
+    return (
+      <>
+        {lockTip}
+        <SelectNodePlease description="当前图形不支持属性编辑" />
+      </>
+    );
+  }
+
   return (
     <EditorForm key={node.id} node={node} readonly={model.readonly || isLocked}>
-      {!!(isLocked && !model.readonly) && (
-        <div className={s.lockInfo}>
-          {isLockedByCollaborator ? (
-            '其他协作者正在编辑中，暂时禁止编辑'
-          ) : isLockedByHierarchy ? (
-            '父节点已锁定，禁止编辑'
-          ) : (
-            <>
-              <div>节点已锁定</div>
-              <Button onClick={() => model.handleUnLockNode({ node })} disabled={false}>
-                解锁
-              </Button>
-            </>
-          )}
-        </div>
-      )}
+      {lockTip}
       {createElement(config.attributeComponent, {
         model: model.editorModel,
         node,
