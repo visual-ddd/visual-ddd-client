@@ -452,12 +452,6 @@ export class CanvasModel implements IDisposable {
         title: '适配内容',
         key: { macos: 'shift+command+f', other: 'shift+ctrl+f' },
         handler: this.handleZoomToFit,
-      })
-      .bindKey({
-        name: 'zoomToCenter',
-        title: '居中并还原',
-        key: { macos: 'shift+command+c', other: 'shift+ctrl+c' },
-        handler: this.handleZoomToCenter,
       });
 
     // 监听 EditorModel 事件
@@ -719,13 +713,11 @@ export class CanvasModel implements IDisposable {
     this.graph?.zoomTo(zoom);
   };
 
-  handleZoomToCenter = () => {
-    this.graph?.zoomTo(1);
-    this.graph?.center();
-  };
-
   handleZoomToFit = () => {
-    this.graph?.zoomToFit();
+    // this.graph?.zoomTo(1);
+    // this.graph?.center();
+    this.graph?.zoomToFit({ padding: 20 });
+    this.graph?.centerContent();
   };
 
   /**

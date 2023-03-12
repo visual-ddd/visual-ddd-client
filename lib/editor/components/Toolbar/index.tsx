@@ -91,9 +91,9 @@ export const EditorToolbar = observer(function EditorToolbar(props: EditorToolba
           icon={<ZoomOutOutlined />}
         />
         <Item
-          name="zoomToCenter"
-          tooltip={getDesc('zoomToCenter').tooltip}
-          onClick={getDesc('zoomToCenter').handler}
+          name="zoomToFit"
+          tooltip={getDesc('zoomToFit').tooltip}
+          onClick={getDesc('zoomToFit').handler}
           icon={<ExpandOutlined />}
         ></Item>
       </Group>
