@@ -7,6 +7,24 @@ body {
   color: var(--vd-color-font-primary);
 }
 
+::-webkit-scrollbar-thumb {
+  background: #d3d1cb;
+}
+
+::-webkit-scrollbar-track {
+  background: #edece9;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+  background: transparent;
+}
+
+*::selection {
+  background: rgba(35, 131, 226, 0.28);
+}
+
 a {
   color: inherit;
   text-decoration: none;

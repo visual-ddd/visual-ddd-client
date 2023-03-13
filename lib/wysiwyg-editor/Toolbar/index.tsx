@@ -12,23 +12,29 @@ import {
   AlignLeftOutlined,
   AlignCenterOutlined,
   AlignRightOutlined,
+  LinkOutlined,
 } from '@ant-design/icons';
 import { useReadableKeyBinding } from '@/lib/hooks';
+
+import { CustomKeyboardBinding } from '../CustomKeyboardBinding';
+
 import { CodeIcon } from './CodeIcon';
 import { JustifyIcon } from './JustifyIcon';
+import { LinkEditor } from './LinkEditor';
 
 export interface WYSIWYGEditorToolbarProps {
   editor: Editor | null;
   className?: string;
+  keyboardBinding: CustomKeyboardBinding;
   style?: React.CSSProperties;
 }
 
 const Group = Toolbar.Group;
 const Item = Toolbar.Item;
 
-// 这里不要使用 memo，否则会导致 toolbar 无法更新
+// 这里不要使用 memo 和 observer，否则会导致 toolbar 无法更新
 export const WYSIWYGEditorToolbar = function WYSIWYGEditorToolbar(props: WYSIWYGEditorToolbarProps) {
-  const { editor, ...other } = props;
+  const { editor, keyboardBinding, ...other } = props;
   // tiptap 内置快捷键 https://tiptap.dev/api/keyboard-shortcuts
   const getReadableKeyBinding = useReadableKeyBinding();
 
@@ -149,6 +155,18 @@ export const WYSIWYGEditorToolbar = function WYSIWYGEditorToolbar(props: WYSIWYG
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
           disabled={!editor.can().chain().focus().toggleOrderedList().run()}
         ></Item>
+        <Group>
+          <LinkEditor keyboardBinding={keyboardBinding} editor={editor}>
+            <Item
+              name="link"
+              icon={<LinkOutlined />}
+              active={editor.isActive('link')}
+              tooltip={`链接 (${getReadableKeyBinding({ macos: 'command+k', other: 'ctrl+k' })})`}
+              tooltipProps={{ placement: 'right' }}
+              // onClick={keyboardBinding.toggleLinkSetter}
+            ></Item>
+          </LinkEditor>
+        </Group>
       </Group>
     </Toolbar>
   );

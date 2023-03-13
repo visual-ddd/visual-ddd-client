@@ -43,7 +43,15 @@ export interface KeyboardBindingRegistry {
    * 移除所有绑定
    */
   unbindAll(): void;
+
+  /**
+   * 决定是否开启快捷键触发
+   * @returns
+   */
+  guard?: () => boolean;
 }
+
+const NOOP_GUARD = () => true;
 
 /**
  * 快捷键处理器
@@ -84,6 +92,10 @@ export class KeyboardBinding implements IDisposable {
       const finalKey = this.getBindingKey(desc);
 
       registry.bind(finalKey, e => {
+        if (!(this.registry?.guard ?? NOOP_GUARD)()) {
+          return;
+        }
+
         if (e?.preventDefault) {
           e.preventDefault();
         }

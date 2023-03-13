@@ -7,13 +7,17 @@ import Collaboration from '@tiptap/extension-collaboration';
 import CollaborationCursor from '@tiptap/extension-collaboration-cursor';
 import TextAlign from '@tiptap/extension-text-align';
 import Underline from '@tiptap/extension-underline';
+import Link from '@tiptap/extension-link';
 import classNames from 'classnames';
 import { IUser } from '@/lib/core';
+import { NoopArray } from '@wakeapp/utils';
 
-import { getMappedColor, ignoreFalse } from '@/lib/utils';
+import { getMappedColor, ignoreFalse, tryDispose } from '@/lib/utils';
 
 import s from './index.module.scss';
 import { WYSIWYGEditorToolbar } from './Toolbar';
+import { useEffect, useMemo, useRef } from 'react';
+import { CustomKeyboardBinding } from './CustomKeyboardBinding';
 
 export interface WYSIWYGEditorProps {
   /**
@@ -45,6 +49,7 @@ export interface WYSIWYGEditorProps {
 
 export const WYSIWYGEditor = (props: WYSIWYGEditorProps) => {
   const { doc, field, readonly, awareness, user } = props;
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const editor = useEditor({
     editable: !readonly,
@@ -61,6 +66,8 @@ export const WYSIWYGEditor = (props: WYSIWYGEditorProps) => {
       TextAlign.configure({
         types: ['heading', 'paragraph'],
       }) as any,
+
+      Link.configure({}),
 
       !!awareness &&
         !!user &&
@@ -97,9 +104,28 @@ export const WYSIWYGEditor = (props: WYSIWYGEditorProps) => {
     ].filter(ignoreFalse),
   });
 
+  const keyboardBinding = useMemo(() => {
+    return new CustomKeyboardBinding();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, NoopArray);
+
+  useEffect(() => {
+    if (editor) {
+      keyboardBinding.bindEditor(editor, containerRef.current!);
+
+      return () => {
+        tryDispose(keyboardBinding);
+      };
+    }
+  }, [keyboardBinding, editor]);
+
   return (
-    <div className={classNames('vd-wd', s.root)}>
-      <WYSIWYGEditorToolbar className={classNames('vd-wd__toolbar', s.toolbar)} editor={editor} />
+    <div className={classNames('vd-wd', s.root)} ref={containerRef}>
+      <WYSIWYGEditorToolbar
+        className={classNames('vd-wd__toolbar', s.toolbar)}
+        editor={editor}
+        keyboardBinding={keyboardBinding}
+      />
       <EditorContent className={classNames('vd-wd__content', s.content)} editor={editor}></EditorContent>
     </div>
   );
