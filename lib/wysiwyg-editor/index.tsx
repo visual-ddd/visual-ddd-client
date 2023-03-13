@@ -172,11 +172,13 @@ export const WYSIWYGEditor = (props: WYSIWYGEditorProps) => {
 
   return (
     <div className={classNames('vd-wd', s.root)} ref={containerRef}>
-      <WYSIWYGEditorToolbar
-        className={classNames('vd-wd__toolbar', s.toolbar)}
-        editor={editor}
-        keyboardBinding={keyboardBinding}
-      />
+      {!readonly && (
+        <WYSIWYGEditorToolbar
+          className={classNames('vd-wd__toolbar', s.toolbar)}
+          editor={editor}
+          keyboardBinding={keyboardBinding}
+        />
+      )}
       <EditorContent
         onPasteCapture={handlePaste}
         className={classNames('vd-wd__content', s.content)}
