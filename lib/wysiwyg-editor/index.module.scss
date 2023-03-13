@@ -24,7 +24,7 @@
     width: 100%;
     min-height: 100%;
     outline: none;
-    padding: 20px 10%;
+    padding: 45px calc((100% - 900px) / 2);
     font-size: 15px;
     & > * + * {
       margin-top: 2px;
@@ -104,19 +104,7 @@
       h6 {
         line-height: 1.1;
       }
-      pre {
-        background: #0d0d0d;
-        color: #fff;
-        font-family: monospace;
-        padding: 0.75rem 1rem;
-        border-radius: 0.5rem;
-        code {
-          color: inherit;
-          padding: 0;
-          background: none;
-          font-size: 0.8rem;
-        }
-      }
+
       img {
         max-width: 100%;
         height: auto;
@@ -150,6 +138,8 @@
         }
       }
 
+      // 代码高亮
+
       code {
         background-color: rgba(#616161, 0.1);
         border-radius: 0.25em;
@@ -158,6 +148,75 @@
         font-size: 0.9rem;
         padding: 0.25em;
       }
+
+      pre {
+        background: #0d0d0d;
+        color: #fff;
+        font-family: 'JetBrainsMono', FiraFlott, Menlo, Monaco, 'Courier New', monospace;
+        padding: 1.3rem 1rem;
+        border-radius: 0.5rem;
+
+        code {
+          color: inherit;
+          padding: 0;
+          background: none;
+          font-size: 0.8rem;
+        }
+      }
+
+      .hljs-comment,
+      .hljs-quote {
+        color: #616161;
+      }
+
+      .hljs-variable,
+      .hljs-template-variable,
+      .hljs-attribute,
+      .hljs-tag,
+      .hljs-name,
+      .hljs-regexp,
+      .hljs-link,
+      .hljs-name,
+      .hljs-selector-id,
+      .hljs-selector-class {
+        color: #f98181;
+      }
+
+      .hljs-number,
+      .hljs-meta,
+      .hljs-built_in,
+      .hljs-builtin-name,
+      .hljs-literal,
+      .hljs-type,
+      .hljs-params {
+        color: #fbbc88;
+      }
+
+      .hljs-string,
+      .hljs-symbol,
+      .hljs-bullet {
+        color: #b9f18d;
+      }
+
+      .hljs-title,
+      .hljs-section {
+        color: #faf594;
+      }
+
+      .hljs-keyword,
+      .hljs-selector-tag {
+        color: #70cff8;
+      }
+
+      .hljs-emphasis {
+        font-style: italic;
+      }
+
+      .hljs-strong {
+        font-weight: 700;
+      }
+
+      // 多人协作提示
 
       .collaboration-cursor__caret {
         border-left: 1px solid #0d0d0d;

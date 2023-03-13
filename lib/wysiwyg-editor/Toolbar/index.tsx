@@ -14,6 +14,7 @@ import {
   AlignRightOutlined,
   LinkOutlined,
   PictureOutlined,
+  CodeOutlined,
 } from '@ant-design/icons';
 import { useReadableKeyBinding } from '@/lib/hooks';
 
@@ -176,6 +177,13 @@ export const WYSIWYGEditorToolbar = function WYSIWYGEditorToolbar(props: WYSIWYG
               tooltipProps={{ placement: 'right' }}
             ></Item>
           </ImageEditor>
+          <Item
+            name="codeBlock"
+            icon={<CodeOutlined />}
+            active={editor.isActive('codeBlock')}
+            tooltip={`代码块 (${getReadableKeyBinding({ macos: 'command+alt+c', other: 'ctrl+alt+c' })})`}
+            onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+          ></Item>
         </Group>
       </Group>
     </Toolbar>

@@ -18,6 +18,7 @@ specifiers:
   '@testing-library/jest-dom': ^5.16.5
   '@testing-library/react': ^14.0.0
   '@tiptap/core': 2.0.0-beta.220
+  '@tiptap/extension-code-block-lowlight': 2.0.0-beta.220
   '@tiptap/extension-collaboration': 2.0.0-beta.220
   '@tiptap/extension-collaboration-cursor': 2.0.0-beta.220
   '@tiptap/extension-image': 2.0.0-beta.220
@@ -65,6 +66,7 @@ specifiers:
   js-base64: ^3.7.5
   localforage: ^1.10.0
   lodash: ^4.17.21
+  lowlight: ^2.8.1
   lru-cache: ^7.18.3
   mobx: ^6.8.0
   mobx-react: ^7.6.0
@@ -118,6 +120,7 @@ dependencies:
   '@antv/x6-react-components': 2.0.7_gobdu7oqf7subfinaleisgb544
   '@sentry/nextjs': 7.41.0_next@13.2.2+react@18.2.0
   '@tiptap/core': 2.0.0-beta.220_@tiptap+pm@2.0.0-beta.220
+  '@tiptap/extension-code-block-lowlight': 2.0.0-beta.220_ohumfzynigfck3hzagxvh2a4ky
   '@tiptap/extension-collaboration': 2.0.0-beta.220_vghkcsy37zmnft7cy7riket6na
   '@tiptap/extension-collaboration-cursor': 2.0.0-beta.220_xurnhx2lyuimbqrywcpq5zxutu
   '@tiptap/extension-image': 2.0.0-beta.220_7w7m52asdh3tod4ocz57yex63q
@@ -147,6 +150,7 @@ dependencies:
   js-base64: 3.7.5
   localforage: 1.10.0
   lodash: 4.17.21
+  lowlight: 2.8.1
   lru-cache: 7.18.3
   mobx: 6.8.0
   mobx-react: 7.6.0_woojb62cqeyk443mbl7msrwu2e
@@ -2176,6 +2180,18 @@ packages:
       '@tiptap/core': 2.0.0-beta.220_@tiptap+pm@2.0.0-beta.220
     dev: false
 
+  /@tiptap/extension-code-block-lowlight/2.0.0-beta.220_ohumfzynigfck3hzagxvh2a4ky:
+    resolution:
+      { integrity: sha512-xMwbl5O50yaIGYQF3yrBM7Ft0JYejkuEo161jRElYG+PYvUCvbf2wB5oLNtRknj00WOM01kPXH2xMTuk8fTOPg== }
+    peerDependencies:
+      '@tiptap/core': ^2.0.0-beta.209
+      '@tiptap/extension-code-block': ^2.0.0-beta.209
+      '@tiptap/pm': ^2.0.0-beta.209
+    dependencies:
+      '@tiptap/core': 2.0.0-beta.220_@tiptap+pm@2.0.0-beta.220
+      '@tiptap/pm': 2.0.0-beta.220_7w7m52asdh3tod4ocz57yex63q
+    dev: false
+
   /@tiptap/extension-code-block/2.0.0-beta.220_ohumfzynigfck3hzagxvh2a4ky:
     resolution:
       { integrity: sha512-fgA7yTfHqhBtMJF7I9FPJ6UWuZPtxOQiN45Iv9LNmFIB6YRucdpmF+daZ27sElu0a+eICZyXwVn4w4iJphifuw== }
@@ -2612,6 +2628,13 @@ packages:
       '@types/node': 18.14.2
     dev: true
 
+  /@types/hast/2.3.4:
+    resolution:
+      { integrity: sha512-wLEm0QvaoawEDoTRwzTXp4b4jpwiJDvR5KMnFnVodm3scufTlBOWRD6N1OBf9TZMhjlNsSfcO5V+7AF4+Vy+9g== }
+    dependencies:
+      '@types/unist': 2.0.6
+    dev: false
+
   /@types/http-assert/1.5.3:
     resolution:
       { integrity: sha512-FyAOrDuQmBi8/or3ns4rwPno7/9tJTijVW6aQQjK02+kOQ8zmoNg2XJtAuQhvQcy1ASJq38wirX5//9J1EqoUA== }
@@ -2825,6 +2848,11 @@ packages:
     resolution:
       { integrity: sha512-Q5vtl1W5ue16D+nIaW8JWebSSraJVlK+EthKn7e7UcD4KWsaSJ8BqGPXNaPghgtcn/fhvrN17Tv8ksUsQpiplw== }
     dev: true
+
+  /@types/unist/2.0.6:
+    resolution:
+      { integrity: sha512-PBjIUxZHOuj0R15/xuwJYjFi+KZdNFrehocChv4g5hu6aFroHue8m0lBP0POdK2nKzbw0cgV1mws8+V/JAcEkQ== }
+    dev: false
 
   /@types/uuid/9.0.1:
     resolution:
@@ -4618,6 +4646,13 @@ packages:
       reusify: 1.0.4
     dev: true
 
+  /fault/2.0.1:
+    resolution:
+      { integrity: sha512-WtySTkS4OKev5JtpHXnib4Gxiurzh5NCGvWrFaZ34m6JehfTUhKZvn9njTfw48t6JumVQOmrKqpmGcdwxnhqBQ== }
+    dependencies:
+      format: 0.2.2
+    dev: false
+
   /fb-watchman/2.0.2:
     resolution:
       { integrity: sha512-p5161BqbuCaSnB8jIbzQHOlpgsPmK5rJVDfDKO91Axs5NC1uu3HRQm6wt9cd9/+GtQQIO53JdGXXoyDpTAsgYA== }
@@ -4702,6 +4737,12 @@ packages:
       combined-stream: 1.0.8
       mime-types: 2.1.35
     dev: true
+
+  /format/0.2.2:
+    resolution:
+      { integrity: sha512-wzsgA6WOq+09wrU1tsJ09udeR/YZRaeArL9e1wPbFg3GG2yDnC2ldKpxs4xunpFF9DgqCqOIra3bc1HWrJ37Ww== }
+    engines: { node: '>=0.4.x' }
+    dev: false
 
   /fs-constants/1.0.0:
     resolution:
@@ -5015,6 +5056,12 @@ packages:
     dependencies:
       function-bind: 1.1.1
     dev: true
+
+  /highlight.js/11.7.0:
+    resolution:
+      { integrity: sha512-1rRqesRFhMO/PRF+G86evnyJkCgaZFOI+Z6kdj15TA18funfoqJXvgPCLSf0SWq3SRfg1j3HlDs8o4s3EGq1oQ== }
+    engines: { node: '>=12.0.0' }
+    dev: false
 
   /hoist-non-react-statics/3.3.2:
     resolution:
@@ -6281,6 +6328,15 @@ packages:
     hasBin: true
     dependencies:
       js-tokens: 4.0.0
+
+  /lowlight/2.8.1:
+    resolution:
+      { integrity: sha512-HCaGL61RKc1MYzEYn3rFoGkK0yslzCVDFJEanR19rc2L0mb8i58XM55jSRbzp9jcQrFzschPlwooC0vuNitk8Q== }
+    dependencies:
+      '@types/hast': 2.3.4
+      fault: 2.0.1
+      highlight.js: 11.7.0
+    dev: false
 
   /lru-cache/5.1.1:
     resolution:

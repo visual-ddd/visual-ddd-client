@@ -1,4 +1,4 @@
-import { EditorContent, useEditor } from '@tiptap/react';
+import { EditorContent, useEditor, ReactNodeViewRenderer } from '@tiptap/react';
 import { Doc as YDoc } from 'yjs';
 import { Awareness } from 'y-protocols/awareness';
 
@@ -10,6 +10,12 @@ import Underline from '@tiptap/extension-underline';
 import Placeholder from '@tiptap/extension-placeholder';
 import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
+import CodeBlock from '@tiptap/extension-code-block-lowlight';
+import { lowlight } from 'lowlight';
+import css from 'highlight.js/lib/languages/css';
+import js from 'highlight.js/lib/languages/javascript';
+import ts from 'highlight.js/lib/languages/typescript';
+import html from 'highlight.js/lib/languages/xml';
 import classNames from 'classnames';
 import { IUser } from '@/lib/core';
 import { NoopArray } from '@wakeapp/utils';
@@ -21,6 +27,12 @@ import { WYSIWYGEditorToolbar } from './Toolbar';
 import { useEffect, useMemo, useRef } from 'react';
 import { CustomKeyboardBinding } from './CustomKeyboardBinding';
 import { FileHandler } from './FileHandler';
+import { CodeBlockComponent } from './CodeBlockComponent';
+
+lowlight.registerLanguage('html', html);
+lowlight.registerLanguage('css', css);
+lowlight.registerLanguage('js', js);
+lowlight.registerLanguage('ts', ts);
 
 export interface WYSIWYGEditorProps {
   /**
@@ -78,6 +90,14 @@ export const WYSIWYGEditor = (props: WYSIWYGEditorProps) => {
 
       Placeholder.configure({
         placeholder: placeholder ?? '请输入内容',
+      }),
+
+      CodeBlock.extend({
+        addNodeView() {
+          return ReactNodeViewRenderer(CodeBlockComponent);
+        },
+      }).configure({
+        lowlight,
       }),
 
       !!awareness &&
