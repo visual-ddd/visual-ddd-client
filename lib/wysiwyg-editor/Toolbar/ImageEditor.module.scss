@@ -1,0 +1,28 @@
+.root {
+  min-width: 250px;
+  outline: none;
+  :global {
+    .ant-tabs-nav {
+      margin-bottom: 8px;
+    }
+
+    .ant-tabs-tab {
+      padding: 4px 0 !important;
+    }
+  }
+}
+
+.upload {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80px;
+}
+
+.external {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  min-height: 80px;
+}

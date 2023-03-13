@@ -13,6 +13,12 @@ export class CustomKeyboardBinding extends KeyboardBinding {
   @observable
   linkSetterVisible = false;
 
+  /**
+   * 图片设置窗口是否开启
+   */
+  @observable
+  imageSetterVisible = false;
+
   constructor() {
     super();
 
@@ -30,6 +36,11 @@ export class CustomKeyboardBinding extends KeyboardBinding {
     this.linkSetterVisible = !this.linkSetterVisible;
   }
 
+  @mutation('TOGGLE_IMAGE_SETTER', false)
+  toggleImageSetter() {
+    this.imageSetterVisible = !this.imageSetterVisible;
+  }
+
   private initial(container: HTMLDivElement) {
     this.bindKey({
       name: 'link',
@@ -41,6 +52,17 @@ export class CustomKeyboardBinding extends KeyboardBinding {
       },
       handler: () => {
         this.toggleLinkSetter();
+      },
+    }).bindKey({
+      name: 'image',
+      title: '图片',
+      description: '插入图片',
+      key: {
+        macos: 'command+g',
+        other: 'ctrl+g',
+      },
+      handler: () => {
+        this.toggleImageSetter();
       },
     });
 

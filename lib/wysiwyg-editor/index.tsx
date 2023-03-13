@@ -7,6 +7,8 @@ import Collaboration from '@tiptap/extension-collaboration';
 import CollaborationCursor from '@tiptap/extension-collaboration-cursor';
 import TextAlign from '@tiptap/extension-text-align';
 import Underline from '@tiptap/extension-underline';
+import Placeholder from '@tiptap/extension-placeholder';
+import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import classNames from 'classnames';
 import { IUser } from '@/lib/core';
@@ -18,6 +20,7 @@ import s from './index.module.scss';
 import { WYSIWYGEditorToolbar } from './Toolbar';
 import { useEffect, useMemo, useRef } from 'react';
 import { CustomKeyboardBinding } from './CustomKeyboardBinding';
+import { FileHandler } from './FileHandler';
 
 export interface WYSIWYGEditorProps {
   /**
@@ -45,10 +48,12 @@ export interface WYSIWYGEditorProps {
    * 如果开启了多人协作，需要传递该属性
    */
   user?: IUser;
+
+  placeholder?: string;
 }
 
 export const WYSIWYGEditor = (props: WYSIWYGEditorProps) => {
-  const { doc, field, readonly, awareness, user } = props;
+  const { doc, field, readonly, awareness, user, placeholder } = props;
   const containerRef = useRef<HTMLDivElement>(null);
 
   const editor = useEditor({
@@ -68,6 +73,12 @@ export const WYSIWYGEditor = (props: WYSIWYGEditorProps) => {
       }) as any,
 
       Link.configure({}),
+
+      Image.configure({}),
+
+      Placeholder.configure({
+        placeholder: placeholder ?? '请输入内容',
+      }),
 
       !!awareness &&
         !!user &&
@@ -109,6 +120,11 @@ export const WYSIWYGEditor = (props: WYSIWYGEditorProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, NoopArray);
 
+  const fileHandler = useMemo(() => {
+    return new FileHandler();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, NoopArray);
+
   useEffect(() => {
     if (editor) {
       keyboardBinding.bindEditor(editor, containerRef.current!);
@@ -119,6 +135,21 @@ export const WYSIWYGEditor = (props: WYSIWYGEditorProps) => {
     }
   }, [keyboardBinding, editor]);
 
+  useEffect(() => {
+    if (editor) {
+      fileHandler.bindEditor(editor);
+    }
+  }, [fileHandler, editor]);
+
+  // 处理粘贴事件
+  const handlePaste: React.ClipboardEventHandler<HTMLDivElement> = e => {
+    if (e.clipboardData.files.length) {
+      e.preventDefault();
+      e.stopPropagation();
+      fileHandler?.handleFiles(Array.from(e.clipboardData.files));
+    }
+  };
+
   return (
     <div className={classNames('vd-wd', s.root)} ref={containerRef}>
       <WYSIWYGEditorToolbar
@@ -126,7 +157,11 @@ export const WYSIWYGEditor = (props: WYSIWYGEditorProps) => {
         editor={editor}
         keyboardBinding={keyboardBinding}
       />
-      <EditorContent className={classNames('vd-wd__content', s.content)} editor={editor}></EditorContent>
+      <EditorContent
+        onPasteCapture={handlePaste}
+        className={classNames('vd-wd__content', s.content)}
+        editor={editor}
+      ></EditorContent>
     </div>
   );
 };

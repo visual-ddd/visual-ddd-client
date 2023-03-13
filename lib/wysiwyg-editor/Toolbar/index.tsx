@@ -13,6 +13,7 @@ import {
   AlignCenterOutlined,
   AlignRightOutlined,
   LinkOutlined,
+  PictureOutlined,
 } from '@ant-design/icons';
 import { useReadableKeyBinding } from '@/lib/hooks';
 
@@ -21,6 +22,7 @@ import { CustomKeyboardBinding } from '../CustomKeyboardBinding';
 import { CodeIcon } from './CodeIcon';
 import { JustifyIcon } from './JustifyIcon';
 import { LinkEditor } from './LinkEditor';
+import { ImageEditor } from './ImageEditor';
 
 export interface WYSIWYGEditorToolbarProps {
   editor: Editor | null;
@@ -163,9 +165,17 @@ export const WYSIWYGEditorToolbar = function WYSIWYGEditorToolbar(props: WYSIWYG
               active={editor.isActive('link')}
               tooltip={`链接 (${getReadableKeyBinding({ macos: 'command+k', other: 'ctrl+k' })})`}
               tooltipProps={{ placement: 'right' }}
-              // onClick={keyboardBinding.toggleLinkSetter}
             ></Item>
           </LinkEditor>
+          <ImageEditor keyboardBinding={keyboardBinding} editor={editor}>
+            <Item
+              name="image"
+              icon={<PictureOutlined />}
+              active={editor.isActive('image')}
+              tooltip="插入图片"
+              tooltipProps={{ placement: 'right' }}
+            ></Item>
+          </ImageEditor>
         </Group>
       </Group>
     </Toolbar>

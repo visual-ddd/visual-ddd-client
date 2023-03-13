@@ -134,6 +134,7 @@ export class KeyboardBinding implements IDisposable {
    */
   dispose() {
     this.registry?.unbindAll();
+    this.registry = undefined;
   }
 
   /**
