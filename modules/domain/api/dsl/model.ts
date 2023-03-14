@@ -16,6 +16,10 @@ export class DSLModel implements IObjectStore {
   private dataModel: DataModelContainer;
   private mapperModel: MapperModelContainer;
   private vision?: string;
+  /**
+   * 统一语言
+   */
+  private ubiquitousLanguage?: DSL.UbiquitousLanguageItem[];
 
   constructor(doc: YDoc) {
     const domainMap = doc.getMap(YJS_FIELD_NAME.DOMAIN);
@@ -28,6 +32,7 @@ export class DSLModel implements IObjectStore {
     this.dataModel = new DataModelContainer(dataObjectMap.toJSON());
     this.mapperModel = new MapperModelContainer(mapperMap.toJSON(), this);
     this.vision = doc.getText(YJS_FIELD_NAME.VISION).toString();
+    this.ubiquitousLanguage = doc.getArray(YJS_FIELD_NAME.UBIQUITOUS_LANGUAGE).toJSON();
   }
 
   /**
@@ -70,6 +75,7 @@ export class DSLModel implements IObjectStore {
       dataModel: this.dataModel.toDSL(),
       objectMapper: this.mapperModel.toDSL(),
       vision: this.vision,
+      ubiquitousLanguage: this.ubiquitousLanguage,
     };
   }
 }

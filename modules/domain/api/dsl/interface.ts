@@ -1,5 +1,7 @@
 import type { UbiquitousLanguageItem } from '@/modules/domain/ubiquitous-language-design/types';
 
+export type { UbiquitousLanguageItem } from '@/modules/domain/ubiquitous-language-design/types';
+
 /**
  * DSL 定义
  */

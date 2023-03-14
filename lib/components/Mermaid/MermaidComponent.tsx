@@ -13,11 +13,15 @@ export const MermaidComponent = (props: MermaidProps) => {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    Mermaid.render('graph', code).then(({ svg }) => {
-      if (ref.current) {
-        ref.current.innerHTML = svg;
-      }
-    });
+    Mermaid.render('graph', code)
+      .then(({ svg }) => {
+        if (ref.current) {
+          ref.current.innerHTML = svg;
+        }
+      })
+      .catch(err => {
+        console.error('mermaid error', err, code);
+      });
   }, [code]);
 
   return <div ref={ref} className={classNames('mermaid', className)} {...rest} />;

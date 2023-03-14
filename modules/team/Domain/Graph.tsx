@@ -24,7 +24,7 @@ export const Graph = memo((props: GraphProps) => {
     }
 
     const root: MindMapNode = {
-      name: detail.name,
+      name: `《业务域》<br>${detail.name}`,
       shape: 'circle',
       children: [],
     };
@@ -95,7 +95,7 @@ export const Graph = memo((props: GraphProps) => {
           }
         }
 
-        if (aggregation.entities) {
+        if (aggregation.entities?.length) {
           const entityNode: MindMapNode = {
             name: '《实体》',
             children: [],
