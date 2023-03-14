@@ -3,7 +3,7 @@ import { makeAutoBindThis, derive, mutation } from '@/lib/store';
 import { IAwarenessRegistry, IUser } from '@/lib/core';
 import { IDisposable } from '@/lib/utils';
 import localforage from 'localforage';
-import { debounce, Disposer } from '@wakeapp/utils';
+import { debounce, Disposer, NoopArray } from '@wakeapp/utils';
 
 import { BaseEditorDatasource } from './BaseEditorDatasource';
 import { BaseNode } from './BaseNode';
@@ -81,6 +81,23 @@ export interface BaseEditorAwarenessRemoteState {
  * 协作交互状态设置
  */
 export interface BaseEditorAwarenessRegistry extends IAwarenessRegistry<BaseEditorAwarenessState> {}
+
+export class NoopBaseEditorAwarenessRegistry implements BaseEditorAwarenessRegistry {
+  /**
+   * 设置状态
+   * @param state
+   */
+  setState(state: any) {}
+
+  getState() {
+    return undefined;
+  }
+
+  /**
+   * 远程状态
+   */
+  remoteStates = NoopArray;
+}
 
 /**
  * 这里放置非核心的视图状态

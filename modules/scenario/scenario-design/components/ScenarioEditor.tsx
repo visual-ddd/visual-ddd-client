@@ -22,7 +22,7 @@ export interface ScenarioEditorProps {
   active?: boolean;
 }
 
-const options: CanvasModelOptions = {
+export const CANVAS_MODEL_OPTIONS: CanvasModelOptions = {
   onOptionsCreated(opts) {
     opts.highlighting!.embedding = {
       name: 'className',
@@ -61,7 +61,7 @@ export const ScenarioEditor = observer(function ScenarioEditor(props: ScenarioEd
   return (
     <div>
       <EditorModelProvider value={model}>
-        <CanvasModelProvider options={options}>
+        <CanvasModelProvider options={CANVAS_MODEL_OPTIONS}>
           <EditorConfigurationProvider value={configuration}>
             <EditorLayout
               left={

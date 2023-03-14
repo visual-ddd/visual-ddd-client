@@ -13,6 +13,7 @@ import {
 import { PreviewPageLayout, PreviewPageSection, PreviewPageVersion } from '@/lib/components/PreviewPageLayout';
 import { Button, Card, Space, Statistic } from 'antd';
 import classNames from 'classnames';
+import dynamic from 'next/dynamic';
 import { request, useRequestPaginationByGet } from '@/modules/backend-client';
 import { useLayoutTitle } from '@/modules/Layout';
 import type { ScenarioDSL } from '@/modules/scenario/api/dsl/interface';
@@ -26,6 +27,10 @@ import { useStat } from './useStat';
 export interface ScenarioReversionProps {
   detail: ScenarioDetail;
 }
+
+const ScenarioStandalone = dynamic(() => import('@/modules/scenario/scenario-design/StandaloneEditor'), {
+  ssr: false,
+});
 
 export const ScenarioReversion = (props: ScenarioReversionProps) => {
   const { detail } = props;
@@ -198,6 +203,9 @@ export const ScenarioReversion = (props: ScenarioReversionProps) => {
                 </Button>
               )}
             </Space>
+          </Card>
+          <Card size="small" title="流程图">
+            <ScenarioStandalone dsl={detail.version.graphDsl} />
           </Card>
         </>
       }
