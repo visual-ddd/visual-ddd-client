@@ -20,6 +20,7 @@ import { request } from '@/modules/backend-client';
 import { useLayoutTitle } from '@/modules/Layout';
 import { DomainDetail, VersionStatus } from '../types';
 import { UpdateDomain, useUpdateDomain } from './Update';
+import { Graph } from './Graph';
 
 export interface DomainReversionProps {
   detail: DomainDetail;
@@ -162,6 +163,9 @@ export const DomainReversion = (props: DomainReversionProps) => {
               {detail.version.description || '未配置版本描述'}
             </PreviewPageSection>
             <PreviewPageSection name="愿景/目标">{dsl?.vision || '未配置愿景/目标'}</PreviewPageSection>
+          </Card>
+          <Card size="small" title="业务域概览">
+            <Graph dsl={dsl} detail={detail} />
           </Card>
         </>
       }

@@ -4,6 +4,10 @@
 import { AccessModifier, UntitledInCamelCase, Void, VoidClass } from './constants';
 import { AccessDSL, MethodDSL, ParameterDSL, PropertyDSL, TypeDSL, TypeType } from './dsl';
 
+export function stringifyName(node: { name: string; title?: string }) {
+  return node.title ? `${node.title}(${node.name})` : node.name;
+}
+
 export function stringifyTypeDSL(type?: TypeDSL, getReferenceTypeName?: (id: string, name: string) => string): string {
   if (type == null) {
     return VoidClass;
