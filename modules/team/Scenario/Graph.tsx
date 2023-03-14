@@ -1,9 +1,12 @@
 import { Empty } from 'antd';
-import { memo, useMemo } from 'react';
+import { useMemo } from 'react';
+import { observer } from 'mobx-react';
 import { MermaidContainer, MindMap, MindMapNode } from '@/lib/components/Mermaid';
 import type { ScenarioDSL } from '@/modules/scenario/api/dsl/interface';
 
 import { ScenarioDetail } from '../types';
+import { useTeamLayoutModel } from '../TeamLayout';
+import { booleanPredicate } from '@wakeapp/utils';
 
 export interface GraphProps extends React.HTMLAttributes<HTMLDivElement> {
   detail: ScenarioDetail;
@@ -14,8 +17,22 @@ function stringifyName(node: { name: string; title?: string }) {
   return node.title ? `${node.title}<br>${node.name}` : node.name;
 }
 
-export const Graph = memo((props: GraphProps) => {
+export const Graph = observer(function Graph(props: GraphProps) {
   const { dsl, detail, ...other } = props;
+
+  const layoutModel = useTeamLayoutModel();
+
+  const domains = useMemo(() => {
+    const domainIds = dsl?.domainDependencies.filter(i => !i.teamId && i.domainId).map(i => i.domainId);
+
+    return domainIds
+      ?.map(domainId => {
+        const domain = layoutModel?.domainList.find(i => i.id === domainId);
+
+        return domain;
+      })
+      .filter(booleanPredicate);
+  }, [layoutModel?.domainList, dsl?.domainDependencies]);
 
   const tree = useMemo<MindMapNode | undefined>(() => {
     if (dsl == null) {
@@ -44,10 +61,24 @@ export const Graph = memo((props: GraphProps) => {
       }
     }
 
-    // TODO: 业务域
+    if (domains?.length) {
+      const domain: MindMapNode = {
+        name: '《业务域》',
+        children: [],
+      };
+
+      root.children?.push(domain);
+
+      for (const domainItem of domains) {
+        domain.children?.push({
+          name: stringifyName(domainItem),
+          shape: 'square',
+        });
+      }
+    }
 
     return root;
-  }, [dsl, detail]);
+  }, [dsl, detail, domains]);
 
   if (tree == null) {
     return <Empty description="暂无数据" />;
@@ -59,7 +90,5 @@ export const Graph = memo((props: GraphProps) => {
     </MermaidContainer>
   );
 });
-
-Graph.displayName = 'Graph';
 
 export default Graph;

@@ -14,12 +14,13 @@ import {
 import { PreviewPageLayout, PreviewPageSection, PreviewPageVersion } from '@/lib/components/PreviewPageLayout';
 import { Button, Card, Space, Statistic, Modal, message } from 'antd';
 import classNames from 'classnames';
-import { download, request } from '@/modules/backend-client';
+import { download, request, useRequestPaginationByGet } from '@/modules/backend-client';
 
 import { useLayoutTitle } from '@/modules/Layout';
 import { AppDetail, DomainSimple, ScenarioSimple, VersionStatus } from '../types';
 import { UpdateApp, useUpdateApp } from './Update';
 import { Association, AssociationProps, IAssociable, useAssociation } from './Association';
+import Graph from './Graph';
 
 export interface AppReversionProps {
   detail: AppDetail;
@@ -37,6 +38,10 @@ export const AppReversion = (props: AppReversionProps) => {
   const scenarioAssociationRef = useAssociation();
   const status = detail.version.state;
   const readonly = status === VersionStatus.PUBLISHED;
+
+  const { data: versionList } = useRequestPaginationByGet(
+    `/wd/visual/web/application-version/application-version-page-query?pageNo=1&pageSize=1&searchCount=true&applicationId=${detail.id}`
+  );
 
   const requestVersionList: VersionListProps['onRequest'] = async ({ pageNo, pageSize }) => {
     const { totalCount, data } = await request.requestPaginationByGet(
@@ -199,6 +204,16 @@ export const AppReversion = (props: AppReversionProps) => {
     });
   };
 
+  const handleOpenVersions = () => versionListRef.current?.open();
+
+  const handleOpenDomains = () => {
+    domainAssociationRef.current?.open();
+  };
+
+  const handleOpenScenarios = () => {
+    scenarioAssociationRef.current?.open();
+  };
+
   return (
     <PreviewPageLayout
       className={classNames('vd-domain-rv')}
@@ -216,7 +231,7 @@ export const AppReversion = (props: AppReversionProps) => {
           >
             Fork 版本
           </Button>
-          <Button size="small" onClick={() => versionListRef.current?.open()}>
+          <Button size="small" onClick={handleOpenVersions}>
             查看历史版本
           </Button>
           {status === VersionStatus.UNPUBLISHED && (
@@ -233,26 +248,26 @@ export const AppReversion = (props: AppReversionProps) => {
       }
       stats={
         <>
-          <Card bordered size="small">
-            <Statistic value={10} title="业务域"></Statistic>
+          <Card bordered size="small" onClick={handleOpenDomains} className="u-pointer">
+            <Statistic value={detail.version.domainDesignVersionIds?.length ?? 0} title="业务域"></Statistic>
           </Card>
-          <Card bordered size="small">
-            <Statistic value={6} title="业务场景"></Statistic>
+          <Card bordered size="small" onClick={handleOpenScenarios} className="u-pointer">
+            <Statistic value={detail.version.businessSceneVersionIds?.length ?? 0} title="业务场景"></Statistic>
           </Card>
-          <Card bordered size="small">
+          {/* <Card bordered size="small">
             <Statistic value={6} title="统一语言"></Statistic>
-          </Card>
-          <Card bordered size="small">
+          </Card> */}
+          {/* <Card bordered size="small">
             <Statistic value={6} title="领域模型"></Statistic>
-          </Card>
-          <Card bordered size="small">
+          </Card> */}
+          {/* <Card bordered size="small">
             <Statistic value={6} title="数据模型"></Statistic>
           </Card>
           <Card bordered size="small">
             <Statistic value={6} title="能力"></Statistic>
-          </Card>
-          <Card bordered size="small">
-            <Statistic value={6} title="版本"></Statistic>
+          </Card> */}
+          <Card bordered size="small" onClick={handleOpenVersions} className="u-pointer">
+            <Statistic value={versionList?.totalCount ?? 0} title="版本"></Statistic>
           </Card>
         </>
       }
@@ -265,6 +280,9 @@ export const AppReversion = (props: AppReversionProps) => {
               {detail.version.description || '未配置版本描述'}
             </PreviewPageSection>
           </Card>
+          <Card size="small" title="概览图">
+            <Graph detail={detail} />
+          </Card>
         </>
       }
       right={
@@ -274,22 +292,10 @@ export const AppReversion = (props: AppReversionProps) => {
               <Button size="small" type="primary" onClick={() => updateRef.current?.open()}>
                 设置
               </Button>
-              <Button
-                size="small"
-                type="primary"
-                onClick={() => {
-                  domainAssociationRef.current?.open();
-                }}
-              >
+              <Button size="small" type="primary" onClick={handleOpenDomains}>
                 关联业务域
               </Button>
-              <Button
-                size="small"
-                type="primary"
-                onClick={() => {
-                  scenarioAssociationRef.current?.open();
-                }}
-              >
+              <Button size="small" type="primary" onClick={handleOpenScenarios}>
                 关联业务场景
               </Button>
               <Button size="small" type="primary">

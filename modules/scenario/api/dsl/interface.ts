@@ -5,7 +5,7 @@ export interface DomainDependencyDSL {
   teamId?: string;
 
   // 依赖业务域 ID
-  domainId: string;
+  domainId: string | number;
 
   // 业务域版本号 ID
   versionId: string;
