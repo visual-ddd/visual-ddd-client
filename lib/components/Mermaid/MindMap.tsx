@@ -17,7 +17,5 @@ export const MindMap = (props: MindMapProps) => {
   const { tree, ...other } = props;
   const code = useMemo(() => mindMapNodeToMermaidCode(tree), [tree]);
 
-  console.log(code);
-
   return <MermaidComponent code={code} {...other} />;
 };

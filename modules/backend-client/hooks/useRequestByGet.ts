@@ -1,4 +1,4 @@
-import { useRequest } from './useRequest';
+import { useRequest, useRequestPagination } from './useRequest';
 
 /**
  * GET 请求
@@ -9,6 +9,13 @@ import { useRequest } from './useRequest';
  */
 export const useRequestByGet: typeof useRequest = (url, body, config) => {
   return useRequest(url, body, {
+    ...config,
+    method: 'GET',
+  });
+};
+
+export const useRequestPaginationByGet: typeof useRequestPagination = (url, body, config) => {
+  return useRequestPagination(url, body, {
     ...config,
     method: 'GET',
   });

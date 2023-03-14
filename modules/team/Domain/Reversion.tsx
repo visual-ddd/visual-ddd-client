@@ -15,12 +15,13 @@ import type { BusinessDomainDSL } from '@/modules/domain/api/dsl/interface';
 import { PreviewPageLayout, PreviewPageSection, PreviewPageVersion } from '@/lib/components/PreviewPageLayout';
 import { Button, Card, Space, Statistic } from 'antd';
 import classNames from 'classnames';
-import { request } from '@/modules/backend-client';
+import { request, useRequestPaginationByGet } from '@/modules/backend-client';
 
 import { useLayoutTitle } from '@/modules/Layout';
 import { DomainDetail, VersionStatus } from '../types';
 import { UpdateDomain, useUpdateDomain } from './Update';
 import { Graph } from './Graph';
+import { useStat } from './useStat';
 
 export interface DomainReversionProps {
   detail: DomainDetail;
@@ -41,6 +42,10 @@ export const DomainReversion = (props: DomainReversionProps) => {
       return JSON.parse(dslStr);
     }
   }, [dslStr]);
+  const stats = useStat(dsl);
+  const { data: versionList } = useRequestPaginationByGet(
+    `/wd/visual/web/domain-design-version/domain-design-version-page-query?pageNo=1&pageSize=1&searchCount=true&domainDesignId=${detail.id}`
+  );
 
   const requestVersionList: VersionListProps['onRequest'] = async ({ pageNo, pageSize }) => {
     const { totalCount, data } = await request.requestPaginationByGet(
@@ -98,6 +103,10 @@ export const DomainReversion = (props: DomainReversionProps) => {
     router.replace(router.asPath);
   };
 
+  const showVersionList = () => {
+    versionListRef.current?.open();
+  };
+
   return (
     <PreviewPageLayout
       className={classNames('vd-domain-rv')}
@@ -115,7 +124,7 @@ export const DomainReversion = (props: DomainReversionProps) => {
           >
             Fork 版本
           </Button>
-          <Button size="small" onClick={() => versionListRef.current?.open()}>
+          <Button size="small" onClick={showVersionList}>
             查看历史版本
           </Button>
           {status === VersionStatus.UNPUBLISHED && (
@@ -133,26 +142,26 @@ export const DomainReversion = (props: DomainReversionProps) => {
       stats={
         <>
           <Card bordered size="small">
-            <Statistic value={10} title="领域模型"></Statistic>
+            <Statistic value={stats?.domainObject ?? 0} title="领域对象"></Statistic>
           </Card>
           <Card bordered size="small">
-            <Statistic value={6} title="数据模型"></Statistic>
+            <Statistic value={stats?.dataObject ?? 0} title="数据对象"></Statistic>
           </Card>
           <Card bordered size="small">
-            <Statistic value={6} title="统一语言"></Statistic>
+            <Statistic value={stats?.ubiquitousLanguage ?? 0} title="统一语言"></Statistic>
           </Card>
           <Card bordered size="small">
-            <Statistic value={6} title="能力"></Statistic>
+            <Statistic value={stats?.businessCapability ?? 0} title="能力"></Statistic>
           </Card>
-          <Card bordered size="small">
-            <Statistic value={6} title="版本"></Statistic>
+          <Card bordered className="u-pointer" size="small" onClick={showVersionList}>
+            <Statistic value={versionList?.totalCount ?? 0} title="版本"></Statistic>
           </Card>
-          <Card bordered size="small">
+          {/* <Card bordered size="small">
             <Statistic value={6} title="关联应用"></Statistic>
           </Card>
           <Card bordered size="small">
             <Statistic value={6} title="关联业务场景"></Statistic>
-          </Card>
+          </Card> */}
         </>
       }
       left={

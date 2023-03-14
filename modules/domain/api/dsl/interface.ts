@@ -1,3 +1,5 @@
+import type { UbiquitousLanguageItem } from '@/modules/domain/ubiquitous-language-design/types';
+
 /**
  * DSL 定义
  */
@@ -527,6 +529,11 @@ export interface BusinessDomainDSL {
    * 对象映射
    */
   objectMapper: ObjectMapper.ObjectMapperModel;
+
+  /**
+   * 统一语言
+   */
+  ubiquitousLanguage?: UbiquitousLanguageItem[];
 
   /**
    * 产品愿景

@@ -1,4 +1,4 @@
-import { useRequest } from './useRequest';
+import { useRequest, useRequestPagination } from './useRequest';
 
 /**
  * POST 请求
@@ -8,3 +8,5 @@ import { useRequest } from './useRequest';
  * @returns
  */
 export const useRequestByPost = useRequest;
+
+export const useRequestPaginationByPost = useRequestPagination;
