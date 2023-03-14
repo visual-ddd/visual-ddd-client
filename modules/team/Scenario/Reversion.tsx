@@ -13,11 +13,15 @@ import {
 import { PreviewPageLayout, PreviewPageSection, PreviewPageVersion } from '@/lib/components/PreviewPageLayout';
 import { Button, Card, Space, Statistic } from 'antd';
 import classNames from 'classnames';
-import { request } from '@/modules/backend-client';
+import { request, useRequestPaginationByGet } from '@/modules/backend-client';
 import { useLayoutTitle } from '@/modules/Layout';
+import type { ScenarioDSL } from '@/modules/scenario/api/dsl/interface';
 
 import { ScenarioDetail, VersionStatus } from '../types';
 import { UpdateScenario, useUpdateScenario } from './Update';
+import { useMemo } from 'react';
+import Graph from './Graph';
+import { useStat } from './useStat';
 
 export interface ScenarioReversionProps {
   detail: ScenarioDetail;
@@ -33,6 +37,17 @@ export const ScenarioReversion = (props: ScenarioReversionProps) => {
   const versionCreateRef = useVersionCreateRef();
   const versionPublishRef = useVersionPublishRef();
   const status = detail.version.state;
+
+  const dslStr = detail.version.dsl;
+  const dsl = useMemo<ScenarioDSL | undefined>(() => {
+    if (dslStr) {
+      return JSON.parse(dslStr);
+    }
+  }, [dslStr]);
+  const stats = useStat(dsl);
+  const { data: versionList } = useRequestPaginationByGet(
+    `/wd/visual/web/business-scene-version/business-scene-version-page-query?pageNo=1&pageSize=1&searchCount=true&businessSceneId=${detail.id}`
+  );
 
   const requestVersionList: VersionListProps['onRequest'] = async ({ pageNo, pageSize }) => {
     const { totalCount, data } = await request.requestPaginationByGet(
@@ -90,6 +105,14 @@ export const ScenarioReversion = (props: ScenarioReversionProps) => {
     router.replace(router.asPath);
   };
 
+  const handleOpenPublish = () => {
+    versionPublishRef.current?.open(detail.version);
+  };
+
+  const handleOpenVersionList = () => {
+    versionListRef.current?.open();
+  };
+
   return (
     <PreviewPageLayout
       className={classNames('vd-domain-rv')}
@@ -107,16 +130,11 @@ export const ScenarioReversion = (props: ScenarioReversionProps) => {
           >
             Fork 版本
           </Button>
-          <Button size="small" onClick={() => versionListRef.current?.open()}>
+          <Button size="small" onClick={handleOpenVersionList}>
             查看历史版本
           </Button>
           {status === VersionStatus.UNPUBLISHED && (
-            <Button
-              size="small"
-              onClick={() => {
-                versionPublishRef.current?.open(detail.version);
-              }}
-            >
+            <Button size="small" onClick={handleOpenPublish}>
               发布
             </Button>
           )}
@@ -125,16 +143,17 @@ export const ScenarioReversion = (props: ScenarioReversionProps) => {
       stats={
         <>
           <Card bordered size="small">
-            <Statistic value={6} title="能力"></Statistic>
+            <Statistic value={stats?.services ?? 0} title="能力"></Statistic>
           </Card>
-          <Card bordered size="small">
-            <Statistic value={6} title="版本"></Statistic>
-          </Card>
-          <Card bordered size="small">
+
+          {/* <Card bordered size="small">
             <Statistic value={6} title="关联应用"></Statistic>
-          </Card>
+          </Card> */}
           <Card bordered size="small">
-            <Statistic value={6} title="关联业务域"></Statistic>
+            <Statistic value={stats?.domain ?? 0} title="关联业务域"></Statistic>
+          </Card>
+          <Card className="u-pointer" bordered size="small" onClick={handleOpenVersionList}>
+            <Statistic value={versionList?.totalCount ?? 0} title="版本"></Statistic>
           </Card>
         </>
       }
@@ -145,6 +164,9 @@ export const ScenarioReversion = (props: ScenarioReversionProps) => {
             <PreviewPageSection name={`版本描述(${detail.version.currentVersion})`}>
               {detail.version.description || '未配置版本描述'}
             </PreviewPageSection>
+          </Card>
+          <Card size="small" title="概览图">
+            <Graph detail={detail} dsl={dsl} />
           </Card>
         </>
       }

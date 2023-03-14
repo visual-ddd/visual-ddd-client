@@ -58,6 +58,7 @@ specifiers:
   fs-extra: ^11.1.0
   fuse.js: ^6.6.2
   gravatar-url: ^4.0.1
+  highlight.js: ^11.7.0
   husky: ^8.0.3
   immer: ^9.0.19
   iron-session: ^6.3.1
@@ -147,6 +148,7 @@ dependencies:
   fs-extra: 11.1.0
   fuse.js: 6.6.2
   gravatar-url: 4.0.1
+  highlight.js: 11.7.0
   immer: 9.0.19
   iron-session: 6.3.1_next@13.2.2
   js-base64: 3.7.5
