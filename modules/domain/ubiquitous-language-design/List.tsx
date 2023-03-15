@@ -7,6 +7,7 @@ import { IUbiquitousLanguageModel, UbiquitousLanguageItem } from './types';
 import { Import } from '@/lib/components/Import';
 
 import s from './List.module.scss';
+import { AIImport, useAIImport } from './AIImport';
 
 export interface UbiquitousLanguageProps {
   model: IUbiquitousLanguageModel;
@@ -74,6 +75,7 @@ const Item = observer(function Item({
 export const UbiquitousLanguage = observer(function UbiquitousLanguage(props: UbiquitousLanguageProps) {
   const { model } = props;
   const readonly = model.readonly;
+  const aiImportRef = useAIImport();
 
   const columns = useMemo<TableColumnType<UbiquitousLanguageItem>[]>(() => {
     const editable = (key: keyof UbiquitousLanguageItem, title: string): TableColumnType<UbiquitousLanguageItem> => {
@@ -125,6 +127,12 @@ export const UbiquitousLanguage = observer(function UbiquitousLanguage(props: Ub
 
   const disabledBatchDelete = !model.selecting.length || readonly;
 
+  const unshiftItems = (items: UbiquitousLanguageItem[]) => {
+    for (const item of items) {
+      model.addItem('unshift', item);
+    }
+  };
+
   return (
     <div className={classNames('vd-ul', s.root)}>
       <div className={classNames('vd-ul__actions', s.actions)}>
@@ -151,13 +159,20 @@ export const UbiquitousLanguage = observer(function UbiquitousLanguage(props: Ub
               批量删除
             </Button>
           </Popconfirm>
-          <Button size="small" disabled={readonly}>
+
+          {/* <Button size="small" disabled={readonly} >
             自动翻译
-          </Button>
+          </Button> */}
         </Space>
         <Space>
-          <Button size="small" disabled={readonly}>
-            导入 Word
+          <Button
+            size="small"
+            disabled={readonly}
+            onClick={() => {
+              aiImportRef.current?.open();
+            }}
+          >
+            AI 导入
           </Button>
           {!!model.importExcel && (
             <Import
@@ -200,6 +215,7 @@ export const UbiquitousLanguage = observer(function UbiquitousLanguage(props: Ub
           </Popconfirm>
         </Space>
       </div>
+      <AIImport ref={aiImportRef} onImport={unshiftItems} />
     </div>
   );
 });

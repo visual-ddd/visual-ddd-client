@@ -5,7 +5,7 @@ import { v4 } from 'uuid';
 import { download, request } from '@/modules/backend-client';
 import pick from 'lodash/pick';
 
-import { IUbiquitousLanguageModel, UbiquitousLanguageItem } from './types';
+import type { IUbiquitousLanguageModel, UbiquitousLanguageItem } from './types';
 import { UbiquitousLanguageEvent } from './UbiquitousLanguageEvents';
 import { UbiquitousLanguageFuseStore } from './UbiquitousLanguageFuseStore';
 import { ItemWrapper } from './Yjs';
@@ -297,8 +297,8 @@ export class UbiquitousLanguageModel implements IUbiquitousLanguageModel {
   }
 
   @mutation('UBL_ADD_ITEM', false)
-  addItem(order: 'push' | 'unshift' = 'push') {
-    const item: UbiquitousLanguageItem = {
+  addItem(order: 'push' | 'unshift' = 'push', defaultValue?: UbiquitousLanguageItem) {
+    const item: UbiquitousLanguageItem = defaultValue ?? {
       uuid: v4(),
       conception: '',
       englishName: '',
@@ -306,6 +306,8 @@ export class UbiquitousLanguageModel implements IUbiquitousLanguageModel {
       restraint: '',
       example: '',
     };
+
+    item.uuid ||= v4();
 
     if (order === 'push') {
       this.innerList.push(item);

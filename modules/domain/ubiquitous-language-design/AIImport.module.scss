@@ -1,0 +1,27 @@
+.root {
+  :global(.ant-modal-body) {
+    max-height: 80vh;
+    overflow: auto;
+  }
+}
+
+.text {
+  margin-bottom: 1em;
+}
+
+.words {
+  margin-top: 2em;
+}
+
+.tags {
+  margin-bottom: 1.5em;
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 8px;
+  column-gap: 0px;
+}
+
+.customTag {
+  display: inline-block;
+  width: 120px;
+}

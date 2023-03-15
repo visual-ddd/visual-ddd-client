@@ -241,15 +241,17 @@ export class LanguageModel implements IUbiquitousLanguageModel {
    * 新增
    * @param order
    */
-  async addItem(order: 'push' | 'unshift' = 'push') {
+  async addItem(order: 'push' | 'unshift' = 'push', defaultValue?: UbiquitousLanguageItem) {
     try {
-      const item = await this.props.add({
-        conception: '',
-        englishName: '',
-        definition: '',
-        restraint: '',
-        example: '',
-      });
+      const item = await this.props.add(
+        defaultValue ?? {
+          conception: '',
+          englishName: '',
+          definition: '',
+          restraint: '',
+          example: '',
+        }
+      );
 
       this.addItemInner({ order, item });
     } catch (err) {

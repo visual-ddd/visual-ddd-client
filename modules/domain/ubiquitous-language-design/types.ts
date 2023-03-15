@@ -64,7 +64,12 @@ export interface IUbiquitousLanguageModel {
 
   updateItem(params: { uuid: string; key: keyof UbiquitousLanguageItem; value: string }): void;
 
-  addItem(order?: 'push' | 'unshift'): void;
+  /**
+   * 新增
+   * @param order
+   * @param item
+   */
+  addItem(order?: 'push' | 'unshift', item?: UbiquitousLanguageItem): void;
 
   removeItem(params: { uuid: string }): void;
 

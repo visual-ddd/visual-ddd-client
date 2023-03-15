@@ -2,6 +2,7 @@ import { allowMethod } from '@/lib/api';
 import { createSuccessResponse } from '@/modules/backend-node';
 import { withWakedataRequestApiRoute } from '@/modules/session/api-helper';
 import { NextApiHandler } from 'next';
+import { v4 } from 'uuid';
 import * as prompt from '../prompts';
 
 export const wordsToUbiquitousLanguage: NextApiHandler = allowMethod(
@@ -20,6 +21,10 @@ export const wordsToUbiquitousLanguage: NextApiHandler = allowMethod(
         .map(i => i.trim())
         .filter(Boolean)
     );
+
+    data.forEach(i => {
+      i.uuid ||= v4();
+    });
 
     return res.json(createSuccessResponse(data));
   })
