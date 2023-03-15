@@ -13,6 +13,13 @@ export interface CanvasModelProviderProps {
    */
   options?: CanvasModelOptions;
 
+  /**
+   * 模型准备完成
+   * @param canvasModel
+   * @returns
+   */
+  onReady?: (canvasModel: CanvasModel) => void;
+
   children?: React.ReactNode;
 }
 
@@ -22,21 +29,24 @@ export interface CanvasModelProviderProps {
  * @returns
  */
 export const CanvasModelProvider = (props: CanvasModelProviderProps) => {
+  const { children, options, onReady } = props;
   const { model: editorModel } = useEditorModel();
 
   const canvasModel = useMemo(() => {
-    return new CanvasModel({ editorModel, options: props.options });
+    return new CanvasModel({ editorModel, options: options });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editorModel]);
 
   useEffect(() => {
+    onReady?.(canvasModel);
     return () => {
       // 资源释放
       canvasModel.dispose();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [canvasModel]);
 
-  return <CONTEXT.Provider value={canvasModel}>{props.children}</CONTEXT.Provider>;
+  return <CONTEXT.Provider value={canvasModel}>{children}</CONTEXT.Provider>;
 };
 
 export function useCanvasModel() {

@@ -42,6 +42,7 @@ export const ScenarioReversion = (props: ScenarioReversionProps) => {
   const versionCreateRef = useVersionCreateRef();
   const versionPublishRef = useVersionPublishRef();
   const status = detail.version.state;
+  const KEY = detail.id + '_' + detail.version.id;
 
   const dslStr = detail.version.dsl;
   const dsl = useMemo<ScenarioDSL | undefined>(() => {
@@ -171,7 +172,7 @@ export const ScenarioReversion = (props: ScenarioReversionProps) => {
             </PreviewPageSection>
           </Card>
           <Card size="small" title="概览图">
-            <Graph detail={detail} dsl={dsl} />
+            <Graph key={KEY} detail={detail} dsl={dsl} />
           </Card>
         </>
       }
@@ -205,7 +206,7 @@ export const ScenarioReversion = (props: ScenarioReversionProps) => {
             </Space>
           </Card>
           <Card size="small" title="流程图">
-            <ScenarioStandalone dsl={detail.version.graphDsl} />
+            <ScenarioStandalone key={KEY} dsl={detail.version.graphDsl} />
           </Card>
         </>
       }
