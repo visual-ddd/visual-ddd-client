@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router';
+import { useCallback } from 'react';
 import {
   useVersionListRef,
   VersionCreate,
@@ -43,19 +44,22 @@ export const AppReversion = (props: AppReversionProps) => {
     `/wd/visual/web/application-version/application-version-page-query?pageNo=1&pageSize=1&searchCount=true&applicationId=${detail.id}`
   );
 
-  const requestVersionList: VersionListProps['onRequest'] = async ({ pageNo, pageSize }) => {
-    const { totalCount, data } = await request.requestPaginationByGet(
-      '/wd/visual/web/application-version/application-version-page-query',
-      {
-        pageNo,
-        pageSize,
-        searchCount: true,
-        applicationId: detail.id,
-      }
-    );
+  const requestVersionList: VersionListProps['onRequest'] = useCallback(
+    async ({ pageNo, pageSize }) => {
+      const { totalCount, data } = await request.requestPaginationByGet(
+        '/wd/visual/web/application-version/application-version-page-query',
+        {
+          pageNo,
+          pageSize,
+          searchCount: true,
+          applicationId: detail.id,
+        }
+      );
 
-    return { data, total: totalCount };
-  };
+      return { data, total: totalCount };
+    },
+    [detail]
+  );
 
   const requestDomainAssociations: AssociationProps['onRequest'] = async () => {
     const list = await request.requestByGet<DomainSimple[]>('/wd/visual/web/domain-design/domain-design-page-query', {
@@ -100,7 +104,7 @@ export const AppReversion = (props: AppReversionProps) => {
     });
   };
 
-  const requestDomainVersionList: AssociationProps['onRequestVersions'] = async id => {
+  const requestDomainVersionList: AssociationProps['onRequestVersions'] = useCallback(async id => {
     const list = await request.requestByGet<IVersion[]>(
       '/wd/visual/web/domain-design-version/domain-design-version-page-query',
       {
@@ -110,9 +114,9 @@ export const AppReversion = (props: AppReversionProps) => {
       }
     );
     return list;
-  };
+  }, []);
 
-  const requestScenarioVersionList: AssociationProps['onRequestVersions'] = async id => {
+  const requestScenarioVersionList: AssociationProps['onRequestVersions'] = useCallback(async id => {
     const list = await request.requestByGet<IVersion[]>(
       '/wd/visual/web/business-scene-version/business-scene-version-page-query',
       {
@@ -122,7 +126,7 @@ export const AppReversion = (props: AppReversionProps) => {
       }
     );
     return list;
-  };
+  }, []);
 
   /**
    * 保存业务域关联
@@ -149,6 +153,20 @@ export const AppReversion = (props: AppReversionProps) => {
   const navigateToVersion = (id: number) => {
     router.push(`/team/${detail.teamId}/app/${detail.id}/reversion/${id}`);
   };
+
+  const navigateToDomain = useCallback(
+    (id: number) => {
+      router.push(`/team/${detail.teamId}/domain/${id}`);
+    },
+    [detail, router]
+  );
+
+  const navigateToScenario = useCallback(
+    (id: number) => {
+      router.push(`/team/${detail.teamId}/scenario/${id}`);
+    },
+    [detail, router]
+  );
 
   const handleCreateVersion: VersionCreateProps['onSubmit'] = async values => {
     const id = await request.requestByPost<number>('/wd/visual/web/application-version/application-version-create', {
@@ -329,6 +347,7 @@ export const AppReversion = (props: AppReversionProps) => {
         identify={`${detail.id}.domain`}
         onRequest={requestDomainAssociations}
         onRequestVersions={requestDomainVersionList}
+        onNavigate={navigateToDomain}
         ref={domainAssociationRef}
         onFinish={saveDomainAssociations}
         readonly={readonly}
@@ -339,6 +358,7 @@ export const AppReversion = (props: AppReversionProps) => {
         onRequest={requestScenarioAssociations}
         onRequestVersions={requestScenarioVersionList}
         onFinish={saveScenarioAssociations}
+        onNavigate={navigateToScenario}
         ref={scenarioAssociationRef}
         readonly={readonly}
       ></Association>

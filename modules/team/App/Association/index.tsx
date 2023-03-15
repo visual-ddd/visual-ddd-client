@@ -44,6 +44,13 @@ export interface AssociationProps {
   onRequestVersions: (id: number) => Promise<IVersion[]>;
 
   /**
+   * 跳转
+   * @param id
+   * @returns
+   */
+  onNavigate: (id: number) => void;
+
+  /**
    * 触发保存
    * @param mapper
    * @returns
@@ -65,7 +72,7 @@ export function useAssociation() {
  * 应用组件关联
  */
 export const Association = forwardRef<AssociationRef, AssociationProps>((props, ref) => {
-  const { identify, name, onRequestVersions, onFinish, onRequest, readonly = false } = props;
+  const { identify, name, onRequestVersions, onNavigate, onFinish, onRequest, readonly = false } = props;
   const [visible, setVisible] = useState(false);
   const [datasource, setDatasource] = useState<IAssociable[]>([]);
   const [fetching, setFetching] = useState(false);
@@ -100,6 +107,13 @@ export const Association = forwardRef<AssociationRef, AssociationProps>((props, 
       {
         dataIndex: 'name',
         title: name,
+        render(_, row) {
+          return (
+            <span onClick={() => onNavigate(row.id)} className="u-link">
+              {row.name}
+            </span>
+          );
+        },
       },
       {
         dataIndex: 'version',
@@ -127,7 +141,7 @@ export const Association = forwardRef<AssociationRef, AssociationProps>((props, 
         },
       },
     ];
-  }, [name, identify, readonly, mapper]);
+  }, [name, identify, readonly, mapper, onNavigate, onRequestVersions]);
 
   useEffect(() => {
     if (visible) {
