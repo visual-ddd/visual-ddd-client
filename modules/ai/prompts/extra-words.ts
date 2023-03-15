@@ -1,8 +1,7 @@
 import { PromptTemplate } from 'langchain/prompts';
 import { openAI } from '../model';
 
-const template =
-  "You help me extract important nouns and verbs from the text. Your response must be a JSON array, for example [“hello”, “world”]. The text is: '''{text}'''";
+const template = `Summarize and extract the important nouns and verbs from the text. You response  JSON array, for example ["hello", "world"]. The text is. The text is: '''{text}'''`;
 const promptTemplate = new PromptTemplate({
   template,
   inputVariables: ['text'],
