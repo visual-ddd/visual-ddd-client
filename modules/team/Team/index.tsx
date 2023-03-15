@@ -3,6 +3,7 @@ import { useLayoutTitle } from '@/modules/Layout';
 import { TeamDetail } from '@/modules/organization/types';
 import { Card, Statistic } from 'antd';
 import { useRouter } from 'next/router';
+import { useTeamLayoutModel } from '../TeamLayout';
 import s from './index.module.scss';
 
 export * from './useTeamInfo';
@@ -15,11 +16,10 @@ export interface TeamHomeProps {
  * 团队首页
  */
 export function TeamHome(props: TeamHomeProps) {
-  // @ts-expect-error
   const router = useRouter();
   const { detail } = props;
-  // @ts-expect-error
   const teamId = detail.id;
+  const model = useTeamLayoutModel();
 
   useLayoutTitle(`团队概览(${detail.name})`);
 
@@ -28,14 +28,35 @@ export function TeamHome(props: TeamHomeProps) {
       className={s.root}
       stats={
         <>
-          <Card bordered size="small">
-            <Statistic value={10} title="业务域"></Statistic>
+          <Card
+            bordered
+            size="small"
+            className="u-pointer"
+            onClick={() => {
+              router.push(`/team/${teamId}/domain`);
+            }}
+          >
+            <Statistic value={model?.domainList.length ?? 0} title="业务域"></Statistic>
           </Card>
-          <Card bordered size="small">
-            <Statistic value={10} title="业务场景"></Statistic>
+          <Card
+            bordered
+            size="small"
+            className="u-pointer"
+            onClick={() => {
+              router.push(`/team/${teamId}/scenario`);
+            }}
+          >
+            <Statistic value={model?.scenarioList.length ?? 0} title="业务场景"></Statistic>
           </Card>
-          <Card bordered size="small">
-            <Statistic value={10} title="应用"></Statistic>
+          <Card
+            bordered
+            size="small"
+            className="u-pointer"
+            onClick={() => {
+              router.push(`/team/${teamId}/app`);
+            }}
+          >
+            <Statistic value={model?.appList.length ?? 0} title="应用"></Statistic>
           </Card>
         </>
       }
