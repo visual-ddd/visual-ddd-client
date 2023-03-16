@@ -1,9 +1,11 @@
 import { Middleware } from '@/lib/middleware';
+import { assert } from '@/lib/utils/assert';
 import { NextRequest, NextResponse } from 'next/server';
 import { getIronSession } from 'iron-session/edge';
 
 import {
   API_AUTH_WHITE_LIST,
+  ENTRY_PREFIX,
   IRON_SESSION_OPTIONS,
   PAGE_AUTH_BLACK_LIST,
   RESTFUL_API_PREFIX,
@@ -40,6 +42,16 @@ const inApiAuthWhitelist = (path: string) => {
  */
 const inPageAuthBlacklist = (path: string) => {
   for (const i of PAGE_AUTH_BLACK_LIST) {
+    if (path.startsWith(i)) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
+const inEntryPrefix = (path: string) => {
+  for (const i of ENTRY_PREFIX) {
     if (path.startsWith(i)) {
       return true;
     }
@@ -113,4 +125,35 @@ export const pageAuthMiddleware: Middleware = async (req, next) => {
   }
 
   return redirect;
+};
+
+export const pageEntryRedirectMiddleware: Middleware = async (req, next) => {
+  const pathname = req.nextUrl.pathname;
+
+  if (pathname.startsWith('/_') || !inEntryPrefix(pathname)) {
+    return next();
+  }
+
+  const session = await getSessionInMiddleware(req);
+
+  assert(
+    session,
+    'pageEntryRedirectMiddleware: session is undefined, pageEntryRedirectMiddleware should be after pageAuthMiddleware'
+  );
+
+  const { state } = session;
+
+  if (state == null) {
+    // 导航到启动页
+    return NextResponse.redirect(new URL('/launch', req.url));
+  }
+
+  // check entry
+  const expectedEntry = `/${state.entry}${state.entryId ? '/' + state.entryId : ''}`;
+
+  if (pathname.startsWith(expectedEntry)) {
+    return next();
+  }
+
+  return NextResponse.redirect(new URL(expectedEntry, req.url));
 };

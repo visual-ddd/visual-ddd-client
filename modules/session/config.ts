@@ -16,17 +16,20 @@ export const RESTFUL_API_PREFIX = '/api/rest';
 
 export const API_AUTH_WHITE_LIST = ['/login', '/logout', '/register'].map(i => `/api${i}`);
 
+export const ENTRY_PREFIX = [
+  // 三大模块
+  `/${VDSessionEntry.System}`,
+  `/${VDSessionEntry.Organization}`,
+  `/${VDSessionEntry.Team}`,
+];
+
 /**
  * 需要鉴权的页面
  */
 export const PAGE_AUTH_BLACK_LIST = [
   // 启动页
   '/launch',
-
-  // 三大模块
-  `/${VDSessionEntry.System}`,
-  `/${VDSessionEntry.Organization}`,
-  `/${VDSessionEntry.Team}`,
+  ...ENTRY_PREFIX,
 ];
 
 export const UNAUTH_CODE = 401;
