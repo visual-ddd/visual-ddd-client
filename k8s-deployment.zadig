@@ -28,6 +28,10 @@ spec:
             # 配置为 --inspect=0.0.0.0 打开debugger 服务
             - name: NODE_OPTIONS
               value: {{ .NODE_OPTIONS }}
+            - name: OPENAI_API_KEY
+              value: {{ .OPENAI_API_KEY }}
+            - name: OPENAI_BASE_PATH
+              value: {{ .OPENAI_BASE_PATH }}
         # 信令服务
         - name: visual-ddd-signaling
           image: wkfe/visual-ddd-signaling:latest
