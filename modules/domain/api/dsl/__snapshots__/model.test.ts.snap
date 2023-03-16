@@ -319,6 +319,24 @@ exports[`领域模型 DSL 转换集成测试 1`] = `
       },
     ],
   },
+  "ubiquitousLanguage": [
+    {
+      "conception": "请输入概念",
+      "definition": "",
+      "englishName": "hello",
+      "example": "",
+      "restraint": "",
+      "uuid": "b4cf0a7f-7025-46db-aa00-46aec7410052",
+    },
+    {
+      "conception": "请输入概念",
+      "definition": "",
+      "englishName": "shit",
+      "example": "",
+      "restraint": "",
+      "uuid": "02141c96-4cb8-4ad1-8bb2-9236c1a2e5ce",
+    },
+  ],
   "vision": "",
 }
 `;

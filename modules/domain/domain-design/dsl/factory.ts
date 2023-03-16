@@ -119,9 +119,13 @@ export function createClass(): ClassDSL {
   };
 }
 
+export function createEntityIdProperty() {
+  return { ...createProperty(), type: createBaseType('Long'), name: 'id', title: '实体唯一标识符' };
+}
+
 export function createEntity(): EntityDSL {
   const cls = createClass();
-  const idProperty = { ...createProperty(), type: createBaseType('Long'), name: 'id', title: '实体唯一标识符' };
+  const idProperty = createEntityIdProperty();
 
   return {
     ...cls,
@@ -189,6 +193,7 @@ export function createCommand(): CommandDSL {
     repository: 'modify',
     eventSendable: false,
     aggregation: undefined,
+    category: undefined,
     result: undefined,
   };
 }

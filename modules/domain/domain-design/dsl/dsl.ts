@@ -211,6 +211,13 @@ export interface MethodDSL extends NameDSL {
 }
 
 /**
+ * 包含属性的类型
+ */
+export interface PropertiesLikeDSL extends NameDSL {
+  properties: PropertyDSL[];
+}
+
+/**
  * 类定义
  */
 export interface ClassDSL extends NameDSL {

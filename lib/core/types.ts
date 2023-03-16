@@ -33,3 +33,5 @@ export interface IAwarenessRegistry<T> {
    */
   readonly remoteStates: { user?: IUser; state?: T }[];
 }
+
+export type MakeOptional<T, Keys extends keyof T> = Omit<T, Keys> & Partial<Pick<T, Keys>>;

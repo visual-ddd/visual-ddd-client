@@ -155,5 +155,7 @@ export const pageEntryRedirectMiddleware: Middleware = async (req, next) => {
     return next();
   }
 
+  // TODO: 旧的入口可能已经销毁了？
+
   return NextResponse.redirect(new URL(expectedEntry, req.url));
 };
