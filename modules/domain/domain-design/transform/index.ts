@@ -39,3 +39,11 @@ export function createDomainObjectTransform(type: DomainObjectName, value: NameD
       throw new Error(`不支持的领域对象类型: ${type}`);
   }
 }
+
+export const TRANSFORM_TARGET: [DomainObjectName, keyof IDomainObjectTransform][] = [
+  [DomainObjectName.Command, 'toCommand'],
+  [DomainObjectName.Query, 'toQuery'],
+  [DomainObjectName.DTO, 'toDTO'],
+  [DomainObjectName.Entity, 'toEntity'],
+  [DomainObjectName.ValueObject, 'toValueObject'],
+];

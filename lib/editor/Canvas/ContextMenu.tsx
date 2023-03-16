@@ -6,7 +6,7 @@ import { createPortal } from 'react-dom';
 
 import { useCanvasModel } from './CanvasModelContext';
 import s from './ContextMenu.module.scss';
-import { EditorContextMenuItem, isDivider } from './ContextMenuController';
+import { EditorContextMenuItem, EditorContextMenuNormalized, isDivider } from './ContextMenuController';
 import { NoopArray } from '@wakeapp/utils';
 
 // TODO: 溢出空间计算
@@ -43,6 +43,38 @@ export const ContextMenu = observer(function ContextMenu() {
     return null;
   }
 
+  const renderMenu = (menus: EditorContextMenuNormalized) => {
+    return menus.map((item, index) => {
+      if (isDivider(item)) {
+        return <Menu.Divider key={index} />;
+      }
+
+      if (item.children?.length) {
+        return (
+          <Menu.SubMenu
+            key={item.key}
+            text={item.label}
+            className={classNames(s.item, { [s.danger]: item.danger })}
+            disabled={item.disabled}
+          >
+            {renderMenu(item.children)}
+          </Menu.SubMenu>
+        );
+      }
+
+      return (
+        <Menu.Item
+          key={item.key}
+          className={classNames(s.item, { [s.danger]: item.danger })}
+          disabled={item.disabled}
+          onClick={item.handler}
+        >
+          {item.label}
+        </Menu.Item>
+      );
+    });
+  };
+
   return createPortal(
     <div
       className={s.root}
@@ -51,24 +83,7 @@ export const ContextMenu = observer(function ContextMenu() {
         display: visible ? 'block' : 'none',
       }}
     >
-      <Menu>
-        {menus.map((item, index) => {
-          if (isDivider(item)) {
-            return <Menu.Divider key={index} />;
-          }
-
-          return (
-            <Menu.Item
-              key={item.key}
-              className={classNames(s.item, { [s.danger]: item.danger })}
-              disabled={item.disabled}
-              onClick={item.handler}
-            >
-              {item.label}
-            </Menu.Item>
-          );
-        })}
-      </Menu>
+      <Menu>{renderMenu(menus)}</Menu>
     </div>,
     root
   );

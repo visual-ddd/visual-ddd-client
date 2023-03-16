@@ -1,7 +1,7 @@
 import { mutation } from '@/lib/store';
 import { IDisposable } from '@/lib/utils';
 import type { Cell } from '@antv/x6';
-import { Disposer, NoopArray } from '@wakeapp/utils';
+import { Disposer, Noop, NoopArray } from '@wakeapp/utils';
 import { makeObservable, observable } from 'mobx';
 import type { BaseNode } from '../Model';
 import type { CanvasModel } from './CanvasModel';
@@ -25,7 +25,18 @@ type ObjectWithContext<T> = { [K in keyof T]: WithContext<T[K]> };
 
 export interface EditorContextMenuItem extends ObjectWithContext<EditorContextMenuItemRaw> {
   key: string;
-  handler: (context: EditorContextMenuContext) => void;
+
+  /**
+   * 处理器
+   * @param context
+   * @returns
+   */
+  handler?: (context: EditorContextMenuContext) => void;
+
+  /**
+   * 子菜单
+   */
+  children?: EditorContextMenu;
 }
 
 export interface EditorContextMenuDivider {
@@ -36,12 +47,13 @@ export type EditorContextMenu = (EditorContextMenuItem | EditorContextMenuDivide
 
 export type EditorContextMenuGetter = (context: EditorContextMenuContext) => EditorContextMenu | undefined;
 
-interface EditorContextMenuItemNormalized extends EditorContextMenuItemRaw {
+export interface EditorContextMenuItemNormalized extends EditorContextMenuItemRaw {
   key: string;
   handler: () => void;
+  children?: EditorContextMenuNormalized;
 }
 
-type EditorContextMenuNormalized = (EditorContextMenuItemNormalized | EditorContextMenuDivider)[];
+export type EditorContextMenuNormalized = (EditorContextMenuItemNormalized | EditorContextMenuDivider)[];
 
 export function isDivider(item: any): item is EditorContextMenuDivider {
   return 'type' in item && item.type === 'divider';
@@ -232,24 +244,32 @@ export class ContextMenuController implements IDisposable {
         return item;
       }
 
-      const { key, handler, ...rest } = item;
+      const { key, handler: itemHandler, children, ...rest } = item;
 
       const normalized: Partial<EditorContextMenuItemNormalized> = {
         key,
-        handler: () => {
-          handler(context);
-        },
+        handler: itemHandler
+          ? () => {
+              // 注入上下文信息
+              itemHandler(context);
+            }
+          : Noop,
       };
 
       const keys = Object.keys(rest) as (keyof EditorContextMenuItem)[];
 
-      for (const key of keys) {
-        const value = (rest as any)[key];
+      for (const k of keys) {
+        const value = (rest as any)[k];
         if (typeof value === 'function') {
-          normalized[key] = value(context);
+          normalized[k] = value(context);
         } else {
-          normalized[key] = value;
+          normalized[k] = value;
         }
+      }
+
+      // 递归处理子菜单
+      if (children?.length) {
+        normalized.children = this.buildContextMenu(children, context);
       }
 
       return normalized as EditorContextMenuItemNormalized;

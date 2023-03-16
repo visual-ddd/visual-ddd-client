@@ -59,6 +59,17 @@ export enum DomainObjectName {
   DTO = 'dto',
 }
 
+export const DomainObjectReadableName: Record<DomainObjectName, string> = {
+  [DomainObjectName.Aggregation]: '聚合',
+  [DomainObjectName.Entity]: '实体',
+  [DomainObjectName.ValueObject]: '值对象',
+  [DomainObjectName.Command]: '命令',
+  [DomainObjectName.Rule]: '规则',
+  [DomainObjectName.Enum]: '枚举',
+  [DomainObjectName.Query]: '查询',
+  [DomainObjectName.DTO]: '数据传输对象',
+};
+
 export const DomainObjectColors = {
   [DomainObjectName.Aggregation]: '#D9F7BE',
   [DomainObjectName.Entity]: '#b1ed7c',

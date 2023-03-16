@@ -25,7 +25,7 @@ describe('createDomainObjectTransform', () => {
 
     expect(transform.toDTO()).toMatchObject({
       properties: expect.any(Array),
-      methods: expect.any(Array),
+      methods: [],
     });
 
     expect(transform.toValueObject()).toMatchObject({

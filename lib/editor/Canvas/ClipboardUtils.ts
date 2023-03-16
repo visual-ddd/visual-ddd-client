@@ -85,20 +85,25 @@ function serializeToCopyPayload(cells: Cell[]): CopyPayload[] {
 
 const PAYLOAD_PREFIX = `__visual_ddd__`;
 
+export function copyByPayload(payloads: CopyPayload[]) {
+  const json = JSON.stringify(payloads);
+  const encoded = Base64.encode(PAYLOAD_PREFIX + json);
+
+  // TODO: 重构为 write
+  window.navigator.clipboard.writeText(encoded);
+}
+
 /**
  * 放置到剪切板中
  */
-export function copy(cells: Cell[]) {
-  const payload = serializeToCopyPayload(cells);
+export function copyByCell(cells: Cell[]) {
+  const payloads = serializeToCopyPayload(cells);
 
-  if (!payload.length) {
+  if (!payloads.length) {
     return;
   }
 
-  const json = JSON.stringify(payload);
-  const encoded = Base64.encode(PAYLOAD_PREFIX + json);
-
-  window.navigator.clipboard.writeText(encoded);
+  copyByPayload(payloads);
 }
 
 function tryParsePayload(text: string): CopyPayload[] | null {

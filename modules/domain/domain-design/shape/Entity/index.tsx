@@ -1,6 +1,14 @@
-import { defineShape, FormRuleReportType, ROOT_FIELD, ShapeComponentProps, useShapeModel } from '@/lib/editor';
+import {
+  CopyPayload,
+  defineShape,
+  FormRuleReportType,
+  ROOT_FIELD,
+  ShapeComponentProps,
+  useShapeModel,
+} from '@/lib/editor';
 import { ReactComponentBinding, ReactComponentProps, registerReactComponent } from '@/lib/g6-binding';
 import { Tooltip } from 'antd';
+import type { Node } from '@antv/x6';
 import { QuestionCircleFilled } from '@ant-design/icons';
 import { getPrefixPath } from '@/lib/utils';
 
@@ -15,12 +23,14 @@ import {
   checkSameAggregationReference,
   checkReferenceError,
   checkAggregationRootReference,
+  DomainObjectReadableName,
 } from '../../dsl';
 import { DomainEditorModel } from '../../model';
 
 import { EntityEditor } from './EntityEditor';
 
 import icon from './entity.png';
+import { createDomainObjectTransform, TRANSFORM_TARGET } from '../../transform';
 
 const EntityReactShapeComponent = (props: ReactComponentProps) => {
   const properties = useShapeModel<EntityDSL>(props.node).properties;
@@ -191,6 +201,35 @@ defineShape({
           target.model.properties as unknown as EntityDSL
         );
       },
+    },
+    {
+      key: 'transform',
+      label: '复制为',
+      children: TRANSFORM_TARGET.map(([name, method]) => {
+        return {
+          key: name,
+          label: DomainObjectReadableName[name],
+          handler: context => {
+            const { model, cell } = context.target!;
+            const transform = createDomainObjectTransform(DomainObjectName.Entity, model.properties as any);
+            const dsl = transform[method]();
+
+            const payload: CopyPayload = {
+              id: dsl.uuid,
+              type: 'node',
+              size: (cell as Node).getSize(),
+              position: { x: 0, y: 0 },
+              properties: {
+                ...dsl,
+                __node_name__: name,
+                __node_type__: 'node',
+              },
+            };
+
+            context.canvasModel.handleCopyPayloads([payload]);
+          },
+        };
+      }),
     },
   ],
   component: EntityShapeComponent,

@@ -12,7 +12,7 @@ import { CanvasEvent } from './CanvasEvent';
 import { BaseEditorModel, BaseNode } from '../Model';
 import { NormalizedAutoResizeGroup, ShapeRegistry } from '../Shape';
 import { assertShapeInfo } from '../Shape';
-import { copy, paste } from './ClipboardUtils';
+import { copyByCell, copyByPayload, CopyPayload, paste } from './ClipboardUtils';
 import { CanvasKeyboardBinding } from './KeyboardBinding';
 import { ContextMenuController } from './ContextMenuController';
 import { autoLayout } from './layout';
@@ -1103,6 +1103,10 @@ export class CanvasModel implements IDisposable {
     this.handleCopyCells(selected);
   };
 
+  handleCopyPayloads = (payloads: CopyPayload[]) => {
+    copyByPayload(payloads);
+  };
+
   handleCopyCells = (cells: Cell[]) => {
     const graph = this.graph!;
     // 过滤可以拷贝的cell
@@ -1112,7 +1116,7 @@ export class CanvasModel implements IDisposable {
       graph.copy(cells, { deep: true });
 
       // 放入剪切板
-      copy(graph.getCellsInClipboard());
+      copyByCell(graph.getCellsInClipboard());
     }
   };
 

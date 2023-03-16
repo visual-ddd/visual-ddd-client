@@ -20,7 +20,11 @@ export class ClassLike<T extends ClassDSL> extends PropertiesLike<T> {
   }
 
   override toDTO(): DTODSL {
-    return this.clone();
+    const dto = this.clone();
+
+    dto.methods = [];
+
+    return dto;
   }
 
   override toEntity(): EntityDSL {
