@@ -13,3 +13,11 @@ export function catchPromise<T>(promise: Promise<any>): Promise<T | null> {
       });
   });
 }
+
+/**
+ *  never fulfilled
+ * @returns
+ */
+export function forever() {
+  return new Promise(() => {});
+}
