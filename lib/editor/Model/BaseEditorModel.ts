@@ -226,6 +226,10 @@ export class BaseEditorModel implements IDisposable {
     this.datasource.stopCapturing();
   }
 
+  clearUndoStack() {
+    this.datasource.clearUndoStack();
+  }
+
   dispose() {
     tryDispose(this.scope);
     tryDispose(this.event);

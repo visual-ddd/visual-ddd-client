@@ -1,6 +1,6 @@
-import { makeAutoBindThis, push, pull } from '@/lib/store';
+import { makeAutoBindThis, push, pull, mutation } from '@/lib/store';
 import { Map as YMap, Doc as YDoc, AbstractType, UndoManager } from 'yjs';
-import { observable, action, makeObservable } from 'mobx';
+import { observable, makeObservable } from 'mobx';
 
 import { getPaths } from '@/lib/utils';
 
@@ -89,6 +89,14 @@ export class BaseEditorDatasource {
    */
   stopCapturing() {
     this.undoManager.stopCapturing();
+  }
+
+  /**
+   * 清空 undo 栈
+   */
+  clearUndoStack() {
+    this.undoManager.clear();
+    this.undoStackChange();
   }
 
   /**
@@ -341,14 +349,15 @@ export class BaseEditorDatasource {
     this.event.on('NODE_UNLOCKED', this.unlockNode);
   }
 
-  private watchUndoManager() {
-    const stackChange = action('UPDATE_UNDO_STATE', () => {
-      this.canRedo = this.undoManager.canRedo();
-      this.canUndo = this.undoManager.canUndo();
-    });
+  @mutation('UNDO_STACK_CHANGE', false)
+  private undoStackChange() {
+    this.canRedo = this.undoManager.canRedo();
+    this.canUndo = this.undoManager.canUndo();
+  }
 
-    this.undoManager.on('stack-item-added', stackChange);
-    this.undoManager.on('stack-item-popped', stackChange);
+  private watchUndoManager() {
+    this.undoManager.on('stack-item-added', this.undoStackChange);
+    this.undoManager.on('stack-item-popped', this.undoStackChange);
   }
 
   /**

@@ -174,6 +174,12 @@ export abstract class BaseDesignerModel<
       }
 
       this.setError(undefined);
+
+      // 重置 UndoManager
+      // 避免回退到编辑器的空状态
+      setTimeout(() => {
+        this.resetUndoManager();
+      }, 1000);
     } catch (err) {
       this.setError(err as Error);
     } finally {
@@ -263,5 +269,9 @@ export abstract class BaseDesignerModel<
       awareness: this.awareness,
       key: key,
     });
+  }
+
+  protected resetUndoManager() {
+    this.tabs.forEach(i => i.model.clearUndoStack());
   }
 }
