@@ -3,10 +3,11 @@ import { useMemo } from 'react';
 import { observer } from 'mobx-react';
 import { MermaidContainer, MindMap, MindMapNode } from '@/lib/components/Mermaid';
 import type { ScenarioDSL } from '@/modules/scenario/api/dsl/interface';
+import { booleanPredicate, NoopArray } from '@wakeapp/utils';
+import uniq from 'lodash/uniq';
 
 import { ScenarioDetail } from '../types';
 import { useTeamLayoutModel } from '../TeamLayout';
-import { booleanPredicate } from '@wakeapp/utils';
 
 export interface GraphProps extends React.HTMLAttributes<HTMLDivElement> {
   detail: ScenarioDetail;
@@ -23,7 +24,9 @@ export const Graph = observer(function Graph(props: GraphProps) {
   const layoutModel = useTeamLayoutModel();
 
   const domains = useMemo(() => {
-    const domainIds = dsl?.domainDependencies.filter(i => !i.teamId && i.domainId).map(i => i.domainId);
+    const domainIds = uniq(
+      dsl?.domainDependencies.filter(i => !i.teamId && i.domainId).map(i => i.domainId) ?? NoopArray
+    );
 
     return domainIds
       ?.map(domainId => {
