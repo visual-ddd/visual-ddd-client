@@ -173,7 +173,7 @@ export class DomainDesignerModel
         query: { detailQuery, pageQuery },
         dtos,
         dataObject,
-        mapper,
+        mappers,
       } = domainObjectGenerate({
         aggregationRoot: root,
         domainObjectStore: this.objectStore,
@@ -227,15 +227,17 @@ export class DomainDesignerModel
       });
 
       // 映射对象注入
-      const mapperNode = this.mapperObjectEditorModel.commandHandler.createNode({
-        id: mapper.uuid,
-        name: MapperObjectName.MapperObject,
-        type: 'node',
-        properties: {
-          ...mapper,
-          size: this.guestSize(mapper.mappers.length),
-        },
-      });
+      const mapperNodes = mappers.map(mapper =>
+        this.mapperObjectEditorModel.commandHandler.createNode({
+          id: mapper.uuid,
+          name: MapperObjectName.MapperObject,
+          type: 'node',
+          properties: {
+            ...mapper,
+            size: this.guestSize(mapper.mappers.length),
+          },
+        })
+      );
 
       // 等待节点插入
       // 因为画布位于不同的 Tab，当Tab 未激活时，画布不会渲染，导致节点无法定位和计算大小, 从而导致节点无法计算布局,
@@ -263,7 +265,7 @@ export class DomainDesignerModel
         this.queryEditorModel.commandHandler.removeNode({ node: pageQueryNode });
         this.queryEditorModel.commandHandler.removeBatched({ nodes: dtoNodes });
         this.dataObjectEditorModel.commandHandler.removeNode({ node: dataObjectNode });
-        this.mapperObjectEditorModel.commandHandler.removeNode({ node: mapperNode });
+        this.mapperObjectEditorModel.commandHandler.removeBatched({ nodes: mapperNodes });
       };
 
       this.event.emit('DOMAIN_OBJECT_AUTO_GENERATED', { revoke });

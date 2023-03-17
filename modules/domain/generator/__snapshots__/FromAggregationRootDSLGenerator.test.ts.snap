@@ -215,40 +215,76 @@ exports[`FromAggregationRootDSLGenerator generate 1`] = `
       "uuid": "uuid-32",
     },
   ],
-  "mapper": {
-    "description": "用于将聚合根(我的实体)映射为我的实体(数据对象)",
-    "mappers": [
-      {
-        "source": "uuid-4",
-        "target": "uuid-44",
-        "uuid": "uuid-57",
+  "mappers": [
+    {
+      "description": "用于将我的实体(聚合根)映射为我的实体(数据对象)",
+      "mappers": [
+        {
+          "source": "uuid-4",
+          "target": "uuid-44",
+          "uuid": "uuid-57",
+        },
+        {
+          "source": "uuid-5",
+          "target": "uuid-45",
+          "uuid": "uuid-58",
+        },
+        {
+          "source": "uuid-7",
+          "target": "uuid-48",
+          "uuid": "uuid-59",
+        },
+      ],
+      "meta": [],
+      "name": "MyEntityToMyEntityDO",
+      "source": {
+        "name": "MyEntity",
+        "referenceId": "uuid-0",
+        "source": "domain",
       },
-      {
-        "source": "uuid-5",
-        "target": "uuid-45",
-        "uuid": "uuid-58",
+      "target": {
+        "name": "MyEntityDO",
+        "referenceId": "uuid-42",
+        "source": "data",
       },
-      {
-        "source": "uuid-7",
-        "target": "uuid-48",
-        "uuid": "uuid-59",
-      },
-    ],
-    "meta": [],
-    "name": "MyEntityToMyEntityDO",
-    "source": {
-      "name": "MyEntity",
-      "referenceId": "uuid-0",
-      "source": "domain",
+      "title": "我的实体 数据对象映射",
+      "uuid": "uuid-56",
     },
-    "target": {
-      "name": "MyEntityDO",
-      "referenceId": "uuid-42",
-      "source": "data",
+    {
+      "description": "用于将我的实体数据传输对象(结构化对象)映射为我的实体(数据对象)",
+      "mappers": [
+        {
+          "source": "uuid-13",
+          "target": "uuid-44",
+          "uuid": "uuid-61",
+        },
+        {
+          "source": "uuid-14",
+          "target": "uuid-45",
+          "uuid": "uuid-62",
+        },
+        {
+          "source": "uuid-16",
+          "target": "uuid-48",
+          "uuid": "uuid-63",
+        },
+      ],
+      "meta": [],
+      "name": "MyEntityDTOToMyEntityDO",
+      "source": {
+        "name": "MyEntityDTO",
+        "referenceId": "uuid-10",
+        "source": "struct",
+      },
+      "target": {
+        "name": "MyEntityDO",
+        "referenceId": "uuid-42",
+        "source": "data",
+      },
+      "title": "我的实体数据传输对象 数据对象映射",
+      "uuid": "uuid-60",
     },
-    "title": "我的实体数据对象映射",
-    "uuid": "uuid-56",
-  },
+  ],
   "query": {
     "detailQuery": {
       "description": "查询我的实体详情",

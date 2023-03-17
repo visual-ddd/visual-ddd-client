@@ -1,8 +1,8 @@
 import { assert } from '@/lib/utils';
-import { EntityDSL, QueryDSL } from '../domain-design/dsl/dsl';
+import { DTODSL, EntityDSL, PropertyDSL, QueryDSL } from '../domain-design/dsl/dsl';
 import { createIDDSL, createQuery } from '../domain-design/dsl/factory';
 import { createDataObjectDSL, createDataObjectPropertyDSL } from '../data-design/dsl/factory';
-import { DataObjectDSL } from '../data-design/dsl/dsl';
+import { DataObjectDSL, DataObjectPropertyDSL } from '../data-design/dsl/dsl';
 import { createFieldMapperDSL, createObjectMapperDSL } from '../mapper-design/dsl/factory';
 import { MapperObjectDSL, ObjectReferenceSource } from '../mapper-design/dsl/dsl';
 
@@ -31,16 +31,18 @@ export class FromAggregationRootDSLGenerator extends BaseGenerator {
   }
 
   generate() {
-    const query = this.toQuery();
+    const { pageQuery, detailQuery, resultDTO } = this.toQuery();
     const dtos = this.dtoGeneratorState.list;
     const dataObject = this.toDataObject();
-    const mapper = this.toMapper(dataObject);
+    const aggregationMapper = this.toMapper(dataObject);
+    const queryResultDTOMapper = this.dtoToMapper(resultDTO, dataObject);
+    const mappers: MapperObjectDSL[] = [aggregationMapper, queryResultDTOMapper];
 
     return {
-      query,
+      query: { pageQuery, detailQuery },
       dtos,
       dataObject,
-      mapper,
+      mappers,
     };
   }
 
@@ -48,14 +50,17 @@ export class FromAggregationRootDSLGenerator extends BaseGenerator {
    * 转换为查询对象
    * @param entity
    */
-  protected toQuery(): { detailQuery: QueryDSL; pageQuery: QueryDSL } {
+  protected toQuery(): { detailQuery: QueryDSL; pageQuery: QueryDSL; resultDTO: DTODSL } {
     const root = this.root;
 
-    const dtoTypeDSL = new FromEntityDSLGenerator({
+    const resultDTOGenerator = new FromEntityDSLGenerator({
       entity: root,
       dtoGeneratorState: this.dtoGeneratorState,
       queryTypeDSLTransformer: this,
-    }).toDTOTypeDSL();
+    });
+
+    const resultDTO = resultDTOGenerator.toDTO();
+    const dtoTypeDSL = resultDTOGenerator.toDTOTypeDSL();
 
     const entityIdProperty = root.properties.find(i => i.uuid === root.id)!;
     const id = {
@@ -80,7 +85,7 @@ export class FromAggregationRootDSLGenerator extends BaseGenerator {
     pageQuery.result = dtoTypeDSL;
     pageQuery.pagination = true;
 
-    return { detailQuery, pageQuery };
+    return { detailQuery, pageQuery, resultDTO };
   }
 
   /**
@@ -128,7 +133,7 @@ export class FromAggregationRootDSLGenerator extends BaseGenerator {
   }
 
   /**
-   * 转换为对象映射
+   * 聚合根转换为对象映射
    * 需要在数据对象转换完成后进行
    */
   protected toMapper(target: DataObjectDSL): MapperObjectDSL {
@@ -136,8 +141,8 @@ export class FromAggregationRootDSLGenerator extends BaseGenerator {
 
     const mapper = createObjectMapperDSL();
     mapper.name = `${root.name}To${target.name}`;
-    mapper.title = `${root.title}数据对象映射`;
-    mapper.description = `用于将聚合根(${root.title})映射为${target.title}(数据对象)`;
+    mapper.title = `${root.title} 数据对象映射`;
+    mapper.description = `用于将${root.title}(聚合根)映射为${target.title}(数据对象)`;
 
     mapper.source = {
       source: ObjectReferenceSource.Domain,
@@ -152,8 +157,48 @@ export class FromAggregationRootDSLGenerator extends BaseGenerator {
     };
 
     // 自动字段映射
-    for (const property of root.properties) {
-      const targetProperty = target.properties.find(p => p.name === property.name);
+    this.mergePropertiesToMapper(mapper, root.properties, target.properties);
+
+    return mapper;
+  }
+
+  /**
+   * 结构化对象映射为数据对象
+   * @param dto
+   * @param target
+   * @returns
+   */
+  protected dtoToMapper(dto: DTODSL, target: DataObjectDSL): MapperObjectDSL {
+    const mapper = createObjectMapperDSL();
+    mapper.name = `${dto.name}To${target.name}`;
+    mapper.title = `${dto.title} 数据对象映射`;
+    mapper.description = `用于将${dto.title}(结构化对象)映射为${target.title}(数据对象)`;
+
+    mapper.source = {
+      source: ObjectReferenceSource.Struct,
+      referenceId: dto.uuid,
+      name: dto.name,
+    };
+
+    mapper.target = {
+      source: ObjectReferenceSource.Data,
+      referenceId: target.uuid,
+      name: target.name,
+    };
+
+    // 自动字段映射
+    this.mergePropertiesToMapper(mapper, dto.properties, target.properties);
+
+    return mapper;
+  }
+
+  private mergePropertiesToMapper(
+    mapper: MapperObjectDSL,
+    sourceProperties: PropertyDSL[],
+    targetProperties: DataObjectPropertyDSL[]
+  ) {
+    for (const property of sourceProperties) {
+      const targetProperty = targetProperties.find(p => p.name === property.name);
       if (targetProperty == null) {
         continue;
       }
@@ -164,7 +209,5 @@ export class FromAggregationRootDSLGenerator extends BaseGenerator {
 
       mapper.mappers.push(fieldMapper);
     }
-
-    return mapper;
   }
 }
