@@ -22,7 +22,9 @@ export const DataObjectProperty = observer(function DataObjectProperty(props: Da
   return (
     <div className={classNames('vd-data-object-shape__property', s.property, className)} {...other}>
       <span className={classNames('vd-data-object-shape__name', s.name)}>{reactifyProperty(dsl, property)}</span>
-      <span className={classNames('vd-data-object-shape__title', s.title)}>{property.title}</span>
+      <span className={classNames('vd-data-object-shape__title', s.title)} title={property.title}>
+        {property.title}
+      </span>
     </div>
   );
 });

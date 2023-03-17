@@ -18,7 +18,8 @@ export const RuleShape = observer(function RuleShape(props: RuleShapeProps) {
     <div className={classNames('vd-shape-rule', s.root, className)} style={style}>
       <div className={classNames('vd-shape-rule__type', s.type)}>《规则》</div>
       <div className={classNames('vd-shape-rule__name', s.name)}>
-        {dsl.title || UntitledInHumanReadable}({dsl.name || UntitledInUpperCamelCase})
+        <div className={classNames('vd-shape-rule__title', s.title)}>{dsl.title || UntitledInHumanReadable}</div>
+        <div>({dsl.name || UntitledInUpperCamelCase})</div>
       </div>
       <div className={classNames('vd-shape-rule__desc', s.desc)}>{dsl.description || '内容为空'}</div>
     </div>
