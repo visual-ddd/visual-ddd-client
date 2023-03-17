@@ -258,7 +258,7 @@ const Member = observer(function Member<T extends IDDSL>(props: {
       onClickCapture={handleSelectedChange}
       data-member-id={value.uuid}
     >
-      {selecting ? (
+      {readonly ? null : selecting ? (
         <Checkbox
           checked={selected}
           // onChange={handleSelectedChange}
