@@ -1,6 +1,5 @@
 import { VersionBadge } from '@/lib/components/VersionBadge';
 import { IUser, VersionStatus } from '@/lib/core';
-import { LeftOutlined } from '@ant-design/icons';
 import { Avatar, Button, Tooltip } from 'antd';
 import { observer } from 'mobx-react';
 import { useRouter } from 'next/router';
@@ -36,10 +35,15 @@ export const DesignerHeader = observer(function DesignerHeader(props: DesignerHe
     </Button>
   );
 
+  const backHome = () => {
+    router.push('/');
+  };
+
   return (
     <div className={s.root}>
-      <div className={s.back} onClick={router.back} title="返回上一级">
-        <LeftOutlined />
+      <div className={s.back} onClick={backHome} title="返回主页">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/logo.svg" alt="logo" />
       </div>
       <div className={s.aside}>
         {version != null && versionStatus != null && <VersionBadge version={version} status={versionStatus} />}
