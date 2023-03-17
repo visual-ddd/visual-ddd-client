@@ -1,6 +1,8 @@
+import { getMappedLighterColor } from '@/lib/utils';
 import { InboxOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
+import { useMemo } from 'react';
 
 import { ActivityBindingType, ActivityDSL } from '../../dsl';
 import s from './ActivityShape.module.scss';
@@ -12,12 +14,25 @@ export interface ActivityShapeProps {
 export const ActivityShape = observer(function ActivityShape(props: ActivityShapeProps) {
   const { dsl } = props;
 
+  const boundKey =
+    dsl.binding?.type && (dsl.binding.type === ActivityBindingType.DomainService ? dsl.binding.domainId : 'service');
+
+  const color = useMemo(() => {
+    return getMappedLighterColor(boundKey ?? '');
+  }, [boundKey]);
+
   const bound =
     dsl.binding?.type &&
     (dsl.binding.type === ActivityBindingType.DomainService ? dsl.binding.domainId : dsl.binding.serviceId);
 
   return (
-    <div className={classNames(s.root, { [s.bound]: bound })}>
+    <div
+      className={classNames(s.root, { [s.bound]: bound })}
+      style={
+        // @ts-expect-error
+        { '--color': color }
+      }
+    >
       <div className={s.icon}>
         <InboxOutlined />
       </div>
