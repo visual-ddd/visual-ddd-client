@@ -17,7 +17,7 @@ import {
   checkAggregationRootReference,
 } from '../../dsl';
 import { DomainEditorModel } from '../../model';
-import { createCopyAsMenu } from '../../transform';
+import { createCopyAsMenu } from '@/modules/domain/transform';
 
 import { EntityEditor } from './EntityEditor';
 

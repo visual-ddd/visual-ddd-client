@@ -1,4 +1,4 @@
-import { ValueObjectDSL } from '../dsl/dsl';
+import { ValueObjectDSL } from '../domain-design/dsl/dsl';
 
 import { ClassLike } from './ClassLike';
 

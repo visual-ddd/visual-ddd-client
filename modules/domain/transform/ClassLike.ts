@@ -1,5 +1,5 @@
-import { createEntityIdProperty } from '../dsl';
-import type { ClassDSL, DTODSL, EntityDSL, ValueObjectDSL } from '../dsl/dsl';
+import { createEntityIdProperty } from '../domain-design/dsl/factory';
+import type { ClassDSL, DTODSL, EntityDSL, ValueObjectDSL } from '../domain-design/dsl/dsl';
 
 import { PropertiesLike } from './PropertiesLike';
 

@@ -1,5 +1,5 @@
-import { createCommand, createDTO, createEntity, createQuery, createValueObject } from '../dsl/factory';
-import { DomainObjectName } from '../dsl/constants';
+import { createCommand, createDTO, createEntity, createQuery, createValueObject } from '../domain-design/dsl/factory';
+import { DomainObjectName } from '../domain-design/dsl/constants';
 import { createDomainObjectTransform } from './index';
 
 describe('createDomainObjectTransform', () => {

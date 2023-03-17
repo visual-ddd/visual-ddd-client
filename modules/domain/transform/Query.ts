@@ -1,4 +1,4 @@
-import { QueryDSL } from '../dsl/dsl';
+import { QueryDSL } from '../domain-design/dsl/dsl';
 
 import { PropertiesLike } from './PropertiesLike';
 

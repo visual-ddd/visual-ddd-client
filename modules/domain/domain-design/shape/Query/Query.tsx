@@ -15,7 +15,7 @@ import {
 import { QueryEditor } from './QueryEditor';
 
 import icon from './query.png';
-import { createCopyAsMenu } from '../../transform';
+import { createCopyAsMenu } from '@/modules/domain/transform';
 
 const QueryReactShapeComponent = (props: ReactComponentProps) => {
   const properties = useShapeModel<QueryDSL>(props.node).properties;

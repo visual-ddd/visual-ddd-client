@@ -1,5 +1,5 @@
-import type { CommandDSL, DTODSL, EntityDSL, IDDSL, NameDSL, QueryDSL, ValueObjectDSL } from '../dsl/dsl';
-import { createIDDSL } from '../dsl/factory';
+import type { CommandDSL, DTODSL, EntityDSL, IDDSL, NameDSL, QueryDSL, ValueObjectDSL } from '../domain-design/dsl/dsl';
+import { createIDDSL } from '../domain-design/dsl/factory';
 
 /**
  * 领域对象转换器
@@ -30,11 +30,11 @@ export abstract class Transform<T extends NameDSL> {
   abstract toDTO(): DTODSL;
   abstract toValueObject(): ValueObjectDSL;
 
-  protected regenerateUUIDList(list?: IDDSL[]) {
+  protected regenerateUUIDList<I extends IDDSL = IDDSL>(list?: I[]) {
     return list?.map(this.regenerateUUID);
   }
 
-  protected regenerateUUID<T extends IDDSL = IDDSL>(input: T) {
+  protected regenerateUUID<I extends IDDSL = IDDSL>(input: I) {
     input.uuid = createIDDSL().uuid;
 
     return input;

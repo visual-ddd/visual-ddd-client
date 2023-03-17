@@ -1,5 +1,7 @@
 import cloneDeep from 'lodash/cloneDeep';
-import { CommandDSL, PropertiesLikeDSL } from '../dsl';
+
+import { CommandDSL, PropertiesLikeDSL } from '../domain-design/dsl';
+
 import { PropertiesLike } from './PropertiesLike';
 
 export class Command extends PropertiesLike<CommandDSL> {

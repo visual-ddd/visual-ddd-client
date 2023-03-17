@@ -14,7 +14,7 @@ import {
   DomainObjectName,
   ValueObjectDSL,
 } from '../../dsl';
-import { createCopyAsMenu } from '../../transform';
+import { createCopyAsMenu } from '@/modules/domain/transform';
 
 import { ValueObjectEditor } from './ValueObjectEditor';
 

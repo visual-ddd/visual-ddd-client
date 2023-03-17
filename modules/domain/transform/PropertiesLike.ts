@@ -7,8 +7,15 @@ import {
   createEntityIdProperty,
   createQuery,
   createValueObject,
-} from '../dsl/factory';
-import type { CommandDSL, DTODSL, EntityDSL, PropertiesLikeDSL, QueryDSL, ValueObjectDSL } from '../dsl/dsl';
+} from '../domain-design/dsl/factory';
+import type {
+  CommandDSL,
+  DTODSL,
+  EntityDSL,
+  PropertiesLikeDSL,
+  QueryDSL,
+  ValueObjectDSL,
+} from '../domain-design/dsl/dsl';
 
 import { Transform } from './Transform';
 

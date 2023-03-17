@@ -1,5 +1,7 @@
 import { MakeOptional } from '@/lib/core';
-import type { DTODSL, EntityDSL, ValueObjectDSL } from '../dsl/dsl';
+
+import type { DTODSL, EntityDSL, ValueObjectDSL } from '../domain-design/dsl/dsl';
+
 import { ClassLike } from './ClassLike';
 
 export class Entity extends ClassLike<EntityDSL> {

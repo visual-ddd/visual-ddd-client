@@ -1,7 +1,8 @@
 import type { EditorContextMenuItem, CopyPayload } from '@/lib/editor';
 import type { Node } from '@antv/x6';
-import { CommandDSL, DTODSL, EntityDSL, NameDSL, QueryDSL, ValueObjectDSL } from '../dsl/dsl';
-import { DomainObjectName, DomainObjectReadableName } from '../dsl/constants';
+
+import { CommandDSL, DTODSL, EntityDSL, NameDSL, QueryDSL, ValueObjectDSL } from '../domain-design/dsl/dsl';
+import { DomainObjectName, DomainObjectReadableName } from '../domain-design/dsl/constants';
 
 import { Command } from './Command';
 import { Query } from './Query';

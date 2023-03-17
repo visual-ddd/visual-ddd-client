@@ -15,7 +15,7 @@ import {
   checkReferenceError,
   checkAggregationRootReference,
 } from '../../dsl';
-import { createCopyAsMenu } from '../../transform';
+import { createCopyAsMenu } from '@/modules/domain/transform';
 
 import { CommandShape } from './CommandShape';
 import { CommandEditor } from './CommandEditor';

@@ -10,7 +10,7 @@ import {
   DomainObjectName,
   DTODSL,
 } from '../../dsl';
-import { createCopyAsMenu } from '../../transform';
+import { createCopyAsMenu } from '@/modules/domain/transform';
 
 import { DTOEditor } from './DTOEditor';
 
