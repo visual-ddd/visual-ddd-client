@@ -74,6 +74,7 @@ export const WYSIWYGEditor = (props: WYSIWYGEditorProps) => {
       StarterKit.configure({
         // 使用 yjs
         history: false,
+        codeBlock: false,
       }),
       Collaboration.configure({
         document: doc,
