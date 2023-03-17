@@ -1,6 +1,6 @@
 import { DataObjectPropertyDSL } from '@/modules/domain/data-design/dsl';
 import { PropertyDSL, stringifyTypeDSL } from '@/modules/domain/domain-design/dsl';
-import { ArrowRightOutlined } from '@ant-design/icons';
+import { SwapOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
 import React from 'react';
@@ -59,7 +59,7 @@ export const FieldMapperDisplay = observer(function MapperDisplay(props: {
   return (
     <span className={classNames('vd-field-mapper', s.root)}>
       {stringifySourceField(sourceFieldId, sourceField, mapper)}
-      <ArrowRightOutlined />
+      <SwapOutlined />
       {stringifyTargetField(targetFieldId, targetField, mapper)}
     </span>
   );

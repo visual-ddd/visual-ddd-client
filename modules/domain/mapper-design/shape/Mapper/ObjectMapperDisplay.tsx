@@ -1,6 +1,6 @@
 import { IDDSL, NameDSL } from '@/modules/domain/domain-design/dsl';
 import { ObjectReferenceDSL } from '../../dsl';
-import { ArrowRightOutlined } from '@ant-design/icons';
+import { SwapOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
 import { Mapper } from '../../model';
@@ -41,7 +41,7 @@ export const ObjectMapperDisplay = observer(function ObjectMapperDisplay(props: 
       >
         {stringifyObject(mapper.dsl.source, mapper.sourceObject, mapper)}
       </div>
-      <ArrowRightOutlined />
+      <SwapOutlined />
       <div
         className={classNames('vd-object-mapper__object', s.object)}
         onClick={handleObjectClick(mapper.targetObject)}
