@@ -31,11 +31,13 @@ export class ClassLike<T extends ClassDSL> extends PropertiesLike<T> {
     const entity = this.clone() as unknown as EntityDSL;
 
     entity.isAggregationRoot = false;
-    const id = this.getEntityId();
-    if (id) {
-      entity.id = id;
+
+    let idProperty = entity.properties.find(i => i.name.toLowerCase().includes('id')) ?? entity.properties[0];
+
+    if (idProperty) {
+      entity.id = idProperty.uuid;
     } else {
-      const idProperty = createEntityIdProperty();
+      idProperty = createEntityIdProperty();
       entity.id = idProperty.uuid;
       entity.properties.unshift(idProperty);
     }

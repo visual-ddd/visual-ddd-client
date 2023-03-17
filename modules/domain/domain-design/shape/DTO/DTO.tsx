@@ -10,6 +10,7 @@ import {
   DomainObjectName,
   DTODSL,
 } from '../../dsl';
+import { createCopyAsMenu } from '../../transform';
 
 import { DTOEditor } from './DTOEditor';
 
@@ -80,6 +81,8 @@ defineShape({
       },
     },
   },
+
+  contextMenu: [createCopyAsMenu(DomainObjectName.DTO)],
 
   initialProps: () => {
     return { ...createDTO(), zIndex: 2 };

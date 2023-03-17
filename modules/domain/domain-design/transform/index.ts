@@ -1,5 +1,7 @@
+import type { EditorContextMenuItem, CopyPayload } from '@/lib/editor';
+import type { Node } from '@antv/x6';
 import { CommandDSL, DTODSL, EntityDSL, NameDSL, QueryDSL, ValueObjectDSL } from '../dsl/dsl';
-import { DomainObjectName } from '../dsl/constants';
+import { DomainObjectName, DomainObjectReadableName } from '../dsl/constants';
 
 import { Command } from './Command';
 import { Query } from './Query';
@@ -9,6 +11,13 @@ import { ValueObject } from './ValueObject';
 import { IDomainObjectTransform } from './Transform';
 
 export type { IDomainObjectTransform } from './Transform';
+
+export type DomainObjectTransformable =
+  | DomainObjectName.Command
+  | DomainObjectName.Query
+  | DomainObjectName.DTO
+  | DomainObjectName.Entity
+  | DomainObjectName.ValueObject;
 
 /**
  * 创建领域对象转换器
@@ -23,7 +32,7 @@ export function createDomainObjectTransform(
   type: DomainObjectName.ValueObject,
   value: ValueObjectDSL
 ): IDomainObjectTransform;
-export function createDomainObjectTransform(type: DomainObjectName, value: NameDSL): IDomainObjectTransform {
+export function createDomainObjectTransform(type: DomainObjectTransformable, value: NameDSL): IDomainObjectTransform {
   switch (type) {
     case DomainObjectName.Command:
       return new Command(value as CommandDSL);
@@ -40,10 +49,47 @@ export function createDomainObjectTransform(type: DomainObjectName, value: NameD
   }
 }
 
-export const TRANSFORM_TARGET: [DomainObjectName, keyof IDomainObjectTransform][] = [
+export const TRANSFORM_TARGET: [DomainObjectTransformable, keyof IDomainObjectTransform][] = [
   [DomainObjectName.Command, 'toCommand'],
   [DomainObjectName.Query, 'toQuery'],
   [DomainObjectName.DTO, 'toDTO'],
   [DomainObjectName.Entity, 'toEntity'],
   [DomainObjectName.ValueObject, 'toValueObject'],
 ];
+
+/**
+ * 创建右键菜单
+ * @param type
+ * @returns
+ */
+export function createCopyAsMenu(type: DomainObjectTransformable): EditorContextMenuItem {
+  return {
+    key: 'transform',
+    label: '复制为',
+    children: TRANSFORM_TARGET.map(([name, method]) => {
+      return {
+        key: name,
+        label: DomainObjectReadableName[name],
+        handler: context => {
+          const { model, cell } = context.target!;
+          const transform = createDomainObjectTransform(type as any, model.properties as any);
+          const dsl = transform[method]();
+
+          const payload: CopyPayload = {
+            id: dsl.uuid,
+            type: 'node',
+            size: (cell as Node).getSize(),
+            position: { x: 0, y: 0 },
+            properties: {
+              ...dsl,
+              __node_name__: name,
+              __node_type__: 'node',
+            },
+          };
+
+          context.canvasModel.handleCopyPayloads([payload]);
+        },
+      };
+    }),
+  };
+}

@@ -14,6 +14,7 @@ import {
   DomainObjectName,
   ValueObjectDSL,
 } from '../../dsl';
+import { createCopyAsMenu } from '../../transform';
 
 import { ValueObjectEditor } from './ValueObjectEditor';
 
@@ -138,6 +139,8 @@ defineShape({
       },
     },
   },
+
+  contextMenu: [createCopyAsMenu(DomainObjectName.ValueObject)],
 
   initialProps: () => {
     return { ...createValueObject(), zIndex: 2 };

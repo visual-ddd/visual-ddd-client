@@ -15,6 +15,7 @@ import {
 import { QueryEditor } from './QueryEditor';
 
 import icon from './query.png';
+import { createCopyAsMenu } from '../../transform';
 
 const QueryReactShapeComponent = (props: ReactComponentProps) => {
   const properties = useShapeModel<QueryDSL>(props.node).properties;
@@ -89,6 +90,7 @@ defineShape({
       },
     },
   },
+  contextMenu: [createCopyAsMenu(DomainObjectName.Query)],
   initialProps: () => {
     return { ...createQuery(), zIndex: 2 };
   },

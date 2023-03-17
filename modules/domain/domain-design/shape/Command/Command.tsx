@@ -15,6 +15,7 @@ import {
   checkReferenceError,
   checkAggregationRootReference,
 } from '../../dsl';
+import { createCopyAsMenu } from '../../transform';
 
 import { CommandShape } from './CommandShape';
 import { CommandEditor } from './CommandEditor';
@@ -150,6 +151,8 @@ defineShape({
       },
     },
   },
+
+  contextMenu: [createCopyAsMenu(DomainObjectName.Command)],
 
   initialProps: () => {
     return { ...createCommand(), zIndex: 2 };

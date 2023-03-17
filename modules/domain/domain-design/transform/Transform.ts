@@ -34,7 +34,9 @@ export abstract class Transform<T extends NameDSL> {
     return list?.map(this.regenerateUUID);
   }
 
-  protected regenerateUUID(input: IDDSL) {
+  protected regenerateUUID<T extends IDDSL = IDDSL>(input: T) {
     input.uuid = createIDDSL().uuid;
+
+    return input;
   }
 }

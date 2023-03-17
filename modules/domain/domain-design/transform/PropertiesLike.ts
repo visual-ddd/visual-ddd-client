@@ -41,12 +41,12 @@ export class PropertiesLike<T extends PropertiesLikeDSL> extends Transform<T> {
     const entity = createEntity();
     this.mergeBaseInfo(entity);
 
-    // 设置 id
-    const id = this.getEntityId();
-    if (id) {
-      entity.id = id;
+    let idProperty = entity.properties.find(i => i.name.toLowerCase().includes('id')) ?? entity.properties[0];
+
+    if (idProperty) {
+      entity.id = idProperty.uuid;
     } else {
-      const idProperty = createEntityIdProperty();
+      idProperty = createEntityIdProperty();
       entity.properties.unshift(idProperty);
       entity.id = idProperty.uuid;
     }
@@ -68,20 +68,12 @@ export class PropertiesLike<T extends PropertiesLikeDSL> extends Transform<T> {
     return command;
   }
 
-  protected getEntityId() {
-    // 设置 id
-    if (this.current.properties.length) {
-      const id = this.current.properties.find(i => i.name.toLowerCase().includes('id')) ?? this.current.properties[0];
-      return id.uuid;
-    }
-  }
-
   /**
    * 合并基础信息
    * @param target
    * @returns
    */
-  private mergeBaseInfo(target: PropertiesLikeDSL) {
+  protected mergeBaseInfo(target: PropertiesLikeDSL) {
     const clone = this.clone();
 
     const { properties, name, title, description, meta } = clone;
