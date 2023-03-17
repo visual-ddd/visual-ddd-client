@@ -37,7 +37,7 @@ export const DomainDesignerHeader = observer(function DomainDesignerHeader(props
       title={DomainDesignerTabsMap[model.activeTab]}
       readonly={model.readonly}
       saveTooltip={saveTitle}
-      saving={model.saving}
+      saving={model.saving || model.refreshing}
       onSave={() => model.keyboardBinding.trigger('save')}
       collaborators={awarenessUsers}
     ></DesignerHeader>

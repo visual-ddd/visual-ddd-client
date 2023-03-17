@@ -1,5 +1,5 @@
 import { makeObservable, observable } from 'mobx';
-import { applyUpdate, Doc as YDoc, encodeStateAsUpdate } from 'yjs';
+import { applyUpdate, Doc as YDoc, encodeStateAsUpdate, encodeStateVector } from 'yjs';
 import { WebrtcProvider } from 'y-webrtc';
 import { message } from 'antd';
 import Router from 'next/router';
@@ -54,6 +54,9 @@ export abstract class BaseDesignerModel<
   loading = false;
 
   @observable
+  refreshing = false;
+
+  @observable
   error?: Error;
 
   get awarenessStates() {
@@ -92,6 +95,12 @@ export abstract class BaseDesignerModel<
    * @param params
    */
   protected abstract loadVector(params: { id: string }): Promise<ArrayBuffer | undefined>;
+
+  /**
+   * 获取服务器差值
+   * @param params
+   */
+  protected abstract getDiff(params: { id: string; vector: Uint8Array }): Promise<ArrayBuffer>;
 
   constructor(options: BaseDesignerModelOptions) {
     const { id, name, readonly = false } = options;
@@ -223,6 +232,31 @@ export abstract class BaseDesignerModel<
     }
   }
 
+  /**
+   * 刷新数据
+   */
+  @effect('DESIGNER:REFRESH')
+  async refresh() {
+    if (this.refreshing) {
+      return;
+    }
+
+    try {
+      this.setRefreshing(true);
+
+      const vector = encodeStateVector(this.ydoc);
+
+      const diff = await this.getDiff({ id: this.id, vector });
+
+      applyUpdate(this.ydoc, new Uint8Array(diff));
+    } catch (err) {
+      console.error('刷新文档失败: ', err);
+      this.setError(err as Error);
+    } finally {
+      this.setRefreshing(false);
+    }
+  }
+
   @mutation('DESIGNER:SET_ACTIVE_TAB', false)
   setActiveTab(params: { tab: Tab }) {
     const tab = (this.activeTab = params.tab);
@@ -244,6 +278,11 @@ export abstract class BaseDesignerModel<
   @mutation('DESIGNER:SET_LOADING', false)
   protected setLoading(loading: boolean) {
     this.loading = loading;
+  }
+
+  @mutation('DESIGNER:SET_REFRESHING', false)
+  protected setRefreshing(refreshing: boolean) {
+    this.refreshing = refreshing;
   }
 
   @mutation('DESIGNER:SET_ERROR', false)

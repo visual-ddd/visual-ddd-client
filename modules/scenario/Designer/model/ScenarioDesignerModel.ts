@@ -106,6 +106,18 @@ export class ScenarioDesignerModel extends BaseDesignerModel<ScenarioDesignerTab
     return await response.arrayBuffer();
   }
 
+  protected async getDiff(params: { id: string; vector: Uint8Array }): Promise<ArrayBuffer> {
+    const { id, vector } = params;
+    const response = await fetch(`/api/rest/scenario/${id}/diff`, { method: 'POST', body: vector });
+
+    if (!response.ok) {
+      const msg = await extraRestErrorMessage(response);
+      throw new Error(msg || '数据刷新失败');
+    }
+
+    return await response.arrayBuffer();
+  }
+
   protected async saveData(params: { id: string; data: Uint8Array; isDiff: boolean }): Promise<void> {
     const { id, data, isDiff } = params;
     const response = await fetch(`/api/rest/scenario/${id}?diff=${!!isDiff}`, { method: 'PUT', body: data });

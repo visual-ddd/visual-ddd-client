@@ -1,4 +1,4 @@
-import { Doc as YDoc, encodeStateVectorFromUpdate, encodeStateAsUpdate, mergeUpdates } from 'yjs';
+import { Doc as YDoc, encodeStateVectorFromUpdate, encodeStateAsUpdate, mergeUpdates, diffUpdate } from 'yjs';
 import { NextApiRequest } from 'next';
 import LRUCache from 'lru-cache';
 import { withWakedataRequestApiRoute } from '@/modules/session/api-helper';
@@ -150,6 +150,21 @@ export function createYjsStore(options: {
     })
   );
 
+  /**
+   * 获取差异值
+   */
+  const handleGetDiff = allowMethod(
+    'POST',
+    withWakedataRequestApiRoute(async (req, res) => {
+      const vector = await readBuffer(req);
+
+      const data = await getData(req);
+      const diff = diffUpdate(data, vector);
+
+      res.status(200).send(Buffer.from(diff));
+    })
+  );
+
   const handleSave = withWakedataRequestApiRoute(async (req, res) => {
     const id = req.query.id as string;
     const isDiff = req.query.diff === 'true';
@@ -191,6 +206,7 @@ export function createYjsStore(options: {
     handleGet,
     handleGetBase64,
     handleGetVector,
+    handleGetDiff,
     handleSave,
   };
 }

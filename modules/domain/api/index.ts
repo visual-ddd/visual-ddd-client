@@ -3,7 +3,7 @@ import type { DomainVersion, DomainDetailPayload } from '@/modules/team/types';
 import { transformToDSL, createDoc } from './dsl/doc';
 import { createYjsStore } from '@/lib/yjs-store-api';
 
-const { addCacheWithRaw, handleGet, handleGetBase64, handleGetVector, handleSave } = createYjsStore({
+const { addCacheWithRaw, handleGet, handleGetBase64, handleGetVector, handleSave, handleGetDiff } = createYjsStore({
   transformYDocToDSL: doc => {
     return transformToDSL(doc);
   },
@@ -41,4 +41,4 @@ const { addCacheWithRaw, handleGet, handleGetBase64, handleGetVector, handleSave
   },
 });
 
-export { addCacheWithRaw, handleGet, handleGetBase64, handleGetVector, handleSave };
+export { addCacheWithRaw, handleGet, handleGetBase64, handleGetVector, handleSave, handleGetDiff };

@@ -5,3 +5,4 @@ export * from './useTimeout';
 export * from './useLazyFalsy';
 export * from './usePreventUnload';
 export * from './useEventBusListener';
+export * from './useOffline';

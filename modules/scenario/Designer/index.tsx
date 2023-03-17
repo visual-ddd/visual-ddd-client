@@ -4,6 +4,7 @@ import { message } from 'antd';
 import { tryDispose } from '@/lib/utils';
 import { VersionStatus } from '@/lib/core';
 import { DesignerHeader, DesignerLayout, DesignerLoading, DesignerTabLabel } from '@/lib/components/DesignerLayout';
+import { OfflineTip } from '@/lib/components/OfflineTip';
 import { NoopArray } from '@wakeapp/utils';
 import { CompletionContextProvider } from '@/lib/components/Completion';
 import {
@@ -166,6 +167,8 @@ const ScenarioDesigner = observer(function ScenarioDesigner(props: ScenarioDesig
             onActiveKeyChange={tab => model.setActiveTab({ tab: tab as ScenarioDesignerTabs })}
           >
             <DesignerLoading loading={model.loading} />
+            {/* 离线提示 */}
+            <OfflineTip message="你掉线了，不用当心，你操作的内容已经本地保存，请检查网络" onOnline={model.refresh} />
             <DesignerHeader
               name={description?.name}
               version={description?.version}
@@ -173,7 +176,7 @@ const ScenarioDesigner = observer(function ScenarioDesigner(props: ScenarioDesig
               title={ScenarioDesignerTabsMap[model.activeTab]}
               readonly={model.readonly}
               saveTooltip={saveTooltip}
-              saving={model.saving}
+              saving={model.saving || model.refreshing}
               onSave={() => model.keyboardBinding.trigger('save')}
               collaborators={awarenessUsers}
             ></DesignerHeader>

@@ -299,6 +299,18 @@ export class DomainDesignerModel
     }
   }
 
+  protected async getDiff(params: { id: string; vector: Uint8Array }): Promise<ArrayBuffer> {
+    const { id, vector } = params;
+    const response = await fetch(`/api/rest/domain/${id}/diff`, { method: 'POST', body: vector });
+
+    if (!response.ok) {
+      const msg = await extraRestErrorMessage(response);
+      throw new Error(msg || '数据刷新失败');
+    }
+
+    return await response.arrayBuffer();
+  }
+
   protected async loadVector(params: { id: string }): Promise<ArrayBuffer | undefined> {
     const res = await fetch(`/api/rest/domain/${this.id}/vector`, { method: 'GET' });
     if (res.ok) {

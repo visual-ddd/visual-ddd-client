@@ -5,6 +5,7 @@ import { tryDispose } from '@/lib/utils';
 import { IUser, VersionStatus } from '@/lib/core';
 import { CompletionContextProvider } from '@/lib/components/Completion';
 import { DesignerLayout, DesignerTabLabel } from '@/lib/components/DesignerLayout';
+import { OfflineTip } from '@/lib/components/OfflineTip';
 import {
   UbiquitousLanguageCompletionItem,
   UbiquitousLanguageCompletionProvider,
@@ -242,7 +243,7 @@ const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerPro
             </div>
           </div>
         ),
-        duration: 5,
+        duration: null,
       });
     });
   });
@@ -274,6 +275,8 @@ const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerPro
             onActiveKeyChange={tab => model.setActiveTab({ tab: tab as DomainDesignerTabs })}
           >
             {notifyContextHolder}
+            {/* 离线提示 */}
+            <OfflineTip message="你掉线了，不用当心，你操作的内容已经本地保存，请检查网络" onOnline={model.refresh} />
             <DomainDesignerLoading></DomainDesignerLoading>
             <DomainDesignerHeader
               user={description?.user}
