@@ -3,6 +3,7 @@ import { FromAggregationRootDSLGenerator } from './FromAggregationRootDSLGenerat
 import { IDomainObjectStore } from './public-types';
 
 export * from './public-types';
+export { transformTypeDSLToDataObjectTypeDSL } from './transform';
 
 /**
  * 领域对象生成器

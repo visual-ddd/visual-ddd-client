@@ -1,6 +1,6 @@
 import cloneDeep from 'lodash/cloneDeep';
 
-import { CommandDSL, PropertiesLikeDSL } from '../domain-design/dsl';
+import { CommandDSL } from '../domain-design/dsl';
 
 import { PropertiesLike } from './PropertiesLike';
 
@@ -16,16 +16,8 @@ export class Command extends PropertiesLike<CommandDSL> {
     return this.clone();
   }
 
-  protected override mergeBaseInfo(target: PropertiesLikeDSL): PropertiesLikeDSL {
-    const result = super.mergeBaseInfo(target);
-
-    if (this.current.eventProperties.length) {
-      // 合并事件属性
-      for (const p of this.current.eventProperties) {
-        result.properties.push(this.regenerateUUID(cloneDeep(p)));
-      }
-    }
-
-    return result;
+  protected override cloneProperties() {
+    // 合并事件参数
+    return this.regenerateUUIDList(cloneDeep([...this.current.properties, ...this.current.eventProperties]))!;
   }
 }

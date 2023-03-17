@@ -32,7 +32,7 @@ export function transformTypeDSLReference(type: TypeDSL, transform: (type: Refer
  */
 export function transformTypeDSLToDataObjectTypeDSL(
   type: TypeDSL,
-  getObjectById: IDomainObjectStore['getObjectById']
+  getObjectById?: IDomainObjectStore['getObjectById']
 ): DataObjectTypeDSL | undefined {
   switch (type.type) {
     case TypeType.Base:
@@ -42,7 +42,7 @@ export function transformTypeDSLToDataObjectTypeDSL(
         type: compatibleType,
       };
     case TypeType.Reference: {
-      const obj = getObjectById(type.referenceId);
+      const obj = getObjectById?.(type.referenceId);
 
       if (obj?.type === DomainObjectName.Enum) {
         return {

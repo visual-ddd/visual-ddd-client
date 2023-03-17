@@ -1,3 +1,4 @@
+import type { DataObjectDSL } from '../data-design/dsl/dsl';
 import type { CommandDSL, DTODSL, EntityDSL, IDDSL, NameDSL, QueryDSL, ValueObjectDSL } from '../domain-design/dsl/dsl';
 import { createIDDSL } from '../domain-design/dsl/factory';
 
@@ -10,9 +11,14 @@ export interface IDomainObjectTransform {
   toEntity(): EntityDSL;
   toDTO(): DTODSL;
   toValueObject(): ValueObjectDSL;
+
+  /**
+   * 转换为数据对象
+   */
+  toDataObject(): DataObjectDSL;
 }
 
-export abstract class Transform<T extends NameDSL> {
+export abstract class Transform<T extends NameDSL> implements IDomainObjectTransform {
   current: T;
 
   constructor(current: T) {
@@ -29,6 +35,7 @@ export abstract class Transform<T extends NameDSL> {
   abstract toEntity(): EntityDSL;
   abstract toDTO(): DTODSL;
   abstract toValueObject(): ValueObjectDSL;
+  abstract toDataObject(): DataObjectDSL;
 
   protected regenerateUUIDList<I extends IDDSL = IDDSL>(list?: I[]) {
     return list?.map(this.regenerateUUID);

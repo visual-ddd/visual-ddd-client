@@ -4,6 +4,10 @@ export enum DataObjectName {
   DataObject = 'dataObject',
 }
 
+export const DataObjectReadableName: Record<DataObjectName, string> = {
+  [DataObjectName.DataObject]: '数据对象',
+};
+
 export const DataObjectTypeList: { name: DataObjectTypeName; label: string }[] = [
   { name: DataObjectTypeName.Boolean, label: '布尔型' },
   { name: DataObjectTypeName.Integer, label: '整型' },

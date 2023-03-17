@@ -50,5 +50,11 @@ describe('createDomainObjectTransform', () => {
       category: undefined,
       result: undefined,
     });
+
+    expect(transform.toDataObject()).toMatchObject({
+      properties: expect.any(Array),
+      indexes: expect.any(Array),
+      tableName: undefined,
+    });
   });
 });

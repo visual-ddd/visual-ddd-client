@@ -3,6 +3,7 @@ import type { Node } from '@antv/x6';
 
 import { CommandDSL, DTODSL, EntityDSL, NameDSL, QueryDSL, ValueObjectDSL } from '../domain-design/dsl/dsl';
 import { DomainObjectName, DomainObjectReadableName } from '../domain-design/dsl/constants';
+import { DataObjectName, DataObjectReadableName } from '../data-design/dsl/constants';
 
 import { Command } from './Command';
 import { Query } from './Query';
@@ -19,6 +20,8 @@ export type DomainObjectTransformable =
   | DomainObjectName.DTO
   | DomainObjectName.Entity
   | DomainObjectName.ValueObject;
+
+export type DomainObjectTransformTarget = DomainObjectTransformable | DataObjectName.DataObject;
 
 /**
  * 创建领域对象转换器
@@ -50,13 +53,19 @@ export function createDomainObjectTransform(type: DomainObjectTransformable, val
   }
 }
 
-export const TRANSFORM_TARGET: [DomainObjectTransformable, keyof IDomainObjectTransform][] = [
+export const TRANSFORM_TARGET: [DomainObjectTransformTarget, keyof IDomainObjectTransform][] = [
   [DomainObjectName.Command, 'toCommand'],
   [DomainObjectName.Query, 'toQuery'],
   [DomainObjectName.DTO, 'toDTO'],
   [DomainObjectName.Entity, 'toEntity'],
   [DomainObjectName.ValueObject, 'toValueObject'],
+  [DataObjectName.DataObject, 'toDataObject'],
 ];
+
+const DOMAIN_OBJECT_TRANSFORM_TARGET_READABLE_NAME: Record<DomainObjectTransformTarget, string> = {
+  ...DomainObjectReadableName,
+  ...DataObjectReadableName,
+};
 
 /**
  * 创建右键菜单
@@ -70,7 +79,7 @@ export function createCopyAsMenu(type: DomainObjectTransformable): EditorContext
     children: TRANSFORM_TARGET.map(([name, method]) => {
       return {
         key: name,
-        label: DomainObjectReadableName[name],
+        label: DOMAIN_OBJECT_TRANSFORM_TARGET_READABLE_NAME[name],
         handler: context => {
           const { model, cell } = context.target!;
           const transform = createDomainObjectTransform(type as any, model.properties as any);
