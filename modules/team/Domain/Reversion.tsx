@@ -66,7 +66,8 @@ export const DomainReversion = (props: DomainReversionProps) => {
   };
 
   const navigateToAction = (id: number, action: 'view' | 'edit') => {
-    router.push(`/team/${detail.teamId}/domain/${detail.id}/reversion/${id}/${action}`);
+    const name = `domain-${detail.id}-reversion-${id}`;
+    window.open(`/team/${detail.teamId}/domain/${detail.id}/reversion/${id}/${action}`, name);
   };
 
   const handleCreateVersion: VersionCreateProps['onSubmit'] = async values => {

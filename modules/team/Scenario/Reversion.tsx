@@ -74,7 +74,8 @@ export const ScenarioReversion = (props: ScenarioReversionProps) => {
   };
 
   const navigateToAction = (id: number, action: 'view' | 'edit') => {
-    router.push(`/team/${detail.teamId}/scenario/${detail.id}/reversion/${id}/${action}`);
+    const name = `scenario-${detail.id}-reversion-${id}`;
+    window.open(`/team/${detail.teamId}/scenario/${detail.id}/reversion/${id}/${action}`, name);
   };
 
   const handleCreateVersion: VersionCreateProps['onSubmit'] = async values => {
