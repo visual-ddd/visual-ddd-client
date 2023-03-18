@@ -16,6 +16,8 @@ export interface DesignerHeaderProps {
   saving?: boolean;
   onSave?: () => void;
 
+  onGotoParent?: () => void;
+
   /**
    * 参与协作的用户
    */
@@ -26,7 +28,19 @@ export interface DesignerHeaderProps {
 }
 
 export const DesignerHeader = observer(function DesignerHeader(props: DesignerHeaderProps) {
-  const { name, onSave, saving, version, title, readonly, collaborators, saveTooltip, versionStatus, right } = props;
+  const {
+    name,
+    onSave,
+    onGotoParent,
+    saving,
+    version,
+    title,
+    readonly,
+    collaborators,
+    saveTooltip,
+    versionStatus,
+    right,
+  } = props;
   const router = useRouter();
 
   const save = (
@@ -51,7 +65,9 @@ export const DesignerHeader = observer(function DesignerHeader(props: DesignerHe
         <span className={s.title}>
           {!!name && (
             <>
-              <span className={s.name}>{name}</span>
+              <span className={s.name} onClick={onGotoParent}>
+                {name}
+              </span>
               <span className={s.split}>/</span>
             </>
           )}

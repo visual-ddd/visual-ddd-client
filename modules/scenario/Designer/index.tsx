@@ -62,6 +62,12 @@ export interface ScenarioDesignerProps {
   description?: ScenarioDescription;
 
   /**
+   * 返回上一级
+   * @returns
+   */
+  onGotoParent: () => void;
+
+  /**
    * 是否为只读模式
    */
   readonly?: boolean;
@@ -81,7 +87,7 @@ export interface ScenarioDesignerProps {
  * 领域模型设计器
  */
 const ScenarioDesigner = observer(function ScenarioDesigner(props: ScenarioDesignerProps) {
-  const { id, readonly, description, words, ubiquitousLanguages: globalUbiquitousLanguages } = props;
+  const { id, readonly, description, onGotoParent, words, ubiquitousLanguages: globalUbiquitousLanguages } = props;
 
   const ubiquitousLanguages = useCallback(() => {
     return globalUbiquitousLanguages ?? NoopArray;
@@ -179,6 +185,7 @@ const ScenarioDesigner = observer(function ScenarioDesigner(props: ScenarioDesig
               saving={model.saving || model.refreshing}
               onSave={() => model.keyboardBinding.trigger('save')}
               collaborators={awarenessUsers}
+              onGotoParent={onGotoParent}
             ></DesignerHeader>
           </DesignerLayout>
         </CompletionContextProvider>

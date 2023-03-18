@@ -6,6 +6,7 @@ import type { DomainDescription } from '@/modules/domain/Designer';
 import { getSession } from '@/modules/session/api';
 import { addCacheWithRaw } from '@/modules/domain/api';
 import { useGlobalUbiquitousLanguage } from '@/modules/team/UbiquitousLanguage/useGlobalUbiquitousLanguage';
+import { useRouter } from 'next/router';
 
 const DynamicDesigner = dynamic(() => import('@/modules/domain/Designer'), { ssr: false });
 
@@ -20,15 +21,29 @@ export interface DesignerProps {
  * @returns
  */
 export default function Designer(props: DesignerProps) {
+  const router = useRouter();
   const { id, readonly, description } = props;
   const { words, list } = useGlobalUbiquitousLanguage();
+
+  const handleGotoParent = () => {
+    const { id, did, rid } = router.query as { id: string; did: string; rid: string };
+
+    router.push(`/team/${id}/domain/${did}/reversion/${rid}`);
+  };
 
   return (
     <>
       <Head>
         <title>{`${description.name} - 业务域设计器`}</title>
       </Head>
-      <DynamicDesigner id={id} readonly={readonly} description={description} words={words} ubiquitousLanguages={list} />
+      <DynamicDesigner
+        onGotoParent={handleGotoParent}
+        id={id}
+        readonly={readonly}
+        description={description}
+        words={words}
+        ubiquitousLanguages={list}
+      />
     </>
   );
 }

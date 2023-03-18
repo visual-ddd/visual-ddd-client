@@ -10,10 +10,11 @@ export interface DomainDesignerHeaderProps {
   version?: string;
   versionStatus?: VersionStatus;
   user?: IUser;
+  onGotoParent?: () => void;
 }
 
 export const DomainDesignerHeader = observer(function DomainDesignerHeader(props: DomainDesignerHeaderProps) {
-  const { name, version, versionStatus, user } = props;
+  const { name, version, onGotoParent, versionStatus, user } = props;
   const model = useDomainDesignerContext()!;
   const saveTitle = useMemo(() => {
     const desc = model.keyboardBinding.getReadableKeyBinding('save');
@@ -40,6 +41,7 @@ export const DomainDesignerHeader = observer(function DomainDesignerHeader(props
       saving={model.saving || model.refreshing}
       onSave={() => model.keyboardBinding.trigger('save')}
       collaborators={awarenessUsers}
+      onGotoParent={onGotoParent}
     ></DesignerHeader>
   );
 });

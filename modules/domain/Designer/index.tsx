@@ -68,6 +68,12 @@ export interface DomainDesignerProps {
   description?: DomainDescription;
 
   /**
+   * 返回上一级
+   * @returns
+   */
+  onGotoParent: () => void;
+
+  /**
    * 是否为只读模式
    */
   readonly?: boolean;
@@ -87,7 +93,7 @@ export interface DomainDesignerProps {
  * 领域模型设计器
  */
 const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerProps) {
-  const { id, readonly, description, words, ubiquitousLanguages: globalUbiquitousLanguages } = props;
+  const { id, readonly, onGotoParent, description, words, ubiquitousLanguages: globalUbiquitousLanguages } = props;
   const model = useMemo(() => new DomainDesignerModel({ id, readonly }), [id, readonly]);
   const [notify, notifyContextHolder] = notification.useNotification();
 
@@ -283,6 +289,7 @@ const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerPro
               name={description?.name}
               version={description?.version}
               versionStatus={description?.versionStatus}
+              onGotoParent={onGotoParent}
             ></DomainDesignerHeader>
           </DesignerLayout>
         </CompletionContextProvider>
