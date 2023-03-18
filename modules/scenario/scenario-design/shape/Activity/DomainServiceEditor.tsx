@@ -79,7 +79,14 @@ const ServiceSelect = observer(function ServiceSelect(
   );
 
   return (
-    <Select dropdownMatchSelectWidth={false} {...COMMON_SELECT_PROPS} {...other} loading={isLoading}>
+    <Select
+      dropdownMatchSelectWidth={false}
+      mode="tags"
+      allowClear
+      {...COMMON_SELECT_PROPS}
+      {...other}
+      loading={isLoading}
+    >
       {data?.map(i => {
         return (
           <Select.Option key={i.id} value={i.id}>

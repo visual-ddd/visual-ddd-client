@@ -1,4 +1,5 @@
 import { FormValidatorContext } from '@/lib/editor';
+import { toArray } from '@/lib/utils';
 import { ActivityBindingType, ActivityDSL } from '../../dsl';
 import { ScenarioEditorModel } from '../../model';
 
@@ -80,11 +81,19 @@ export async function checkVersionId(value: string | undefined, context: FormVal
   }
 }
 
-async function isDomainServiceIdExists(domainId: string, versionId: string, id: string, model: ScenarioEditorModel) {
-  return (await model.domainServiceStore.getDomainServiceList(domainId, versionId)).some(service => service.id === id);
+async function isDomainServiceIdExists(
+  domainId: string,
+  versionId: string,
+  id: string | string[],
+  model: ScenarioEditorModel
+) {
+  const ids = toArray(id);
+  const services = await model.domainServiceStore.getDomainServiceList(domainId, versionId);
+
+  return ids.every(i => services.some(service => service.id === i));
 }
 
-export async function checkDomainServiceId(value: string | undefined, context: FormValidatorContext) {
+export async function checkDomainServiceId(value: string | string[] | undefined, context: FormValidatorContext) {
   const dsl = getDslFromContext(context);
   const editorModel = getScenarioEditorModelFromContext(context);
 
@@ -110,6 +119,6 @@ export async function checkDomainServiceId(value: string | undefined, context: F
   }
 
   if (!(await isDomainServiceIdExists(dsl.binding.domainId, dsl.binding.versionId, value, editorModel))) {
-    throw new Error(`业务域服务不存在`);
+    throw new Error(`业务域服务不存在, 请检查`);
   }
 }

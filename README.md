@@ -37,7 +37,6 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 - NodeYMap 单元测试
 - rule 包含 label, 更好的信息提示
-- 引用关系支持可见性控制
 - layout 支持折叠
 - edge/node selected 状态高亮
 - 组件树换行优化
