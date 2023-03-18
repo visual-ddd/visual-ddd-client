@@ -1,6 +1,22 @@
 import type { Doc as YDoc } from 'yjs';
 import type { Awareness } from 'y-protocols/awareness';
 import { WebrtcProvider } from 'y-webrtc';
+import { IndexeddbPersistence } from 'y-indexeddb';
+
+/**
+ * 建立本地缓存
+ * @param options
+ */
+export async function createYjsLocalProvider(options: { id: string; doc: YDoc }) {
+  const { id, doc } = options;
+  const name = `visual-ddd-${id}`;
+
+  const provider = new IndexeddbPersistence(name, doc);
+
+  return new Promise(resolve => {
+    provider.once('synced', resolve);
+  });
+}
 
 export function createYjsProvider(options: { id: string; doc: YDoc; awareness: Awareness }) {
   const { id, doc, awareness } = options;

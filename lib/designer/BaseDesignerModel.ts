@@ -12,7 +12,7 @@ import { DesignerKeyboardBinding } from './DesignerKeyboardBinding';
 import { IDesignerTab } from './IDesignerTab';
 import { IDesigner } from './IDesigner';
 import { BaseDesignerAwarenessState, DesignerAwareness } from './DesignerAwareness';
-import { createYjsProvider } from './createYjsProvider';
+import { createYjsLocalProvider, createYjsProvider } from './createYjsProvider';
 import { DesignerAwarenessDelegate } from './DesignerAwarenessDelegate';
 
 export interface BaseDesignerModelOptions {
@@ -72,12 +72,18 @@ export abstract class BaseDesignerModel<
   }
 
   readonly ydoc: YDoc;
+
   protected webrtcProvider?: WebrtcProvider;
 
   /**
    * Tab 模型
    */
   protected tabs: { key: Tab; model: IDesignerTab }[] = [];
+
+  /**
+   * 本地 provider 就绪
+   */
+  private localProviderSynced = false;
 
   /**
    * 加载数据
@@ -160,6 +166,14 @@ export abstract class BaseDesignerModel<
     try {
       this.setLoading(true);
 
+      const key = `${this.name}-${this.id}`;
+
+      // 加载本地数据
+      if (!this.localProviderSynced && !this.readonly) {
+        await createYjsLocalProvider({ id: key, doc: this.ydoc });
+        this.localProviderSynced = true;
+      }
+
       // 销毁旧的链接
       if (this.webrtcProvider) {
         this.webrtcProvider.destroy();
@@ -177,7 +191,7 @@ export abstract class BaseDesignerModel<
       if (!this.readonly) {
         this.webrtcProvider = createYjsProvider({
           doc: this.ydoc,
-          id: `${this.name}-${this.id}`,
+          id: key,
           awareness: this.awareness.awareness,
         });
       }
