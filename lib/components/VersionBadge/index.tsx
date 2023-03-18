@@ -11,14 +11,18 @@ export interface VersionBadgeProps {
    * 默认 block
    */
   type?: 'block' | 'text';
+
+  className?: string;
+  style?: React.CSSProperties;
 }
 
 export const VersionBadge = (props: VersionBadgeProps) => {
-  const { version, status, type = 'block' } = props;
+  const { version, status, type = 'block', className, style } = props;
   return (
     <div
-      className={classNames('vd-version-badge', s.root, type)}
+      className={classNames('vd-version-badge', s.root, type, className)}
       style={{
+        ...style,
         // @ts-expect-error
         '--color': VersionStatusColor[status],
       }}

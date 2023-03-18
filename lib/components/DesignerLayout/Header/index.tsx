@@ -39,6 +39,8 @@ export const DesignerHeader = observer(function DesignerHeader(props: DesignerHe
     router.push('/');
   };
 
+  const hasVersion = version != null && versionStatus != null;
+
   return (
     <div className={s.root}>
       <div className={s.back} onClick={backHome} title="返回主页">
@@ -46,9 +48,6 @@ export const DesignerHeader = observer(function DesignerHeader(props: DesignerHe
         <img src="/logo.svg" alt="logo" />
       </div>
       <div className={s.aside}>
-        {version != null && versionStatus != null && <VersionBadge version={version} status={versionStatus} />}
-      </div>
-      <div className={s.center}>
         <span className={s.title}>
           {!!name && (
             <>
@@ -56,10 +55,11 @@ export const DesignerHeader = observer(function DesignerHeader(props: DesignerHe
               <span className={s.split}>/</span>
             </>
           )}
-          {title}
-          {!!readonly && <span className="u-gray-500">(只读)</span>}
+          <span className={s.mainTitle}>{title}</span>
         </span>
+        {!!hasVersion && <VersionBadge className={s.version} version={version} status={versionStatus} />}
       </div>
+      <div className={s.center}></div>
       <div className={s.aside}>
         {right}
 
@@ -78,14 +78,17 @@ export const DesignerHeader = observer(function DesignerHeader(props: DesignerHe
         )}
 
         {/* 保存按钮 */}
-        {!readonly &&
-          (saveTooltip ? (
+        {!readonly ? (
+          saveTooltip ? (
             <Tooltip title={saveTooltip} placement="bottomRight">
               {save}
             </Tooltip>
           ) : (
             save
-          ))}
+          )
+        ) : (
+          <Button disabled>只读</Button>
+        )}
       </div>
     </div>
   );

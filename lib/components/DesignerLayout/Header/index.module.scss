@@ -29,10 +29,19 @@
   justify-content: center;
 }
 
+.mainTitle {
+  font-weight: bold;
+}
+
+.version {
+  margin-left: var(--vd-spacing-sm);
+}
+
 .aside {
   padding: 0 var(--vd-spacing-sm);
   display: flex;
   align-items: center;
+  line-height: 1;
 }
 
 .name {
