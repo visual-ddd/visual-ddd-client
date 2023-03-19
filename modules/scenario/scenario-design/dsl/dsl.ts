@@ -35,8 +35,20 @@ export interface CommentDSL extends IDDSL {
 
 // TODO: 支持外部团队接口
 export enum ActivityBindingType {
+  /**
+   * 业务场景服务
+   */
   ScenarioService = 'scenarioService',
+
+  /**
+   * 业务域服务
+   */
   DomainService = 'domainService',
+
+  /**
+   * 外部服务
+   */
+  ExternalService = 'externalService',
 }
 
 /**
@@ -61,7 +73,27 @@ export interface ActivityBindingDomainService {
   domainServiceId?: string | string[];
 }
 
-export type ActivityBinding = ActivityBindingScenarioService | ActivityBindingDomainService;
+/**
+ * 外部服务
+ */
+export interface ActivityBindingExternalService {
+  type: ActivityBindingType.ExternalService;
+
+  /**
+   * 外部服务
+   */
+  serviceName?: string;
+
+  /**
+   * 外部服务描述
+   */
+  serviceDescription?: string;
+}
+
+export type ActivityBinding =
+  | ActivityBindingScenarioService
+  | ActivityBindingDomainService
+  | ActivityBindingExternalService;
 
 /**
  * 业务活动

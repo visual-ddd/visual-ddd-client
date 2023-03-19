@@ -80,6 +80,21 @@ export const Graph = observer(function Graph(props: GraphProps) {
       }
     }
 
+    if (dsl.externalDependencies.length) {
+      const external: MindMapNode = {
+        name: '《外部服务》',
+        children: [],
+      };
+      root.children?.push(external);
+
+      for (const service of dsl.externalDependencies) {
+        external.children?.push({
+          name: service.name,
+          shape: 'square',
+        });
+      }
+    }
+
     return root;
   }, [dsl, detail, domains]);
 

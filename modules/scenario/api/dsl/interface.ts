@@ -14,6 +14,18 @@ export interface DomainDependencyDSL {
   serviceId: string;
 }
 
+export interface ExternalDependencyDSL {
+  /**
+   * 依赖的外部服务
+   */
+  name: string;
+
+  /**
+   * 依赖的外部服务描述
+   */
+  description?: string;
+}
+
 /**
  * 业务场景
  */
@@ -22,6 +34,11 @@ export interface ScenarioDSL {
    * 依赖的业务域服务
    */
   domainDependencies: DomainDependencyDSL[];
+
+  /**
+   * 依赖的外部服务
+   */
+  externalDependencies: ExternalDependencyDSL[];
 
   /**
    * 业务场景服务，直接复用查询模型

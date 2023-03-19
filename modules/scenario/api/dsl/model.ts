@@ -20,7 +20,7 @@ export class DSLModel {
 
   toDSL(): ScenarioDSL {
     return {
-      domainDependencies: this.scenarioModel.toDSL(),
+      ...this.scenarioModel.toDSL(),
       serviceModel: this.queryModel.toDSL(),
     };
   }

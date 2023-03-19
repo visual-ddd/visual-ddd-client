@@ -1,16 +1,24 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`scenario-model 1`] = `
-[
-  {
-    "domainId": 32,
-    "serviceId": "51772af6-eb77-4ebe-82d5-53edcb7fe82c",
-    "versionId": 60,
-  },
-  {
-    "domainId": 32,
-    "serviceId": "93a15900-45d9-4804-a9e0-bf31a16009c0",
-    "versionId": 60,
-  },
-]
+{
+  "domainDependencies": [
+    {
+      "domainId": 32,
+      "serviceId": "51772af6-eb77-4ebe-82d5-53edcb7fe82c",
+      "versionId": 60,
+    },
+    {
+      "domainId": 32,
+      "serviceId": "93a15900-45d9-4804-a9e0-bf31a16009c0",
+      "versionId": 60,
+    },
+  ],
+  "externalDependencies": [
+    {
+      "description": "description",
+      "name": "name",
+    },
+  ],
+}
 `;

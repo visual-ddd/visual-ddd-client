@@ -14,16 +14,31 @@ export interface ActivityShapeProps {
 export const ActivityShape = observer(function ActivityShape(props: ActivityShapeProps) {
   const { dsl } = props;
 
+  /**
+   * 绑定名称
+   */
   const boundKey =
-    dsl.binding?.type && (dsl.binding.type === ActivityBindingType.DomainService ? dsl.binding.domainId : 'service');
+    dsl.binding?.type &&
+    (dsl.binding.type === ActivityBindingType.DomainService
+      ? dsl.binding.domainId
+      : dsl.binding.type === ActivityBindingType.ExternalService
+      ? 'external'
+      : 'service');
 
   const color = useMemo(() => {
     return getMappedLighterColor(boundKey ?? '');
   }, [boundKey]);
 
+  /**
+   * 已绑定
+   */
   const bound =
     dsl.binding?.type &&
-    (dsl.binding.type === ActivityBindingType.DomainService ? dsl.binding.domainId : dsl.binding.serviceId);
+    (dsl.binding.type === ActivityBindingType.DomainService
+      ? dsl.binding.domainId
+      : dsl.binding.type === ActivityBindingType.ScenarioService
+      ? dsl.binding.serviceId
+      : dsl.binding.serviceName);
 
   return (
     <div

@@ -4,10 +4,11 @@ import uniqBy from 'lodash/uniqBy';
 
 import { ScenarioObjectName, ActivityDSL, ActivityBindingType } from '../../scenario-design/dsl';
 
-import { DomainDependencyDSL } from './interface';
+import { DomainDependencyDSL, ExternalDependencyDSL } from './interface';
 
 export class ScenarioModelContainer extends BaseContainer {
   private dependencies: DomainDependencyDSL[] = [];
+  private externalDependencies: ExternalDependencyDSL[] = [];
 
   constructor(tree: Record<string, Tree>) {
     super();
@@ -15,10 +16,16 @@ export class ScenarioModelContainer extends BaseContainer {
     this.traverse(tree);
   }
 
-  toDSL(): DomainDependencyDSL[] {
-    return uniqBy(this.dependencies, i => {
-      return `${i.teamId ?? 'team'}-${i.domainId}-${i.versionId}-${i.serviceId}`;
-    });
+  toDSL(): {
+    domainDependencies: DomainDependencyDSL[];
+    externalDependencies: ExternalDependencyDSL[];
+  } {
+    return {
+      domainDependencies: uniqBy(this.dependencies, i => {
+        return `${i.teamId ?? 'team'}-${i.domainId}-${i.versionId}-${i.serviceId}`;
+      }),
+      externalDependencies: uniqBy(this.externalDependencies, i => i.name),
+    };
   }
 
   handle(node: Tree) {
@@ -44,6 +51,11 @@ export class ScenarioModelContainer extends BaseContainer {
           serviceId: serviceId,
         });
       }
+    } else if (dsl.binding?.type === ActivityBindingType.ExternalService && dsl.binding.serviceName) {
+      this.externalDependencies.push({
+        name: dsl.binding.serviceName,
+        description: dsl.binding.serviceDescription,
+      });
     }
   }
 }
