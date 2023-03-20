@@ -1,9 +1,13 @@
 import { Button, Input, Popconfirm, Space, Table, TableColumnType } from 'antd';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
-import { useEffect, useMemo, useRef } from 'react';
+import { Children, useEffect, useMemo, useRef, cloneElement } from 'react';
 import { Clipboard } from '@/lib/utils';
 import { v4 } from 'uuid';
+import { DndContext, DragEndEvent } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
+import { MenuOutlined } from '@ant-design/icons';
+import { CSS } from '@dnd-kit/utilities';
 
 import { IUbiquitousLanguageModel, UbiquitousLanguageItem } from './types';
 import { Import } from '@/lib/components/Import';
@@ -73,6 +77,43 @@ const Item = observer(function Item({
 
 const clipboard = new Clipboard<UbiquitousLanguageItem>();
 
+interface RowProps extends React.HTMLAttributes<HTMLTableRowElement> {
+  'data-row-key': string;
+}
+
+const Row = ({ children, ...props }: RowProps) => {
+  const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } = useSortable({
+    id: props['data-row-key'],
+  });
+
+  const style: React.CSSProperties = {
+    ...props.style,
+    transform: CSS.Transform.toString(transform && { ...transform, scaleY: 1 })?.replace(
+      /translate3d\(([^,]+),/,
+      'translate3d(0,'
+    ),
+    transition,
+    ...(isDragging ? { position: 'relative', zIndex: 9999 } : {}),
+  };
+
+  return (
+    <tr {...props} ref={setNodeRef} style={style} {...attributes}>
+      {Children.map(children, child => {
+        if ((child as React.ReactElement).key === 'sort') {
+          return cloneElement(child as React.ReactElement, {
+            children: (
+              <MenuOutlined ref={setActivatorNodeRef} style={{ touchAction: 'none', cursor: 'move' }} {...listeners} />
+            ),
+          });
+        }
+        return child;
+      })}
+    </tr>
+  );
+};
+
+const TableSortableComponents = { body: { row: Row } };
+
 /**
  * 统一语言列表
  */
@@ -80,6 +121,7 @@ export const UbiquitousLanguage = observer(function UbiquitousLanguage(props: Ub
   const { model } = props;
   const readonly = model.readonly;
   const aiImportRef = useAIImport();
+  const sortable = !!(!model.filter && model.moveItem && !readonly);
 
   const columns = useMemo<TableColumnType<UbiquitousLanguageItem>[]>(() => {
     const editable = (key: keyof UbiquitousLanguageItem, title: string): TableColumnType<UbiquitousLanguageItem> => {
@@ -126,8 +168,15 @@ export const UbiquitousLanguage = observer(function UbiquitousLanguage(props: Ub
       });
     }
 
+    if (sortable) {
+      list.push({
+        width: 40,
+        key: 'sort',
+      });
+    }
+
     return list;
-  }, [model]);
+  }, [model, sortable]);
 
   const disabledBatchOperation = !model.selecting.length || readonly;
 
@@ -160,7 +209,20 @@ export const UbiquitousLanguage = observer(function UbiquitousLanguage(props: Ub
     }
   };
 
-  return (
+  let table = (
+    <Table
+      loading={model.loading}
+      rowKey="uuid"
+      rowSelection={{ selectedRowKeys: model.selecting, onChange: e => model.setSelecting(e as string[]) }}
+      columns={columns}
+      size="small"
+      dataSource={model.list}
+      pagination={false}
+      components={sortable ? TableSortableComponents : undefined}
+    ></Table>
+  );
+
+  let content = (
     <div className={classNames('vd-ul', s.root)}>
       <div className={classNames('vd-ul__actions', s.actions)}>
         <Input.Search
@@ -228,17 +290,7 @@ export const UbiquitousLanguage = observer(function UbiquitousLanguage(props: Ub
           )}
         </Space>
       </div>
-      <div className={classNames('vd-ul__table', s.table)}>
-        <Table
-          loading={model.loading}
-          rowKey="uuid"
-          rowSelection={{ selectedRowKeys: model.selecting, onChange: e => model.setSelecting(e as string[]) }}
-          columns={columns}
-          size="small"
-          dataSource={model.list}
-          pagination={false}
-        ></Table>
-      </div>
+      <div className={classNames('vd-ul__table', s.table)}>{table}</div>
       <div className={classNames('vd-ul__actions', s.actions)}>
         <Space>
           <Button size="small" onClick={() => model.addItem('push')} disabled={readonly}>
@@ -254,4 +306,23 @@ export const UbiquitousLanguage = observer(function UbiquitousLanguage(props: Ub
       <AIImport ref={aiImportRef} onImport={unshiftItems} />
     </div>
   );
+
+  if (sortable) {
+    const handleSortEnd = (e: DragEndEvent) => {
+      const { active, over } = e;
+
+      if (active.id !== over?.id) {
+        model.moveItem?.(active.id as string, over?.id as string);
+      }
+    };
+    content = (
+      <DndContext onDragEnd={handleSortEnd}>
+        <SortableContext items={model.ids} strategy={verticalListSortingStrategy}>
+          {content}
+        </SortableContext>
+      </DndContext>
+    );
+  }
+
+  return content;
 });

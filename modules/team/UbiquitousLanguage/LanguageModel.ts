@@ -79,6 +79,14 @@ export class LanguageModel implements IUbiquitousLanguageModel {
   @observable
   list: UbiquitousLanguageItem[] = [];
 
+  /**
+   * 唯一 id 列表
+   */
+  @computed
+  get ids() {
+    return this.innerList.map(i => i.uuid);
+  }
+
   @computed
   get selectingItems(): UbiquitousLanguageItem[] {
     return this.innerList.filter(i => this.selecting.includes(i.uuid));

@@ -50,6 +50,11 @@ export interface IUbiquitousLanguageModel {
   readonly list: UbiquitousLanguageItem[];
 
   /**
+   * 唯一 id 列表
+   */
+  readonly ids: string[];
+
+  /**
    * 当前选中的节点 id
    */
   readonly selecting: string[];
@@ -58,6 +63,8 @@ export interface IUbiquitousLanguageModel {
    * 当前选中的节点
    */
   readonly selectingItems: UbiquitousLanguageItem[];
+
+  readonly filter: string;
 
   setFilter(params: { value: string }): void;
 
@@ -81,6 +88,14 @@ export interface IUbiquitousLanguageModel {
   removeItem(params: { uuid: string }): void;
 
   removeSelecting(): void;
+
+  /**
+   * 移动位置
+   * @param from
+   * @param to
+   * @returns
+   */
+  moveItem?: (target: string, before?: string) => void;
 
   /**
    * 导出 excel

@@ -57,6 +57,11 @@ export class UbiquitousLanguageModel implements IUbiquitousLanguageModel {
   list: UbiquitousLanguageItem[] = [];
 
   @computed
+  get ids() {
+    return this.innerList.map(i => i.uuid);
+  }
+
+  @computed
   get selectingItems(): UbiquitousLanguageItem[] {
     return this.innerList.filter(i => this.selecting.includes(i.uuid));
   }
@@ -328,6 +333,24 @@ export class UbiquitousLanguageModel implements IUbiquitousLanguageModel {
     }
 
     return item.uuid;
+  }
+
+  @mutation('UBL_MOVE_ITEM', false)
+  moveItem(target: string, over?: string | undefined) {
+    const activeIndex = this.innerList.findIndex(i => i.uuid === target);
+    const overIndex = this.innerList.findIndex(i => i.uuid === over);
+
+    const item = this.innerList.splice(activeIndex, 1)[0];
+
+    this.event.emit('ITEM_REMOVED', { item, index: activeIndex });
+
+    const insertIndex = overIndex < 0 ? this.innerList.length + overIndex : overIndex;
+
+    this.innerList.splice(insertIndex, 0, item);
+
+    this.event.emit('ITEM_ADDED', { item, index: insertIndex });
+
+    this.list = this.innerList.slice(0);
   }
 
   @mutation('UBL_INSERT_ITEM', false)
