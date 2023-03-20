@@ -73,7 +73,7 @@ export const UserSelect = memo((props: UserSelectProps) => {
       onBlur={handleBlur}
       options={filtered.map(item => ({
         key: item.id,
-        label: item.userName,
+        label: `${item.userName}(${item.accountNo})`,
         value: item.id,
       }))}
       {...other}
