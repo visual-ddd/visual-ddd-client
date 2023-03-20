@@ -80,7 +80,7 @@ export const Graph = observer(function Graph(props: GraphProps) {
       }
     }
 
-    if (dsl.externalDependencies.length) {
+    if (dsl.externalDependencies?.length) {
       const external: MindMapNode = {
         name: '《外部服务》',
         children: [],

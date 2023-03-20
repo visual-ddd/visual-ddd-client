@@ -1,6 +1,8 @@
+import { FullScreenContainer } from '@/lib/components/FullScreenContainer';
 import {
   BaseEditorModel,
   Canvas,
+  CanvasModel,
   CanvasModelProvider,
   EditorModelProvider,
   NoopBaseEditorAwarenessRegistry,
@@ -9,7 +11,8 @@ import { tryDispose } from '@/lib/utils';
 import { createYDocFromBase64 } from '@/lib/yjs-store-api-for-browser';
 import { NoopArray } from '@wakeapp/utils';
 import { Empty } from 'antd';
-import { useEffect, useMemo } from 'react';
+import classNames from 'classnames';
+import { useEffect, useMemo, useRef } from 'react';
 
 import { YJS_FIELD_NAME } from '../../constants';
 
@@ -18,13 +21,16 @@ import s from './ScenarioStandalone.module.scss';
 
 export interface ScenarioStandaloneProps {
   dsl?: string;
+  className?: string;
+  style?: React.CSSProperties;
 }
 
 /**
  * 独立的业务场景组件
  */
 export const ScenarioStandalone = (props: ScenarioStandaloneProps) => {
-  const { dsl } = props;
+  const { dsl, className, ...other } = props;
+  const canvasModelRef = useRef<CanvasModel>();
 
   const model = useMemo(() => {
     if (dsl == null) {
@@ -51,17 +57,33 @@ export const ScenarioStandalone = (props: ScenarioStandaloneProps) => {
     }
   }, [model]);
 
+  const handleFullScreenChange = () => {
+    setTimeout(() => {
+      canvasModelRef.current?.handleZoomToFit();
+    }, 500);
+  };
+
+  const handleCanvasReady = (canvasModel: CanvasModel) => {
+    canvasModelRef.current = canvasModel;
+
+    handleFullScreenChange();
+  };
+
   if (model == null) {
     return <Empty description="暂无数据" />;
   }
 
   return (
-    <div className={s.root}>
+    <FullScreenContainer
+      className={classNames(s.root, className)}
+      onFullScreenChange={handleFullScreenChange}
+      {...other}
+    >
       <EditorModelProvider value={model}>
-        <CanvasModelProvider options={CANVAS_MODEL_OPTIONS}>
+        <CanvasModelProvider options={CANVAS_MODEL_OPTIONS} onReady={handleCanvasReady}>
           <Canvas></Canvas>
         </CanvasModelProvider>
       </EditorModelProvider>
-    </div>
+    </FullScreenContainer>
   );
 };

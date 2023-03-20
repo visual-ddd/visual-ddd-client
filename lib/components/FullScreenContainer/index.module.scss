@@ -1,0 +1,23 @@
+.root {
+  position: relative;
+  background-color: white;
+}
+
+.icon {
+  position: absolute;
+  right: 4px;
+  top: 4px;
+  line-height: 1;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 5px;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: gray;
+  z-index: 1;
+
+  &:hover {
+    color: black;
+    background-color: rgb(216, 216, 216);
+  }
+}

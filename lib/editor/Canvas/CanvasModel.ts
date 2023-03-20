@@ -756,7 +756,7 @@ export class CanvasModel implements IDisposable {
   handleZoomToFit = () => {
     // this.graph?.zoomTo(1);
     // this.graph?.center();
-    this.graph?.zoomToFit({ padding: 20 });
+    this.graph?.zoomToFit({ padding: 20, maxScale: 1.2 });
     this.graph?.centerContent();
   };
 

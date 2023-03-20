@@ -13,6 +13,7 @@ import {
 import { PreviewPageLayout, PreviewPageSection, PreviewPageVersion } from '@/lib/components/PreviewPageLayout';
 import { Button, Card, Space, Statistic } from 'antd';
 import classNames from 'classnames';
+import { useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import { request, useRequestPaginationByGet } from '@/modules/backend-client';
 import { useLayoutTitle } from '@/modules/Layout';
@@ -20,9 +21,9 @@ import type { ScenarioDSL } from '@/modules/scenario/api/dsl/interface';
 
 import { ScenarioDetail, VersionStatus } from '../types';
 import { UpdateScenario, useUpdateScenario } from './Update';
-import { useMemo } from 'react';
 import Graph from './Graph';
 import { useStat } from './useStat';
+import s from './Reversion.module.scss';
 
 export interface ScenarioReversionProps {
   detail: ScenarioDetail;
@@ -207,7 +208,7 @@ export const ScenarioReversion = (props: ScenarioReversionProps) => {
             </Space>
           </Card>
           <Card size="small" title="流程图">
-            <ScenarioStandalone key={KEY} dsl={detail.version.graphDsl} />
+            <ScenarioStandalone className={s.flowGraph} key={KEY} dsl={detail.version.graphDsl} />
           </Card>
         </>
       }
