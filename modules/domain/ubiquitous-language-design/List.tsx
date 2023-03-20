@@ -2,6 +2,8 @@ import { Button, Input, Popconfirm, Space, Table, TableColumnType } from 'antd';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
 import { useEffect, useMemo, useRef } from 'react';
+import { Clipboard } from '@/lib/utils';
+import { v4 } from 'uuid';
 
 import { IUbiquitousLanguageModel, UbiquitousLanguageItem } from './types';
 import { Import } from '@/lib/components/Import';
@@ -69,6 +71,8 @@ const Item = observer(function Item({
   );
 });
 
+const clipboard = new Clipboard<UbiquitousLanguageItem>();
+
 /**
  * 统一语言列表
  */
@@ -125,11 +129,34 @@ export const UbiquitousLanguage = observer(function UbiquitousLanguage(props: Ub
     return list;
   }, [model]);
 
-  const disabledBatchDelete = !model.selecting.length || readonly;
+  const disabledBatchOperation = !model.selecting.length || readonly;
 
   const unshiftItems = (items: UbiquitousLanguageItem[]) => {
     for (const item of items) {
       model.addItem('unshift', item);
+    }
+  };
+
+  const handleCopy = () => {
+    const selected = model.selectingItems;
+
+    if (selected.length) {
+      clipboard.save(selected);
+    }
+  };
+
+  const handlePaste = async () => {
+    const items = clipboard.get();
+
+    if (items.length) {
+      const itemsToPush = items.map(i => ({ ...i, uuid: v4() }));
+
+      const ids = await Promise.all(itemsToPush.map(i => model.addItem('unshift', i)));
+
+      if (ids.length) {
+        model.cleanSelecting();
+        model.setSelecting(ids);
+      }
     }
   };
 
@@ -154,17 +181,26 @@ export const UbiquitousLanguage = observer(function UbiquitousLanguage(props: Ub
             新增一行
           </Button>
 
-          <Popconfirm title="确认删除?" onConfirm={model.removeSelecting} disabled={disabledBatchDelete}>
-            <Button size="small" disabled={disabledBatchDelete}>
+          <Popconfirm title="确认删除?" onConfirm={model.removeSelecting} disabled={disabledBatchOperation}>
+            <Button size="small" disabled={disabledBatchOperation}>
               批量删除
             </Button>
           </Popconfirm>
+
+          <Button size="small" disabled={disabledBatchOperation} onClick={handleCopy}>
+            复制
+          </Button>
 
           {/* <Button size="small" disabled={readonly} >
             自动翻译
           </Button> */}
         </Space>
         <Space>
+          {!readonly && !clipboard.isEmpty && (
+            <Popconfirm title="确认粘贴?" onConfirm={handlePaste}>
+              <Button>粘贴</Button>
+            </Popconfirm>
+          )}
           <Button
             size="small"
             disabled={readonly}
@@ -208,8 +244,8 @@ export const UbiquitousLanguage = observer(function UbiquitousLanguage(props: Ub
           <Button size="small" onClick={() => model.addItem('push')} disabled={readonly}>
             新增一行
           </Button>
-          <Popconfirm title="确认删除?" onConfirm={model.removeSelecting} disabled={disabledBatchDelete}>
-            <Button size="small" disabled={disabledBatchDelete}>
+          <Popconfirm title="确认删除?" onConfirm={model.removeSelecting} disabled={disabledBatchOperation}>
+            <Button size="small" disabled={disabledBatchOperation}>
               批量删除
             </Button>
           </Popconfirm>

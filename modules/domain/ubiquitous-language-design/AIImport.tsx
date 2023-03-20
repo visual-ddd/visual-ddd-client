@@ -112,7 +112,7 @@ export const AIImport = forwardRef<AIImportRef, AIImportProps>(function AIImport
 
   return (
     <Modal
-      title="AI 提取"
+      title="AI 提取（实验性）"
       open={open}
       onCancel={handleCancel}
       destroyOnClose

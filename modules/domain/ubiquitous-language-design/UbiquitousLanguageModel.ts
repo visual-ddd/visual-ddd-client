@@ -56,6 +56,11 @@ export class UbiquitousLanguageModel implements IUbiquitousLanguageModel {
   @observable
   list: UbiquitousLanguageItem[] = [];
 
+  @computed
+  get selectingItems(): UbiquitousLanguageItem[] {
+    return this.innerList.filter(i => this.selecting.includes(i.uuid));
+  }
+
   /**
    * 所有单词
    */
@@ -265,6 +270,11 @@ export class UbiquitousLanguageModel implements IUbiquitousLanguageModel {
     this.selecting = ids;
   }
 
+  @mutation('UBL_CLEAN_SELECTING', false)
+  cleanSelecting(): void {
+    this.selecting = [];
+  }
+
   @mutation('UBL_UPDATE_ITEM', false)
   updateItem(params: { uuid: string; key: keyof UbiquitousLanguageItem; value: string }) {
     const { uuid, key, value } = params;
@@ -316,6 +326,8 @@ export class UbiquitousLanguageModel implements IUbiquitousLanguageModel {
       this.innerList.unshift(item);
       this.event.emit('ITEM_ADDED', { item, index: 0 });
     }
+
+    return item.uuid;
   }
 
   @mutation('UBL_INSERT_ITEM', false)

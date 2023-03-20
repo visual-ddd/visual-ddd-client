@@ -3,8 +3,8 @@ import { IUbiquitousLanguageModel, UbiquitousLanguageItem } from '@/modules/doma
 import { UbiquitousLanguageEvent } from '@/modules/domain/ubiquitous-language-design/UbiquitousLanguageEvents';
 import { UbiquitousLanguageFuseStore } from '@/modules/domain/ubiquitous-language-design/UbiquitousLanguageFuseStore';
 import { message } from 'antd';
-import { debounce } from 'lodash';
-import { makeObservable, observable, reaction } from 'mobx';
+import debounce from 'lodash/debounce';
+import { makeObservable, observable, reaction, computed } from 'mobx';
 
 export interface LanguageModelProps {
   fetcher: () => Promise<UbiquitousLanguageItem[]>;
@@ -78,6 +78,11 @@ export class LanguageModel implements IUbiquitousLanguageModel {
    */
   @observable
   list: UbiquitousLanguageItem[] = [];
+
+  @computed
+  get selectingItems(): UbiquitousLanguageItem[] {
+    return this.innerList.filter(i => this.selecting.includes(i.uuid));
+  }
 
   private props: LanguageModelProps;
   private event: UbiquitousLanguageEvent = new UbiquitousLanguageEvent();
@@ -185,6 +190,11 @@ export class LanguageModel implements IUbiquitousLanguageModel {
     this.selecting = ids;
   }
 
+  @mutation('UBL_CLEAN_SELECTING', false)
+  cleanSelecting(): void {
+    this.selecting = [];
+  }
+
   @mutation('UBL_UPDATE_ITEM', false)
   updateItem(params: { uuid: string; key: keyof UbiquitousLanguageItem; value: string }) {
     const { uuid, key, value } = params;
@@ -254,8 +264,11 @@ export class LanguageModel implements IUbiquitousLanguageModel {
       );
 
       this.addItemInner({ order, item });
+
+      return item.uuid;
     } catch (err) {
       message.error((err as Error).message);
+      throw err;
     }
   }
 

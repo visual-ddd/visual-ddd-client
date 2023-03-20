@@ -50,15 +50,22 @@ export interface IUbiquitousLanguageModel {
   readonly list: UbiquitousLanguageItem[];
 
   /**
-   * 当前选中的节点
+   * 当前选中的节点 id
    */
   readonly selecting: string[];
+
+  /**
+   * 当前选中的节点
+   */
+  readonly selectingItems: UbiquitousLanguageItem[];
 
   setFilter(params: { value: string }): void;
 
   isEditing(id: string, key: keyof UbiquitousLanguageItem): boolean;
 
   setEditing(params: { id: string; key: keyof UbiquitousLanguageItem; editing: boolean }): void;
+
+  cleanSelecting(): void;
 
   setSelecting(ids: string[]): void;
 
@@ -69,7 +76,7 @@ export interface IUbiquitousLanguageModel {
    * @param order
    * @param item
    */
-  addItem(order?: 'push' | 'unshift', item?: UbiquitousLanguageItem): void;
+  addItem(order?: 'push' | 'unshift', item?: UbiquitousLanguageItem): Promise<string> | string;
 
   removeItem(params: { uuid: string }): void;
 
