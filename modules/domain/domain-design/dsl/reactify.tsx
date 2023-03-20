@@ -62,7 +62,8 @@ export function reactifyMethodResult(type?: TypeDSL): React.ReactNode {
 export function reactifyParameter(parameter: ParameterDSL, index: number): React.ReactNode {
   return (
     <React.Fragment key={parameter.uuid}>
-      {parameter.name || 'arg' + index}: {reactifyTypeDSL(parameter.type)}
+      {parameter.name || 'arg' + index}
+      {parameter.optional ? '?' : ''}: {reactifyTypeDSL(parameter.type)}
     </React.Fragment>
   );
 }
@@ -85,7 +86,8 @@ export function reactifyProperty(property: PropertyDSL): React.ReactNode {
   return (
     <>
       {stringifyAccess(property.access)}
-      {property.name || UntitledInCamelCase}: {reactifyTypeDSL(property.type)}
+      {property.name || UntitledInCamelCase}
+      {property.optional ? '?' : ''}: {reactifyTypeDSL(property.type)}
     </>
   );
 }

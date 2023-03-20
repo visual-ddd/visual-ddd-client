@@ -75,6 +75,11 @@ export interface PropertyDSL extends NameDSL {
    * 访问控制, 默认 public
    */
   access?: AccessDSL;
+
+  /**
+   * 是否可选，比如 Java 场景，生成代码会携带 @Nullable 注解，默认为 false
+   */
+  optional?: boolean;
 }
 
 /**
@@ -85,6 +90,11 @@ export interface ParameterDSL extends NameDSL {
    * 参数
    */
   type: TypeDSL;
+
+  /**
+   * 是否可选，比如 Java 场景，生成代码会携带 @Nullable 注解，默认为 false
+   */
+  optional?: boolean;
 }
 
 export interface ReturnDSL {

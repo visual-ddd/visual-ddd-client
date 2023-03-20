@@ -1,7 +1,7 @@
 import { useEditorFormContext, EditorFormItem } from '@/lib/editor';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
-import { message, Space } from 'antd';
+import { message, Space, Switch } from 'antd';
 import { replaceLastPathToPattern, Clipboard } from '@/lib/utils';
 
 import { NameDSL, PropertyDSL } from '../../dsl';
@@ -69,6 +69,14 @@ const renderEditor = (path: string) => {
       </EditorFormItem>
       <EditorFormItem path={p('type')} label="类型">
         <TypeInput />
+      </EditorFormItem>
+      <EditorFormItem
+        path={p('optional')}
+        label="可空类型？"
+        valuePropName="checked"
+        tooltip="表示该字段可能为 null, 比如我们在代码生成时会加上 @Nullable"
+      >
+        <Switch></Switch>
       </EditorFormItem>
       <EditorFormItem path={p('access')} label="访问控制">
         <AccessSelect />

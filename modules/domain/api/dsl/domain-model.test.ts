@@ -7,6 +7,7 @@ import {
   transformMethods,
   transformEnum,
   transformRule,
+  transformParameter,
 } from './domain-model';
 import { Tree, BaseContainer } from './shared';
 
@@ -84,6 +85,7 @@ test('transformProperty', () => {
         name: 'ok',
         description: 'ok',
         access: 'protected',
+        optional: true,
         type: { type: ViewDSL.TypeType.Base, name: 'Boolean' },
       },
       getRef
@@ -95,11 +97,56 @@ test('transformProperty', () => {
     name: 'ok',
     title: 'ok',
     type: 'Boolean',
+    optional: true,
     uuid: '1',
   });
 
   expect(
     transformProperty(
+      {
+        uuid: '1',
+        title: 'ok',
+        name: 'ok',
+        description: 'ok',
+      },
+      getRef
+    )
+  ).toEqual({
+    description: 'ok',
+    meta: undefined,
+    name: 'ok',
+    title: 'ok',
+    type: 'Void',
+    uuid: '1',
+  });
+});
+
+test('transformParameter', () => {
+  const getRef = (id: string) => ({ name: `NameOf${id}`, uuid: id });
+  expect(
+    transformParameter(
+      {
+        uuid: '1',
+        title: 'ok',
+        name: 'ok',
+        description: 'ok',
+        optional: true,
+        type: { type: ViewDSL.TypeType.Base, name: 'Boolean' },
+      },
+      getRef
+    )
+  ).toEqual({
+    description: 'ok',
+    meta: undefined,
+    name: 'ok',
+    title: 'ok',
+    type: 'Boolean',
+    optional: true,
+    uuid: '1',
+  });
+
+  expect(
+    transformParameter(
       {
         uuid: '1',
         title: 'ok',

@@ -66,7 +66,7 @@ export function transformProperty(
   property: ViewDSL.PropertyDSL,
   getReference: (id: string) => ViewDSL.NameDSL
 ): DSL.PropertyDSL {
-  const { uuid, title, name, description, meta, access, type } = property;
+  const { uuid, title, name, description, meta, access, type, optional } = property;
 
   return {
     uuid,
@@ -74,6 +74,7 @@ export function transformProperty(
     name,
     description,
     meta: transformMeta(meta),
+    optional,
     access,
     type: type ? transformType(type, getReference) : VoidClass,
   };
@@ -83,13 +84,14 @@ export function transformParameter(
   property: ViewDSL.ParameterDSL,
   getReference: (id: string) => ViewDSL.NameDSL
 ): DSL.ParameterDSL {
-  const { uuid, title, name, description, meta, type } = property;
+  const { uuid, title, name, description, meta, type, optional } = property;
 
   return {
     uuid,
     title,
     name,
     description,
+    optional,
     meta: transformMeta(meta),
     type: type ? transformType(type, getReference) : VoidClass,
   };
