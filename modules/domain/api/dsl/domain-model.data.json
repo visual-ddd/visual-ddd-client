@@ -1,0 +1,1224 @@
+{
+  "d5e122b9-2e94-4b75-9c34-5e64624d199c": {
+    "__NODE__": true,
+    "id": "d5e122b9-2e94-4b75-9c34-5e64624d199c",
+    "parent": "__ROOT__",
+    "children": {},
+    "properties": {
+      "__node_name__": "activity",
+      "__node_type__": "node",
+      "label": "创建账号",
+      "position": { "x": 146, "y": 181 },
+      "size": { "width": 120, "height": 75 },
+      "__PROPERTY__": true
+    }
+  },
+  "da7a292e-79a7-4904-8b18-77679d18f35f": {
+    "__NODE__": true,
+    "id": "da7a292e-79a7-4904-8b18-77679d18f35f",
+    "parent": "__ROOT__",
+    "children": {},
+    "properties": {
+      "__node_name__": "activity",
+      "__node_type__": "node",
+      "label": "更新账号基本信息",
+      "position": { "x": 466, "y": 178.5 },
+      "size": { "width": 140, "height": 80 },
+      "__PROPERTY__": true
+    }
+  },
+  "c9810490-bd1d-4a47-a781-66467263740a": {
+    "__NODE__": true,
+    "id": "c9810490-bd1d-4a47-a781-66467263740a",
+    "parent": "__ROOT__",
+    "children": {},
+    "properties": {
+      "__node_name__": "activity",
+      "__node_type__": "node",
+      "label": "删除账号",
+      "size": { "width": 120, "height": 70 },
+      "position": { "x": 783, "y": 183.5 },
+      "__PROPERTY__": true
+    }
+  },
+  "32dc3ed3-05e5-4e0a-a976-aab05aa9e603": {
+    "__NODE__": true,
+    "id": "32dc3ed3-05e5-4e0a-a976-aab05aa9e603",
+    "children": {},
+    "properties": {
+      "__node_name__": "entity",
+      "__node_type__": "node",
+      "zIndex": 2,
+      "uuid": "32dc3ed3-05e5-4e0a-a976-aab05aa9e603",
+      "meta": [],
+      "implements": [],
+      "abstract": false,
+      "classProperties": [],
+      "classMethods": [],
+      "isAggregationRoot": true,
+      "id": "79e264c8-c108-4595-936b-2f45a38352e0",
+      "__PROPERTY__": true,
+      "name": "Account",
+      "title": "账号",
+      "description": "用户的唯一标识，用于平台登录",
+      "properties": [
+        {
+          "uuid": "79e264c8-c108-4595-936b-2f45a38352e0",
+          "name": "id",
+          "title": "用户 ID",
+          "description": "",
+          "meta": [],
+          "type": { "type": "base", "name": "Long" },
+          "access": "public"
+        },
+        {
+          "uuid": "49e2bcce-d2ab-4880-835e-e8b188904fe7",
+          "name": "accountNo",
+          "title": "账号",
+          "description": "用户登录的唯一标识，目前以用户邮箱作为账号",
+          "meta": [],
+          "type": { "type": "base", "name": "String" },
+          "access": "public"
+        },
+        {
+          "uuid": "5926303c-db8d-46d3-8037-cd86fcaa78c7",
+          "name": "userName",
+          "title": "用户名",
+          "description": "",
+          "meta": [],
+          "type": { "type": "base", "name": "String" },
+          "access": "public"
+        },
+        {
+          "uuid": "375be4f9-4118-44e2-b17f-5d82b8efc132",
+          "name": "password",
+          "title": "密码",
+          "description": "",
+          "meta": [],
+          "type": { "type": "base", "name": "String" },
+          "access": "public"
+        },
+        {
+          "uuid": "1ffeec78-9055-49af-ba94-221c5d0d3f19",
+          "name": "icon",
+          "title": "用户头像",
+          "description": "",
+          "meta": [],
+          "type": { "type": "base", "name": "String" },
+          "access": "public"
+        },
+        {
+          "uuid": "b9b551fb-e182-4c7d-a59b-5da2baec40a8",
+          "name": "description",
+          "title": "描述",
+          "description": "",
+          "meta": [],
+          "type": { "type": "base", "name": "String" },
+          "access": "public"
+        },
+        {
+          "uuid": "3a053b69-92c7-4c0b-84b2-07c521f882fc",
+          "name": "uuid",
+          "title": "重置密码唯一标识",
+          "description": "用户重置密码时携带的唯一标识",
+          "meta": [],
+          "type": { "type": "base", "name": "String" },
+          "access": "public"
+        }
+      ],
+      "methods": [
+        {
+          "uuid": "1be32e15-1133-4ede-9655-a04fdce42c24",
+          "name": "checkLoginPass",
+          "title": "验证密码是否正确",
+          "description": "",
+          "meta": [],
+          "access": "public",
+          "abstract": true,
+          "parameters": [
+            {
+              "uuid": "5d8705c6-5024-4353-b6ce-f9c4850bb958",
+              "name": "password",
+              "title": "密码",
+              "description": "",
+              "meta": [],
+              "type": { "type": "base", "name": "String" }
+            }
+          ]
+        },
+        {
+          "uuid": "11e12ff2-ed73-4342-a3a4-ce4b741701db",
+          "name": "checkUuidPass",
+          "title": "验证重置密码唯一标识是否正确",
+          "description": "",
+          "meta": [],
+          "access": "public",
+          "abstract": true,
+          "parameters": [
+            {
+              "uuid": "c29cda36-de86-468b-85f7-245c2f0f780f",
+              "name": "uuid",
+              "title": "重置密码唯一标识",
+              "description": "",
+              "meta": [],
+              "type": { "type": "base", "name": "String" }
+            }
+          ]
+        }
+      ],
+      "position": { "x": 166, "y": 955 },
+      "size": { "width": 349.796875, "height": 306.859375 }
+    }
+  },
+  "8f096b0c-ce91-4040-9df5-32d56c321bd0": {
+    "__NODE__": true,
+    "id": "8f096b0c-ce91-4040-9df5-32d56c321bd0",
+    "parent": "__ROOT__",
+    "children": { "32dc3ed3-05e5-4e0a-a976-aab05aa9e603": 1 },
+    "properties": {
+      "__node_name__": "aggregation",
+      "__node_type__": "node",
+      "zIndex": 1,
+      "position": { "x": 106, "y": 895 },
+      "size": { "width": 500, "height": 500 },
+      "__prevent_auto_resize__": true,
+      "uuid": "8f096b0c-ce91-4040-9df5-32d56c321bd0",
+      "name": "Account",
+      "title": "账号",
+      "description": "用户的唯一标识，用于平台登录",
+      "meta": [],
+      "color": "#D9F7BE",
+      "__PROPERTY__": true
+    }
+  },
+  "8ac97df7-8787-4bf7-ad24-9add13f83d60": {
+    "__NODE__": true,
+    "id": "8ac97df7-8787-4bf7-ad24-9add13f83d60",
+    "parent": "__ROOT__",
+    "children": {},
+    "properties": {
+      "__node_name__": "command",
+      "__node_type__": "node",
+      "position": { "x": 106, "y": 350 },
+      "zIndex": 2,
+      "size": { "width": 200, "height": 238.375 },
+      "uuid": "8ac97df7-8787-4bf7-ad24-9add13f83d60",
+      "name": "AccountCreate",
+      "title": "创建账号",
+      "description": "",
+      "meta": [],
+      "repository": "create",
+      "eventSendable": false,
+      "aggregation": { "referenceId": "8f096b0c-ce91-4040-9df5-32d56c321bd0" },
+      "category": "accountCreate",
+      "source": {
+        "http": { "enabled": true },
+        "rpc": { "enabled": true },
+        "event": { "enabled": false, "value": "" },
+        "schedule": { "enabled": false, "value": "" }
+      },
+      "properties": [
+        {
+          "uuid": "8d7cb88a-772b-42f7-8976-f9136c1aec0b",
+          "name": "userName",
+          "title": "用户名",
+          "description": "",
+          "meta": [],
+          "type": { "type": "base", "name": "String" },
+          "access": "public"
+        },
+        {
+          "uuid": "af98c133-5b16-456c-a93a-eda0774cba66",
+          "name": "accountNo",
+          "title": "账号",
+          "description": "用户登录的唯一标识，目前以用户邮箱作为账号",
+          "meta": [],
+          "type": { "type": "base", "name": "String" },
+          "access": "public"
+        },
+        {
+          "uuid": "fd97955a-7ce9-4bec-9f24-d5f9beeb3deb",
+          "name": "password",
+          "title": "密码",
+          "description": "",
+          "meta": [],
+          "type": { "type": "base", "name": "String" },
+          "access": "public"
+        },
+        {
+          "uuid": "efafd439-d4d3-41b0-8a24-1be29626e342",
+          "name": "icon",
+          "title": "用户头像",
+          "description": "",
+          "meta": [],
+          "type": { "type": "base", "name": "String" },
+          "access": "public"
+        }
+      ],
+      "eventProperties": [
+        {
+          "uuid": "73c5cac7-6eb6-4992-a766-1fab956d09c1",
+          "name": "id",
+          "title": "用户 ID",
+          "description": "",
+          "meta": [],
+          "type": { "type": "base", "name": "Long" },
+          "access": "public"
+        }
+      ],
+      "__PROPERTY__": true
+    }
+  },
+  "0895f138-6bc4-4fcc-900b-4db30c7f796a": {
+    "__NODE__": true,
+    "id": "0895f138-6bc4-4fcc-900b-4db30c7f796a",
+    "parent": "__ROOT__",
+    "children": {},
+    "properties": {
+      "__node_name__": "command",
+      "__node_type__": "node",
+      "position": { "x": 425, "y": 350 },
+      "size": { "width": 200, "height": 284.65625 },
+      "zIndex": 2,
+      "uuid": "0895f138-6bc4-4fcc-900b-4db30c7f796a",
+      "name": "AccountModify",
+      "title": "更新账号基本信息",
+      "description": "",
+      "meta": [],
+      "repository": "modify",
+      "eventSendable": false,
+      "aggregation": { "referenceId": "8f096b0c-ce91-4040-9df5-32d56c321bd0" },
+      "category": "accountModify",
+      "source": {
+        "http": { "enabled": true },
+        "rpc": { "enabled": true },
+        "event": { "enabled": false, "value": "" },
+        "schedule": { "enabled": false, "value": "" }
+      },
+      "properties": [
+        {
+          "uuid": "0e8a3a94-7eec-485c-a7a5-d8570f216a01",
+          "name": "id",
+          "title": "用户 ID",
+          "description": "",
+          "meta": [],
+          "type": { "type": "base", "name": "Long" },
+          "access": "public"
+        },
+        {
+          "uuid": "a7fb242d-b377-4e94-99a9-1e8574851f90",
+          "name": "description",
+          "title": "描述",
+          "description": "",
+          "meta": [],
+          "type": { "type": "base", "name": "String" },
+          "access": "public"
+        },
+        {
+          "uuid": "f5834929-7d85-4928-ae5d-1f6c1551db6a",
+          "name": "userName",
+          "title": "用户名",
+          "description": "",
+          "meta": [],
+          "type": { "type": "base", "name": "String" },
+          "access": "public"
+        },
+        {
+          "uuid": "a3c9f879-d662-4ce8-a479-08288e01af22",
+          "name": "accountNo",
+          "title": "账号",
+          "description": "用户登录的唯一标识，目前以用户邮箱作为账号",
+          "meta": [],
+          "type": { "type": "base", "name": "String" },
+          "access": "public"
+        },
+        {
+          "uuid": "1b8a2662-b206-4d18-a27a-d04bafbf11ba",
+          "name": "newPassword",
+          "title": "密码",
+          "description": "",
+          "meta": [],
+          "type": { "type": "base", "name": "String" },
+          "access": "public"
+        },
+        {
+          "uuid": "a200e2ad-e335-4c5c-bcb7-955af55dbd70",
+          "name": "icon",
+          "title": "用户头像",
+          "description": "",
+          "meta": [],
+          "type": { "type": "base", "name": "String" },
+          "access": "public"
+        }
+      ],
+      "eventProperties": [],
+      "__PROPERTY__": true
+    }
+  },
+  "90ce402a-d39b-49e2-a229-36fa7b3cf6fc": {
+    "__NODE__": true,
+    "id": "90ce402a-d39b-49e2-a229-36fa7b3cf6fc",
+    "parent": "__ROOT__",
+    "children": {},
+    "properties": {
+      "__node_name__": "command",
+      "__node_type__": "node",
+      "position": { "x": 743, "y": 350 },
+      "size": { "width": 200, "height": 129.96875 },
+      "zIndex": 2,
+      "uuid": "90ce402a-d39b-49e2-a229-36fa7b3cf6fc",
+      "name": "AccountDelete",
+      "title": "删除账号",
+      "description": "",
+      "meta": [],
+      "repository": "remove",
+      "eventSendable": false,
+      "aggregation": { "referenceId": "8f096b0c-ce91-4040-9df5-32d56c321bd0" },
+      "category": "accountRemove",
+      "source": {
+        "http": { "enabled": true },
+        "rpc": { "enabled": true },
+        "event": { "enabled": false, "value": "" },
+        "schedule": { "enabled": false, "value": "" }
+      },
+      "properties": [
+        {
+          "uuid": "b8d8f2ed-bd60-4917-8127-8283717ce1b9",
+          "name": "id",
+          "title": "用户 ID",
+          "description": "",
+          "meta": [],
+          "type": { "type": "base", "name": "Long" },
+          "access": "public"
+        }
+      ],
+      "eventProperties": [],
+      "__PROPERTY__": true
+    }
+  },
+  "7c4bd5aa-5959-4674-aa0c-053e5a3f8f6f": {
+    "__NODE__": true,
+    "id": "7c4bd5aa-5959-4674-aa0c-053e5a3f8f6f",
+    "parent": "__ROOT__",
+    "children": {},
+    "properties": {
+      "__node_name__": "edge",
+      "__node_type__": "edge",
+      "source": { "cell": "d5e122b9-2e94-4b75-9c34-5e64624d199c", "port": "right" },
+      "target": { "cell": "da7a292e-79a7-4904-8b18-77679d18f35f", "port": "left" },
+      "__PROPERTY__": true
+    }
+  },
+  "8a8de5cc-b104-41bb-8137-88c3814afcb9": {
+    "__NODE__": true,
+    "id": "8a8de5cc-b104-41bb-8137-88c3814afcb9",
+    "parent": "__ROOT__",
+    "children": {},
+    "properties": {
+      "__node_name__": "edge",
+      "__node_type__": "edge",
+      "source": { "cell": "da7a292e-79a7-4904-8b18-77679d18f35f", "port": "right" },
+      "target": { "cell": "c9810490-bd1d-4a47-a781-66467263740a", "port": "left" },
+      "__PROPERTY__": true
+    }
+  },
+  "__ROOT__": {
+    "__NODE__": true,
+    "id": "__ROOT__",
+    "children": {
+      "d5e122b9-2e94-4b75-9c34-5e64624d199c": 1,
+      "da7a292e-79a7-4904-8b18-77679d18f35f": 1,
+      "c9810490-bd1d-4a47-a781-66467263740a": 1,
+      "8f096b0c-ce91-4040-9df5-32d56c321bd0": 1,
+      "8ac97df7-8787-4bf7-ad24-9add13f83d60": 1,
+      "0895f138-6bc4-4fcc-900b-4db30c7f796a": 1,
+      "90ce402a-d39b-49e2-a229-36fa7b3cf6fc": 1,
+      "7c4bd5aa-5959-4674-aa0c-053e5a3f8f6f": 1,
+      "8a8de5cc-b104-41bb-8137-88c3814afcb9": 1,
+      "08fc390a-3f53-4a7c-b6e1-6e2470234722": 1,
+      "copy-d1c693ff-ea36-4210-981a-5e23e48320ac": 1,
+      "714d6afe-c758-452d-83cd-abb02cde2e03": 1,
+      "07240930-49a6-4b2b-8084-8bbaad6d4780": 1,
+      "571d6f41-bc48-46da-8928-ac78181e008f": 1,
+      "2221e012-63d9-4b14-987b-26d960829172": 1,
+      "a071bf13-5df5-497f-9b0e-6801cc1667ec": 1,
+      "0cfa988c-f068-4b21-b8fc-49a1e2976c10": 1,
+      "22409dbd-654a-4677-a101-52a37e056cba": 1,
+      "82bfac24-4223-4d1e-8c5f-49d677eb5100": 1,
+      "0bd20652-d20f-4597-8d73-fad1e462fa55": 1,
+      "72ffc579-b232-45c1-a715-dd600e8c9f66": 1,
+      "885b74cc-1379-445d-9dd5-9c56bd418854": 1,
+      "b49e52a8-da6e-4af3-a6be-f438d5f88393": 1,
+      "c01cc41d-47e6-434d-b55c-c73444865234": 1,
+      "44832857-8ded-420d-a926-725d44884881": 1,
+      "78531f9d-99cb-4f32-a733-a001fff2267e": 1,
+      "copy-4aeb7cb2-266b-412b-b016-a52654945da3": 1,
+      "84b89030-cd1a-49eb-b398-98e30103f321": 1,
+      "0074ca2c-9eac-4ac3-90fb-0e619574e28b": 1,
+      "7a55b184-0f4c-4241-ae9d-66a3ebe0b7fd": 1,
+      "8a05e281-ee53-47c0-af32-7767e578683f": 1,
+      "d4034981-8c99-4e97-b28d-34f45d484cbe": 1,
+      "278dcc33-935b-4d3d-9445-4e5117fcf238": 1,
+      "494774a0-5af9-44af-ad61-f1e647638fa4": 1,
+      "ecc60aa4-b8d4-4386-9ee8-5c66dc936105": 1
+    },
+    "properties": { "__node_name__": "__ROOT__", "__node_type__": "node", "__PROPERTY__": true }
+  },
+  "08fc390a-3f53-4a7c-b6e1-6e2470234722": {
+    "__NODE__": true,
+    "id": "08fc390a-3f53-4a7c-b6e1-6e2470234722",
+    "parent": "__ROOT__",
+    "children": {},
+    "properties": {
+      "__node_name__": "rule",
+      "__node_type__": "node",
+      "position": { "x": 114.4921875, "y": 663.1578979492188 },
+      "uuid": "08fc390a-3f53-4a7c-b6e1-6e2470234722",
+      "name": "IsAccountExistsOrError",
+      "title": "账号唯一",
+      "description": "邮箱为用户唯一标识，同一个邮箱不可重复注册",
+      "meta": [],
+      "aggregator": { "referenceId": "8ac97df7-8787-4bf7-ad24-9add13f83d60", "name": "新增用户域(UserCreate)" },
+      "zIndex": 2,
+      "__PROPERTY__": true,
+      "size": { "width": 183.015625, "height": 133.390625 }
+    }
+  },
+  "copy-d1c693ff-ea36-4210-981a-5e23e48320ac": {
+    "__NODE__": true,
+    "id": "copy-d1c693ff-ea36-4210-981a-5e23e48320ac",
+    "parent": "__ROOT__",
+    "children": {},
+    "properties": {
+      "__node_name__": "rule",
+      "__node_type__": "node",
+      "uuid": "copy-d1c693ff-ea36-4210-981a-5e23e48320ac",
+      "name": "IsAccountExistsOrError",
+      "title": "账号唯一",
+      "description": "邮箱为用户唯一标识，同一个邮箱不可重复注册",
+      "meta": [],
+      "aggregator": { "referenceId": "0895f138-6bc4-4fcc-900b-4db30c7f796a", "name": "编辑用户域(UserModify)" },
+      "zIndex": 2,
+      "position": { "x": 433.4921875, "y": 692.9469604492188 },
+      "size": { "width": 183.015625, "height": 133.390625 },
+      "__PROPERTY__": true
+    }
+  },
+  "714d6afe-c758-452d-83cd-abb02cde2e03": {
+    "__NODE__": true,
+    "id": "714d6afe-c758-452d-83cd-abb02cde2e03",
+    "parent": "__ROOT__",
+    "children": {},
+    "properties": {
+      "__node_name__": "rule",
+      "__node_type__": "node",
+      "position": { "x": 762.3359375, "y": 662.3688354492188 },
+      "uuid": "714d6afe-c758-452d-83cd-abb02cde2e03",
+      "name": "CheckSystemAdmin",
+      "title": "不能删除系统管理员账号",
+      "description": "不能删除系统管理员账号",
+      "meta": [],
+      "aggregator": { "referenceId": "90ce402a-d39b-49e2-a229-36fa7b3cf6fc", "name": "删除用户(UserRemove)" },
+      "zIndex": 2,
+      "__PROPERTY__": true,
+      "size": { "width": 161.328125, "height": 134.96875 }
+    }
+  },
+  "07240930-49a6-4b2b-8084-8bbaad6d4780": {
+    "__NODE__": true,
+    "id": "07240930-49a6-4b2b-8084-8bbaad6d4780",
+    "parent": "__ROOT__",
+    "children": {},
+    "properties": {
+      "__node_name__": "activity",
+      "__node_type__": "node",
+      "position": { "x": 1073.6842041015625, "y": 183.5 },
+      "label": "发送重置密码邮件",
+      "size": { "width": 160, "height": 70 },
+      "__PROPERTY__": true
+    }
+  },
+  "571d6f41-bc48-46da-8928-ac78181e008f": {
+    "__NODE__": true,
+    "id": "571d6f41-bc48-46da-8928-ac78181e008f",
+    "parent": "__ROOT__",
+    "children": {},
+    "properties": {
+      "__node_name__": "edge",
+      "__node_type__": "edge",
+      "source": { "cell": "c9810490-bd1d-4a47-a781-66467263740a", "port": "right" },
+      "target": { "cell": "07240930-49a6-4b2b-8084-8bbaad6d4780" },
+      "__PROPERTY__": true
+    }
+  },
+  "2221e012-63d9-4b14-987b-26d960829172": {
+    "__NODE__": true,
+    "id": "2221e012-63d9-4b14-987b-26d960829172",
+    "parent": "__ROOT__",
+    "children": {},
+    "properties": {
+      "__node_name__": "command",
+      "__node_type__": "node",
+      "position": { "x": 1053.6842041015625, "y": 350 },
+      "uuid": "2221e012-63d9-4b14-987b-26d960829172",
+      "name": "AccountEmailSend",
+      "title": "发送重置密码邮件",
+      "description": "",
+      "meta": [],
+      "source": {
+        "http": { "enabled": true },
+        "rpc": { "enabled": true },
+        "event": { "enabled": false, "value": "" },
+        "schedule": { "enabled": false, "value": "" }
+      },
+      "properties": [
+        {
+          "uuid": "60daee34-cf2e-489f-93f5-0ac4530fe304",
+          "name": "id",
+          "title": "用户 ID",
+          "description": "",
+          "meta": [],
+          "type": { "type": "base", "name": "Long" },
+          "access": "public"
+        },
+        {
+          "uuid": "066ae788-7010-48a1-b8e2-2aaf1651ebc8",
+          "name": "userName",
+          "title": "用户名",
+          "description": "",
+          "meta": [],
+          "type": { "type": "base", "name": "String" },
+          "access": "public"
+        },
+        {
+          "uuid": "90af3419-ebda-4104-b527-ca34b6df0dac",
+          "name": "accountNo",
+          "title": "账号",
+          "description": "用户登录的唯一标识，目前以用户邮箱作为账号",
+          "meta": [],
+          "type": { "type": "base", "name": "String" },
+          "access": "public"
+        },
+        {
+          "uuid": "a9907256-809e-42c9-b232-89b89e0187bf",
+          "name": "newPassword",
+          "title": "密码",
+          "description": "",
+          "meta": [],
+          "type": { "type": "base", "name": "String" },
+          "access": "public"
+        },
+        {
+          "uuid": "66bb91ff-12b8-4aff-9be7-0b43a4e2a29e",
+          "name": "icon",
+          "title": "用户头像",
+          "description": "",
+          "meta": [],
+          "type": { "type": "base", "name": "String" },
+          "access": "public"
+        },
+        {
+          "uuid": "770b0550-361c-4cd0-b6f4-21ccbd16c042",
+          "name": "description",
+          "title": "描述",
+          "description": "",
+          "meta": [],
+          "type": { "type": "base", "name": "String" },
+          "access": "public"
+        },
+        {
+          "uuid": "d8ed9f6e-85d2-4701-b68a-8985eee36613",
+          "name": "account",
+          "title": "账号标识",
+          "description": "用户登录的唯一标识，目前以用户邮箱作为账号",
+          "meta": [],
+          "type": { "type": "base", "name": "String" },
+          "access": "public"
+        }
+      ],
+      "eventProperties": [],
+      "repository": "modify",
+      "eventSendable": false,
+      "aggregation": { "referenceId": "8f096b0c-ce91-4040-9df5-32d56c321bd0", "name": "用户域(User)" },
+      "zIndex": 2,
+      "__PROPERTY__": true,
+      "size": { "width": 200, "height": 311.5 },
+      "category": "accountPasswordResetSendEmail"
+    }
+  },
+  "a071bf13-5df5-497f-9b0e-6801cc1667ec": {
+    "__NODE__": true,
+    "id": "a071bf13-5df5-497f-9b0e-6801cc1667ec",
+    "parent": "__ROOT__",
+    "children": {},
+    "properties": {
+      "__node_name__": "rule",
+      "__node_type__": "node",
+      "position": { "x": 1061.8717041015625, "y": 702.3688354492188 },
+      "uuid": "a071bf13-5df5-497f-9b0e-6801cc1667ec",
+      "name": "UpdateAccountRetPass",
+      "title": "更新重置账号uuid",
+      "description": "更新重置账号uuid",
+      "meta": [],
+      "aggregator": {
+        "referenceId": "2221e012-63d9-4b14-987b-26d960829172",
+        "name": "发送重置密码邮件(AccountEmailSend)"
+      },
+      "zIndex": 2,
+      "__PROPERTY__": true,
+      "size": { "width": 183.625, "height": 114.546875 }
+    }
+  },
+  "0cfa988c-f068-4b21-b8fc-49a1e2976c10": {
+    "__NODE__": true,
+    "id": "0cfa988c-f068-4b21-b8fc-49a1e2976c10",
+    "parent": "__ROOT__",
+    "children": {},
+    "properties": {
+      "__node_name__": "command",
+      "__node_type__": "node",
+      "position": { "x": 1359.305908203125, "y": 350 },
+      "uuid": "0cfa988c-f068-4b21-b8fc-49a1e2976c10",
+      "name": "AccountLogin",
+      "title": "账号登录",
+      "description": "",
+      "meta": [],
+      "source": {
+        "http": { "enabled": true },
+        "rpc": { "enabled": true },
+        "event": { "enabled": false, "value": "" },
+        "schedule": { "enabled": false, "value": "" }
+      },
+      "properties": [
+        {
+          "uuid": "f5d99d5e-7cc6-4cc3-b499-d28ed3c00907",
+          "name": "accountNo",
+          "title": "账号",
+          "description": "用户登录的唯一标识，目前以用户邮箱作为账号",
+          "meta": [],
+          "type": { "type": "base", "name": "String" },
+          "access": "public"
+        },
+        {
+          "uuid": "52275032-eec3-4a9f-ba4b-a6b91222219a",
+          "name": "password",
+          "title": "密码",
+          "description": "",
+          "meta": [],
+          "type": { "type": "base", "name": "String" },
+          "access": "public"
+        }
+      ],
+      "eventProperties": [],
+      "repository": "modify",
+      "eventSendable": false,
+      "aggregation": { "referenceId": "8f096b0c-ce91-4040-9df5-32d56c321bd0", "name": "用户域(User)" },
+      "zIndex": 2,
+      "__PROPERTY__": true,
+      "size": { "width": 200, "height": 156.828125 },
+      "category": "login"
+    }
+  },
+  "22409dbd-654a-4677-a101-52a37e056cba": {
+    "__NODE__": true,
+    "id": "22409dbd-654a-4677-a101-52a37e056cba",
+    "parent": "__ROOT__",
+    "children": {},
+    "properties": {
+      "__node_name__": "rule",
+      "__node_type__": "node",
+      "position": { "x": 1384.305908203125, "y": 662.3688354492188 },
+      "uuid": "22409dbd-654a-4677-a101-52a37e056cba",
+      "name": "CheckLoginPass",
+      "title": "账号密码正确",
+      "description": "验证账号密码是否正确",
+      "meta": [],
+      "aggregator": { "referenceId": "0cfa988c-f068-4b21-b8fc-49a1e2976c10", "name": "账号登录(AccountLogin)" },
+      "zIndex": 2,
+      "__PROPERTY__": true,
+      "size": { "width": 150, "height": 114.546875 }
+    }
+  },
+  "82bfac24-4223-4d1e-8c5f-49d677eb5100": {
+    "__NODE__": true,
+    "id": "82bfac24-4223-4d1e-8c5f-49d677eb5100",
+    "parent": "__ROOT__",
+    "children": {},
+    "properties": {
+      "__node_name__": "command",
+      "__node_type__": "node",
+      "position": { "x": 1683.1578369140625, "y": 350 },
+      "uuid": "82bfac24-4223-4d1e-8c5f-49d677eb5100",
+      "name": "AccountPasswordReset",
+      "title": "重置用户密码",
+      "description": "",
+      "meta": [],
+      "source": {
+        "http": { "enabled": true },
+        "rpc": { "enabled": true },
+        "event": { "enabled": false, "value": "" },
+        "schedule": { "enabled": false, "value": "" }
+      },
+      "properties": [
+        {
+          "uuid": "7e2a1e8b-5d86-4e0c-af81-11aaca60bd19",
+          "name": "uuid",
+          "title": "重置密码唯一标识",
+          "description": "用户重置密码时携带的唯一标识",
+          "meta": [],
+          "type": { "type": "base", "name": "String" },
+          "access": "public"
+        },
+        {
+          "uuid": "ad00d894-50bc-467d-bd1b-d1a7cde635ea",
+          "name": "accountNo",
+          "title": "账号",
+          "description": "用户登录的唯一标识，目前以用户邮箱作为账号",
+          "meta": [],
+          "type": { "type": "base", "name": "String" },
+          "access": "public"
+        },
+        {
+          "uuid": "9a18e055-f601-4d78-8cb5-cfc00b50b2fd",
+          "name": "newPassword",
+          "title": "密码",
+          "description": "",
+          "meta": [],
+          "type": { "type": "base", "name": "String" },
+          "access": "public"
+        }
+      ],
+      "eventProperties": [],
+      "repository": "modify",
+      "eventSendable": false,
+      "aggregation": { "referenceId": "8f096b0c-ce91-4040-9df5-32d56c321bd0", "name": "用户域(User)" },
+      "zIndex": 2,
+      "__PROPERTY__": true,
+      "size": { "width": 200, "height": 204.09375 },
+      "category": "accountPasswordReset"
+    }
+  },
+  "0bd20652-d20f-4597-8d73-fad1e462fa55": {
+    "__NODE__": true,
+    "id": "0bd20652-d20f-4597-8d73-fad1e462fa55",
+    "parent": "__ROOT__",
+    "children": {},
+    "properties": {
+      "__node_name__": "activity",
+      "__node_type__": "node",
+      "position": { "x": 1407.368408203125, "y": 183.5 },
+      "label": "账号登录",
+      "size": { "height": 70, "width": 120 },
+      "__PROPERTY__": true
+    }
+  },
+  "72ffc579-b232-45c1-a715-dd600e8c9f66": {
+    "__NODE__": true,
+    "id": "72ffc579-b232-45c1-a715-dd600e8c9f66",
+    "parent": "__ROOT__",
+    "children": {},
+    "properties": {
+      "__node_name__": "edge",
+      "__node_type__": "edge",
+      "source": { "cell": "07240930-49a6-4b2b-8084-8bbaad6d4780", "port": "right" },
+      "target": { "cell": "0bd20652-d20f-4597-8d73-fad1e462fa55" },
+      "__PROPERTY__": true
+    }
+  },
+  "885b74cc-1379-445d-9dd5-9c56bd418854": {
+    "__NODE__": true,
+    "id": "885b74cc-1379-445d-9dd5-9c56bd418854",
+    "parent": "__ROOT__",
+    "children": {},
+    "properties": {
+      "__node_name__": "activity",
+      "__node_type__": "node",
+      "position": { "x": 1723.1578369140625, "y": 183.5 },
+      "label": "重置用户密码",
+      "size": { "height": 70, "width": 120 },
+      "__PROPERTY__": true
+    }
+  },
+  "b49e52a8-da6e-4af3-a6be-f438d5f88393": {
+    "__NODE__": true,
+    "id": "b49e52a8-da6e-4af3-a6be-f438d5f88393",
+    "parent": "__ROOT__",
+    "children": {},
+    "properties": {
+      "__node_name__": "edge",
+      "__node_type__": "edge",
+      "source": { "cell": "0bd20652-d20f-4597-8d73-fad1e462fa55", "port": "right" },
+      "target": { "cell": "885b74cc-1379-445d-9dd5-9c56bd418854" },
+      "__PROPERTY__": true
+    }
+  },
+  "c01cc41d-47e6-434d-b55c-c73444865234": {
+    "__NODE__": true,
+    "id": "c01cc41d-47e6-434d-b55c-c73444865234",
+    "parent": "__ROOT__",
+    "children": {},
+    "properties": {
+      "__node_name__": "activity",
+      "__node_type__": "node",
+      "position": { "x": 2010.8848876953125, "y": 183.5 },
+      "label": "修改用户密码",
+      "size": { "height": 70, "width": 120 },
+      "__PROPERTY__": true
+    }
+  },
+  "44832857-8ded-420d-a926-725d44884881": {
+    "__NODE__": true,
+    "id": "44832857-8ded-420d-a926-725d44884881",
+    "parent": "__ROOT__",
+    "children": {},
+    "properties": {
+      "__node_name__": "edge",
+      "__node_type__": "edge",
+      "source": { "cell": "885b74cc-1379-445d-9dd5-9c56bd418854", "port": "right" },
+      "target": { "cell": "c01cc41d-47e6-434d-b55c-c73444865234" },
+      "__PROPERTY__": true
+    }
+  },
+  "78531f9d-99cb-4f32-a733-a001fff2267e": {
+    "__NODE__": true,
+    "id": "78531f9d-99cb-4f32-a733-a001fff2267e",
+    "parent": "__ROOT__",
+    "children": {},
+    "properties": {
+      "__node_name__": "command",
+      "__node_type__": "node",
+      "position": { "x": 1970.8848876953125, "y": 350 },
+      "uuid": "78531f9d-99cb-4f32-a733-a001fff2267e",
+      "name": "AccountPasswordUpdate",
+      "title": "修改用户密码",
+      "description": "",
+      "meta": [],
+      "source": {
+        "http": { "enabled": true },
+        "rpc": { "enabled": true },
+        "event": { "enabled": false, "value": "" },
+        "schedule": { "enabled": false, "value": "" }
+      },
+      "properties": [
+        {
+          "uuid": "6ff27f30-06a5-4946-af1c-7b01d94aeb99",
+          "name": "id",
+          "title": "主键",
+          "description": "",
+          "meta": [],
+          "type": { "type": "base", "name": "Long" },
+          "access": "public"
+        },
+        {
+          "uuid": "0dde1ebb-b94d-486f-b8c4-dcc525c89e4b",
+          "name": "oldPassword",
+          "title": "旧密码",
+          "description": "",
+          "meta": [],
+          "type": { "type": "base", "name": "String" },
+          "access": "public"
+        },
+        {
+          "uuid": "19ef3649-7a4c-4718-8631-8153a457d29d",
+          "name": "newPassword",
+          "title": "新密码",
+          "description": "",
+          "meta": [],
+          "type": { "type": "base", "name": "String" },
+          "access": "public"
+        }
+      ],
+      "eventProperties": [],
+      "repository": "modify",
+      "eventSendable": false,
+      "aggregation": { "referenceId": "8f096b0c-ce91-4040-9df5-32d56c321bd0", "name": "用户域(User)" },
+      "zIndex": 2,
+      "__PROPERTY__": true,
+      "size": { "width": 200, "height": 204.09375 },
+      "category": "accountPasswordUpdate"
+    }
+  },
+  "copy-4aeb7cb2-266b-412b-b016-a52654945da3": {
+    "__NODE__": true,
+    "id": "copy-4aeb7cb2-266b-412b-b016-a52654945da3",
+    "parent": "__ROOT__",
+    "children": {},
+    "properties": {
+      "__node_name__": "rule",
+      "__node_type__": "node",
+      "uuid": "copy-4aeb7cb2-266b-412b-b016-a52654945da3",
+      "name": "CheckLoginPass",
+      "title": "账号密码正确",
+      "description": "验证账号密码是否正确",
+      "meta": [],
+      "aggregator": {
+        "referenceId": "78531f9d-99cb-4f32-a733-a001fff2267e",
+        "name": "修改用户密码(AccountPasswordUpdate)"
+      },
+      "zIndex": 2,
+      "position": { "x": 1995.8848876953125, "y": 672.5797729492188 },
+      "size": { "width": 150, "height": 114.546875 },
+      "__PROPERTY__": true
+    }
+  },
+  "84b89030-cd1a-49eb-b398-98e30103f321": {
+    "__NODE__": true,
+    "id": "84b89030-cd1a-49eb-b398-98e30103f321",
+    "parent": "__ROOT__",
+    "children": {},
+    "properties": {
+      "__node_name__": "activity",
+      "__node_type__": "node",
+      "position": { "x": 2322.378173828125, "y": 183.5 },
+      "label": "创建验证码",
+      "size": { "width": 140, "height": 70 },
+      "__PROPERTY__": true
+    }
+  },
+  "0074ca2c-9eac-4ac3-90fb-0e619574e28b": {
+    "__NODE__": true,
+    "id": "0074ca2c-9eac-4ac3-90fb-0e619574e28b",
+    "parent": "__ROOT__",
+    "children": {},
+    "properties": {
+      "__node_name__": "command",
+      "__node_type__": "node",
+      "position": { "x": 2276.307861328125, "y": 350 },
+      "uuid": "0074ca2c-9eac-4ac3-90fb-0e619574e28b",
+      "name": "AccountVerificationCreate",
+      "title": "创建验证码",
+      "description": "",
+      "meta": [],
+      "source": {
+        "http": { "enabled": true },
+        "rpc": { "enabled": true },
+        "event": { "enabled": false, "value": "" },
+        "schedule": { "enabled": false, "value": "" }
+      },
+      "properties": [
+        {
+          "uuid": "e71ff599-4a75-4cf1-ad03-dfce12729d40",
+          "name": "code",
+          "title": "验证码",
+          "description": "",
+          "meta": [],
+          "type": { "type": "base", "name": "String" },
+          "access": "public"
+        },
+        {
+          "uuid": "36cfb4df-db1d-4cf7-a24a-a4425f9be940",
+          "name": "accountNo",
+          "title": "账号标识",
+          "description": "用户登录的唯一标识，目前以用户邮箱作为账号",
+          "meta": [],
+          "type": { "type": "base", "name": "String" },
+          "access": "public"
+        }
+      ],
+      "eventProperties": [],
+      "repository": "create",
+      "eventSendable": false,
+      "aggregation": {
+        "referenceId": "ecc60aa4-b8d4-4386-9ee8-5c66dc936105",
+        "name": "账号验证码(AccountVerification)"
+      },
+      "zIndex": 2,
+      "__PROPERTY__": true,
+      "size": { "width": 232.140625, "height": 177.25 },
+      "category": "verificationCreate"
+    }
+  },
+  "7a55b184-0f4c-4241-ae9d-66a3ebe0b7fd": {
+    "__NODE__": true,
+    "id": "7a55b184-0f4c-4241-ae9d-66a3ebe0b7fd",
+    "parent": "__ROOT__",
+    "children": {},
+    "properties": {
+      "__node_name__": "rule",
+      "__node_type__": "node",
+      "position": { "x": 2300.870361328125, "y": 682.7907104492188 },
+      "uuid": "7a55b184-0f4c-4241-ae9d-66a3ebe0b7fd",
+      "name": "IsAccountExistsOrError",
+      "title": "校验账号唯一标识是否存在",
+      "description": "校验账号唯一标识是否存在",
+      "meta": [],
+      "aggregator": {
+        "referenceId": "0074ca2c-9eac-4ac3-90fb-0e619574e28b",
+        "name": "创建验证码基本信息(AccountVerificationCreate)"
+      },
+      "zIndex": 2,
+      "__PROPERTY__": true,
+      "size": { "width": 183, "height": 114.53125 }
+    }
+  },
+  "8a05e281-ee53-47c0-af32-7767e578683f": {
+    "__NODE__": true,
+    "id": "8a05e281-ee53-47c0-af32-7767e578683f",
+    "parent": "__ROOT__",
+    "children": {},
+    "properties": {
+      "__node_name__": "edge",
+      "__node_type__": "edge",
+      "source": { "cell": "c01cc41d-47e6-434d-b55c-c73444865234", "port": "right" },
+      "target": { "cell": "84b89030-cd1a-49eb-b398-98e30103f321" },
+      "__PROPERTY__": true
+    }
+  },
+  "d4034981-8c99-4e97-b28d-34f45d484cbe": {
+    "__NODE__": true,
+    "id": "d4034981-8c99-4e97-b28d-34f45d484cbe",
+    "parent": "__ROOT__",
+    "children": {},
+    "properties": {
+      "__node_name__": "activity",
+      "__node_type__": "node",
+      "position": { "x": 2655.870361328125, "y": 183.5 },
+      "label": "更新验证码",
+      "size": { "height": 70, "width": 120 },
+      "__PROPERTY__": true
+    }
+  },
+  "278dcc33-935b-4d3d-9445-4e5117fcf238": {
+    "__NODE__": true,
+    "id": "278dcc33-935b-4d3d-9445-4e5117fcf238",
+    "parent": "__ROOT__",
+    "children": {},
+    "properties": {
+      "__node_name__": "edge",
+      "__node_type__": "edge",
+      "source": { "cell": "84b89030-cd1a-49eb-b398-98e30103f321", "port": "right" },
+      "target": { "cell": "d4034981-8c99-4e97-b28d-34f45d484cbe" },
+      "__PROPERTY__": true
+    }
+  },
+  "494774a0-5af9-44af-ad61-f1e647638fa4": {
+    "__NODE__": true,
+    "id": "494774a0-5af9-44af-ad61-f1e647638fa4",
+    "parent": "__ROOT__",
+    "children": {},
+    "properties": {
+      "__node_name__": "command",
+      "__node_type__": "node",
+      "position": { "x": 2615.870361328125, "y": 350 },
+      "uuid": "494774a0-5af9-44af-ad61-f1e647638fa4",
+      "name": "AccountVerificationUpdate",
+      "title": "更新验证码",
+      "description": "",
+      "meta": [],
+      "source": {
+        "http": { "enabled": true },
+        "rpc": { "enabled": true },
+        "event": { "enabled": false, "value": "" },
+        "schedule": { "enabled": false, "value": "" }
+      },
+      "properties": [
+        {
+          "uuid": "bf95005a-d1ae-40f9-8f3f-a8160f1f9601",
+          "name": "id",
+          "title": "主键",
+          "description": "",
+          "meta": [],
+          "type": { "type": "base", "name": "Long" },
+          "access": "public"
+        },
+        {
+          "uuid": "d88c2d00-2206-411a-9923-8d46ce2aabbe",
+          "name": "code",
+          "title": "验证码",
+          "description": "",
+          "meta": [],
+          "type": { "type": "base", "name": "String" },
+          "access": "public"
+        }
+      ],
+      "eventProperties": [],
+      "repository": "modify",
+      "eventSendable": false,
+      "aggregation": {
+        "referenceId": "ecc60aa4-b8d4-4386-9ee8-5c66dc936105",
+        "name": "账号验证码(AccountVerification)"
+      },
+      "zIndex": 2,
+      "__PROPERTY__": true,
+      "size": { "width": 206.828125, "height": 177.25 },
+      "category": "verificationUpdate"
+    }
+  },
+  "ecc60aa4-b8d4-4386-9ee8-5c66dc936105": {
+    "__NODE__": true,
+    "id": "ecc60aa4-b8d4-4386-9ee8-5c66dc936105",
+    "parent": "__ROOT__",
+    "children": { "04c161af-e83d-484a-b47d-0b27aa06f7c0": 1 },
+    "properties": {
+      "__node_name__": "aggregation",
+      "__node_type__": "node",
+      "position": { "x": 743, "y": 895 },
+      "uuid": "ecc60aa4-b8d4-4386-9ee8-5c66dc936105",
+      "name": "AccountVerification",
+      "title": "账号验证码",
+      "description": "账号进行邮箱验证操作时，需要使用验证码进行验证",
+      "meta": [],
+      "color": "#f6cf96",
+      "zIndex": 1,
+      "size": { "width": 500, "height": 500 },
+      "__prevent_auto_resize__": true,
+      "originSize": { "width": 500, "height": 300 },
+      "__PROPERTY__": true
+    }
+  },
+  "04c161af-e83d-484a-b47d-0b27aa06f7c0": {
+    "__NODE__": true,
+    "id": "04c161af-e83d-484a-b47d-0b27aa06f7c0",
+    "parent": "ecc60aa4-b8d4-4386-9ee8-5c66dc936105",
+    "children": {},
+    "properties": {
+      "__node_name__": "entity",
+      "__node_type__": "node",
+      "position": { "x": 803, "y": 955 },
+      "uuid": "04c161af-e83d-484a-b47d-0b27aa06f7c0",
+      "name": "AccountVerification",
+      "title": "账号验证码",
+      "description": "账号进行邮箱验证操作时，需要使用验证码进行验证",
+      "meta": [],
+      "implements": [],
+      "abstract": false,
+      "properties": [
+        {
+          "uuid": "5055849c-99da-4150-9021-7079dbb1b18f",
+          "name": "id",
+          "title": "实体唯一标识符",
+          "description": "",
+          "meta": [],
+          "type": { "type": "base", "name": "Long" },
+          "access": "public"
+        },
+        {
+          "uuid": "8e45f37e-5e50-4d1c-9f0a-28f15c340ebd",
+          "name": "code",
+          "title": "验证码",
+          "description": "",
+          "meta": [],
+          "type": { "type": "base", "name": "String" },
+          "access": "public"
+        },
+        {
+          "uuid": "9766036e-48cf-47f6-ba29-2a7609253479",
+          "name": "accountNo",
+          "title": "账号标识",
+          "description": "用户登录的唯一标识，目前以用户邮箱作为账号",
+          "meta": [],
+          "type": { "type": "base", "name": "String" },
+          "access": "public"
+        }
+      ],
+      "methods": [],
+      "classProperties": [],
+      "classMethods": [],
+      "isAggregationRoot": true,
+      "id": "5055849c-99da-4150-9021-7079dbb1b18f",
+      "zIndex": 2,
+      "__PROPERTY__": true,
+      "size": { "width": 200, "height": 165.25 }
+    }
+  }
+}

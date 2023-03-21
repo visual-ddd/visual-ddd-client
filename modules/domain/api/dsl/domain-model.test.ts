@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import * as ViewDSL from '@/modules/domain/domain-design/dsl/dsl';
 import {
   DomainModelContainer,
@@ -674,6 +676,14 @@ test('BaseContainer', () => {
 
 test('Container', () => {
   const container = new DomainModelContainer(DATA as any);
+
+  expect(container.toDSL()).toMatchSnapshot();
+});
+
+test('real data', async () => {
+  const data = JSON.parse((await fs.promises.readFile(path.resolve(__dirname, './domain-model.data.json'))).toString());
+
+  const container = new DomainModelContainer(data as any);
 
   expect(container.toDSL()).toMatchSnapshot();
 });

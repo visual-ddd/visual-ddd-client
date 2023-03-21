@@ -400,7 +400,23 @@ export class DomainModelContainer extends BaseContainer implements IContainer {
 
   handle(node: Tree, tree: Record<string, Tree>): void {
     const getParent = (n: Tree) => {
-      const parentId = n.parent;
+      let parentId = n.parent;
+
+      // 理论上所有的节点都应该有父节点
+      // 某些异常情况下可能会出现没有父节点的情况
+      if (parentId == null) {
+        const id = n.id;
+        console.warn(`[DomainModel] parentId 为空`, n);
+        // 查找 children
+        for (const key of Object.keys(tree)) {
+          const item = tree[key];
+          if (item.children && id in item.children) {
+            parentId = key;
+            break;
+          }
+        }
+      }
+
       if (parentId == null || parentId === ROOT) {
         return null;
       }
