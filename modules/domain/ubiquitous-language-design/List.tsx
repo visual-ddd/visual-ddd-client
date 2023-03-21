@@ -6,14 +6,14 @@ import { Clipboard } from '@/lib/utils';
 import { v4 } from 'uuid';
 import { DndContext, DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
-import { MenuOutlined } from '@ant-design/icons';
+import { BulbOutlined, MenuOutlined } from '@ant-design/icons';
 import { CSS } from '@dnd-kit/utilities';
 
 import { IUbiquitousLanguageModel, UbiquitousLanguageItem } from './types';
 import { Import } from '@/lib/components/Import';
 
 import s from './List.module.scss';
-import { AIImport, useAIImport } from './AIImport';
+import { AIImport } from './AIImport';
 
 export interface UbiquitousLanguageProps {
   model: IUbiquitousLanguageModel;
@@ -120,7 +120,6 @@ const TableSortableComponents = { body: { row: Row } };
 export const UbiquitousLanguage = observer(function UbiquitousLanguage(props: UbiquitousLanguageProps) {
   const { model } = props;
   const readonly = model.readonly;
-  const aiImportRef = useAIImport();
   const sortable = !!(!model.filter && model.moveItem && !readonly);
 
   const columns = useMemo<TableColumnType<UbiquitousLanguageItem>[]>(() => {
@@ -180,9 +179,12 @@ export const UbiquitousLanguage = observer(function UbiquitousLanguage(props: Ub
 
   const disabledBatchOperation = !model.selecting.length || readonly;
 
-  const unshiftItems = (items: UbiquitousLanguageItem[]) => {
-    for (const item of items) {
-      model.addItem('unshift', item);
+  const unshiftItems = async (items: UbiquitousLanguageItem[]) => {
+    const ids = await Promise.all(items.map(i => model.addItem('unshift', i)));
+
+    if (ids.length) {
+      model.cleanSelecting();
+      model.setSelecting(ids);
     }
   };
 
@@ -263,15 +265,12 @@ export const UbiquitousLanguage = observer(function UbiquitousLanguage(props: Ub
               <Button>粘贴</Button>
             </Popconfirm>
           )}
-          <Button
-            size="small"
-            disabled={readonly}
-            onClick={() => {
-              aiImportRef.current?.open();
-            }}
-          >
-            AI 导入
-          </Button>
+
+          <AIImport onImport={unshiftItems}>
+            <Button size="small" disabled={readonly} icon={<BulbOutlined />}>
+              AI 导入
+            </Button>
+          </AIImport>
           {!!model.importExcel && (
             <Import
               template="/excel-templates/ubiquitous-language.xlsx"
@@ -303,7 +302,6 @@ export const UbiquitousLanguage = observer(function UbiquitousLanguage(props: Ub
           </Popconfirm>
         </Space>
       </div>
-      <AIImport ref={aiImportRef} onImport={unshiftItems} />
     </div>
   );
 

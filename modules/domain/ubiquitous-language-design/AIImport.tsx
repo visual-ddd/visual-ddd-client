@@ -1,11 +1,14 @@
-import { Button, Input, message, Modal, notification, Tag } from 'antd';
-import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
+import { Button, Input, message, Modal, notification, Space, Tag } from 'antd';
+import { cloneElement, isValidElement, useState } from 'react';
 import { UbiquitousLanguageItem } from './types';
-import { request } from '@/modules/backend-client';
 import uniq from 'lodash/uniq';
+import { NoopArray } from '@wakeapp/utils';
+import { Loading, looseJSONParse, OpenAIEventSourceModelOptions, useOpenAI } from '@/lib/openai-event-source';
+import { observer } from 'mobx-react';
+import { useRefValue } from '@wakeapp/hooks';
+import { v4 } from 'uuid';
 
 import s from './AIImport.module.scss';
-import { NoopArray } from '@wakeapp/utils';
 
 export interface AIImportProps {
   /**
@@ -13,14 +16,7 @@ export interface AIImportProps {
    * @param items
    */
   onImport?: (items: UbiquitousLanguageItem[]) => void;
-}
-
-export interface AIImportRef {
-  open(): void;
-}
-
-export function useAIImport() {
-  return useRef<AIImportRef>(null);
+  children?: React.ReactNode;
 }
 
 // random color
@@ -30,21 +26,33 @@ function randomColor() {
   return COLORS[Math.floor(Math.random() * COLORS.length)];
 }
 
-export const AIImport = forwardRef<AIImportRef, AIImportProps>(function AIImport(props, ref) {
+const OpenAIOptions: OpenAIEventSourceModelOptions = {
+  decode: looseJSONParse,
+};
+
+const ImportWordsOpenAIOptions: OpenAIEventSourceModelOptions = {
+  decode: w => {
+    const d = looseJSONParse<UbiquitousLanguageItem[]>(w);
+
+    return d.map(i => {
+      i.uuid = v4();
+      return i;
+    });
+  },
+};
+
+export const AIImport = observer(function AIImport(props: AIImportProps) {
+  const { children } = props;
   const [open, setOpen] = useState(false);
   const [paragraph, setParagraph] = useState('');
-  const [detecting, setDetecting] = useState(false);
   const [words, setWords] = useState<string[]>(NoopArray);
-  const [importing, setImporting] = useState(false);
   const [customTag, setCustomTag] = useState('');
+  const detectWords = useOpenAI<string[]>(OpenAIOptions, [open]);
+  const importWords = useOpenAI<UbiquitousLanguageItem[]>(ImportWordsOpenAIOptions, [open]);
 
-  useImperativeHandle(ref, () => {
-    return {
-      open() {
-        setOpen(true);
-      },
-    };
-  });
+  const detecting = detectWords.loading;
+  const importing = importWords.loading;
+  const openRef = useRefValue(open);
 
   const handleCancel = () => {
     setOpen(false);
@@ -52,13 +60,16 @@ export const AIImport = forwardRef<AIImportRef, AIImportProps>(function AIImport
     setWords(NoopArray);
   };
 
-  const detectWords = async () => {
+  const handleDetectWords = async () => {
     if (!paragraph.trim() || detecting) {
       return;
     }
+
     try {
-      setDetecting(true);
-      const ws = await request.requestByGet<string[]>('/api/ai/extra-words', { text: paragraph });
+      const ws = await detectWords.open(`/api/ai/extra-words?text=${paragraph}`);
+      if (!openRef.current) {
+        return;
+      }
       const uws = uniq(ws);
 
       if (uws.length) {
@@ -66,9 +77,6 @@ export const AIImport = forwardRef<AIImportRef, AIImportProps>(function AIImport
       }
     } catch (e) {
       message.error((e as Error).message);
-      console.error(e);
-    } finally {
-      setDetecting(false);
     }
   };
 
@@ -76,16 +84,18 @@ export const AIImport = forwardRef<AIImportRef, AIImportProps>(function AIImport
     setWords(words.filter(w => w !== word));
   };
 
-  const importWords = async () => {
-    if (!words.length || importing) {
+  const handleImportWords = async () => {
+    if (!words.length || importing || detecting) {
       return;
     }
 
     try {
-      setImporting(true);
-      const items = await request.requestByGet<UbiquitousLanguageItem[]>('/api/ai/words-to-ubiquitous-language', {
-        words: words.join(','),
-      });
+      const items = await importWords.open(`/api/ai/words-to-ubiquitous-language?words=${words.join(',')}`);
+
+      if (!openRef.current) {
+        return;
+      }
+
       props.onImport?.(items);
       handleCancel();
       notification.success({
@@ -94,9 +104,6 @@ export const AIImport = forwardRef<AIImportRef, AIImportProps>(function AIImport
       });
     } catch (e) {
       message.error((e as Error).message);
-      console.error(e);
-    } finally {
-      setImporting(false);
     }
   };
 
@@ -110,55 +117,77 @@ export const AIImport = forwardRef<AIImportRef, AIImportProps>(function AIImport
     }
   };
 
-  return (
-    <Modal
-      title="AI 提取（实验性）"
-      open={open}
-      onCancel={handleCancel}
-      destroyOnClose
-      footer={null}
-      className={s.root}
-      maskClosable={false}
-    >
-      <div className={s.input}>
-        <Input.TextArea
-          className={s.text}
-          rows={10}
-          value={paragraph}
-          placeholder="请输入文本"
-          onChange={e => setParagraph(e.target.value)}
-          showCount
-          maxLength={1000}
-          disabled={detecting || importing}
-        />
-        <Button type="primary" disabled={!paragraph.trim() || importing} loading={detecting} onClick={detectWords}>
-          开始分析
-        </Button>
-      </div>
-      {!!words.length && (
-        <div className={s.words}>
-          <h3>识别结果:</h3>
+  const handleShow = () => {
+    setOpen(true);
+  };
 
-          <div className={s.tags}>
-            {words.map(w => (
-              <Tag key={w} closable={!importing} onClose={() => removeWord(w)} color={randomColor()}>
-                {w}
-              </Tag>
-            ))}
-            <Input
-              value={customTag}
-              disabled={importing}
-              onChange={e => setCustomTag(e.target.value)}
-              className={s.customTag}
-              placeholder="插入自定义词条"
-              onKeyDown={handleCustomTagKeyDown}
-            />
-          </div>
-          <Button block disabled={!words.length} loading={importing} onClick={importWords}>
-            开始导入
-          </Button>
+  return (
+    <>
+      {isValidElement(children) &&
+        cloneElement(children, {
+          // @ts-expect-error
+          onClick: handleShow,
+        })}
+      <Modal
+        title="AI 提取（实验性）"
+        open={open}
+        onCancel={handleCancel}
+        destroyOnClose
+        footer={null}
+        className={s.root}
+        maskClosable={false}
+      >
+        <div className={s.input}>
+          <Input.TextArea
+            className={s.text}
+            rows={10}
+            value={paragraph}
+            placeholder="请输入文本"
+            onChange={e => setParagraph(e.target.value)}
+            showCount
+            maxLength={1000}
+            disabled={detecting || importing}
+          />
+          <Space>
+            <Button
+              type="primary"
+              disabled={!paragraph.trim() || importing}
+              loading={detecting}
+              onClick={handleDetectWords}
+            >
+              开始分析
+            </Button>
+            <Loading model={detectWords} />
+          </Space>
         </div>
-      )}
-    </Modal>
+        {!!words.length && (
+          <div className={s.words}>
+            <h3>识别结果:</h3>
+
+            <div className={s.tags}>
+              {words.map(w => (
+                <Tag key={w} closable={!importing} onClose={() => removeWord(w)} color={randomColor()}>
+                  {w}
+                </Tag>
+              ))}
+              <Input
+                value={customTag}
+                disabled={importing}
+                onChange={e => setCustomTag(e.target.value)}
+                className={s.customTag}
+                placeholder="插入自定义词条"
+                onKeyDown={handleCustomTagKeyDown}
+              />
+            </div>
+            <Space>
+              <Button block disabled={!words.length} loading={importing} onClick={handleImportWords}>
+                开始导入
+              </Button>
+              <Loading model={importWords} />
+            </Space>
+          </div>
+        )}
+      </Modal>
+    </>
   );
 });

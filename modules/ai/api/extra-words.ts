@@ -1,8 +1,8 @@
 import { allowMethod } from '@/lib/api';
-import { createSuccessResponse } from '@/modules/backend-node';
+import { createFailResponse } from '@/modules/backend-node';
 import { withWakedataRequestApiRoute } from '@/modules/session/api-helper';
 import { NextApiHandler } from 'next';
-import * as prompt from '../prompts';
+import { chat } from '../proxy';
 
 export const extraWords: NextApiHandler = allowMethod(
   'GET',
@@ -10,12 +10,23 @@ export const extraWords: NextApiHandler = allowMethod(
     const text = req.query.text as string;
 
     if (text == null) {
-      res.json(createSuccessResponse([]));
+      res.status(400).json(createFailResponse(400, 'text is required'));
       return;
     }
 
-    const data = await prompt.extraWords(text);
-
-    return res.json(createSuccessResponse(data));
+    chat({
+      pipe: res,
+      messages: [
+        {
+          role: 'system',
+          content: 'You are a language expert, skilled at summarizing.',
+        },
+        {
+          role: 'user',
+          content: `Summarize and extract the important nouns and verbs from the text. You response JSON array, don't explain it, for example ["hello", "world"]. The text is: '''${text}'''`,
+        },
+      ],
+      temperature: 0.5,
+    });
   })
 );

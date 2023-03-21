@@ -1,0 +1,55 @@
+.icon {
+  background-color: var(--vd-color-gray-300);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 5px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--vd-color-gray-400);
+  }
+}
+
+.svg {
+  width: 1em;
+  height: 1em;
+}
+
+@keyframes blink {
+  from {
+    opacity: 0.2;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.root {
+  min-height: 10em;
+  max-height: 40em;
+  min-width: 25em;
+  max-width: 40em;
+  overflow: auto;
+  background-color: var(--vd-color-gray-200);
+  border-radius: 5px;
+  border: 2px solid var(--vd-color-primary);
+  padding: 4px;
+  font-size: 13px;
+  color: gray;
+  white-space: pre-wrap;
+  word-break: break-all;
+
+  &::after {
+    content: '';
+    display: inline-block;
+    width: 5px;
+    height: 1em;
+    margin-left: 2px;
+    background-color: var(--vd-color-gray-700);
+    animation: blink 0.3s linear infinite alternate;
+    vertical-align: text-bottom;
+    line-height: 1em;
+  }
+}

@@ -16,6 +16,7 @@
     "immer",
     "localforage",
     "mindmap",
+    "openai",
     "pannable",
     "Popconfirm",
     "previewable",
