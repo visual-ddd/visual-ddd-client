@@ -1,3 +1,5 @@
+import JSON5 from 'json5';
+
 const isValidStartChar = (char: string) => {
   return char === '{' || char === '[' || char === '"';
 };
@@ -33,5 +35,5 @@ export function looseJSONParse<T = any>(json: string): T {
 
   json = json.slice(validStartIndex, validEndIndex + 1);
 
-  return JSON.parse(json);
+  return JSON5.parse(json);
 }

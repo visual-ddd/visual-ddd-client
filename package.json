@@ -63,6 +63,7 @@
     "immer": "^9.0.19",
     "iron-session": "^6.3.1",
     "js-base64": "^3.7.5",
+    "json5": "^2.2.3",
     "langchain": "^0.0.33",
     "localforage": "^1.10.0",
     "lodash": "^4.17.21",

@@ -28,4 +28,11 @@ describe('looseJSONParse函数测试', () => {
     expect(jsonObj.name).toEqual('小明');
     expect(jsonObj.age).toEqual(18);
   });
+
+  it('更宽松地解释 JSON', () => {
+    const jsonString = '{  "name": "小明",  "age": 18,  }// 这也是注释\n';
+    const jsonObj = looseJSONParse(jsonString);
+    expect(jsonObj.name).toEqual('小明');
+    expect(jsonObj.age).toEqual(18);
+  });
 });

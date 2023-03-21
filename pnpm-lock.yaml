@@ -70,6 +70,7 @@ specifiers:
   jest: ^29.5.0
   jest-environment-jsdom: ^29.5.0
   js-base64: ^3.7.5
+  json5: ^2.2.3
   langchain: ^0.0.33
   localforage: ^1.10.0
   lodash: ^4.17.21
@@ -162,6 +163,7 @@ dependencies:
   immer: 9.0.19
   iron-session: 6.3.1_next@13.2.2
   js-base64: 3.7.5
+  json5: 2.2.3
   langchain: 0.0.33
   localforage: 1.10.0
   lodash: 4.17.21
@@ -7026,7 +7028,6 @@ packages:
       { integrity: sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg== }
     engines: { node: '>=6' }
     hasBin: true
-    dev: true
 
   /jsonfile/6.1.0:
     resolution:
