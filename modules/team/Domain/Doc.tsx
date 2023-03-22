@@ -13,6 +13,7 @@ import { DomainDetail } from '../types';
 
 import s from './Doc.module.scss';
 import { StaticEditor } from '@/lib/wysiwyg-editor/StaticEditor';
+import dynamic from 'next/dynamic';
 
 export interface DocProps {
   detail: DomainDetail;
@@ -41,6 +42,11 @@ const ubColumns: ColumnType<UbiquitousLanguageItem>[] = [
     title: '示例',
   },
 ];
+
+const DomainEditor = dynamic(() => import('@/modules/domain/domain-design/StandaloneDomainEditor'), { ssr: false });
+const DataObjectEditor = dynamic(() => import('@/modules/domain/data-design/StandaloneDataObjectEditor'), {
+  ssr: false,
+});
 
 /**
  * 业务域文档
@@ -88,6 +94,18 @@ export const Doc = (props: DocProps) => {
         <p>{dsl.vision || '未设置'}</p>
       </section>
       <section>{!!productionContent && <StaticEditor content={productionContent} className={s.editor} />}</section>
+      <section>
+        <h2>领域模型</h2>
+        <DomainEditor dsl={detail.version.graphDsl} />
+      </section>
+      <section>
+        <h2>数据模型</h2>
+        <DataObjectEditor dsl={detail.version.graphDsl} />
+      </section>
+      <section>
+        <h2>接口文档</h2>
+        <div>TODO:</div>
+      </section>
     </div>
   );
 };
