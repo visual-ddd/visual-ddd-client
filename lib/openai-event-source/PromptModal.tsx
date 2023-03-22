@@ -8,6 +8,7 @@ import s from './PromptModal.module.scss';
 import { RobotOutlined, SendOutlined } from '@ant-design/icons';
 import { Loading } from './Loading';
 import { clamp } from 'lodash';
+import classNames from 'classnames';
 
 export interface PromptModalProps<T> {
   options: OpenAIEventSourceModelOptions<T>;
@@ -112,7 +113,10 @@ export const PromptModal = observer(function PromptModal<T>(props: PromptModalPr
           {model.loading ? (
             <Loading model={model} />
           ) : (
-            <SendOutlined className={s.sendButton} title="发送 Ctrl/Command + Enter" />
+            <SendOutlined
+              className={classNames(s.sendButton, { disable: !prompt })}
+              title="发送 Ctrl/Command + Enter"
+            />
           )}
         </div>
         {model.error && <div className={s.error}>{model.error.message}</div>}
