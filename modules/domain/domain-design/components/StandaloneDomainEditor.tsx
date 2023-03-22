@@ -1,6 +1,5 @@
 import { FullScreenContainer } from '@/lib/components/FullScreenContainer';
 import {
-  BaseEditorModel,
   Canvas,
   CanvasModel,
   CanvasModelProvider,
@@ -15,6 +14,8 @@ import classNames from 'classnames';
 import { useEffect, useMemo, useRef } from 'react';
 
 import { YJS_FIELD_NAME } from '../../constants';
+import { DomainEditorModel } from '../model';
+import { DomainObjectReferenceEdges } from './DomainObjectReferenceEdges';
 
 import s from './StandaloneDomainEditor.module.scss';
 
@@ -38,7 +39,7 @@ export const StandaloneDomainEditor = (props: StandaloneDomainProps) => {
 
     const ydoc = createYDocFromBase64(dsl);
 
-    return new BaseEditorModel({
+    return new DomainEditorModel({
       readonly: true,
       scopeId: 'domain-standalone',
       activeScope: false,
@@ -80,7 +81,9 @@ export const StandaloneDomainEditor = (props: StandaloneDomainProps) => {
     >
       <EditorModelProvider value={model}>
         <CanvasModelProvider onReady={handleCanvasReady}>
-          <Canvas></Canvas>
+          <Canvas>
+            <DomainObjectReferenceEdges />
+          </Canvas>
         </CanvasModelProvider>
       </EditorModelProvider>
     </FullScreenContainer>

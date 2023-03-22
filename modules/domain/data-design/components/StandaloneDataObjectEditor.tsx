@@ -15,6 +15,7 @@ import { useEffect, useMemo, useRef } from 'react';
 
 import { YJS_FIELD_NAME } from '../../constants';
 import { DataObjectEditorModel } from '../model';
+import { DomainObjectReferenceEdges } from './DataObjectReferenceEdges';
 
 import s from './StandaloneDataObjectEditor.module.scss';
 
@@ -80,7 +81,9 @@ export const StandaloneDataObjectEditor = (props: StandaloneDataObjectProps) => 
     >
       <EditorModelProvider value={model}>
         <CanvasModelProvider onReady={handleCanvasReady}>
-          <Canvas></Canvas>
+          <Canvas>
+            <DomainObjectReferenceEdges />
+          </Canvas>
         </CanvasModelProvider>
       </EditorModelProvider>
     </FullScreenContainer>
