@@ -13,6 +13,7 @@
 
 .root:global(.text) {
   color: var(--color);
+  display: inline-block;
 }
 
 .version {

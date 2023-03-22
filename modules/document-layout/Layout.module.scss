@@ -1,0 +1,58 @@
+.root {
+}
+
+.body {
+  max-width: 900px;
+  margin: auto;
+  padding: var(--vd-spacing-lg) 0;
+  line-height: 1.65;
+  color: var(--vd-color-font-primary);
+  font-size: 16px;
+
+  :global {
+    h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      line-height: 1.35;
+      margin-top: 0.75rem;
+      word-break: break-word;
+    }
+
+    h2 {
+      font-size: 2rem;
+      line-height: 1.5;
+      margin: 3.5rem 0 2rem 0;
+      font-weight: 600;
+    }
+
+    h3 {
+      font-size: 1.5rem;
+      line-height: 1.6;
+    }
+
+    h4 {
+      font-size: 1.2rem;
+    }
+
+    h5 {
+      font-size: 1rem;
+    }
+
+    p {
+      margin: 1.25rem 0;
+    }
+
+    blockquote {
+      color: #666;
+      background: #fafafa;
+      border: 1px solid#eaeaea;
+      border-radius: 3px;
+      padding: 0 1.25rem;
+      margin: 1.5rem 0;
+    }
+
+    section {
+      margin-bottom: 4rem;
+    }
+  }
+}

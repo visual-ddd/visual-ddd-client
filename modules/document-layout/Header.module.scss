@@ -1,0 +1,28 @@
+.root {
+  height: 60px;
+  background-color: var(--vd-color-gray-100);
+  border-bottom: 1px solid var(--vd-color-gray-300);
+}
+
+.body {
+  max-width: 900px;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.logo {
+  height: 100%;
+  display: inline-flex;
+  align-items: center;
+  font-size: 20px;
+  font-weight: bold;
+  background: linear-gradient(190deg, var(--vd-color-primary) 35%, #fff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  img {
+    height: 100%;
+  }
+}

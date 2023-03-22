@@ -21,12 +21,16 @@ specifiers:
   '@testing-library/jest-dom': ^5.16.5
   '@testing-library/react': ^14.0.0
   '@tiptap/core': 2.0.0-beta.220
+  '@tiptap/extension-code-block': 2.0.0-beta.220
   '@tiptap/extension-code-block-lowlight': 2.0.0-beta.220
   '@tiptap/extension-collaboration': 2.0.0-beta.220
   '@tiptap/extension-collaboration-cursor': 2.0.0-beta.220
+  '@tiptap/extension-document': 2.0.0-beta.220
   '@tiptap/extension-image': 2.0.0-beta.220
   '@tiptap/extension-link': 2.0.0-beta.220
+  '@tiptap/extension-paragraph': 2.0.0-beta.220
   '@tiptap/extension-placeholder': 2.0.0-beta.220
+  '@tiptap/extension-text': 2.0.0-beta.220
   '@tiptap/extension-text-align': 2.0.0-beta.220
   '@tiptap/extension-underline': 2.0.0-beta.220
   '@tiptap/pm': 2.0.0-beta.220
@@ -105,6 +109,7 @@ specifiers:
   semver: ^7.3.8
   sharp: ^0.31.3
   swr: ^2.1.0
+  tslib: ^2.5.0
   typescript: 4.9.5
   uuid: ^9.0.0
   wkstd: ^0.2.4
@@ -133,12 +138,16 @@ dependencies:
   '@dnd-kit/utilities': 3.2.1_react@18.2.0
   '@sentry/nextjs': 7.43.0_next@13.2.2+react@18.2.0
   '@tiptap/core': 2.0.0-beta.220_@tiptap+pm@2.0.0-beta.220
-  '@tiptap/extension-code-block-lowlight': 2.0.0-beta.220_ohumfzynigfck3hzagxvh2a4ky
+  '@tiptap/extension-code-block': 2.0.0-beta.220_ohumfzynigfck3hzagxvh2a4ky
+  '@tiptap/extension-code-block-lowlight': 2.0.0-beta.220_ddzafjrquu7yfqymdbmfpxfje4
   '@tiptap/extension-collaboration': 2.0.0-beta.220_vghkcsy37zmnft7cy7riket6na
   '@tiptap/extension-collaboration-cursor': 2.0.0-beta.220_xurnhx2lyuimbqrywcpq5zxutu
+  '@tiptap/extension-document': 2.0.0-beta.220_7w7m52asdh3tod4ocz57yex63q
   '@tiptap/extension-image': 2.0.0-beta.220_7w7m52asdh3tod4ocz57yex63q
   '@tiptap/extension-link': 2.0.0-beta.220_ohumfzynigfck3hzagxvh2a4ky
+  '@tiptap/extension-paragraph': 2.0.0-beta.220_7w7m52asdh3tod4ocz57yex63q
   '@tiptap/extension-placeholder': 2.0.0-beta.220_ohumfzynigfck3hzagxvh2a4ky
+  '@tiptap/extension-text': 2.0.0-beta.220_7w7m52asdh3tod4ocz57yex63q
   '@tiptap/extension-text-align': 2.0.0-beta.220_7w7m52asdh3tod4ocz57yex63q
   '@tiptap/extension-underline': 2.0.0-beta.220_7w7m52asdh3tod4ocz57yex63q
   '@tiptap/pm': 2.0.0-beta.220_7w7m52asdh3tod4ocz57yex63q
@@ -195,6 +204,7 @@ dependencies:
   semver: 7.3.8
   sharp: 0.31.3
   swr: 2.1.0_react@18.2.0
+  tslib: 2.5.0
   uuid: 9.0.0
   y-indexeddb: 9.0.9_yjs@13.5.50
   y-prosemirror: 1.2.0_w7ntbg6oz4fbisqlqoiwzuj4ee
@@ -2302,7 +2312,7 @@ packages:
       '@tiptap/core': 2.0.0-beta.220_@tiptap+pm@2.0.0-beta.220
     dev: false
 
-  /@tiptap/extension-code-block-lowlight/2.0.0-beta.220_ohumfzynigfck3hzagxvh2a4ky:
+  /@tiptap/extension-code-block-lowlight/2.0.0-beta.220_ddzafjrquu7yfqymdbmfpxfje4:
     resolution:
       { integrity: sha512-xMwbl5O50yaIGYQF3yrBM7Ft0JYejkuEo161jRElYG+PYvUCvbf2wB5oLNtRknj00WOM01kPXH2xMTuk8fTOPg== }
     peerDependencies:
@@ -2311,6 +2321,7 @@ packages:
       '@tiptap/pm': ^2.0.0-beta.209
     dependencies:
       '@tiptap/core': 2.0.0-beta.220_@tiptap+pm@2.0.0-beta.220
+      '@tiptap/extension-code-block': 2.0.0-beta.220_ohumfzynigfck3hzagxvh2a4ky
       '@tiptap/pm': 2.0.0-beta.220_7w7m52asdh3tod4ocz57yex63q
     dev: false
 

@@ -1,6 +1,8 @@
+import { useEffect, useMemo, useRef } from 'react';
 import { EditorContent, useEditor, ReactNodeViewRenderer } from '@tiptap/react';
 import { Doc as YDoc } from 'yjs';
 import { Awareness } from 'y-protocols/awareness';
+import { lowlight } from 'lowlight';
 
 import StarterKit from '@tiptap/starter-kit';
 import Collaboration from '@tiptap/extension-collaboration';
@@ -11,7 +13,6 @@ import Placeholder from '@tiptap/extension-placeholder';
 import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import CodeBlock from '@tiptap/extension-code-block-lowlight';
-import { lowlight } from 'lowlight';
 import css from 'highlight.js/lib/languages/css';
 import js from 'highlight.js/lib/languages/javascript';
 import ts from 'highlight.js/lib/languages/typescript';
@@ -19,15 +20,14 @@ import html from 'highlight.js/lib/languages/xml';
 import classNames from 'classnames';
 import { IUser } from '@/lib/core';
 import { NoopArray } from '@wakeapp/utils';
-
 import { getMappedColor, ignoreFalse, tryDispose } from '@/lib/utils';
 
-import s from './index.module.scss';
 import { WYSIWYGEditorToolbar } from './Toolbar';
-import { useEffect, useMemo, useRef } from 'react';
 import { CustomKeyboardBinding } from './CustomKeyboardBinding';
 import { FileHandler } from './FileHandler';
 import { CodeBlockComponent } from './CodeBlockComponent';
+import s from './index.module.scss';
+import cs from './common.module.scss';
 
 lowlight.registerLanguage('html', html);
 lowlight.registerLanguage('css', css);
@@ -62,10 +62,14 @@ export interface WYSIWYGEditorProps {
   user?: IUser;
 
   placeholder?: string;
+
+  className?: string;
+
+  style?: React.CSSProperties;
 }
 
 export const WYSIWYGEditor = (props: WYSIWYGEditorProps) => {
-  const { doc, field, readonly, awareness, user, placeholder } = props;
+  const { doc, field, readonly, awareness, user, placeholder, className, ...other } = props;
   const containerRef = useRef<HTMLDivElement>(null);
 
   const editor = useEditor({
@@ -172,7 +176,7 @@ export const WYSIWYGEditor = (props: WYSIWYGEditorProps) => {
   };
 
   return (
-    <div className={classNames('vd-wd', s.root)} ref={containerRef}>
+    <div className={classNames('vd-wd', s.root, className, cs.root)} ref={containerRef} {...other}>
       {!readonly && (
         <WYSIWYGEditorToolbar
           className={classNames('vd-wd__toolbar', s.toolbar)}
