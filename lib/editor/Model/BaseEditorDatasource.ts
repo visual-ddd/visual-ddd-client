@@ -1,8 +1,8 @@
 import { makeAutoBindThis, push, pull, mutation } from '@/lib/store';
-import { Map as YMap, Doc as YDoc, AbstractType, UndoManager } from 'yjs';
+import { Map as YMap, Doc as YDoc, YEvent, Transaction, AbstractType, UndoManager } from 'yjs';
 import { observable, makeObservable } from 'mobx';
-
-import { getPaths } from '@/lib/utils';
+import { getPaths, IDisposable } from '@/lib/utils';
+import { Disposer } from '@wakeapp/utils';
 
 import { BaseEditorStore } from './BaseEditorStore';
 import { BaseNode } from './BaseNode';
@@ -15,9 +15,8 @@ import { BaseEditorIndex } from './BaseEditorIndex';
 
 /**
  * yjs 数据库
- * TODO: 离线编辑
  */
-export class BaseEditorDatasource {
+export class BaseEditorDatasource implements IDisposable {
   @observable
   canRedo: boolean = false;
 
@@ -36,6 +35,8 @@ export class BaseEditorDatasource {
 
   private postPullQueue: Map<`${'REMOVE_CHILD' | 'ADD_CHILD'}:${string},${string}`, Function> = new Map();
 
+  private disposer = new Disposer();
+
   constructor(inject: {
     store: BaseEditorStore;
     index: BaseEditorIndex;
@@ -52,6 +53,9 @@ export class BaseEditorDatasource {
     this.undoManager = new UndoManager(datasource, {
       // captureTimeout: 0, 默认 500ms
     });
+    this.disposer.push(() => {
+      this.undoManager.destroy();
+    });
 
     makeAutoBindThis(this);
     makeObservable(this);
@@ -61,6 +65,10 @@ export class BaseEditorDatasource {
     this.watchUndoManager();
 
     this.undoManager.clear();
+  }
+
+  dispose() {
+    this.disposer.release();
   }
 
   /**
@@ -339,20 +347,16 @@ export class BaseEditorDatasource {
    * 监听来自 Store 的事件
    */
   private watchStore() {
-    this.event.on('NODE_CREATED', this.addNode);
-    this.event.on('NODE_REMOVED', this.removeNode);
-    this.event.on('NODE_APPEND_CHILD', this.addChild);
-    this.event.on('NODE_REMOVE_CHILD', this.removeChild);
-    this.event.on('NODE_UPDATE_PROPERTY', this.updateNodeProperty);
-    this.event.on('NODE_DELETE_PROPERTY', this.deleteNodeProperty);
-    this.event.on('NODE_LOCKED', this.lockNode);
-    this.event.on('NODE_UNLOCKED', this.unlockNode);
-  }
-
-  @mutation('UNDO_STACK_CHANGE', false)
-  private undoStackChange() {
-    this.canRedo = this.undoManager.canRedo();
-    this.canUndo = this.undoManager.canUndo();
+    this.disposer.push(
+      this.event.on('NODE_CREATED', this.addNode),
+      this.event.on('NODE_REMOVED', this.removeNode),
+      this.event.on('NODE_APPEND_CHILD', this.addChild),
+      this.event.on('NODE_REMOVE_CHILD', this.removeChild),
+      this.event.on('NODE_UPDATE_PROPERTY', this.updateNodeProperty),
+      this.event.on('NODE_DELETE_PROPERTY', this.deleteNodeProperty),
+      this.event.on('NODE_LOCKED', this.lockNode),
+      this.event.on('NODE_UNLOCKED', this.unlockNode)
+    );
   }
 
   private watchUndoManager() {
@@ -366,7 +370,16 @@ export class BaseEditorDatasource {
   private async watchDatasource() {
     console.log('isLoaded', this.doc.isLoaded);
 
-    this.datasource.observeDeep((evts, transact) => {
+    // 初始化
+    if (this.datasource.size) {
+      // 这里延迟触发，因为其他地方可能依赖这里的事件
+      Promise.resolve().then(() => {
+        this.initialDatasource();
+      });
+    }
+
+    // 监听
+    const listener = (evts: YEvent<any>[], transact: Transaction) => {
       console.log('datasource change', evts);
       // 本地触发, 并且不是 UndoManager 触发的, 跳过
       if (transact.local && transact.origin !== this.undoManager) {
@@ -509,7 +522,57 @@ export class BaseEditorDatasource {
       }
 
       console.log('datasource change end');
+    };
+
+    this.datasource.observeDeep(listener);
+    this.disposer.push(() => {
+      this.datasource.unobserveDeep(listener);
     });
+  }
+
+  private initialDatasource() {
+    // 父子节点关系
+    const relationships: Record<string, Set<string>> = {};
+
+    const addRelationship = (parentId: string, childId: string) => {
+      if (relationships[parentId]) {
+        relationships[parentId].add(childId);
+      } else {
+        relationships[parentId] = new Set([childId]);
+      }
+    };
+
+    this.datasource.forEach((map, nodeId) => {
+      const node = NodeYMap.fromYMap(map)!.toNodePO();
+      this.handleAddNode({ node });
+
+      if (node.parent) {
+        addRelationship(node.parent, node.id);
+      }
+
+      if (node.children) {
+        for (const childId of node.children) {
+          addRelationship(node.id, childId);
+        }
+      }
+    });
+
+    const parentKeys = Object.keys(relationships);
+
+    if (parentKeys.length) {
+      for (const parentId of parentKeys) {
+        const children = relationships[parentId];
+        for (const childId of children) {
+          this.handleAddChild({ parentId, childId });
+        }
+      }
+    }
+  }
+
+  @mutation('UNDO_STACK_CHANGE', false)
+  private undoStackChange() {
+    this.canRedo = this.undoManager.canRedo();
+    this.canUndo = this.undoManager.canUndo();
   }
 
   private doUpdate(runner: () => void) {

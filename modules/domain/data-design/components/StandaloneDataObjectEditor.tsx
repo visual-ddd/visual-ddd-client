@@ -1,3 +1,4 @@
+import type { Doc as YDoc } from 'yjs';
 import { FullScreenContainer } from '@/lib/components/FullScreenContainer';
 import {
   Canvas,
@@ -20,7 +21,7 @@ import { DomainObjectReferenceEdges } from './DataObjectReferenceEdges';
 import s from './StandaloneDataObjectEditor.module.scss';
 
 export interface StandaloneDataObjectProps {
-  dsl?: string;
+  dsl?: string | YDoc;
   className?: string;
   style?: React.CSSProperties;
 }
@@ -37,7 +38,7 @@ export const StandaloneDataObjectEditor = (props: StandaloneDataObjectProps) => 
       return;
     }
 
-    const ydoc = createYDocFromBase64(dsl);
+    const ydoc = typeof dsl === 'string' ? createYDocFromBase64(dsl) : dsl;
 
     return new DataObjectEditorModel({
       readonly: true,

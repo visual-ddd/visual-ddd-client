@@ -18,6 +18,44 @@ export class EventBus<
    */
   protected eventBus: EventEmitter = new EventEmitter();
 
+  private ready = true;
+
+  // 未触发的事件
+  private pending: [string, any][] = [];
+
+  /**
+   * 事件总线是否就绪
+   *
+   * 有一些场景需要延迟触发事件，比如在初始化时，需要先初始化一些数据，然后再通知调用者
+   * 在准备就绪后，需要调用 iAmReady() 方法
+   *
+   */
+  get isReady(): boolean {
+    return this.ready;
+  }
+
+  constructor(options?: { notReadyYet?: boolean }) {
+    if (options?.notReadyYet) {
+      this.ready = false;
+    }
+  }
+
+  iAmReady() {
+    if (this.ready) {
+      throw new Error('EventBus is already ready');
+    }
+
+    this.ready = true;
+
+    if (this.pending.length) {
+      for (const [name, arg] of this.pending) {
+        this.eventBus.emit(name, arg);
+      }
+
+      this.pending = [];
+    }
+  }
+
   /**
    * 事件订阅
    * @param name
@@ -42,6 +80,11 @@ export class EventBus<
   // @ts-expect-error
   emit<T extends WithArg>(name: T, arg: EventDefinition[T]): void;
   emit(name: string, args?: any): void {
+    if (!this.ready) {
+      this.pending.push([name, args]);
+      return;
+    }
+
     this.eventBus.emit(name, args);
   }
 }

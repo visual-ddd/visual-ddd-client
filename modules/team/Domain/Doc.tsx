@@ -96,11 +96,11 @@ export const Doc = (props: DocProps) => {
       <section>{!!productionContent && <StaticEditor content={productionContent} className={s.editor} />}</section>
       <section>
         <h2>领域模型</h2>
-        <DomainEditor dsl={detail.version.graphDsl} />
+        <DomainEditor dsl={yjsDoc} />
       </section>
       <section>
         <h2>数据模型</h2>
-        <DataObjectEditor dsl={detail.version.graphDsl} />
+        <DataObjectEditor dsl={yjsDoc} />
       </section>
       <section>
         <h2>接口文档</h2>
