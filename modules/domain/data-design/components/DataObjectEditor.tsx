@@ -19,6 +19,7 @@ import { DataObjectEditorModel } from '../model/DataObjectEditorModel';
 import { DomainObjectReferenceEdges } from './DataObjectReferenceEdges';
 import { ShapeTitle } from './ShapeTitle';
 import { ShapeTree } from './ShapeTree';
+import { AIModal } from './AIModal';
 
 export interface DataObjectEditorProps {
   /**
@@ -62,7 +63,11 @@ export const DataObjectEditor = observer(function DataObjectEditor(props: DataOb
                 )
               }
               right={<EditorInspectPanel />}
-              toolbar={<EditorToolbar />}
+              toolbar={
+                <EditorToolbar>
+                  <AIModal />
+                </EditorToolbar>
+              }
             >
               <Canvas>
                 {/* 扩展连线 */}

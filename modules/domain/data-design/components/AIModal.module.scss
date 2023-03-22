@@ -1,0 +1,18 @@
+.button {
+  background: linear-gradient(120deg, #3f94d6 30%, #1e62be);
+  // -webkit-background-clip: text;
+  // -webkit-text-fill-color: transparent;
+  // font-weight: bolder;
+  // font-size: 16px;
+  color: white;
+  font-size: 13px;
+  height: 28px;
+  line-height: 28px;
+  border-radius: 10px;
+  padding: 0 12px;
+  position: absolute;
+  cursor: pointer;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+}

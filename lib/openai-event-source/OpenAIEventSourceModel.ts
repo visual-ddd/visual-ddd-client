@@ -44,6 +44,9 @@ export class OpenAIEventSourceModel<Result = any> implements IDisposable {
   @observable
   loading: boolean = false;
 
+  @observable
+  error?: Error;
+
   private disposed = false;
 
   private eventSource?: EventSource;
@@ -72,20 +75,25 @@ export class OpenAIEventSourceModel<Result = any> implements IDisposable {
     try {
       this.setLoading(true);
       this.setResult('');
+      this.setError(undefined);
 
       return await new Promise<Result>((resolve, reject) => {
         const source = (this.eventSource = new EventSource(url, { withCredentials: true }));
         source.onmessage = event => {
           const data = event.data as string;
 
-          if (data === DONE) {
-            source.close();
-            resolve(this.handleDone());
-          } else {
-            // FIXME: 这里耦合了 chat 接口协议
-            const payload = JSON.parse(data) as ChatCompletion;
-            const result = this.result + payload.choices.map(choice => choice.delta.content ?? '').join('');
-            this.setResult(result);
+          try {
+            if (data === DONE) {
+              source.close();
+              resolve(this.handleDone());
+            } else {
+              // FIXME: 这里耦合了 chat 接口协议
+              const payload = JSON.parse(data) as ChatCompletion;
+              const result = this.result + payload.choices.map(choice => choice.delta.content ?? '').join('');
+              this.setResult(result);
+            }
+          } catch (err) {
+            reject(err);
           }
         };
         source.onerror = error => {
@@ -93,6 +101,9 @@ export class OpenAIEventSourceModel<Result = any> implements IDisposable {
           reject(new Error(`数据加载失败`));
         };
       });
+    } catch (err) {
+      this.setError(err as Error);
+      throw err;
     } finally {
       this.setLoading(false);
     }
@@ -117,5 +128,10 @@ export class OpenAIEventSourceModel<Result = any> implements IDisposable {
   @action
   private setLoading(loading: boolean) {
     this.loading = loading;
+  }
+
+  @action
+  private setError(error?: Error) {
+    this.error = error;
   }
 }

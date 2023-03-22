@@ -5,3 +5,4 @@ export * from './OpenAIEventSourceModel';
 export * from './useOpenAI';
 export * from './decode';
 export * from './Loading';
+export * from './PromptModal';

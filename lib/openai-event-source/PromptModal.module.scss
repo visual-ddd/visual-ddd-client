@@ -1,0 +1,39 @@
+.body {
+  position: relative;
+  margin-bottom: 25px;
+}
+
+.text {
+  border: 2px solid var(--vd-color-primary-600);
+  border-radius: 4px;
+  padding: 4px;
+
+  :global(.ant-input-data-count) {
+    font-size: 12px;
+    float: left;
+    margin-top: 6px;
+  }
+}
+
+.send {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sendButton {
+  font-size: 16px;
+  cursor: pointer;
+  color: var(--vd-color-primary-900);
+}
+
+.error {
+  position: absolute;
+  left: 0;
+  bottom: -40px;
+  color: var(--vd-color-danger-400);
+  font-size: 13px;
+}
