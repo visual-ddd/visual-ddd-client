@@ -2,6 +2,8 @@ import type { UbiquitousLanguageItem } from '@/modules/domain/ubiquitous-languag
 
 export type { UbiquitousLanguageItem } from '@/modules/domain/ubiquitous-language-design/types';
 
+export type { BaseType } from '@/modules/domain/domain-design/dsl/dsl';
+
 /**
  * DSL 定义
  */
@@ -60,7 +62,17 @@ export interface QueryModelDSL {
  */
 export type AccessDSL = 'public' | 'private' | 'protected';
 
+/**
+ * 类型
+ */
 export type TypeDSL = string;
+
+/**
+ * 引用类型
+ */
+export type ReferenceTypeName = string;
+export type ReferenceTypeId = string;
+export type ReferenceTypeDSL = `[${ReferenceTypeName}:${ReferenceTypeId}]`;
 
 /**
  * 属性定义

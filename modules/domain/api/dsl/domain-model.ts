@@ -58,7 +58,7 @@ export function transformType(
     const dsl = getReference(id);
 
     // 引用类型返回对应的对象的 [name:id]
-    return `[${dsl.name}:${id}]`;
+    return `[${dsl.name}:${id}]` satisfies DSL.ReferenceTypeDSL;
   });
 }
 

@@ -1,0 +1,1156 @@
+{
+  "domainModel": {
+    "aggregates": [
+      {
+        "uuid": "e1284a59-d915-480e-bd4a-99f3cb19bd30",
+        "title": "组织",
+        "name": "Organization",
+        "description": "组织结构管理的领域",
+        "meta": {},
+        "root": {
+          "uuid": "0aefce5e-198c-4622-b1c3-65a0c0b18116",
+          "title": "组织",
+          "name": "Organization",
+          "description": "组织结构管理的领域",
+          "meta": {},
+          "id": {
+            "uuid": "2729e392-8125-43a7-94b7-4489efadb330",
+            "title": "组织 ID",
+            "name": "id",
+            "description": "",
+            "meta": {},
+            "access": "public",
+            "type": "Long"
+          },
+          "properties": [
+            {
+              "uuid": "f902e52b-f171-4664-a139-fe9dad39f5c1",
+              "title": "名称",
+              "name": "name",
+              "description": "",
+              "meta": {},
+              "access": "public",
+              "type": "String"
+            },
+            {
+              "uuid": "ff55f732-544d-4ee7-8b81-4cfb1fc89842",
+              "title": "描述",
+              "name": "description",
+              "description": "",
+              "meta": {},
+              "access": "public",
+              "type": "String"
+            },
+            {
+              "uuid": "04931e49-e64c-4336-87ea-76427fdf83df",
+              "title": "组织管理员",
+              "name": "organizationManagerId",
+              "description": "组织的管理者，被系统管理员授权，管理自己所在组织下的所有团队。",
+              "meta": {},
+              "access": "public",
+              "type": "Long"
+            }
+          ],
+          "methods": []
+        },
+        "entities": [],
+        "valueObjects": [],
+        "enums": [],
+        "commands": [
+          {
+            "uuid": "a8f2d25d-00cd-421d-869e-a85f8d882d39",
+            "title": "新增组织",
+            "name": "OrganizationCreate",
+            "description": "",
+            "meta": {},
+            "rules": [
+              {
+                "uuid": "1aa8782e-5828-446b-ace2-8c7ca5905ac1",
+                "title": "校验名称是否重复",
+                "name": "CheckRepeatedName",
+                "description": "校验名称是否重复",
+                "meta": {}
+              }
+            ],
+            "category": "organizationCreate",
+            "repository": "create",
+            "eventSendable": false,
+            "source": [{ "type": "http" }, { "type": "rpc" }],
+            "properties": [
+              {
+                "uuid": "04db7cde-1692-44a6-a256-117c6c573415",
+                "title": "名称",
+                "name": "name",
+                "description": "",
+                "meta": {},
+                "access": "public",
+                "type": "String"
+              },
+              {
+                "uuid": "dc7d5665-c222-4206-b90f-281d5e362cac",
+                "title": "描述",
+                "name": "description",
+                "description": "",
+                "meta": {},
+                "access": "public",
+                "type": "String"
+              },
+              {
+                "uuid": "78b4e1cd-0fea-46b6-b9df-4f8668d5caa8",
+                "title": "组织管理员",
+                "name": "organizationManagerId",
+                "description": "组织的管理者，被系统管理员授权，管理自己所在组织下的所有团队。",
+                "meta": {},
+                "access": "public",
+                "type": "Long"
+              }
+            ],
+            "event": {
+              "uuid": "a8f2d25d-00cd-421d-869e-a85f8d882d39",
+              "name": "OrganizationCreateEvent",
+              "properties": [
+                {
+                  "uuid": "ed05e7e1-d3c6-4412-b933-c4b0fbebe9af",
+                  "title": "组织 ID",
+                  "name": "id",
+                  "description": "",
+                  "meta": {},
+                  "access": "public",
+                  "type": "Long"
+                }
+              ]
+            },
+            "return": { "type": "void" }
+          },
+          {
+            "uuid": "974b9b21-88a3-4b64-bb13-d7017ba4bb8d",
+            "title": "编辑组织",
+            "name": "OrganizationModify",
+            "description": "",
+            "meta": {},
+            "rules": [
+              {
+                "uuid": "copy-fa26ba23-1a8d-4b74-873e-3bbef56635a3",
+                "title": "校验名称是否重复",
+                "name": "CheckRepeatedName",
+                "description": "校验名称是否重复",
+                "meta": {}
+              }
+            ],
+            "category": "organizationModify",
+            "repository": "modify",
+            "eventSendable": false,
+            "source": [{ "type": "http" }, { "type": "rpc" }],
+            "properties": [
+              {
+                "uuid": "0176edd8-c8d1-485a-ac1e-e4c079e97eba",
+                "title": "组织 ID",
+                "name": "id",
+                "description": "",
+                "meta": {},
+                "access": "public",
+                "type": "Long"
+              },
+              {
+                "uuid": "16002449-ed15-4efe-a1ad-9f652f0d6f4b",
+                "title": "名称",
+                "name": "name",
+                "description": "",
+                "meta": {},
+                "access": "public",
+                "type": "String"
+              },
+              {
+                "uuid": "e25fca53-8a04-4d5e-92ff-4fac54263334",
+                "title": "描述",
+                "name": "description",
+                "description": "",
+                "meta": {},
+                "access": "public",
+                "type": "String"
+              },
+              {
+                "uuid": "51faa759-c339-48f9-874c-067ebf913828",
+                "title": "组织管理员",
+                "name": "organizationManagerId",
+                "description": "组织的管理者，被系统管理员授权，管理自己所在组织下的所有团队。",
+                "meta": {},
+                "access": "public",
+                "type": "Long"
+              }
+            ],
+            "event": {
+              "uuid": "974b9b21-88a3-4b64-bb13-d7017ba4bb8d",
+              "name": "OrganizationModifyEvent",
+              "properties": []
+            },
+            "return": { "type": "void" }
+          },
+          {
+            "uuid": "31a56395-a105-45fe-b48b-d07d5be71ea4",
+            "title": "删除组织",
+            "name": "OrganizationRemove",
+            "description": "",
+            "meta": {},
+            "rules": [
+              {
+                "uuid": "f5867523-0f28-4144-addf-a4f06403c84d",
+                "title": "存在团队不能删除组织",
+                "name": "CheckExistTeam",
+                "description": "检查组织下是否存在团队",
+                "meta": {}
+              }
+            ],
+            "category": "organizationRemove",
+            "repository": "remove",
+            "eventSendable": false,
+            "source": [{ "type": "http" }, { "type": "rpc" }],
+            "properties": [
+              {
+                "uuid": "38061f3c-0c66-4c39-bf52-cc785accc8d4",
+                "title": "组织 ID",
+                "name": "id",
+                "description": "",
+                "meta": {},
+                "access": "public",
+                "type": "Long"
+              }
+            ],
+            "event": {
+              "uuid": "31a56395-a105-45fe-b48b-d07d5be71ea4",
+              "name": "OrganizationRemoveEvent",
+              "properties": []
+            },
+            "return": { "type": "void" }
+          },
+          {
+            "uuid": "967c4491-6176-4633-856f-a74c29219e84",
+            "title": "绑定组织管理员",
+            "name": "OrganizationManagerBind",
+            "description": "",
+            "meta": {},
+            "rules": [],
+            "category": "organizationManagerBind",
+            "repository": "modify",
+            "eventSendable": false,
+            "source": [{ "type": "http" }, { "type": "rpc" }],
+            "properties": [
+              {
+                "uuid": "6eef17e3-ab7d-493f-b8d9-105b68d5f47d",
+                "title": "组织 ID",
+                "name": "id",
+                "description": "",
+                "meta": {},
+                "access": "public",
+                "type": "Long"
+              },
+              {
+                "uuid": "584107c5-7186-4b1a-8921-114e47102654",
+                "title": "组织管理员",
+                "name": "organizationManagerId",
+                "description": "组织的管理者，被系统管理员授权，管理自己所在组织下的所有团队。",
+                "meta": {},
+                "access": "public",
+                "type": "Long"
+              }
+            ],
+            "event": {
+              "uuid": "967c4491-6176-4633-856f-a74c29219e84",
+              "name": "OrganizationManagerBindEvent",
+              "properties": []
+            },
+            "return": { "type": "void" }
+          },
+          {
+            "uuid": "copy-6ff57305-9236-47a4-aa35-d701c724ce7a",
+            "title": "解绑组织管理员",
+            "name": "OrganizationManagerUnbind",
+            "description": "",
+            "meta": {},
+            "rules": [],
+            "category": "organizationManagerUnbind",
+            "repository": "modify",
+            "eventSendable": false,
+            "source": [{ "type": "http" }, { "type": "rpc" }],
+            "properties": [
+              {
+                "uuid": "6eef17e3-ab7d-493f-b8d9-105b68d5f47d",
+                "title": "组织 ID",
+                "name": "id",
+                "description": "",
+                "meta": {},
+                "access": "public",
+                "type": "Long"
+              }
+            ],
+            "event": {
+              "uuid": "copy-6ff57305-9236-47a4-aa35-d701c724ce7a",
+              "name": "OrganizationManagerUnbindEvent",
+              "properties": []
+            },
+            "return": { "type": "void" }
+          }
+        ]
+      },
+      {
+        "uuid": "7f11b95d-cf31-48ed-be9c-ef444479c753",
+        "title": "团队",
+        "name": "Team",
+        "description": "每个团队是单一职责的，通常负责独立子领域的开发工作。",
+        "meta": {},
+        "root": {
+          "uuid": "9ea99cf9-b265-4205-b1f1-1cfa4c6bedcf",
+          "title": "团队",
+          "name": "Team",
+          "description": "每个团队是单一职责的，通常负责独立子领域的开发工作。",
+          "meta": {},
+          "id": {
+            "uuid": "9a903618-1ec6-4180-ada4-623b4458f197",
+            "title": "团队ID",
+            "name": "id",
+            "description": "",
+            "meta": {},
+            "access": "public",
+            "type": "Long"
+          },
+          "properties": [
+            {
+              "uuid": "56ac5688-0d22-4428-a8fa-109026eeec45",
+              "title": "名称",
+              "name": "name",
+              "description": "",
+              "meta": {},
+              "access": "public",
+              "type": "String"
+            },
+            {
+              "uuid": "2b3b77ec-0042-4fec-b7a4-d833ca1b6545",
+              "title": "描述",
+              "name": "description",
+              "description": "",
+              "meta": {},
+              "access": "public",
+              "type": "String"
+            },
+            {
+              "uuid": "8cedf515-6c1f-4412-a25c-9e3260d0429c",
+              "title": "组织ID",
+              "name": "organizationId",
+              "description": "组织唯一标识",
+              "meta": {},
+              "access": "public",
+              "type": "Long"
+            },
+            {
+              "uuid": "9a58e198-1d54-470d-bad5-c755198341e5",
+              "title": "团队管理员",
+              "name": "teamManagerId",
+              "description": "团队的管理者，被组织管理员授权，管理自己所在团队",
+              "meta": {},
+              "access": "public",
+              "type": "Long"
+            }
+          ],
+          "methods": []
+        },
+        "entities": [],
+        "valueObjects": [],
+        "enums": [],
+        "commands": [
+          {
+            "uuid": "copy-711a540d-2af8-4a8f-9bf4-61bd76859909",
+            "title": "新增团队",
+            "name": "TeamCreate",
+            "description": "",
+            "meta": {},
+            "rules": [
+              {
+                "uuid": "e3178307-1429-48aa-b72e-7d4199847804",
+                "title": "校验名称是否重复",
+                "name": "CheckRepeatedName",
+                "description": "校验名称是否重复",
+                "meta": {}
+              }
+            ],
+            "category": "teamCreate",
+            "repository": "create",
+            "eventSendable": false,
+            "source": [{ "type": "http" }, { "type": "rpc" }],
+            "properties": [
+              {
+                "uuid": "527a9fe0-94a2-48ad-a7df-c23cd5ba67af",
+                "title": "名称",
+                "name": "name",
+                "description": "",
+                "meta": {},
+                "access": "public",
+                "type": "String"
+              },
+              {
+                "uuid": "ff90e119-0293-4bc5-8a18-1ce2e5141513",
+                "title": "描述",
+                "name": "description",
+                "description": "",
+                "meta": {},
+                "access": "public",
+                "type": "String"
+              },
+              {
+                "uuid": "9f11d0bc-a907-40ad-bd9e-e712992d58ab",
+                "title": "组织ID",
+                "name": "organizationId",
+                "description": "组织唯一标识",
+                "meta": {},
+                "access": "public",
+                "type": "Long"
+              },
+              {
+                "uuid": "d7280bbe-567a-4f14-bb01-a6070bbccf12",
+                "title": "团队管理员",
+                "name": "teamManagerId",
+                "description": "团队的管理者，被组织管理员授权，管理自己所在团队",
+                "meta": {},
+                "access": "public",
+                "type": "Long"
+              }
+            ],
+            "event": {
+              "uuid": "copy-711a540d-2af8-4a8f-9bf4-61bd76859909",
+              "name": "TeamCreateEvent",
+              "properties": [
+                {
+                  "uuid": "4f1cea6d-0fe8-4cab-8189-5d449b7b9274",
+                  "title": "团队 ID",
+                  "name": "id",
+                  "description": "",
+                  "meta": {},
+                  "access": "public",
+                  "type": "Long"
+                }
+              ]
+            },
+            "return": { "type": "void" }
+          },
+          {
+            "uuid": "copy-73391b49-6571-4fc1-823a-04d1bd7ef26a",
+            "title": "编辑团队",
+            "name": "TeamModify",
+            "description": "",
+            "meta": {},
+            "rules": [
+              {
+                "uuid": "copy-e9c53073-2c11-49b3-8c1c-1ae5fc2ae4a4",
+                "title": "校验名称是否重复",
+                "name": "CheckRepeatedName",
+                "description": "校验名称是否重复",
+                "meta": {}
+              }
+            ],
+            "category": "teamModify",
+            "repository": "modify",
+            "eventSendable": false,
+            "source": [{ "type": "http" }, { "type": "rpc" }],
+            "properties": [
+              {
+                "uuid": "e4aac776-2bf2-42b0-8407-5a5f3319cdca",
+                "title": "团队 ID",
+                "name": "id",
+                "description": "",
+                "meta": {},
+                "access": "public",
+                "type": "Long"
+              },
+              {
+                "uuid": "8468dd10-4215-4d39-91c2-8caf1d4d6e9b",
+                "title": "名称",
+                "name": "name",
+                "description": "",
+                "meta": {},
+                "access": "public",
+                "type": "String"
+              },
+              {
+                "uuid": "8828e506-1f49-4bd4-96bc-6e4ba58bbe89",
+                "title": "描述",
+                "name": "description",
+                "description": "",
+                "meta": {},
+                "access": "public",
+                "type": "String"
+              },
+              {
+                "uuid": "318f0dea-2abd-4b00-94f7-3e1f00f478b2",
+                "title": "组织ID",
+                "name": "organizationId",
+                "description": "组织唯一标识",
+                "meta": {},
+                "access": "public",
+                "type": "Long"
+              },
+              {
+                "uuid": "7f118c74-8e86-4a93-965f-b050f0fae0fe",
+                "title": "团队管理员",
+                "name": "teamManagerId",
+                "description": "团队的管理者，被组织管理员授权，管理自己所在团队",
+                "meta": {},
+                "access": "public",
+                "type": "Long"
+              }
+            ],
+            "event": {
+              "uuid": "copy-73391b49-6571-4fc1-823a-04d1bd7ef26a",
+              "name": "TeamModifyEvent",
+              "properties": []
+            },
+            "return": { "type": "void" }
+          },
+          {
+            "uuid": "copy-f658dc1a-46e7-4e60-b488-ecf78c7242ed",
+            "title": "删除团队",
+            "name": "TeamRemove",
+            "description": "",
+            "meta": {},
+            "rules": [
+              {
+                "uuid": "6222037b-dcf2-4c7f-9a91-eb1bd06be896",
+                "title": "存在应用不能删除",
+                "name": "CheckExistApplication",
+                "description": "检查团队下是否存在应用",
+                "meta": {}
+              },
+              {
+                "uuid": "copy-2c557447-f223-4a7d-8674-bf77a4f02159",
+                "title": "存在业务场景不能删除",
+                "name": "CheckExistBusinessScene",
+                "description": "检查团队下是否存在业务场景",
+                "meta": {}
+              },
+              {
+                "uuid": "copy-5657fd45-523b-40ec-9aab-cccae0044e86",
+                "title": "存在业务域不能删除",
+                "name": "CheckExistDomainDesign",
+                "description": "检查团队下是否存在业务域",
+                "meta": {}
+              }
+            ],
+            "category": "teamRemove",
+            "repository": "remove",
+            "eventSendable": false,
+            "source": [{ "type": "http" }, { "type": "rpc" }],
+            "properties": [
+              {
+                "uuid": "2ec6074e-74f5-4efa-bf7f-700ada96c07b",
+                "title": "团队 ID",
+                "name": "id",
+                "description": "",
+                "meta": {},
+                "access": "public",
+                "type": "Long"
+              }
+            ],
+            "event": {
+              "uuid": "copy-f658dc1a-46e7-4e60-b488-ecf78c7242ed",
+              "name": "TeamRemoveEvent",
+              "properties": []
+            },
+            "return": { "type": "void" }
+          },
+          {
+            "uuid": "c19b7203-3de6-4b7b-a7eb-fc647e2e8937",
+            "title": "绑定团队管理员",
+            "name": "TeamManagerBind",
+            "description": "",
+            "meta": {},
+            "rules": [],
+            "category": "teamManagerBind",
+            "repository": "modify",
+            "eventSendable": false,
+            "source": [{ "type": "http" }, { "type": "rpc" }],
+            "properties": [
+              {
+                "uuid": "2ef9dd00-04b2-4dda-83e5-fb829df44886",
+                "title": "团队 ID",
+                "name": "id",
+                "description": "",
+                "meta": {},
+                "access": "public",
+                "type": "Long"
+              },
+              {
+                "uuid": "3a3ce794-e409-4826-a14d-f1ce5643d0c8",
+                "title": "团队管理员",
+                "name": "teamManagerId",
+                "description": "团队的管理者，被组织管理员授权，管理自己所在团队",
+                "meta": {},
+                "access": "public",
+                "type": "Long"
+              }
+            ],
+            "event": {
+              "uuid": "c19b7203-3de6-4b7b-a7eb-fc647e2e8937",
+              "name": "TeamManagerBindEvent",
+              "properties": []
+            },
+            "return": { "type": "void" }
+          },
+          {
+            "uuid": "76210e50-42c2-44a0-b6bf-6e236c5d06b7",
+            "title": "解绑团队管理员",
+            "name": "TeamManagerUnBind",
+            "description": "",
+            "meta": {},
+            "rules": [],
+            "category": "teamManagerUnbind",
+            "repository": "modify",
+            "eventSendable": false,
+            "source": [{ "type": "http" }, { "type": "rpc" }],
+            "properties": [
+              {
+                "uuid": "1285be00-99ad-4931-9f27-1348aca6c5e0",
+                "title": "主键",
+                "name": "id",
+                "description": "",
+                "meta": {},
+                "access": "public",
+                "type": "Long"
+              }
+            ],
+            "event": {
+              "uuid": "76210e50-42c2-44a0-b6bf-6e236c5d06b7",
+              "name": "TeamManagerUnBindEvent",
+              "properties": []
+            },
+            "return": { "type": "void" }
+          }
+        ]
+      },
+      {
+        "uuid": "3433bf20-4129-4350-9718-43d881523c17",
+        "title": "团队成员",
+        "name": "TeamMember",
+        "description": "关联到当前团队的用户，团队管理员可以为成员绑定不同的团队职位",
+        "meta": {},
+        "root": {
+          "uuid": "fe64f086-b593-4a1d-938e-a52509160197",
+          "title": "团队成员",
+          "name": "TeamMember",
+          "description": "关联到当前团队的用户，团队管理员可以为成员绑定不同的团队职位",
+          "meta": {},
+          "id": {
+            "uuid": "e4eb1cb0-64e1-4f97-a131-d107ce34d8c1",
+            "title": "团队成员ID",
+            "name": "id",
+            "description": "",
+            "meta": {},
+            "access": "public",
+            "type": "Long"
+          },
+          "properties": [
+            {
+              "uuid": "ddc7145b-1496-40e1-afa9-882d7000171b",
+              "title": "团队ID",
+              "name": "teamId",
+              "description": "团队唯一标识",
+              "meta": {},
+              "access": "public",
+              "type": "Long"
+            },
+            {
+              "uuid": "fbcc3af0-6ede-448e-88bc-915e1686d502",
+              "title": "成员账号ID",
+              "name": "accountId",
+              "description": "团队成员的账号唯一标识",
+              "meta": {},
+              "access": "public",
+              "type": "Long"
+            },
+            {
+              "uuid": "99cf9308-4cc8-49f0-b59d-9fa41c5a9c50",
+              "title": "成员类型标签",
+              "name": "memberTypeList",
+              "description": "",
+              "meta": {},
+              "access": "public",
+              "type": "List<[MemberType:4eb5926e-77bb-4665-badd-a3bb0d8b763e]>"
+            }
+          ],
+          "methods": []
+        },
+        "entities": [],
+        "valueObjects": [],
+        "enums": [
+          {
+            "uuid": "4eb5926e-77bb-4665-badd-a3bb0d8b763e",
+            "title": "团队成员类型",
+            "name": "MemberType",
+            "description": "团队成员在所属团队中扮演的职位",
+            "meta": {},
+            "baseType": "number",
+            "members": [
+              {
+                "uuid": "75e1a790-5d96-47b4-88eb-48d777e55eaf",
+                "title": "产品经理",
+                "name": "PM",
+                "description": "需求发起者和验收者，主要负责业务域和业务场景需求的输入、验收项目接口和参与领域建模",
+                "meta": {},
+                "code": 1
+              },
+              {
+                "uuid": "96d3e1c0-6442-406f-9743-d29f274d6b00",
+                "title": "架构师",
+                "name": "ARCHITECT",
+                "description": "应用的管理者和领域建模的监督者，主要负责应用的管理和发布、审核领域建模和参与领域建模",
+                "meta": {},
+                "code": 0
+              },
+              {
+                "uuid": "d488c89f-2227-4331-ab2a-4f7b5c4175eb",
+                "title": "开发者",
+                "name": "DEVELOPER",
+                "description": "包括后端开发、前端开发、测试等具体的项目开发人员；主要负责功能开发和参与领域建模",
+                "meta": {},
+                "code": 0
+              }
+            ]
+          }
+        ],
+        "commands": [
+          {
+            "uuid": "7faf7f22-3e8a-4b11-977b-6b76a6b5cb99",
+            "title": "添加团队成员",
+            "name": "TeamMemberAdd",
+            "description": "",
+            "meta": {},
+            "rules": [
+              {
+                "uuid": "49594627-7d0e-45fb-a5e1-db92f3aae9dd",
+                "title": "团队成员不能重复",
+                "name": "CheckRepeatedTeamMember",
+                "description": "校验团队成员是否重复",
+                "meta": {}
+              }
+            ],
+            "category": "teamMemberAdd",
+            "repository": "create",
+            "eventSendable": false,
+            "source": [{ "type": "http" }, { "type": "rpc" }],
+            "properties": [
+              {
+                "uuid": "ae7468cb-8ea2-440f-b5ff-0bf476047965",
+                "title": "成员账号ID",
+                "name": "accountId",
+                "description": "团队成员的账号唯一标识",
+                "meta": {},
+                "access": "public",
+                "type": "Long"
+              },
+              {
+                "uuid": "f151cc0a-2eb0-48af-a9e8-7fd14d0746a3",
+                "title": "团队ID",
+                "name": "teamId",
+                "description": "团队唯一标识",
+                "meta": {},
+                "access": "public",
+                "type": "Long"
+              },
+              {
+                "uuid": "662a46ed-3f7f-4a8a-8d48-591201db11c8",
+                "title": "成员类型标签",
+                "name": "memberTypeList",
+                "description": "",
+                "meta": {},
+                "access": "public",
+                "type": "List<[MemberType:4eb5926e-77bb-4665-badd-a3bb0d8b763e]>"
+              }
+            ],
+            "event": { "uuid": "7faf7f22-3e8a-4b11-977b-6b76a6b5cb99", "name": "TeamMemberAddEvent", "properties": [] },
+            "return": { "type": "void" }
+          },
+          {
+            "uuid": "a559db3f-3012-43f9-97bf-16bde3732b11",
+            "title": "删除团队成员",
+            "name": "TeamMemberRemove",
+            "description": "",
+            "meta": {},
+            "rules": [],
+            "category": "teamMemberRemove",
+            "repository": "remove",
+            "eventSendable": false,
+            "source": [{ "type": "http" }, { "type": "rpc" }],
+            "properties": [
+              {
+                "uuid": "a99c7a69-bdeb-464a-afd7-f6324b762e5c",
+                "title": "团队成员ID",
+                "name": "id",
+                "description": "",
+                "meta": {},
+                "access": "public",
+                "type": "Long"
+              }
+            ],
+            "event": {
+              "uuid": "a559db3f-3012-43f9-97bf-16bde3732b11",
+              "name": "TeamMemberRemoveEvent",
+              "properties": []
+            },
+            "return": { "type": "void" }
+          },
+          {
+            "uuid": "f07914d8-7023-4b50-bbad-93c6e4e97dbc",
+            "title": "绑定团队成员职位",
+            "name": "TeamMemberRoleBind",
+            "description": "",
+            "meta": {},
+            "rules": [],
+            "category": "teamMemberRoleBind",
+            "repository": "modify",
+            "eventSendable": false,
+            "source": [{ "type": "http" }, { "type": "rpc" }],
+            "properties": [
+              {
+                "uuid": "1d931112-9bcc-4b4b-8888-a10a7af963c9",
+                "title": "团队成员ID",
+                "name": "id",
+                "description": "",
+                "meta": {},
+                "access": "public",
+                "type": "Long"
+              },
+              {
+                "uuid": "c7a43335-3e9c-4b94-b0cf-a3fe35ce7b89",
+                "title": "成员类型标签",
+                "name": "memberTypeList",
+                "description": "",
+                "meta": {},
+                "access": "public",
+                "type": "List<[MemberType:4eb5926e-77bb-4665-badd-a3bb0d8b763e]>"
+              }
+            ],
+            "event": {
+              "uuid": "f07914d8-7023-4b50-bbad-93c6e4e97dbc",
+              "name": "TeamMemberRoleBindEvent",
+              "properties": []
+            },
+            "return": { "type": "void" }
+          },
+          {
+            "uuid": "copy-f7fccdac-d38f-4ba0-9afc-749d85297b8c",
+            "title": "解绑团队成员职位",
+            "name": "TeamMemberRoleUnBind",
+            "description": "",
+            "meta": {},
+            "rules": [],
+            "category": "teamManagerRoleUnbind",
+            "repository": "modify",
+            "eventSendable": false,
+            "source": [{ "type": "http" }, { "type": "rpc" }],
+            "properties": [
+              {
+                "uuid": "1d931112-9bcc-4b4b-8888-a10a7af963c9",
+                "title": "团队成员ID",
+                "name": "id",
+                "description": "",
+                "meta": {},
+                "access": "public",
+                "type": "Long"
+              },
+              {
+                "uuid": "c7a43335-3e9c-4b94-b0cf-a3fe35ce7b89",
+                "title": "成员类型标签",
+                "name": "memberTypeList",
+                "description": "",
+                "meta": {},
+                "access": "public",
+                "type": "List<[MemberType:4eb5926e-77bb-4665-badd-a3bb0d8b763e]>"
+              }
+            ],
+            "event": {
+              "uuid": "copy-f7fccdac-d38f-4ba0-9afc-749d85297b8c",
+              "name": "TeamMemberRoleUnBindEvent",
+              "properties": []
+            },
+            "return": { "type": "void" }
+          }
+        ]
+      }
+    ]
+  },
+  "queryModel": {
+    "queries": [
+      {
+        "uuid": "595e70ba-0c85-4405-a8a2-04736be4119e",
+        "title": "组织详情查询对象",
+        "name": "OrganizationQuery",
+        "description": "查询组织详情",
+        "meta": {},
+        "source": [{ "type": "http" }, { "type": "rpc" }],
+        "rules": [],
+        "pagination": false,
+        "properties": [
+          {
+            "uuid": "c2866a4f-0576-49de-88e2-a6a477061e21",
+            "title": "组织 ID",
+            "name": "id",
+            "description": "",
+            "meta": {},
+            "access": "public",
+            "type": "Long"
+          }
+        ],
+        "return": { "type": "[OrganizationDTO:06a2c1e8-8d27-4c0a-bc26-1f95602c5a48]" }
+      },
+      {
+        "uuid": "f18f6eed-9262-41e8-8f8a-192d7b7c51cd",
+        "title": "组织分页查询对象",
+        "name": "OrganizationPageQuery",
+        "description": "分页查询组织",
+        "meta": {},
+        "source": [{ "type": "http" }, { "type": "rpc" }],
+        "rules": [],
+        "pagination": true,
+        "properties": [
+          {
+            "uuid": "ad759e5f-4da8-4d16-a413-df4cd823b9e2",
+            "title": "组织名称",
+            "name": "name",
+            "description": "",
+            "meta": {},
+            "access": "public",
+            "type": "String"
+          }
+        ],
+        "return": { "type": "[OrganizationDTO:06a2c1e8-8d27-4c0a-bc26-1f95602c5a48]" }
+      },
+      {
+        "uuid": "a18d70b1-c07f-4551-b2ef-883ebbdfbf78",
+        "title": "团队详情查询对象",
+        "name": "TeamQuery",
+        "description": "查询团队详情",
+        "meta": {},
+        "source": [{ "type": "http" }, { "type": "rpc" }],
+        "rules": [],
+        "pagination": false,
+        "properties": [
+          {
+            "uuid": "e8d30abe-8694-45f1-8c14-b12c3bd359e0",
+            "title": "团队ID",
+            "name": "id",
+            "description": "",
+            "meta": {},
+            "access": "public",
+            "type": "Long"
+          }
+        ],
+        "return": { "type": "[TeamDTO:9bbc1892-0bf7-4460-b6c2-f47d40ad210e]" }
+      },
+      {
+        "uuid": "93b35927-7e63-4fb2-9d92-5173e897d9fc",
+        "title": "团队分页查询对象",
+        "name": "TeamPageQuery",
+        "description": "分页查询团队",
+        "meta": {},
+        "source": [{ "type": "http" }, { "type": "rpc" }],
+        "rules": [],
+        "pagination": true,
+        "properties": [
+          {
+            "uuid": "88a094c0-ef87-456b-bab3-930451c45d02",
+            "title": "组织ID",
+            "name": "organizationId",
+            "description": "组织唯一标识",
+            "meta": {},
+            "access": "public",
+            "type": "Long"
+          },
+          {
+            "uuid": "a2e347b6-a81c-4a3e-93c1-d1a45d4e2baa",
+            "title": "团队名称",
+            "name": "name",
+            "description": "",
+            "meta": {},
+            "access": "public",
+            "type": "String"
+          }
+        ],
+        "return": { "type": "[TeamDTO:9bbc1892-0bf7-4460-b6c2-f47d40ad210e]" }
+      },
+      {
+        "uuid": "c7e8372f-85dc-493e-89e8-e14bd250e71f",
+        "title": "查询团队下的成员信息",
+        "name": "TeamMemberByTeamIdPageQuery",
+        "description": "分页查询团队成员",
+        "meta": {},
+        "source": [{ "type": "http" }, { "type": "rpc" }],
+        "rules": [],
+        "pagination": true,
+        "properties": [
+          {
+            "uuid": "74491d69-3ab5-46d4-854b-1547842cd075",
+            "title": "团队ID",
+            "name": "teamId",
+            "description": "团队唯一标识",
+            "meta": {},
+            "access": "public",
+            "type": "Long"
+          }
+        ],
+        "return": { "type": "[TeamMemberDTO:0d948c5a-d87b-458e-9566-a20058bcabe9]" }
+      }
+    ],
+    "dtos": [
+      {
+        "uuid": "06a2c1e8-8d27-4c0a-bc26-1f95602c5a48",
+        "title": "组织数据传输对象",
+        "name": "OrganizationDTO",
+        "description": "用于组织的数据传输对象",
+        "meta": {},
+        "properties": [
+          {
+            "uuid": "a7237916-6acd-4d5b-84ed-c493f2ec943a",
+            "title": "组织 ID",
+            "name": "id",
+            "description": "",
+            "meta": {},
+            "access": "public",
+            "type": "Long"
+          },
+          {
+            "uuid": "5edf83ff-b1f2-4ce7-850d-3e1f44d51ed9",
+            "title": "名称",
+            "name": "name",
+            "description": "",
+            "meta": {},
+            "access": "public",
+            "type": "String"
+          },
+          {
+            "uuid": "a7657045-22e2-4574-bd1d-cac85dc13923",
+            "title": "描述",
+            "name": "description",
+            "description": "",
+            "meta": {},
+            "access": "public",
+            "type": "String"
+          },
+          {
+            "uuid": "cfc1cd0f-774f-4b1b-a5a7-76ae123882a7",
+            "title": "组织管理员",
+            "name": "organizationManagerId",
+            "description": "组织的管理者，被系统管理员授权，管理自己所在组织下的所有团队。",
+            "meta": {},
+            "access": "public",
+            "type": "Long"
+          }
+        ]
+      },
+      {
+        "uuid": "9bbc1892-0bf7-4460-b6c2-f47d40ad210e",
+        "title": "团队数据传输对象",
+        "name": "TeamDTO",
+        "description": "用于团队的数据传输对象",
+        "meta": {},
+        "properties": [
+          {
+            "uuid": "371e4750-2032-44a5-b995-a2df477a3951",
+            "title": "团队ID",
+            "name": "id",
+            "description": "",
+            "meta": {},
+            "access": "public",
+            "type": "Long"
+          },
+          {
+            "uuid": "9e2dd2de-185c-4b57-a5dc-d82aedc64982",
+            "title": "名称",
+            "name": "name",
+            "description": "",
+            "meta": {},
+            "access": "public",
+            "type": "String"
+          },
+          {
+            "uuid": "163e1547-26ac-4efb-9b63-3735d5b8dd3d",
+            "title": "描述",
+            "name": "description",
+            "description": "",
+            "meta": {},
+            "access": "public",
+            "type": "String"
+          },
+          {
+            "uuid": "f2a32b75-8b10-4bb0-8b29-055117b91542",
+            "title": "组织ID",
+            "name": "organizationId",
+            "description": "组织唯一标识",
+            "meta": {},
+            "access": "public",
+            "type": "Long"
+          },
+          {
+            "uuid": "82eeb218-2f4b-4aaf-a38d-7ced833405bf",
+            "title": "团队管理员",
+            "name": "teamManagerId",
+            "description": "团队的管理者，被组织管理员授权，管理自己所在团队",
+            "meta": {},
+            "access": "public",
+            "type": "Long"
+          },
+          {
+            "uuid": "c43a9a49-1207-462a-8f0f-e740d67f1e86",
+            "title": "团队成员",
+            "name": "teamMembers",
+            "description": "团队成员",
+            "meta": {},
+            "access": "public",
+            "type": "List<[TeamMemberDTO:0d948c5a-d87b-458e-9566-a20058bcabe9]>"
+          }
+        ]
+      },
+      {
+        "uuid": "0d948c5a-d87b-458e-9566-a20058bcabe9",
+        "title": "团队成员数据传输对象",
+        "name": "TeamMemberDTO",
+        "description": "用于团队成员的数据传输对象",
+        "meta": {},
+        "properties": [
+          {
+            "uuid": "39ef299a-cc63-4508-9d97-7c98a6b5e475",
+            "title": "团队成员ID",
+            "name": "id",
+            "description": "",
+            "meta": {},
+            "access": "public",
+            "type": "Long"
+          },
+          {
+            "uuid": "9cdac279-09b5-4d47-8e29-5b979bc9de9b",
+            "title": "团队ID",
+            "name": "teamId",
+            "description": "团队唯一标识",
+            "meta": {},
+            "access": "public",
+            "type": "Long"
+          },
+          {
+            "uuid": "4c27adb9-eb56-4b89-8f55-84eb6a47b09b",
+            "title": "成员账号ID",
+            "name": "accountId",
+            "description": "团队成员的账号唯一标识",
+            "meta": {},
+            "access": "public",
+            "type": "Long"
+          },
+          {
+            "uuid": "e72462b1-2f56-4c8b-aa3d-79122e1b8d8a",
+            "title": "成员类型标签",
+            "name": "memberTypeList",
+            "description": "",
+            "meta": {},
+            "access": "public",
+            "type": "List<Integer>"
+          }
+        ]
+      }
+    ]
+  }
+}

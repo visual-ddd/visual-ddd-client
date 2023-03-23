@@ -14,6 +14,7 @@ import { DomainDetail } from '../types';
 import s from './Doc.module.scss';
 import { StaticEditor } from '@/lib/wysiwyg-editor/StaticEditor';
 import dynamic from 'next/dynamic';
+import { APiDoc } from './ApiDoc/ApiDoc';
 
 export interface DocProps {
   detail: DomainDetail;
@@ -54,13 +55,13 @@ const DataObjectEditor = dynamic(() => import('@/modules/domain/data-design/Stan
 export const Doc = (props: DocProps) => {
   const { detail } = props;
 
-  const dsl = useMemo<BusinessDomainDSL>(() => {
+  const dsl = useMemo<BusinessDomainDSL | undefined>(() => {
     return detail.version.domainDesignDsl ? JSON.parse(detail.version.domainDesignDsl) : undefined;
   }, [detail.version.domainDesignDsl]);
 
   const yjsDoc = useYDocFromBase64(detail.version.graphDsl, true);
 
-  const ubList = dsl.ubiquitousLanguage ?? NoopArray;
+  const ubList = dsl?.ubiquitousLanguage ?? NoopArray;
 
   const productionContent = useMemo(() => {
     if (yjsDoc) {
@@ -91,7 +92,7 @@ export const Doc = (props: DocProps) => {
       </section>
       <section>
         <h2>业务背景</h2>
-        <p>{dsl.vision || '未设置'}</p>
+        <p>{dsl?.vision || '未设置'}</p>
       </section>
       <section>{!!productionContent && <StaticEditor content={productionContent} className={s.editor} />}</section>
       <section>
@@ -104,7 +105,7 @@ export const Doc = (props: DocProps) => {
       </section>
       <section>
         <h2>接口文档</h2>
-        <div>TODO:</div>
+        <div>{dsl && <APiDoc dsl={dsl} />}</div>
       </section>
     </div>
   );
