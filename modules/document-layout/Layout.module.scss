@@ -1,5 +1,8 @@
 .root {
   --nav-height: 60px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 .body {
@@ -16,6 +19,7 @@
 
 .body,
 .fullBody {
+  flex: 1;
   line-height: 1.65;
   color: var(--vd-color-font-primary);
   font-size: 16px;
@@ -69,5 +73,5 @@
 }
 
 .content {
-  padding: 2em;
+  padding: 45px 170px 32px 64px;
 }
