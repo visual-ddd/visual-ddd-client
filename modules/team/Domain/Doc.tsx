@@ -106,10 +106,12 @@ export const Doc = (props: DocProps) => {
         <h2 id="domain-model">领域模型</h2>
         <DomainEditor dsl={yjsDoc} />
       </section>
-      <section>
-        <h2 id="data-model">数据模型</h2>
-        <DataObjectEditor dsl={yjsDoc} />
-      </section>
+      {!!(dsl && dsl.dataModel.dataObjects.length) && (
+        <section>
+          <h2 id="data-model">数据模型</h2>
+          <DataObjectEditor dsl={yjsDoc} />
+        </section>
+      )}
       <section>
         <h2 id="api">接口文档</h2>
         <div>{dsl && <APiDoc dsl={dsl} />}</div>

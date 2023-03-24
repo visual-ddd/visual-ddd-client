@@ -1,8 +1,7 @@
 import { withWakedataRequestSsr } from '@/modules/session/ssr-helper';
-import type { DomainDetail, DomainDetailPayload, DomainVersion } from '@/modules/team/types';
+import type { DomainDetail, DomainSimple, DomainVersion } from '@/modules/team/types';
 import { getDocumentLayout } from '@/modules/document-layout';
 import { Doc } from '@/modules/team/Domain/Doc';
-import omit from 'lodash/omit';
 
 /**
  * 业务域具体版本首页
@@ -15,27 +14,18 @@ export default function DomainDoc(props: { detail: DomainDetail }) {
 DomainDoc.getLayout = getDocumentLayout;
 
 export const getServerSideProps = withWakedataRequestSsr<{ detail: DomainDetail }>(async context => {
-  const { id, rid } = context.params as { id: string; rid: string };
+  const { rid } = context.params as { id: string; rid: string };
 
-  // 获取业务域详情
-  const [detail, version] = await Promise.all([
-    context.req.request<DomainDetailPayload>(
-      '/wd/visual/web/domain-design/domain-design-detail-query',
-      {
-        id,
-      },
-      { method: 'GET' }
-    ),
-    context.req.request<DomainVersion>(
-      '/wd/visual/web/domain-design-version/domain-design-version-detail-query',
-      {
-        id: rid,
-      },
-      { method: 'GET' }
-    ),
-  ]);
+  interface Payload extends DomainVersion {
+    domainDesignDTO: DomainSimple;
+  }
+
+  const { domainDesignDTO, ...version } = await context.req.request<Payload>(
+    '/wd/visual/web/secondary-development/get-domain-design-version-no-auth',
+    { id: rid }
+  );
 
   return {
-    props: { detail: { version, ...omit(detail, 'domainDesignLatestVersion') } },
+    props: { detail: { version, ...domainDesignDTO } },
   };
 });
