@@ -3,6 +3,7 @@ import { EditorContent, useEditor, ReactNodeViewRenderer } from '@tiptap/react';
 import { Doc as YDoc } from 'yjs';
 import { Awareness } from 'y-protocols/awareness';
 import { lowlight } from 'lowlight';
+import { xmlFragmentToJSON } from '@/lib/yjs-xml-fragment';
 
 import StarterKit from '@tiptap/starter-kit';
 import Collaboration from '@tiptap/extension-collaboration';
@@ -165,6 +166,16 @@ export const WYSIWYGEditor = (props: WYSIWYGEditorProps) => {
       fileHandler.bindEditor(editor);
     }
   }, [fileHandler, editor]);
+
+  useEffect(() => {
+    // 方便调试
+    // @ts-expect-error
+    containerRef.current.__EDITOR__ = editor;
+    // @ts-expect-error
+    containerRef.current.__TO_JSON__ = () => {
+      return xmlFragmentToJSON(doc.getXmlFragment(field));
+    };
+  }, [editor, doc, field]);
 
   // 处理粘贴事件
   const handlePaste: React.ClipboardEventHandler<HTMLDivElement> = e => {

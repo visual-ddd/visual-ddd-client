@@ -1,14 +1,16 @@
-import { Doc as YDoc, XmlElement, XmlText, Map as YMap, Array as YArray } from 'yjs';
+import { Doc as YDoc, XmlFragment as YXmlFragment, Map as YMap, Array as YArray } from 'yjs';
 import { buildEditorYjs, buildEmptyEditorYjs } from '@/lib/editor/Model/Yjs';
 import { YjsDocMetaInfo } from '@/lib/yjs-store-api';
 import { AggregationDSL, EntityDSL, TypeType, CommandDSL } from '@/modules/domain/domain-design/dsl/dsl';
 import { buildUbiquitousLanguageYjs } from '@/modules/domain/ubiquitous-language-design/Yjs';
 import { toNameCase } from '@/lib/utils';
+import { buildXmlFragmentFromJSON } from '@/lib/yjs-xml-fragment';
 
 import { YJS_FIELD_NAME } from '../../constants';
 
 import * as DSL from './interface';
 import { DSLModel } from './model';
+import { createProductionTemplate } from './product-template';
 
 /**
  * 创建业务域模型
@@ -295,6 +297,15 @@ function createUbiquitousLanguages(array: YArray<YMap<string>>) {
   );
 }
 
+/**
+ * 创建产品资料文档
+ * @param meta
+ * @param fragment
+ */
+function createProductionDoc(meta: YjsDocMetaInfo, fragment: YXmlFragment) {
+  buildXmlFragmentFromJSON(fragment, createProductionTemplate(meta));
+}
+
 export function createDoc(params: YjsDocMetaInfo) {
   const doc = new YDoc();
 
@@ -311,10 +322,7 @@ export function createDoc(params: YjsDocMetaInfo) {
 
   // 产品文档
   const product = doc.getXmlFragment(YJS_FIELD_NAME.PRODUCT);
-  const productTemplate = new XmlElement('heading');
-  productTemplate.setAttribute('level', '1');
-  productTemplate.insert(0, [new XmlText(`${params.title}产品文档`)]);
-  product.insert(0, [productTemplate]);
+  createProductionDoc(params, product);
 
   // 产品愿景
   doc.getText(YJS_FIELD_NAME.VISION);
