@@ -1,4 +1,4 @@
-import { memo, useMemo } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { Checkbox, Collapse, Table } from 'antd';
 import type { ColumnType } from 'antd/es/table';
 import type { PropertyDSL } from '@/modules/domain/api/dsl/interface';
@@ -74,9 +74,26 @@ const OBJECT_TYPES: Record<ObjectType, [string, string]> = {
 
 export const ObjectCard = memo((props: ObjectCardProps) => {
   const { object, references } = props;
+  const [active, setActive] = useState(false);
 
   const notResult = object.result == null;
   const theme = OBJECT_TYPES[object.type];
+
+  useEffect(() => {
+    let listener = (evt: HashChangeEvent) => {
+      const url = new URL(evt.newURL);
+
+      if (url.hash === `#ref-${object.uuid}`) {
+        setActive(true);
+      }
+    };
+
+    window.addEventListener('hashchange', listener);
+
+    return () => {
+      window.removeEventListener('hashchange', listener);
+    };
+  }, [object.uuid]);
 
   return (
     <Collapse
@@ -84,7 +101,8 @@ export const ObjectCard = memo((props: ObjectCardProps) => {
       // @ts-expect-error
       style={{ '--color': theme[1] }}
       expandIconPosition="end"
-      // defaultActiveKey={object.uuid}
+      activeKey={active ? object.uuid : undefined}
+      onChange={a => (a.length ? setActive(true) : setActive(false))}
       expandIcon={p => {
         return (
           <div className={classNames(s.expand, { active: p.isActive })}>

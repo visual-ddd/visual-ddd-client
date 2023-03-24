@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import { Header } from './Header';
+import { HeadingMenu } from './HeadingMenu';
 import s from './Layout.module.scss';
 
 export interface LayoutProps {
@@ -12,7 +13,10 @@ export const Layout = (props: LayoutProps) => {
   return (
     <div className={classNames(s.root)}>
       <Header />
-      <div className={s.body}>{children}</div>
+      <div className={s.body}>
+        {children}
+        <HeadingMenu />
+      </div>
     </div>
   );
 };

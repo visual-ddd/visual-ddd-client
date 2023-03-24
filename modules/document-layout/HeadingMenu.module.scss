@@ -1,0 +1,9 @@
+.root {
+  position: fixed;
+  right: 0;
+  top: var(--nav-height);
+  bottom: 0;
+  background-color: white;
+  padding: var(--vd-spacing-sm);
+  overflow: auto;
+}

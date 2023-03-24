@@ -1,3 +1,4 @@
+import dynamic from 'next/dynamic';
 import { useYDocFromBase64 } from '@/lib/yjs-store-api-for-browser';
 import { VersionBadge } from '@/lib/components/VersionBadge';
 import type { UbiquitousLanguageItem } from '@/modules/domain/ubiquitous-language-design/types';
@@ -12,8 +13,6 @@ import { NoopArray } from '@wakeapp/utils';
 import { DomainDetail } from '../types';
 
 import s from './Doc.module.scss';
-import { StaticEditor } from '@/lib/wysiwyg-editor/StaticEditor';
-import dynamic from 'next/dynamic';
 import { APiDoc } from './ApiDoc/ApiDoc';
 
 export interface DocProps {
@@ -44,6 +43,8 @@ const ubColumns: ColumnType<UbiquitousLanguageItem>[] = [
   },
 ];
 
+// 不支持 SSR，因此这里异步加载了
+const StaticEditor = dynamic(() => import('@/lib/wysiwyg-editor/StaticEditor'), { ssr: false });
 const DomainEditor = dynamic(() => import('@/modules/domain/domain-design/StandaloneDomainEditor'), { ssr: false });
 const DataObjectEditor = dynamic(() => import('@/modules/domain/data-design/StandaloneDataObjectEditor'), {
   ssr: false,
@@ -72,7 +73,9 @@ export const Doc = (props: DocProps) => {
 
   return (
     <div className={s.root}>
-      <h1 className={s.title}>{detail.name}</h1>
+      <h1 id="title" className={s.title}>
+        {detail.name}
+      </h1>
       <section className={s.header}>
         <div className={s.meta}>
           <span>标识符：{detail.identity}</span>
@@ -87,24 +90,24 @@ export const Doc = (props: DocProps) => {
         </blockquote>
       </section>
       <section>
-        <h2>术语表(统一语言)</h2>
+        <h2 id="ubiquitous-language">术语表(统一语言)</h2>
         <Table columns={ubColumns} dataSource={ubList} rowKey="uuid" pagination={false}></Table>
       </section>
       <section>
-        <h2>业务背景</h2>
+        <h2 id="background">业务背景</h2>
         <p>{dsl?.vision || '未设置'}</p>
       </section>
       <section>{!!productionContent && <StaticEditor content={productionContent} className={s.editor} />}</section>
       <section>
-        <h2>领域模型</h2>
+        <h2 id="domain-model">领域模型</h2>
         <DomainEditor dsl={yjsDoc} />
       </section>
       <section>
-        <h2>数据模型</h2>
+        <h2 id="data-model">数据模型</h2>
         <DataObjectEditor dsl={yjsDoc} />
       </section>
       <section>
-        <h2>接口文档</h2>
+        <h2 id="api">接口文档</h2>
         <div>{dsl && <APiDoc dsl={dsl} />}</div>
       </section>
     </div>

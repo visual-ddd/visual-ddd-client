@@ -1,9 +1,11 @@
 .root {
+  --nav-height: 60px;
 }
 
 .body {
   max-width: 900px;
   margin: auto;
+  margin-top: var(--nav-height);
   padding: var(--vd-spacing-lg) 0;
   line-height: 1.65;
   color: var(--vd-color-font-primary);

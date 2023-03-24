@@ -69,3 +69,5 @@ export const StaticEditor = (props: StaticEditorProps) => {
 
   return <EditorContent editor={editor} className={classNames(className, s.root)} {...other}></EditorContent>;
 };
+
+export default StaticEditor;

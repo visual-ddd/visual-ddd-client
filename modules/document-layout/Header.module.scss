@@ -1,7 +1,14 @@
 .root {
-  height: 60px;
-  background-color: var(--vd-color-gray-100);
+  height: var(--nav-height);
+  background-color: #f7f8fb8c;
+  backdrop-filter: saturate(180%) blur(20px);
   border-bottom: 1px solid var(--vd-color-gray-300);
+  z-index: 100;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
 }
 
 .body {
