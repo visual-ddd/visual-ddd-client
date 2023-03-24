@@ -28,9 +28,12 @@ export const VersionSelect = (props: VersionSelectProps) => {
       className="u-fw"
       virtual={false}
       bordered={false}
+      showSearch
+      optionFilterProp="version"
       options={data?.map(i => {
         return {
           label: <VersionBadge version={i.currentVersion} status={i.state} />,
+          version: i.currentVersion,
           value: i.id,
         };
       })}
