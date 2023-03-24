@@ -1,0 +1,20 @@
+.root {
+  position: sticky;
+  top: 0;
+  height: 100%;
+  max-height: 100vh;
+  overflow: hidden;
+  border-right: 1px solid var(--vd-color-gray-300);
+
+  padding: var(--vd-spacing-xs);
+}
+
+.menu {
+  border-inline-end: none !important;
+}
+
+.title {
+  font-size: var(--vd-font-size-h2);
+  padding: var(--vd-spacing-xs);
+  font-weight: bold;
+}

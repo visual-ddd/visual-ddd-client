@@ -5,8 +5,17 @@
 .body {
   max-width: 900px;
   margin: auto;
-  margin-top: var(--nav-height);
   padding: var(--vd-spacing-lg) 0;
+  padding-top: calc(var(--nav-height) + var(--vd-spacing-lg));
+}
+
+.fullBody {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.body,
+.fullBody {
   line-height: 1.65;
   color: var(--vd-color-font-primary);
   font-size: 16px;
@@ -57,4 +66,8 @@
       margin-bottom: 6rem;
     }
   }
+}
+
+.content {
+  padding: 2em;
 }

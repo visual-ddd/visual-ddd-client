@@ -1,19 +1,25 @@
 .root {
   height: var(--nav-height);
+  width: 100%;
   background-color: #f7f8fb8c;
   backdrop-filter: saturate(180%) blur(20px);
   border-bottom: 1px solid var(--vd-color-gray-300);
   z-index: 100;
+}
 
+.root:global(.fixed) {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
+
+  .body {
+    max-width: 900px;
+    margin: auto;
+  }
 }
 
 .body {
-  max-width: 900px;
-  margin: auto;
   display: flex;
   align-items: center;
   height: 100%;
