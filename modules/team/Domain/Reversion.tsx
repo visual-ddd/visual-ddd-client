@@ -70,6 +70,11 @@ export const DomainReversion = (props: DomainReversionProps) => {
     window.open(`/team/${detail.teamId}/domain/${detail.id}/reversion/${id}/${action}`, name);
   };
 
+  const navigateToDoc = () => {
+    const name = `domain-${detail.id}-reversion-${detail.version.id}-doc`;
+    window.open(`/doc/domain/${detail.id}/reversion/${detail.version.id}`, name);
+  };
+
   const handleCreateVersion: VersionCreateProps['onSubmit'] = async values => {
     const id = await request.requestByPost<number>(
       '/wd/visual/web/domain-design-version/domain-design-version-create',
@@ -206,7 +211,7 @@ export const DomainReversion = (props: DomainReversionProps) => {
                   编辑
                 </Button>
               )}
-              <Button size="small" type="primary">
+              <Button size="small" type="primary" onClick={navigateToDoc}>
                 打开文档
               </Button>
             </Space>

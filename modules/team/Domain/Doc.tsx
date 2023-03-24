@@ -1,4 +1,5 @@
 import dynamic from 'next/dynamic';
+import Head from 'next/head';
 import { useYDocFromBase64 } from '@/lib/yjs-store-api-for-browser';
 import { VersionBadge } from '@/lib/components/VersionBadge';
 import type { UbiquitousLanguageItem } from '@/modules/domain/ubiquitous-language-design/types';
@@ -73,6 +74,9 @@ export const Doc = (props: DocProps) => {
 
   return (
     <div className={s.root}>
+      <Head>
+        <title>{`${detail.name} - 业务域`}</title>
+      </Head>
       <h1 id="title" className={s.title}>
         {detail.name}
       </h1>
