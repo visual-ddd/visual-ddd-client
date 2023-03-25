@@ -94,10 +94,12 @@ export const Doc = (props: DocProps) => {
         <blockquote className={classNames(s.description)}>
           <p>
             <b>业务域说明</b>
+            <br />
             {detail.description || '业务域描述'}
           </p>
           <p>
             <b>版本说明</b>
+            <br />
             {detail.version.description || '版本描述'}
           </p>
         </blockquote>

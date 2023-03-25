@@ -1,33 +1,5 @@
-import { withWakedataRequestSsr } from '@/modules/session/ssr-helper';
-import { GetServerSideProps } from 'next';
+import { Home } from '@/modules/home';
 
-// TODO: 首页
-export default function Home() {
-  return (
-    <div>
-      <img src="/logo.svg" alt="logo" />
-    </div>
-  );
+export default function Page() {
+  return <Home />;
 }
-
-export const getServerSideProps: GetServerSideProps = withWakedataRequestSsr(async context => {
-  const session = context.req.session.content;
-
-  if (!session) {
-    return {
-      redirect: { destination: '/login', statusCode: 302 },
-    };
-  }
-
-  const state = session.state;
-
-  if (state == null) {
-    return {
-      redirect: { destination: '/launch', statusCode: 302 },
-    };
-  }
-
-  return {
-    redirect: { destination: `/${state.entry}${state.entryId ? `/${state.entryId}` : ''}`, statusCode: 302 },
-  };
-});
