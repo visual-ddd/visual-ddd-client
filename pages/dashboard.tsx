@@ -1,8 +1,7 @@
 import { withWakedataRequestSsr } from '@/modules/session/ssr-helper';
 import { GetServerSideProps } from 'next';
 
-// TODO: 首页
-export default function Home() {
+export default function Dashboard() {
   return (
     <div>
       <img src="/logo.svg" alt="logo" />

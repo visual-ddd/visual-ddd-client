@@ -50,7 +50,7 @@ export const DesignerHeader = observer(function DesignerHeader(props: DesignerHe
   );
 
   const backHome = () => {
-    router.push('/');
+    router.push('/dashboard');
   };
 
   const hasVersion = version != null && versionStatus != null;

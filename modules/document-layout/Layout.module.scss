@@ -55,6 +55,17 @@
 
     p {
       margin: 1.25rem 0;
+      white-space: pre-wrap;
+    }
+
+    dl {
+      display: flex;
+      flex-wrap: wrap;
+
+      dd {
+        margin-right: 2em;
+        color: var(--vd-color-font-regular);
+      }
     }
 
     blockquote {

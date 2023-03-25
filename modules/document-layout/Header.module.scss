@@ -1,6 +1,7 @@
 .root {
   height: var(--nav-height);
   width: 100%;
+  padding: 0 var(--vd-spacing-xs);
   background-color: #f7f8fb8c;
   backdrop-filter: saturate(180%) blur(20px);
   border-bottom: 1px solid var(--vd-color-gray-300);
@@ -38,4 +39,11 @@
   img {
     height: 100%;
   }
+}
+
+.extra {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 }

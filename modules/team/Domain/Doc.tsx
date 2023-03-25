@@ -81,16 +81,25 @@ export const Doc = (props: DocProps) => {
         {detail.name}
       </h1>
       <section className={s.header}>
-        <div className={s.meta}>
-          <span>标识符：{detail.identity}</span>
-          <span>
-            版本：
+        <dl>
+          <dt>标识符：</dt>
+          <dd>{detail.identity}</dd>
+          <dt>版本：</dt>
+          <dd>
             <VersionBadge version={detail.version.currentVersion} status={detail.version.state} type="text" />
-          </span>
-          <span>最后更新于：{detail.version.updateTime}</span>
-        </div>
+          </dd>
+          <dt>最后更新于：</dt>
+          <dd>{detail.version.updateTime}</dd>
+        </dl>
         <blockquote className={classNames(s.description)}>
-          <p>{detail.description || '业务域描述'}</p>
+          <p>
+            <b>业务域说明</b>
+            {detail.description || '业务域描述'}
+          </p>
+          <p>
+            <b>版本说明</b>
+            {detail.version.description || '版本描述'}
+          </p>
         </blockquote>
       </section>
       <section>
