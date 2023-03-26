@@ -1,9 +1,12 @@
 import { EditorFormConsumer, EditorFormItem, useEditorFormContext, useEditorModel } from '@/lib/editor';
 import useSwr from 'swr';
-import { Select, SelectProps } from 'antd';
+import { Select, SelectProps, Tag } from 'antd';
 import { observer } from 'mobx-react';
 
 import { ScenarioEditorModel } from '../../model';
+
+import s from './DomainServiceEditor.module.scss';
+import { ShareIcon } from './ShareIocn';
 
 export interface DomainServiceEditorProps {}
 
@@ -12,9 +15,23 @@ const useServiceStore = () => {
   return model.domainServiceStore;
 };
 
+const onPreventMouseDown = (event: React.MouseEvent<HTMLSpanElement>) => {
+  event.preventDefault();
+  event.stopPropagation();
+};
+
 const COMMON_SELECT_PROPS: SelectProps = {
   showSearch: true,
-  optionFilterProp: 'children',
+  optionFilterProp: 'name',
+  dropdownMatchSelectWidth: false,
+  tagRender: props => {
+    const { label, closable, onClose } = props;
+    return (
+      <Tag className={s.tag} onMouseDown={onPreventMouseDown} closable={closable} onClose={onClose}>
+        {label}
+      </Tag>
+    );
+  },
 };
 
 const DomainSelect = observer(function DomainSelect(props: SelectProps) {
@@ -28,7 +45,7 @@ const DomainSelect = observer(function DomainSelect(props: SelectProps) {
     <Select {...COMMON_SELECT_PROPS} {...props} loading={isLoading}>
       {data?.map(i => {
         return (
-          <Select.Option key={i.id} value={i.id}>
+          <Select.Option key={i.id} value={i.id} name={i.name}>
             {i.name}
           </Select.Option>
         );
@@ -53,7 +70,7 @@ const VersionSelect = observer(function VersionSelect(
     <Select {...COMMON_SELECT_PROPS} {...other} loading={isLoading}>
       {data?.map(i => {
         return (
-          <Select.Option key={i.id} value={i.id}>
+          <Select.Option key={i.id} value={i.id} name={i.name}>
             {i.name}
           </Select.Option>
         );
@@ -88,9 +105,22 @@ const ServiceSelect = observer(function ServiceSelect(
       loading={isLoading}
     >
       {data?.map(i => {
+        const open = (e: React.MouseEvent) => {
+          e.preventDefault();
+          e.stopPropagation();
+
+          window.open(
+            `/doc/domain/${domainId}/reversion/${versionId}#ref-${i.id}`,
+            `doc-domain-${domainId}-${versionId}`
+          );
+        };
+
         return (
-          <Select.Option key={i.id} value={i.id}>
+          <Select.Option key={i.id} value={i.id} name={i.name}>
             {i.name}
+            <span className={s.share} onClick={open}>
+              <ShareIcon />
+            </span>
           </Select.Option>
         );
       })}

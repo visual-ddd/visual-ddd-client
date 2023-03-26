@@ -74,21 +74,26 @@ const OBJECT_TYPES: Record<ObjectType, [string, string]> = {
 
 export const ObjectCard = memo((props: ObjectCardProps) => {
   const { object, references } = props;
+  const [expanded, setExpanded] = useState(false);
   const [active, setActive] = useState(false);
 
-  const notResult = object.result == null;
   const theme = OBJECT_TYPES[object.type];
 
   useEffect(() => {
-    let listener = (evt: HashChangeEvent) => {
-      const url = new URL(evt.newURL);
+    let listener = () => {
+      const url = new URL(window.location.href);
 
       if (url.hash === `#ref-${object.uuid}`) {
+        setExpanded(true);
         setActive(true);
+      } else {
+        setActive(false);
       }
     };
 
     window.addEventListener('hashchange', listener);
+
+    listener();
 
     return () => {
       window.removeEventListener('hashchange', listener);
@@ -97,12 +102,12 @@ export const ObjectCard = memo((props: ObjectCardProps) => {
 
   return (
     <Collapse
-      className={s.root}
+      className={classNames(s.root, { active })}
       // @ts-expect-error
       style={{ '--color': theme[1] }}
       expandIconPosition="end"
-      activeKey={active ? object.uuid : undefined}
-      onChange={a => (a.length ? setActive(true) : setActive(false))}
+      activeKey={expanded ? object.uuid : undefined}
+      onChange={a => (a.length ? setExpanded(true) : setExpanded(false))}
       expandIcon={p => {
         return (
           <div className={classNames(s.expand, { active: p.isActive })}>
@@ -122,17 +127,20 @@ export const ObjectCard = memo((props: ObjectCardProps) => {
           </div>
         }
       >
-        {notResult ? (
-          <PropertiesTable object={object} references={references} />
-        ) : (
-          <div className={s.result}>
-            <h5>参数</h5>
-            <PropertiesTable object={object} references={references} />
+        <div className={s.result}>
+          <h5>描述</h5>
+          <p className="u-gray-800">{object.description}</p>
 
-            <h5>返回值</h5>
-            <TypeRender type={object.result!}></TypeRender>
-          </div>
-        )}
+          <h5>参数</h5>
+          <PropertiesTable object={object} references={references} />
+
+          {!!object.result && (
+            <>
+              <h5>返回值</h5>
+              <TypeRender type={object.result!}></TypeRender>
+            </>
+          )}
+        </div>
       </Collapse.Panel>
     </Collapse>
   );

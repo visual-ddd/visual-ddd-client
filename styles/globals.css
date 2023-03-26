@@ -57,6 +57,10 @@ a {
   color: var(--vd-color-gray-500);
 }
 
+.u-gray-800 {
+  color: var(--vd-color-gray-800);
+}
+
 .u-tc {
   text-align: center;
 }
