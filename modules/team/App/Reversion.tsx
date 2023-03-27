@@ -222,6 +222,11 @@ export const AppReversion = (props: AppReversionProps) => {
     });
   };
 
+  const handleOpenDoc = () => {
+    const name = `app-${detail.id}-reversion-${detail.version.id}-doc`;
+    window.open(`/doc/app/${detail.id}/reversion/${detail.version.id}`, name);
+  };
+
   const handleOpenVersions = () => versionListRef.current?.open();
 
   const handleOpenDomains = () => {
@@ -321,6 +326,9 @@ export const AppReversion = (props: AppReversionProps) => {
               </Button>
               <Button size="small" type="primary" onClick={handleDownload}>
                 下载脚手架
+              </Button>
+              <Button size="small" type="primary" onClick={handleOpenDoc}>
+                打开文档
               </Button>
             </Space>
           </Card>
