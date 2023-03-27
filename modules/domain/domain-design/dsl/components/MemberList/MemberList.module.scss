@@ -16,10 +16,29 @@
   margin-bottom: var(--vd-spacing-xs);
   user-select: none;
   font-size: var(--vd-font-size-h6);
+  position: relative;
+  outline: none;
 
-  &:global(.editing),
-  &:global(.selected) {
-    outline: 2px solid var(--vd-color-primary);
+  &::after {
+    content: '';
+    position: absolute;
+    background-color: transparent;
+    left: -1px;
+    top: -1px;
+    right: -1px;
+    bottom: -1px;
+    border-radius: 4px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  &:focus::after {
+    outline: 4px solid #91caff7a;
+  }
+
+  &:global(.editing)::after,
+  &:global(.selected)::after {
+    border: 2px solid var(--vd-color-primary);
   }
 }
 
@@ -42,4 +61,15 @@
 
 .itemCheck {
   margin-right: var(--vd-spacing-xs);
+}
+
+.actions {
+  font-size: var(--vd-font-size-h6);
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.menu {
+  font-size: 1.1em;
+  color: var(--vd-color-primary);
 }

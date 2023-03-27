@@ -1,7 +1,7 @@
 import { useEditorFormContext, EditorFormItem } from '@/lib/editor';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
-import { message, Space, Switch } from 'antd';
+import { Switch } from 'antd';
 import { replaceLastPathToPattern, Clipboard } from '@/lib/utils';
 
 import { NameDSL, PropertyDSL } from '../../dsl';
@@ -11,7 +11,7 @@ import { DomainObject, DomainObjectFactory } from '../../../model';
 import { useAutoCompleteUbiquitousLanguageFromFormModel } from '../../../hooks';
 import { reactifyProperty } from '../../reactify';
 import { AccessSelect } from '../AccessSelect';
-import { MemberList } from '../MemberList';
+import { MemberList, renderActions } from '../MemberList';
 import { NameInput } from '../NameInput';
 import { DescriptionInput } from '../DescriptionInput';
 import { ReferenceTypeProvider, ReferenceTypeProviderProps, TypeInput } from '../TypeInput';
@@ -124,66 +124,7 @@ export const PropertiesEditor = observer(function PropertiesEditor(props: Proper
         children={
           !!actionSlot &&
           (context => {
-            if (context.readonly) {
-              actionSlot(null);
-              return null;
-            }
-
-            actionSlot(
-              <Space size="small" className={s.actions}>
-                {context.selecting ? (
-                  <>
-                    <span
-                      className="u-link"
-                      onClick={() => {
-                        if (context.selected) {
-                          CLIPBOARD.save(context.selected);
-                          message.success('已复制');
-                        }
-                      }}
-                    >
-                      复制
-                    </span>
-                    <span className="u-link" onClick={context.handleUnselectAll}>
-                      清空
-                    </span>
-                    <span className="u-link" onClick={context.handleSelectAll}>
-                      全选
-                    </span>
-                    <span className="u-link" onClick={context.handleToggleSelecting}>
-                      取消
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    {!CLIPBOARD.isEmpty && (
-                      <span
-                        className="u-link"
-                        onClick={() => {
-                          context.handleConcat(CLIPBOARD.get());
-                        }}
-                      >
-                        粘贴
-                      </span>
-                    )}
-                    <span
-                      className="u-link"
-                      onClick={() => {
-                        if (context.list.length) {
-                          CLIPBOARD.save(context.list);
-                          message.success('已复制所有属性');
-                        }
-                      }}
-                    >
-                      复制
-                    </span>
-                    <span className="u-link" onClick={context.handleToggleSelecting}>
-                      编辑
-                    </span>
-                  </>
-                )}
-              </Space>
-            );
+            actionSlot(renderActions(context, CLIPBOARD));
 
             return null;
           })

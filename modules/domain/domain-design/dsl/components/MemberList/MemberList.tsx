@@ -1,13 +1,13 @@
 import React, { useEffect, useMemo, useRef } from 'react';
-import { Button, Checkbox, Popover, Space } from 'antd';
+import { Button, Checkbox, Dropdown, message, Popover, Space } from 'antd';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
-import { EditTwoTone, MinusCircleTwoTone } from '@ant-design/icons';
+import { EditTwoTone, EllipsisOutlined } from '@ant-design/icons';
 import { action, observable } from 'mobx';
 import { useRefValue } from '@wakeapp/hooks';
-import { NoopArray } from '@wakeapp/utils';
+import { NoopArray, cloneDeep } from '@wakeapp/utils';
 import { v4 } from 'uuid';
-import { getPathSegmentByIndex, getPathLength } from '@/lib/utils';
+import { Clipboard, getPathSegmentByIndex, getPathLength } from '@/lib/utils';
 import { EditorFormTooltip, useEditorFormContext, usePropertyLocationSatisfy } from '@/lib/editor';
 import { scrollIntoView } from '@/lib/dom';
 import { DragHandle, SortableList } from '@/lib/components/SortableList';
@@ -167,6 +167,13 @@ export interface MemberListContext<T extends IDDSL> {
   handleConcat: (items: T[]) => void;
 
   /**
+   * 重复属性
+   * @param item
+   * @returns
+   */
+  handleDuplicate: (item: T) => void;
+
+  /**
    * 渲染条项
    * @param item
    * @param index
@@ -212,6 +219,8 @@ export interface MemberListContext<T extends IDDSL> {
   isSelected: (item: T) => boolean;
 }
 
+const DROPDOWN_TRIGGER = ['click', 'contextMenu'];
+
 const Member = observer(function Member<T extends IDDSL>(props: {
   value: T;
   context: MemberListContext<T>;
@@ -239,24 +248,52 @@ const Member = observer(function Member<T extends IDDSL>(props: {
     context.handleRemove(value);
   };
 
+  const handleDuplicate = () => {
+    context.handleDuplicate(value);
+  };
+
   const handleSelectedChange = (evt: React.MouseEvent) => {
+    // evt.preventDefault();
+    // (evt.currentTarget as HTMLDivElement)?.focus();
+
     if (!selecting) {
       return;
     }
 
     evt.stopPropagation();
-    evt.preventDefault();
 
     context.handleToggleSelected(value);
+  };
+
+  const handleMouseUp = (evt: React.KeyboardEvent) => {
+    let matched = true;
+    switch (evt.key) {
+      case 'Enter':
+        handleEdit();
+        break;
+      case 'Backspace':
+        handleRemove();
+        break;
+      default:
+        matched = false;
+        break;
+    }
+
+    if (matched) {
+      evt.stopPropagation();
+      evt.preventDefault();
+    }
   };
 
   return (
     <div
       className={classNames('vd-member-list-item', s.item, { editing: editing && !selecting, selected })}
+      tabIndex={0}
       title={selecting ? '点击选择' : '双击编辑'}
       onDoubleClick={handleEdit}
       onClickCapture={handleSelectedChange}
       data-member-id={value.uuid}
+      onKeyDown={handleMouseUp}
     >
       {readonly ? null : selecting ? (
         <Checkbox
@@ -272,6 +309,7 @@ const Member = observer(function Member<T extends IDDSL>(props: {
       </div>
       {!selecting && (
         <div className={classNames('vd-member-list-item__actions', s.itemActions)}>
+          {showError && <EditorFormTooltip path={pathWithIndex} aggregated></EditorFormTooltip>}
           {popoverEdit ? (
             <Popover
               trigger="click"
@@ -293,8 +331,30 @@ const Member = observer(function Member<T extends IDDSL>(props: {
           ) : (
             <EditTwoTone onClick={handleEdit} />
           )}
-          {!readonly && <MinusCircleTwoTone onClick={handleRemove} />}
-          {showError && <EditorFormTooltip path={pathWithIndex} aggregated></EditorFormTooltip>}
+          {!readonly && (
+            <Dropdown
+              destroyPopupOnHide
+              placement="topRight"
+              trigger={DROPDOWN_TRIGGER as any}
+              menu={{
+                items: [
+                  {
+                    key: 'duplicate',
+                    label: '重复',
+                    onClick: handleDuplicate,
+                  },
+                  {
+                    key: 'remove',
+                    label: '删除',
+                    danger: true,
+                    onClick: handleRemove,
+                  },
+                ],
+              }}
+            >
+              <EllipsisOutlined className={s.menu} />
+            </Dropdown>
+          )}
         </div>
       )}
     </div>
@@ -307,6 +367,71 @@ const Member = observer(function Member<T extends IDDSL>(props: {
  */
 export function useMemberListContextRef<T extends IDDSL>() {
   return useRef<MemberListContext<T>>(null);
+}
+
+export function renderActions<T extends IDDSL>(context: MemberListContext<T>, clipboard: Clipboard<T>) {
+  if (context.readonly) {
+    return null;
+  }
+
+  const paste = !clipboard.isEmpty && (
+    <span
+      className="u-link"
+      onClick={() => {
+        context.handleConcat(clipboard.get());
+      }}
+    >
+      粘贴
+    </span>
+  );
+
+  return (
+    <Space size="small" className={s.actions}>
+      {context.selecting ? (
+        <>
+          {paste}
+          <span
+            className="u-link"
+            onClick={() => {
+              if (context.selected) {
+                clipboard.save(context.selected);
+                message.success('已复制');
+              }
+            }}
+          >
+            复制
+          </span>
+          <span className="u-link" onClick={context.handleUnselectAll}>
+            清空
+          </span>
+          <span className="u-link" onClick={context.handleSelectAll}>
+            全选
+          </span>
+          <span className="u-link" onClick={context.handleToggleSelecting}>
+            取消
+          </span>
+        </>
+      ) : (
+        <>
+          {paste}
+          <span
+            className="u-link"
+            onClick={() => {
+              if (context.list.length) {
+                clipboard.save(context.list);
+                message.success('已复制所有属性');
+              }
+            }}
+          >
+            复制所有
+          </span>
+          <span className="u-link" onClick={context.handleToggleSelecting}>
+            编辑
+          </span>
+        </>
+      )}
+    </Space>
+  );
 }
 
 /**
@@ -359,6 +484,10 @@ export const MemberList = observer(function MemberList<T extends IDDSL>(props: M
       } else {
         store.selected.splice(idx, 1);
       }
+    });
+
+    const selectItems = action('SELECT_ITEMS', (items: T[]) => {
+      store.selected = items;
     });
 
     const selectAll = action('SELECT_ALL', () => {
@@ -451,23 +580,43 @@ export const MemberList = observer(function MemberList<T extends IDDSL>(props: M
           self.handleValidate();
         }
       },
+      handleDuplicate(item) {
+        const newItem = cloneDeep(item);
+        newItem.uuid = v4();
+
+        const list = propsRef.current.value;
+        const idx = list.findIndex(i => i.uuid === item.uuid);
+        const insertIdx = idx === -1 ? list.length : idx + 1;
+
+        const clone = list.slice();
+        clone.splice(insertIdx, 0, newItem);
+
+        propsRef.current.onChange(clone);
+
+        self.handleValidate();
+      },
       handleConcat(items) {
         if (!items.length) {
           return;
         }
 
         const list = propsRef.current.value;
-        const clone = list.concat(
-          items.map(i => {
-            return {
-              ...i,
-              uuid: v4(),
-            };
-          })
-        );
+        const newItems = items.map(i => {
+          return {
+            ...i,
+            uuid: v4(),
+          };
+        });
+
+        const clone = list.concat(newItems);
 
         propsRef.current.onChange(clone);
         self.handleValidate();
+
+        // 选中刚编辑的元素
+        if (self.selecting) {
+          selectItems(newItems);
+        }
       },
       handleCreate() {
         const newItem = propsRef.current.factory();

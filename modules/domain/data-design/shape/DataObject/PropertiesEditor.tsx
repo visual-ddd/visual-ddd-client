@@ -2,14 +2,14 @@ import { useEditorFormContext, EditorFormItem, EditorFormConsumer, EditorFormIte
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
 import snakeCase from 'lodash/snakeCase';
-import { InputNumber, message, Select, Space, Switch } from 'antd';
+import { InputNumber, Select, Switch } from 'antd';
 import { replaceLastPathToPattern, Clipboard, elseUndefined } from '@/lib/utils';
 
 import { NameTooltip, UntitledInCamelCase } from '@/modules/domain/domain-design/dsl/constants';
 import { NameInput } from '@/modules/domain/domain-design/dsl/components/NameInput';
 import { TitleInput } from '@/modules/domain/domain-design/dsl/components/TitleInput';
 import { DescriptionInput } from '@/modules/domain/domain-design/dsl/components/DescriptionInput';
-import { MemberList } from '@/modules/domain/domain-design/dsl/components/MemberList';
+import { MemberList, renderActions } from '@/modules/domain/domain-design/dsl/components/MemberList';
 
 import {
   createDataObjectPropertyDSL,
@@ -26,7 +26,6 @@ import {
 import { reactifyProperty } from './reactify';
 import { PropertyDefaultValue } from './PropertyDefaultValue';
 import { ReferenceEditor } from './ReferenceEditor';
-import s from './PropertiesEditor.module.scss';
 import { useAutoCompleteUbiquitousLanguageFromFormModel } from '@/modules/domain/domain-design/hooks/useAutoCompleteUbiquitousLanguageFromFormModel';
 
 export interface PropertiesEditorProps {
@@ -80,7 +79,7 @@ const renderEditor = (path: string) => {
         // 通知同一层级的命名检查
         notify={replaceLastPathToPattern(path) + '.name'}
       >
-        <NameInput nameCase="camelCase" onMatchUbiquitousLanguage={handleMatchUbiquitousLanguage} />
+        <NameInput autoFocus nameCase="camelCase" onMatchUbiquitousLanguage={handleMatchUbiquitousLanguage} />
       </EditorFormItem>
       <EditorFormItem path={p('title')} label="标题">
         <TitleInput />
@@ -250,67 +249,7 @@ export const PropertiesEditor = observer(function PropertiesEditor(props: Proper
       children={
         !!actionSlot &&
         (context => {
-          if (context.readonly) {
-            actionSlot(null);
-            return null;
-          }
-
-          actionSlot(
-            <Space size="small" className={s.actions}>
-              {context.selecting ? (
-                <>
-                  <span
-                    className="u-link"
-                    onClick={() => {
-                      if (context.selected) {
-                        CLIPBOARD.save(context.selected);
-                        message.success('已复制');
-                      }
-                    }}
-                  >
-                    复制
-                  </span>
-                  <span className="u-link" onClick={context.handleUnselectAll}>
-                    清空
-                  </span>
-                  <span className="u-link" onClick={context.handleSelectAll}>
-                    全选
-                  </span>
-                  <span className="u-link" onClick={context.handleToggleSelecting}>
-                    取消
-                  </span>
-                </>
-              ) : (
-                <>
-                  {!CLIPBOARD.isEmpty && (
-                    <span
-                      className="u-link"
-                      onClick={() => {
-                        context.handleConcat(CLIPBOARD.get());
-                      }}
-                    >
-                      粘贴
-                    </span>
-                  )}
-                  <span
-                    className="u-link"
-                    onClick={() => {
-                      if (context.list.length) {
-                        CLIPBOARD.save(context.list);
-                        message.success('已复制所有属性');
-                      }
-                    }}
-                  >
-                    复制
-                  </span>
-                  <span className="u-link" onClick={context.handleToggleSelecting}>
-                    编辑
-                  </span>
-                </>
-              )}
-            </Space>
-          );
-
+          actionSlot(renderActions(context, CLIPBOARD));
           return null;
         })
       }
