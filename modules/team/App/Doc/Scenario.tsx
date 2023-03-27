@@ -1,7 +1,13 @@
 import { AppDocLayout, AppDocLayoutProps } from './AppDocLayout';
+import { Doc, DocProps } from '../../Scenario/Doc';
 
-export interface ScenarioDocProps extends AppDocLayoutProps {}
+export interface ScenarioDocProps extends AppDocLayoutProps, DocProps {}
 
 export const ScenarioDoc = (props: ScenarioDocProps) => {
-  return <AppDocLayout info={props.info}>敬请期待</AppDocLayout>;
+  const { info, detail } = props;
+  return (
+    <AppDocLayout info={info}>
+      <Doc detail={detail} />
+    </AppDocLayout>
+  );
 };

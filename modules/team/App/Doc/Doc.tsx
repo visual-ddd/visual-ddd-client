@@ -18,7 +18,7 @@ export const AppDoc = (props: AppDocLayoutProps) => {
           return (
             <Link
               className="u-link"
-              href={`/doc/app/${info.applicationDTO.id}/domain/${record.domainDesignDTO.id}/reversion/${record.id}`}
+              href={`/doc/app/${info.applicationDTO.id}/reversion/${info.id}/domain/${record.domainDesignDTO.id}/reversion/${record.id}`}
             >
               {record.domainDesignDTO.name}
             </Link>
@@ -52,7 +52,7 @@ export const AppDoc = (props: AppDocLayoutProps) => {
           return (
             <Link
               className="u-link"
-              href={`/doc/app/${info.applicationDTO.id}/scenario/${record.businessScenarioDTO.id}/reversion/${record.id}`}
+              href={`/doc/app/${info.applicationDTO.id}/reversion/${info.id}/scenario/${record.businessScenarioDTO.id}/reversion/${record.id}`}
             >
               {record.businessScenarioDTO.name}
             </Link>
