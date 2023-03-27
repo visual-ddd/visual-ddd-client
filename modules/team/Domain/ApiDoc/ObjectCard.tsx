@@ -1,11 +1,11 @@
 import { memo, useEffect, useMemo, useState } from 'react';
 import { Checkbox, Collapse, Table } from 'antd';
 import type { ColumnType } from 'antd/es/table';
-import type { PropertyDSL } from '@/modules/domain/api/dsl/interface';
+import type { PropertyDSL, ReferenceTypeDSL } from '@/modules/domain/api/dsl/interface';
 import { EnterOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
 
-import { ObjectDSL, ObjectType } from './extra-api';
+import { ObjectDSL, ObjectType, parseReference } from './extra-api';
 
 import s from './ObjectCard.module.scss';
 import { TypeRender } from './TypeRender';
@@ -63,6 +63,29 @@ const PropertiesTable = (props: ObjectCardProps) => {
   return (
     <Table className={s.table} columns={columns} size="small" pagination={false} dataSource={object.properties}></Table>
   );
+};
+
+const Result = (props: {
+  result: string;
+
+  references: Record<string, ObjectDSL>;
+}) => {
+  const { result, references } = props;
+  if (result.startsWith('[') && result.endsWith(']')) {
+    const [_name, id] = parseReference(result as ReferenceTypeDSL);
+    const object = references[id];
+
+    if (object) {
+      return (
+        <>
+          <TypeRender type={result} />:
+          <PropertiesTable object={object} references={references} />
+        </>
+      );
+    }
+  }
+
+  return <TypeRender type={result} />;
 };
 
 const OBJECT_TYPES: Record<ObjectType, [string, string]> = {
@@ -128,8 +151,12 @@ export const ObjectCard = memo((props: ObjectCardProps) => {
         }
       >
         <div className={s.result}>
-          <h5>描述</h5>
-          <p className="u-gray-800">{object.description}</p>
+          {!!object.description && (
+            <>
+              <h5>描述</h5>
+              <p className="u-gray-800">{object.description}</p>
+            </>
+          )}
 
           <h5>参数</h5>
           <PropertiesTable object={object} references={references} />
@@ -137,7 +164,7 @@ export const ObjectCard = memo((props: ObjectCardProps) => {
           {!!object.result && (
             <>
               <h5>返回值</h5>
-              <TypeRender type={object.result!}></TypeRender>
+              <Result result={object.result!} references={references} />
             </>
           )}
         </div>

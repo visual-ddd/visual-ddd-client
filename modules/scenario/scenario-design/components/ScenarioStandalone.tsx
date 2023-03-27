@@ -13,6 +13,7 @@ import { NoopArray } from '@wakeapp/utils';
 import { Empty } from 'antd';
 import classNames from 'classnames';
 import { useEffect, useMemo, useRef } from 'react';
+import { Doc as YDoc } from 'yjs';
 
 import { YJS_FIELD_NAME } from '../../constants';
 
@@ -20,7 +21,7 @@ import { CANVAS_MODEL_OPTIONS } from './ScenarioEditor';
 import s from './ScenarioStandalone.module.scss';
 
 export interface ScenarioStandaloneProps {
-  dsl?: string;
+  dsl?: string | YDoc;
   className?: string;
   style?: React.CSSProperties;
 }
@@ -37,7 +38,7 @@ export const ScenarioStandalone = (props: ScenarioStandaloneProps) => {
       return;
     }
 
-    const ydoc = createYDocFromBase64(dsl);
+    const ydoc = typeof dsl === 'string' ? createYDocFromBase64(dsl) : dsl;
 
     return new BaseEditorModel({
       readonly: true,

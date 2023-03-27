@@ -209,7 +209,7 @@ export function extraApi(dsl: BusinessDomainDSL) {
   };
 }
 
-function parseReference(refType: ReferenceTypeDSL) {
+export function parseReference(refType: ReferenceTypeDSL) {
   return refType.slice(1, -1).split(':') as [ReferenceTypeName, ReferenceTypeId];
 }
 
