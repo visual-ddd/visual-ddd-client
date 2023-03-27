@@ -5,8 +5,9 @@ import { VersionBadge } from '@/lib/components/VersionBadge';
 import type { UbiquitousLanguageItem } from '@/modules/domain/ubiquitous-language-design/types';
 import type { BusinessDomainDSL } from '@/modules/domain/api/dsl/interface';
 import { YJS_FIELD_NAME } from '@/modules/domain/constants';
+import { useSession } from '@/modules/session';
 import classNames from 'classnames';
-import { Table } from 'antd';
+import { Button, Table } from 'antd';
 import type { ColumnType } from 'antd/es/table';
 import { useMemo } from 'react';
 import { NoopArray } from '@wakeapp/utils';
@@ -56,6 +57,7 @@ const DataObjectEditor = dynamic(() => import('@/modules/domain/data-design/Stan
  */
 export const Doc = (props: DocProps) => {
   const { detail } = props;
+  const session = useSession({ shouldRedirect: false });
 
   const dsl = useMemo<BusinessDomainDSL | undefined>(() => {
     return detail.version.domainDesignDsl ? JSON.parse(detail.version.domainDesignDsl) : undefined;
@@ -102,6 +104,22 @@ export const Doc = (props: DocProps) => {
             <br />
             {detail.version.description || '版本描述'}
           </p>
+          {!!session.session && (
+            <p>
+              <Button
+                onClick={() => {
+                  window.open(
+                    `/launch?from=${encodeURIComponent(
+                      `/team/${detail.teamId}/domain/${detail.id}/reversion/${detail.version.id}`
+                    )}`,
+                    'main'
+                  );
+                }}
+              >
+                进入主页
+              </Button>
+            </p>
+          )}
         </blockquote>
       </section>
       <section>

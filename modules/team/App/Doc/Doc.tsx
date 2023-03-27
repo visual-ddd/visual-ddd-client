@@ -1,4 +1,6 @@
 import { VersionBadge } from '@/lib/components/VersionBadge';
+import { useSession } from '@/modules/session';
+import { Button } from 'antd';
 import type { ColumnType } from 'antd/es/table';
 import Table from 'antd/es/table';
 import Head from 'next/head';
@@ -9,6 +11,7 @@ import { AppDocLayoutProps, AppDocLayout, DomainInfo, ScenarioInfo } from './App
 
 export const AppDoc = (props: AppDocLayoutProps) => {
   const { info } = props;
+  const session = useSession({ shouldRedirect: false });
 
   const DOMAIN_COLUMNS = useMemo<ColumnType<DomainInfo>[]>(() => {
     return [
@@ -107,6 +110,22 @@ export const AppDoc = (props: AppDocLayoutProps) => {
             <br></br>
             {info.description || '版本描述'}
           </p>
+          {!!session.session && (
+            <p>
+              <Button
+                onClick={() => {
+                  window.open(
+                    `/launch?from=${encodeURIComponent(
+                      `/team/${info.applicationDTO.teamId}/app/${info.applicationDTO.id}/reversion/${info.id}`
+                    )}`,
+                    'main'
+                  );
+                }}
+              >
+                进入主页
+              </Button>
+            </p>
+          )}
         </blockquote>
       </section>
       <section>

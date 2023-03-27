@@ -1,6 +1,8 @@
 import { VersionBadge } from '@/lib/components/VersionBadge';
 import { useYDocFromBase64 } from '@/lib/yjs-store-api-for-browser';
 import type { ScenarioDSL } from '@/modules/scenario/api/dsl/interface';
+import { useSession } from '@/modules/session';
+import { Button } from 'antd';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import { useMemo } from 'react';
@@ -18,6 +20,8 @@ const ScenarioStandalone = dynamic(() => import('@/modules/scenario/scenario-des
 export const Doc = (props: DocProps) => {
   const { detail } = props;
   const yjsDoc = useYDocFromBase64(detail.version.graphDsl, true);
+
+  const session = useSession({ shouldRedirect: false });
 
   const dsl = useMemo<ScenarioDSL | undefined>(() => {
     return detail.version.dsl ? JSON.parse(detail.version.dsl) : undefined;
@@ -51,6 +55,22 @@ export const Doc = (props: DocProps) => {
             <br />
             {detail.version.description || '版本描述'}
           </p>
+          {!!session.session && (
+            <p>
+              <Button
+                onClick={() => {
+                  window.open(
+                    `/launch?from=${encodeURIComponent(
+                      `/team/${detail.teamId}/scenario/${detail.id}/reversion/${detail.version.id}`
+                    )}`,
+                    'main'
+                  );
+                }}
+              >
+                进入主页
+              </Button>
+            </p>
+          )}
         </blockquote>
       </section>
       <section>
