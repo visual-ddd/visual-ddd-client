@@ -1,4 +1,5 @@
 import type { Edge } from '@antv/x6';
+import type { PortManager } from '@antv/x6/lib/model/port';
 import s from './shared.module.scss';
 
 const CIRCLE = {
@@ -9,9 +10,15 @@ const CIRCLE = {
   class: s.port,
 };
 
-export const PORTS = {
+export const PORTS: { ports: PortManager.Metadata } = {
   ports: {
     groups: {
+      top: {
+        position: 'top',
+        attrs: {
+          circle: CIRCLE,
+        },
+      },
       left: {
         position: 'left',
         attrs: {
@@ -20,15 +27,18 @@ export const PORTS = {
       },
       right: {
         position: 'right',
-        label: {
-          position: 'right',
-        },
+        attrs: { circle: CIRCLE },
+      },
+      bottom: {
+        position: 'bottom',
         attrs: { circle: CIRCLE },
       },
     },
     items: [
+      { id: 'top', group: 'top' },
       { id: 'left', group: 'left' },
       { id: 'right', group: 'right' },
+      { id: 'bottom', group: 'bottom' },
     ],
   },
 };
