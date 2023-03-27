@@ -7,7 +7,8 @@ import { useMemo } from 'react';
 import { ScenarioEditorModel } from '../../model';
 
 import s from './DomainServiceEditor.module.scss';
-import { ShareIcon } from './ShareIocn';
+import cs from './common.module.scss';
+import { ShareIcon } from './ShareIcon';
 
 export interface DomainServiceEditorProps {}
 
@@ -87,7 +88,7 @@ const VersionSelect = observer(function VersionSelect(
         label: (
           <span>
             {i.label ?? i.name}
-            <span className={s.share} onClick={open}>
+            <span className={cs.share} onClick={open}>
               <ShareIcon />
             </span>
           </span>
@@ -138,7 +139,7 @@ const ServiceSelect = observer(function ServiceSelect(
         return (
           <Select.Option key={i.id} value={i.id} name={i.name}>
             {i.name}
-            <span className={s.share} onClick={open}>
+            <span className={cs.share} onClick={open}>
               <ShareIcon />
             </span>
           </Select.Option>

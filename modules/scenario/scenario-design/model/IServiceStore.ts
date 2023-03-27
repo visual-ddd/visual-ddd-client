@@ -11,4 +11,10 @@ export interface IServiceStore {
    * @param id
    */
   getObjectById(id: string): NameDSL | undefined;
+
+  /**
+   * 打开服务
+   * @param id
+   */
+  openObjectById(id: string): void;
 }

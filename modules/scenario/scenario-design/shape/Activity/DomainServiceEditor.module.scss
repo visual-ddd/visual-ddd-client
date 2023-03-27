@@ -8,16 +8,3 @@
     color: var(--vd-color-font-primary) !important;
   }
 }
-
-.share {
-  font-size: 14px;
-  line-height: 14px;
-  vertical-align: middle;
-  margin-left: 3px;
-  color: var(--vd-color-link);
-  cursor: pointer;
-
-  &:hover {
-    color: var(--vd-color-link-hover);
-  }
-}

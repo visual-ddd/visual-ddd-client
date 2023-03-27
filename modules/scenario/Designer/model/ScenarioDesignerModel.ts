@@ -56,6 +56,7 @@ export class ScenarioDesignerModel extends BaseDesignerModel<ScenarioDesignerTab
 
     const serviceStore = new ScenarioServiceStore({
       serviceEditorModel: this.serviceEditorModel,
+      designer: this,
     });
 
     const domainServiceStore = new DomainServiceStore();

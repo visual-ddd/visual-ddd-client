@@ -1,0 +1,12 @@
+.share {
+  font-size: 1em;
+  line-height: 1em !important;
+  vertical-align: middle;
+  margin-left: 3px;
+  color: var(--vd-color-link);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--vd-color-link-hover);
+  }
+}
