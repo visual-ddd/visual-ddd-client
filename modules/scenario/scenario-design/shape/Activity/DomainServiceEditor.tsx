@@ -2,6 +2,7 @@ import { EditorFormConsumer, EditorFormItem, useEditorFormContext, useEditorMode
 import useSwr from 'swr';
 import { Select, SelectProps, Tag } from 'antd';
 import { observer } from 'mobx-react';
+import { useMemo } from 'react';
 
 import { ScenarioEditorModel } from '../../model';
 
@@ -42,15 +43,19 @@ const DomainSelect = observer(function DomainSelect(props: SelectProps) {
   });
 
   return (
-    <Select {...COMMON_SELECT_PROPS} {...props} loading={isLoading}>
-      {data?.map(i => {
-        return (
-          <Select.Option key={i.id} value={i.id} name={i.name}>
-            {i.name}
-          </Select.Option>
-        );
+    <Select
+      {...COMMON_SELECT_PROPS}
+      {...props}
+      loading={isLoading}
+      options={data?.map(i => {
+        return {
+          key: i.id,
+          value: i.id,
+          name: i.name,
+          label: i.name,
+        };
       })}
-    </Select>
+    ></Select>
   );
 });
 
@@ -66,17 +71,32 @@ const VersionSelect = observer(function VersionSelect(
     return serviceStore.getDomainVersionList(domainId!);
   });
 
-  return (
-    <Select {...COMMON_SELECT_PROPS} {...other} loading={isLoading}>
-      {data?.map(i => {
-        return (
-          <Select.Option key={i.id} value={i.id} name={i.name}>
-            {i.name}
-          </Select.Option>
-        );
-      })}
-    </Select>
-  );
+  const options = useMemo(() => {
+    return data?.map(i => {
+      const open = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        window.open(`/doc/domain/${domainId}/reversion/${i.id}`, `doc-domain-${domainId}-${i.id}`);
+      };
+
+      return {
+        key: i.id,
+        value: i.id,
+        name: i.name,
+        label: (
+          <span>
+            {i.label ?? i.name}
+            <span className={s.share} onClick={open}>
+              <ShareIcon />
+            </span>
+          </span>
+        ),
+      };
+    });
+  }, [data, domainId]);
+
+  return <Select {...COMMON_SELECT_PROPS} {...other} loading={isLoading} options={options}></Select>;
 });
 
 const ServiceSelect = observer(function ServiceSelect(
@@ -98,7 +118,7 @@ const ServiceSelect = observer(function ServiceSelect(
   return (
     <Select
       dropdownMatchSelectWidth={false}
-      mode="tags"
+      mode="multiple"
       allowClear
       {...COMMON_SELECT_PROPS}
       {...other}

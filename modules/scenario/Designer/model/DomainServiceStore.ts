@@ -70,7 +70,8 @@ export class DomainServiceStore implements IDomainServiceStore {
     const items = list.map(i => {
       return {
         id: i.id,
-        name: React.createElement(VersionBadge, {
+        name: i.currentVersion,
+        label: React.createElement(VersionBadge, {
           version: i.currentVersion,
           status: i.state,
           type: 'text',

@@ -1,7 +1,8 @@
 export namespace IDomainServiceStore {
   export interface Item {
     id: string | number;
-    name: React.ReactNode;
+    name: string;
+    label?: React.ReactNode;
   }
 }
 
