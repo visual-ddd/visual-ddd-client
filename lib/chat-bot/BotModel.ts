@@ -1,4 +1,5 @@
 import { action, makeObservable, observable } from 'mobx';
+import { captureException } from '@sentry/nextjs';
 import { v4 } from 'uuid';
 import { Disposer } from '@wakeapp/utils';
 import { IDisposable, tryDispose } from '@/lib/utils';
@@ -6,9 +7,10 @@ import { command, derive, makeAutoBindThis, mutation } from '@/lib/store';
 
 import { ExtensionType, GLOBAL_EXTENSION_KEY, IBot, Role } from './protocol';
 import type { Extension, Message } from './protocol';
-import { getExtension, registry } from './registry';
+import { registry } from './registry';
 import { BotEvent } from './BotEvent';
 import { BotKeyBinding } from './BotKeyBinding';
+import { extraMention } from './util';
 
 /**
  * 机器人
@@ -30,14 +32,35 @@ export class BotModel implements IDisposable, IBot {
   @observable
   prompt: string = '';
 
-  @observable.ref
-  activeExtension: Extension;
+  @derive
+  get defaultExtension() {
+    return this.availableExtensions.find(i => i.key === GLOBAL_EXTENSION_KEY)!;
+  }
+
+  @derive
+  get activeExtension(): Extension {
+    const matchKey = extraMention(this.prompt);
+
+    if (matchKey) {
+      const ext = this.availableExtensions.find(i => i.match === matchKey);
+      if (ext) {
+        return ext;
+      }
+    }
+
+    return this.defaultExtension;
+  }
 
   /**
    * 可以使用的扩展
    */
   @observable.shallow
   availableExtensions: Extension[] = [];
+
+  @derive
+  get availableExtensionsExceptGlobal() {
+    return this.availableExtensions.filter(i => i.key !== GLOBAL_EXTENSION_KEY);
+  }
 
   /**
    * 上下文信息
@@ -51,8 +74,6 @@ export class BotModel implements IDisposable, IBot {
 
   constructor() {
     this.setAvailableExtensions();
-
-    this.activeExtension = getExtension(GLOBAL_EXTENSION_KEY)!;
 
     if (this.activeExtension == null) {
       throw new Error('Global extension not found');
@@ -69,16 +90,19 @@ export class BotModel implements IDisposable, IBot {
         this.setAvailableExtensions();
       })
     );
+
+    // @ts-expect-error
+    globalThis.__BOT__ = this;
   }
 
   dispose() {
     this.disposer.release();
   }
 
-  @mutation('SET_PROMPT', false)
-  setPrompt(value: string) {
+  @action
+  setPrompt = (value: string) => {
     this.prompt = value;
-  }
+  };
 
   @command('SHOW')
   show() {
@@ -94,68 +118,75 @@ export class BotModel implements IDisposable, IBot {
       return;
     }
 
-    const message = this.prompt;
+    const message = this.getNormalizedPrompt();
     const extension = this.activeExtension;
 
-    const response = extension.onSend({ message, bot: this });
-    const responseMessageId = v4();
+    try {
+      const response = extension.onSend({ message, bot: this, currentTarget: extension });
+      const responseMessageId = v4();
 
-    if (extension.type === ExtensionType.Message) {
-      // 消息回复
-      this.addMessage({
-        uuid: v4(),
-        role: Role.User,
-        content: message,
-        timestamp: Date.now(),
-        extension: extension.key,
-      });
+      if (extension.type === ExtensionType.Message) {
+        // 消息回复
+        this.addMessage({
+          uuid: v4(),
+          role: Role.User,
+          content: message,
+          timestamp: Date.now(),
+          extension: extension.key,
+        });
 
-      this.addMessage({
-        uuid: responseMessageId,
-        role: Role.Assistant,
-        content: '',
-        timestamp: Date.now(),
-        pending: {
-          extension,
-          response,
-        },
-        extension: extension.key,
-      });
-    } else {
-      // 指令执行
-      this.addMessage({
-        uuid: responseMessageId,
-        role: Role.User,
-        content: message,
-        timestamp: Date.now(),
-        extension: extension.key,
-        pending: {
-          extension,
-          response,
-        },
-      });
+        this.addMessage({
+          uuid: responseMessageId,
+          role: Role.Assistant,
+          content: '',
+          timestamp: Date.now(),
+          pending: {
+            extension,
+            response,
+          },
+          extension: extension.key,
+        });
+      } else {
+        // 指令执行
+        this.addMessage({
+          uuid: responseMessageId,
+          role: Role.User,
+          content: message,
+          timestamp: Date.now(),
+          extension: extension.key,
+          pending: {
+            extension,
+            response,
+          },
+        });
+      }
+
+      response.result
+        .then(() => {
+          this.updateMessageContent(responseMessageId, response.eventSource.result);
+        })
+        .catch(err => {
+          console.error(`[BotModel] commit error: `, err);
+          // 回复错误信息
+          const errorMessage = `❌ 抱歉，出现了错误: ${err.message}`;
+          captureException(err);
+
+          if (extension.type === ExtensionType.Message) {
+            this.updateMessageContent(responseMessageId, errorMessage);
+          } else {
+            this.responseMessage(errorMessage, extension);
+          }
+        })
+        .finally(() => {
+          this.updateMessagePending(responseMessageId);
+        });
+
+      this.setPrompt('');
+    } catch (err) {
+      console.error(err);
+      captureException(err);
+      this.responseMessage(`抱歉，出现了错误：${(err as Error).message}`);
     }
-
-    response.result
-      .then(() => {
-        this.updateMessageContent(responseMessageId, response.eventSource.result);
-      })
-      .catch(err => {
-        console.error(`[BotModel] commit error: `, err);
-        // 回复错误信息
-        const errorMessage = `通信异常: ${err.message}`;
-        if (extension.type === ExtensionType.Message) {
-          this.updateMessageContent(responseMessageId, errorMessage);
-        } else {
-          this.responseMessage(errorMessage, extension);
-        }
-      })
-      .finally(() => {
-        this.updateMessagePending(responseMessageId);
-      });
-
-    this.setPrompt('');
-    this.setActiveExtension(getExtension(GLOBAL_EXTENSION_KEY)!);
   }
 
   /**
@@ -175,20 +206,11 @@ export class BotModel implements IDisposable, IBot {
   }
 
   /**
-   * 激活插件
-   * @param extension
-   */
-  @mutation('SET_ACTIVE_EXTENSION', false)
-  setActiveExtension(extension: Extension) {
-    this.activeExtension = extension;
-  }
-
-  /**
    * 设置可用的插件
    */
   @action
   private setAvailableExtensions() {
-    this.availableExtensions = Array.from(registry.registered().values()).filter(i => i.key !== GLOBAL_EXTENSION_KEY);
+    this.availableExtensions = Array.from(registry.registered().values());
   }
 
   @mutation('ADD_MESSAGE', false)
@@ -212,5 +234,14 @@ export class BotModel implements IDisposable, IBot {
       tryDispose(msg.pending?.response.eventSource);
       msg.pending = undefined;
     }
+  }
+
+  private getNormalizedPrompt() {
+    const value = this.prompt.trim();
+    if (this.activeExtension !== this.defaultExtension) {
+      return value.slice(`#${this.activeExtension.match}`.length);
+    }
+
+    return value;
   }
 }

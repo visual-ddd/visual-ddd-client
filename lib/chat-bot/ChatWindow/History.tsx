@@ -1,5 +1,5 @@
 import { useEventBusListener } from '@/lib/hooks';
-import { Loading } from '@/lib/openai-event-source';
+import { Loading, LoadingIcon } from '@/lib/openai-event-source';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
 import { useRef } from 'react';
@@ -30,8 +30,8 @@ const MessageItem = observer(function MessageItem(props: { item: Message }) {
       })}
     >
       <div className={s.content}>
-        {content ?? '...'}
         {!!showExtension && <span className={s.extension}>#{extension}</span>}
+        {content || <LoadingIcon className={s.loading} />}
       </div>
       {!!(item.pending && isCommand) && (
         <div className={s.pending}>

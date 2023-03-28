@@ -11,6 +11,7 @@
   width: 100%;
   padding: 6px 0;
   position: relative;
+  align-items: flex-end;
 
   .content {
     color: white;
@@ -39,6 +40,16 @@
 
   .extension {
     color: var(--vd-color-link);
-    margin-left: 0.5em;
+    margin-right: 0.5em;
+  }
+
+  .loading {
+    width: 1em;
+    height: 1em;
+    vertical-align: middle;
+  }
+
+  .pending {
+    margin-left: 4px;
   }
 }

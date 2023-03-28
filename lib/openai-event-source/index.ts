@@ -6,3 +6,4 @@ export * from './useOpenAI';
 export * from './decode';
 export * from './Loading';
 export * from './PromptModal';
+export * from './LoadingIcon';

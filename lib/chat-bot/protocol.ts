@@ -72,6 +72,11 @@ export interface SendParams {
    * 机器人, 可以与机器人进行交互或者获取上下文信息等
    */
   bot: IBot;
+
+  /**
+   * 当前插件
+   */
+  currentTarget: Extension;
 }
 
 export enum ExtensionType {
@@ -95,7 +100,7 @@ export interface ExtensionResponse {
   /**
    * 执行结果
    */
-  result: Promise<void>;
+  result: Promise<any>;
 }
 
 /**

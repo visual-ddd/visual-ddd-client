@@ -32,6 +32,7 @@ export const ChatWindow = observer(function ChatWindow(props: ChatWindowProps) {
   return (
     <BotProvider bot={bot}>
       <Drawer
+        rootClassName={s.dialogRoot}
         open={visible}
         className={s.dialog}
         title={null}

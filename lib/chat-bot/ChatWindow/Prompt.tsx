@@ -1,4 +1,4 @@
-import { useEventBusListener } from '@/lib/hooks';
+import { useEventBusListener, useIsMacos } from '@/lib/hooks';
 import { SendOutlined } from '@ant-design/icons';
 import { Mentions } from 'antd';
 import type { MentionsRef } from 'antd/es/mentions';
@@ -16,37 +16,33 @@ const AUTO_SIZE = {
   maxRows: 6,
 };
 
+const UNREACHABLE_PREFIX = '$$_$__$$$$__$_$';
+
 export const Prompt = observer(function Prompt() {
   const bot = useBotContext();
   const mentionsRef = useRef<MentionsRef>(null);
+  const isMacOs = useIsMacos();
+  const PLACEHOLDER = isMacOs
+    ? '说点什么吧。 输入 # 使用指令, Command + Enter 发送消息'
+    : '说点什么吧。 输入 # 使用指令, Ctrl + Enter 发送消息';
+  const SEND_PLACEHOLDER = isMacOs ? 'Command + Enter 发送消息' : 'Ctrl + Enter 发送消息';
 
-  const handleExtensionChange = (value: string) => {
-    const matched = bot.availableExtensions.find(i => i.match === value);
-
-    if (matched) {
-      bot.setActiveExtension(matched);
-      return true;
-    }
-
-    return false;
-  };
-
-  const handleMentionSelect = (option: { value?: string }) => {
-    if (option.value) {
-      handleExtensionChange(option.value);
-    }
-  };
-
-  const options = bot.availableExtensions.map(i => {
-    return { label: i.match, value: i.match };
+  const options = bot.availableExtensionsExceptGlobal.map(i => {
+    return { label: i.match, value: i.match, key: i.key };
   });
+
+  const enableMention = bot.prompt.match(/^(#[^\s#]*)?$/);
+
+  const commit = () => {
+    bot.commit();
+  };
 
   const handleKeyUp = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.ctrlKey || e.metaKey) {
       if (e.key === 'Enter') {
         e.preventDefault();
         e.stopPropagation();
-        bot.commit();
+        commit();
       }
     }
   };
@@ -69,17 +65,18 @@ export const Prompt = observer(function Prompt() {
           autoFocus
           value={bot.prompt}
           onChange={bot.setPrompt}
-          prefix="/"
+          prefix={enableMention ? '#' : UNREACHABLE_PREFIX}
+          notFoundContent="未找到相关指令"
+          // 已选中禁用
           options={options}
-          onSelect={handleMentionSelect}
-          placeholder="输入对话，可以使用 / 使用指令"
+          placeholder={PLACEHOLDER}
           onKeyDown={handleKeyUp}
           placement="top"
         />
         <SendOutlined
           className={classNames(s.send, { disable: !bot.prompt.trim() })}
-          title="发送 Ctrl/Command + Enter"
-          onClick={bot.commit}
+          title={SEND_PLACEHOLDER}
+          onClick={commit}
         />
       </div>
     </div>
