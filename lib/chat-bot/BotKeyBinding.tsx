@@ -1,5 +1,5 @@
 import { KeyboardBinding } from '@/lib/utils';
-import { BotModel } from './BotModel';
+import type { BotModel } from './BotModel';
 import MouseTrap from 'mousetrap';
 
 export class BotKeyBinding extends KeyboardBinding {

@@ -48,12 +48,18 @@ export const History = observer(function History(props: HistoryProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEventBusListener(bot.event, on => {
-    on('MESSAGE_ADDED', () => {
+    const scrollToBottom = () => {
       requestAnimationFrame(() => {
         if (containerRef.current) {
           containerRef.current.scrollTop = containerRef.current.scrollHeight;
         }
       });
+    };
+    on('SHOW', () => {
+      scrollToBottom();
+    });
+    on('MESSAGE_ADDED', () => {
+      scrollToBottom();
     });
   });
 

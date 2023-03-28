@@ -11,6 +11,11 @@ export interface BotEventDefinitions {
   MESSAGE_ADDED: { message: Message };
 
   /**
+   * 消息请求完成
+   */
+  MESSAGE_FINISHED: { message: Message };
+
+  /**
    * 显示聊天窗
    */
   SHOW: never;

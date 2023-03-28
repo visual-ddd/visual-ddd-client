@@ -11,6 +11,7 @@ import { registry } from './registry';
 import { BotEvent } from './BotEvent';
 import { BotKeyBinding } from './BotKeyBinding';
 import { extraMention } from './util';
+import { BotPersister } from './BotPersister';
 
 /**
  * 机器人
@@ -22,6 +23,7 @@ export class BotModel implements IDisposable, IBot {
   event = new BotEvent();
 
   private keybinding: BotKeyBinding;
+  private persister: BotPersister;
 
   @observable
   history: Message[] = [];
@@ -81,6 +83,9 @@ export class BotModel implements IDisposable, IBot {
   private disposer = new Disposer();
 
   constructor() {
+    makeObservable(this);
+    makeAutoBindThis(this);
+
     this.setAvailableExtensions();
 
     if (this.activeExtension == null) {
@@ -88,12 +93,11 @@ export class BotModel implements IDisposable, IBot {
     }
 
     this.keybinding = new BotKeyBinding({ bot: this });
-
-    makeObservable(this);
-    makeAutoBindThis(this);
+    this.persister = new BotPersister({ event: this.event, onLoad: this.loadHistory });
 
     this.disposer.push(
       () => tryDispose(this.keybinding),
+      () => tryDispose(this.persister),
       registry.subscribe(() => {
         this.setAvailableExtensions();
       })
@@ -187,6 +191,7 @@ export class BotModel implements IDisposable, IBot {
         })
         .finally(() => {
           this.updateMessagePending(responseMessageId);
+          this.event.emit('MESSAGE_FINISHED', { message: this.getMessageById(responseMessageId)! });
         });
 
       this.setPrompt('');
@@ -213,6 +218,10 @@ export class BotModel implements IDisposable, IBot {
     });
   }
 
+  getMessageById(id: string) {
+    return this.history.find(i => i.uuid === id);
+  }
+
   /**
    * 设置可用的插件
    */
@@ -225,6 +234,11 @@ export class BotModel implements IDisposable, IBot {
   private addMessage(message: Message) {
     this.history.push(message);
     this.event.emit('MESSAGE_ADDED', { message: this.history[this.history.length - 1] });
+  }
+
+  @mutation('LOAD_HISTORY', false)
+  private loadHistory(history: Message[]) {
+    this.history = history;
   }
 
   @action
