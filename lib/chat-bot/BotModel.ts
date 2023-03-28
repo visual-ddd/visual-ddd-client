@@ -63,6 +63,14 @@ export class BotModel implements IDisposable, IBot {
   }
 
   /**
+   * 正在处理的消息
+   */
+  @derive
+  get pendingHistory() {
+    return this.history.filter(i => i.pending);
+  }
+
+  /**
    * 上下文信息
    */
   @derive

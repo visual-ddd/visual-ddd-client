@@ -1,6 +1,6 @@
 import { useEventBusListener, useIsMacos } from '@/lib/hooks';
 import { SendOutlined } from '@ant-design/icons';
-import { Mentions } from 'antd';
+import { Mentions, message } from 'antd';
 import type { MentionsRef } from 'antd/es/mentions';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
@@ -32,8 +32,19 @@ export const Prompt = observer(function Prompt() {
   });
 
   const enableMention = bot.prompt.match(/^(#[^\s#]*)?$/);
+  const disabled = !bot.prompt.trim();
+  const pending = bot.pendingHistory.length > 3;
 
   const commit = () => {
+    if (disabled) {
+      return;
+    }
+
+    if (pending) {
+      message.warning('当前正在请求的消息过多，请稍后再试');
+      return;
+    }
+
     bot.commit();
   };
 
@@ -73,11 +84,7 @@ export const Prompt = observer(function Prompt() {
           onKeyDown={handleKeyUp}
           placement="top"
         />
-        <SendOutlined
-          className={classNames(s.send, { disable: !bot.prompt.trim() })}
-          title={SEND_PLACEHOLDER}
-          onClick={commit}
-        />
+        <SendOutlined className={classNames(s.send, { disable: disabled })} title={SEND_PLACEHOLDER} onClick={commit} />
       </div>
     </div>
   );

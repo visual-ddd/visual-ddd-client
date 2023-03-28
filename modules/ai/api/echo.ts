@@ -12,7 +12,7 @@ export const echo: NextApiHandler = allowMethod('GET', async (req, res) => {
     return;
   }
 
-  await delay(2000);
+  await delay(10000);
 
   chat({
     pipe: res,
