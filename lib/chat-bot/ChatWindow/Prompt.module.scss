@@ -1,0 +1,39 @@
+.root {
+  display: flex;
+  align-items: center;
+}
+
+.prompt {
+  flex: 1;
+  position: relative;
+}
+
+.input {
+  border-radius: 10px;
+  border: 2px solid var(--vd-color-gray-500);
+
+  &:focus,
+  &:hover {
+    box-shadow: none !important;
+    border: 2px solid var(--vd-color-primary-900) !important;
+  }
+
+  textarea {
+    padding-right: 20px;
+  }
+}
+
+.send {
+  position: absolute;
+  right: var(--vd-spacing-xs);
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  cursor: pointer;
+  color: var(--vd-color-primary-900);
+
+  &:global(.disable) {
+    color: var(--vd-color-gray-500);
+    cursor: not-allowed;
+  }
+}
