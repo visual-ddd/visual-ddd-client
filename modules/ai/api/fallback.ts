@@ -20,7 +20,7 @@ export const fallback: NextApiHandler = allowMethod('GET', async (req, res) => {
 
 工具的主要用法如下：
 
-- 你可以使用快捷键(Ctrl+shift+I 或 macos 下Command+Shift+I) 唤醒我，可以问我任何关于 DDD  的问题。
+- 你可以使用快捷键(Ctrl+shift+U 或 macos 下Command+Shift+U) 唤醒我，可以问我任何关于 DDD  的问题。
 - 我也支持一些特定的指令，你可以输入 '#' 选择并激活特定指令
 - 使用 ‘#列举所有指令’ 可以列举所有支持的指令。 `,
       },

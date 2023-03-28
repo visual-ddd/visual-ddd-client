@@ -17,8 +17,8 @@ export class BotKeyBinding extends KeyboardBinding {
       name: 'show',
       title: '打开聊天窗',
       key: {
-        macos: 'command+shift+i',
-        other: 'ctrl+shift+i',
+        macos: 'command+shift+u',
+        other: 'ctrl+shift+u',
       },
       handler: () => {
         this.bot.show();

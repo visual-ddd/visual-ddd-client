@@ -36,6 +36,13 @@ export class BotPersister implements IDisposable {
         this.list.push(this.normalizeMessage(params.message));
         this.save();
       }),
+      this.event.on('MESSAGE_REMOVED', params => {
+        const idx = this.list.findIndex(i => i.uuid === params.message.uuid);
+        if (idx !== -1) {
+          this.list.splice(idx, 1);
+          this.save();
+        }
+      }),
       this.event.on('MESSAGE_FINISHED', params => {
         const item = this.list.find(i => i.uuid === params.message.uuid);
         if (item) {

@@ -3,17 +3,18 @@
   height: 100%;
   overflow-x: hidden;
   overflow-y: auto;
-  padding: var(--vd-spacing-sm) var(--vd-spacing-base);
+  padding: var(--vd-spacing-sm) 0;
 }
 
 .item {
   display: flex;
   width: 100%;
-  padding: 6px 0;
+  padding: 6px var(--vd-spacing-base);
   position: relative;
   align-items: flex-end;
 
   .content {
+    position: relative;
     color: white;
     white-space: pre-wrap;
     word-break: break-all;
@@ -51,5 +52,19 @@
 
   .pending {
     margin-left: 4px;
+  }
+
+  .remove {
+    color: var(--vd-color-danger-300);
+    cursor: pointer;
+    position: absolute;
+    right: calc(-1em + -4px);
+    top: 50%;
+    transform: translateY(-50%);
+    display: none;
+  }
+
+  &:hover .remove {
+    display: block;
   }
 }

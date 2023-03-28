@@ -1,5 +1,6 @@
 import { useEventBusListener } from '@/lib/hooks';
 import { Loading, LoadingIcon } from '@/lib/openai-event-source';
+import { MinusCircleFilled } from '@ant-design/icons';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
 import { useRef } from 'react';
@@ -15,12 +16,17 @@ export interface HistoryProps {
 
 const MessageItem = observer(function MessageItem(props: { item: Message }) {
   const { item } = props;
+  const bot = useBotContext();
 
   const isCommand = item.pending?.extension.type === ExtensionType.Command;
   const extension = item.extension;
   const showExtension = extension && extension !== GLOBAL_EXTENSION_KEY;
 
   const content = item.pending ? (isCommand ? item.content : item.pending.response.eventSource.result) : item.content;
+
+  const remove = () => {
+    bot.removeMessage(item.uuid);
+  };
 
   return (
     <div
@@ -32,6 +38,7 @@ const MessageItem = observer(function MessageItem(props: { item: Message }) {
       <div className={s.content}>
         {!!showExtension && <span className={s.extension}>#{extension}</span>}
         {content || <LoadingIcon className={s.loading} />}
+        <MinusCircleFilled className={s.remove} onClick={remove} />
       </div>
       {!!(item.pending && isCommand) && (
         <div className={s.pending}>

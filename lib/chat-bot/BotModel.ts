@@ -202,6 +202,15 @@ export class BotModel implements IDisposable, IBot {
     }
   }
 
+  @mutation('REMOVE_MESSAGE', false)
+  removeMessage(id: string) {
+    const index = this.history.findIndex(i => i.uuid === id);
+    if (index > -1) {
+      const [message] = this.history.splice(index, 1);
+      this.event.emit('MESSAGE_REMOVED', { message });
+    }
+  }
+
   /**
    * 新增回复信息
    * @param message

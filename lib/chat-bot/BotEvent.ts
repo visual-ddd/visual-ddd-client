@@ -16,6 +16,11 @@ export interface BotEventDefinitions {
   MESSAGE_FINISHED: { message: Message };
 
   /**
+   * 消息删除
+   */
+  MESSAGE_REMOVED: { message: Message };
+
+  /**
    * 显示聊天窗
    */
   SHOW: never;
