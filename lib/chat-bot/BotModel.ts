@@ -20,9 +20,9 @@ export class BotModel implements IDisposable, IBot {
   /**
    * 事件
    */
-  event = new BotEvent();
+  readonly event = new BotEvent();
 
-  private keybinding: BotKeyBinding;
+  readonly keybinding: BotKeyBinding;
   private persister: BotPersister;
 
   @observable

@@ -43,7 +43,10 @@ export const ChatWindow = observer(function ChatWindow(props: ChatWindowProps) {
       >
         <div className={s.root}>
           <header className={s.head}>
-            <div className={s.title}>Visual DDD AI ChatBot</div>
+            <div className={s.title}>
+              Visual DDD AI ChatBot{' '}
+              <span className={s.keybinding}>{bot.keybinding.getReadableKeyBinding('show').key}</span>
+            </div>
             <CloseOutlined className={s.close} onClick={handleClose} />
           </header>
           <div className={s.history}>
