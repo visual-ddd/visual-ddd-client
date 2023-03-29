@@ -68,3 +68,25 @@
     display: block;
   }
 }
+
+.intro {
+  background-color: white;
+  margin: 1em;
+  border: 1px solid var(--vd-color-gray-300);
+  border-radius: 5px;
+  padding: var(--vd-spacing-xs) var(--vd-spacing-base);
+  line-height: 1.6;
+
+  img {
+    max-width: 60px;
+  }
+
+  code {
+    background-color: rgba(#616161, 0.1);
+    border-radius: 0.25em;
+    box-decoration-break: clone;
+    color: #616161;
+    font-size: 0.9rem;
+    padding: 0.25em;
+  }
+}

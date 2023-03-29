@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { useEventBusListener } from '@/lib/hooks';
 import { Loading, LoadingIcon } from '@/lib/openai-event-source';
 import { MinusCircleFilled } from '@ant-design/icons';
@@ -90,6 +91,34 @@ export const History = observer(function History(props: HistoryProps) {
 
   return (
     <div className={classNames(s.root, className)} ref={containerRef} {...other}>
+      <div className={s.intro}>
+        <img className={s.logo} src="/logo.svg" alt="logo" />
+        <h1>欢迎使用 Visual DDD ChatBot</h1>
+        <p>
+          <code>Visual DDD ChatBot</code> 是基于 <code>ChatGPT</code> 的聊天机器人，你可以问它任何关于 DDD
+          的问题。基本用法如下：{' '}
+        </p>
+        <p>
+          <ol>
+            <li>
+              {' '}
+              你可以使用快捷键(<code>Ctrl+shift+U</code> 或 MacOS 下 <code>Command+Shift+U</code>) 唤醒我
+            </li>
+            <li>
+              {' '}
+              我也支持一些特定的指令，你可以输入 <code>#</code> 选择并激活特定指令
+            </li>
+            <li> 随便聊聊吧 </li>
+          </ol>
+        </p>
+        <p>
+          目前，
+          <b>
+            ChatBot 还是一个实验性的功能, 如果你遇到任何问题，可以 <code>#BUG</code> 给我们反馈问题, 谢谢
+          </b>
+          。
+        </p>
+      </div>
       {bot.history.map(i => {
         return <MessageItem key={i.uuid} item={i} />;
       })}
