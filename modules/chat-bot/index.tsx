@@ -1,3 +1,3 @@
 import './extensions';
 
-export { ChatWindow as default } from '@/lib/chat-bot';
+export { BotButton as default } from './BotButton';
