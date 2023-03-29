@@ -31,6 +31,14 @@ export class BotPersister implements IDisposable {
   }
 
   private async initial() {
+    const handleMessageUpdate = (params: { message: Message }) => {
+      const item = this.list.find(i => i.uuid === params.message.uuid);
+      if (item) {
+        Object.assign(item, this.normalizeMessage(params.message));
+
+        this.save();
+      }
+    };
     this.disposer.push(
       this.event.on('MESSAGE_ADDED', params => {
         this.list.push(this.normalizeMessage(params.message));
@@ -43,14 +51,8 @@ export class BotPersister implements IDisposable {
           this.save();
         }
       }),
-      this.event.on('MESSAGE_FINISHED', params => {
-        const item = this.list.find(i => i.uuid === params.message.uuid);
-        if (item) {
-          Object.assign(item, this.normalizeMessage(params.message));
-
-          this.save();
-        }
-      })
+      this.event.on('MESSAGE_UPDATED', handleMessageUpdate),
+      this.event.on('MESSAGE_FINISHED', handleMessageUpdate)
     );
 
     const list = await localforage.getItem<Message[]>(KEY);

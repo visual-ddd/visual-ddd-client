@@ -4,6 +4,7 @@ import { v4 } from 'uuid';
 import { Disposer } from '@wakeapp/utils';
 import { IDisposable, tryDispose } from '@/lib/utils';
 import { command, derive, makeAutoBindThis, mutation } from '@/lib/store';
+import findLastIndex from 'lodash/findLastIndex';
 
 import { ExtensionType, GLOBAL_EXTENSION_KEY, IBot, Role } from './protocol';
 import type { Extension, Message } from './protocol';
@@ -12,6 +13,7 @@ import { BotEvent } from './BotEvent';
 import { BotKeyBinding } from './BotKeyBinding';
 import { extraMention } from './util';
 import { BotPersister } from './BotPersister';
+import { MAX_CONTEXT_MESSAGE } from './constants';
 
 /**
  * 机器人
@@ -24,6 +26,10 @@ export class BotModel implements IDisposable, IBot {
 
   readonly keybinding: BotKeyBinding;
   private persister: BotPersister;
+  /**
+   * 待回收资源
+   */
+  private pending: Map<string, Function> = new Map();
 
   @observable
   history: Message[] = [];
@@ -72,14 +78,6 @@ export class BotModel implements IDisposable, IBot {
     return this.history.filter(i => i.pending);
   }
 
-  /**
-   * 上下文信息
-   */
-  @derive
-  get recentlyMessages() {
-    return this.history.filter(i => !i.pending).slice(-3);
-  }
-
   private disposer = new Disposer();
 
   constructor() {
@@ -98,6 +96,11 @@ export class BotModel implements IDisposable, IBot {
     this.disposer.push(
       () => tryDispose(this.keybinding),
       () => tryDispose(this.persister),
+      () => {
+        const pendingTasks = Array.from(this.pending.values());
+        this.pending.clear();
+        pendingTasks.forEach(i => i());
+      },
       registry.subscribe(() => {
         this.setAvailableExtensions();
       })
@@ -136,6 +139,7 @@ export class BotModel implements IDisposable, IBot {
     try {
       const response = extension.onSend({ message, bot: this, currentTarget: extension });
       const responseMessageId = v4();
+      this.pending.set(responseMessageId, response.dispose);
 
       if (extension.type === ExtensionType.Message) {
         // 消息回复
@@ -173,12 +177,20 @@ export class BotModel implements IDisposable, IBot {
         });
       }
 
+      const resMsg = this.getMessageById(responseMessageId)!;
+
       response.result
         .then(() => {
           this.updateMessageContent(responseMessageId, response.eventSource.result);
         })
         .catch(err => {
           console.error(`[BotModel] commit error: `, err);
+
+          if (err instanceof DOMException && err.name === 'AbortError') {
+            // 用户终止了
+            return;
+          }
+
           // 回复错误信息
           const errorMessage = `❌ 抱歉，出现了错误: ${err.message}`;
           captureException(err);
@@ -190,8 +202,8 @@ export class BotModel implements IDisposable, IBot {
           }
         })
         .finally(() => {
-          this.updateMessagePending(responseMessageId);
-          this.event.emit('MESSAGE_FINISHED', { message: this.getMessageById(responseMessageId)! });
+          this.resetMessagePending(responseMessageId);
+          this.event.emit('MESSAGE_FINISHED', { message: resMsg });
         });
 
       this.setPrompt('');
@@ -204,7 +216,9 @@ export class BotModel implements IDisposable, IBot {
 
   @mutation('REMOVE_MESSAGE', false)
   removeMessage(id: string) {
+    this.resetMessagePending(id);
     const index = this.history.findIndex(i => i.uuid === id);
+
     if (index > -1) {
       const [message] = this.history.splice(index, 1);
       this.event.emit('MESSAGE_REMOVED', { message });
@@ -232,6 +246,48 @@ export class BotModel implements IDisposable, IBot {
   }
 
   /**
+   * 获取上下文信息
+   */
+  getRecentlyMessages() {
+    const lastSummaryIndex = findLastIndex(this.history, i => !!i.summary);
+
+    const sliced = this.history.slice(lastSummaryIndex + 1);
+
+    const filtered = sliced.filter(i => !i.pending).slice(-MAX_CONTEXT_MESSAGE);
+
+    if (filtered.length < MAX_CONTEXT_MESSAGE && lastSummaryIndex > 0) {
+      // 补全
+      filtered.unshift(this.history[lastSummaryIndex]);
+    }
+
+    return filtered;
+  }
+
+  /**
+   * 计算 Token 数量
+   * @param message
+   * @returns
+   */
+  countToken(message: string[]): number {
+    return message.reduce((acc, cur) => {
+      const token = cur.trim();
+      if (token) {
+        return acc + token.length;
+      }
+      return acc;
+    }, 0);
+  }
+
+  @mutation('UPDATE_SUMMARY', false)
+  updateSummary(messageId: string, summary: string): void {
+    const message = this.getMessageById(messageId);
+    if (message) {
+      message.summary = summary;
+      this.event.emit('MESSAGE_UPDATED', { message });
+    }
+  }
+
+  /**
    * 设置可用的插件
    */
   @action
@@ -252,18 +308,28 @@ export class BotModel implements IDisposable, IBot {
 
   @action
   private updateMessageContent(id: string, content: string) {
-    const msg = this.history.find(i => i.uuid === id);
-    if (msg) {
-      msg.content = content;
+    const message = this.history.find(i => i.uuid === id);
+    if (message) {
+      message.content = content;
+      this.event.emit('MESSAGE_UPDATED', { message });
     }
   }
 
   @action
-  private updateMessagePending(id: string) {
-    const msg = this.history.find(i => i.uuid === id && i.pending);
-    if (msg) {
-      tryDispose(msg.pending?.response.eventSource);
-      msg.pending = undefined;
+  private resetMessagePending(id: string) {
+    const message = this.history.find(i => i.uuid === id && i.pending);
+
+    if (message) {
+      // 回收
+      const pending = this.pending.get(id);
+      if (pending) {
+        this.pending.delete(id);
+        pending();
+      }
+
+      message.pending = undefined;
+
+      this.event.emit('MESSAGE_UPDATED', { message });
     }
   }
 

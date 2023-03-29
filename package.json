@@ -60,6 +60,7 @@
     "cookie": "^0.5.0",
     "cron-parser": "^4.8.1",
     "dayjs": "^1.11.7",
+    "eventsource-parser": "^1.0.0",
     "fs-extra": "^11.1.1",
     "fuse.js": "^6.6.2",
     "gravatar-url": "^4.0.1",

@@ -8,8 +8,10 @@ import { OPENAI_API_KEY, OPENAI_BASE_PATH } from './config';
 
 const CHAT_API_ENDPOINT = '/chat/completions';
 
+export type ChatRole = 'system' | 'user' | 'assistant';
+
 export interface ChatMessage {
-  role: 'system' | 'user' | 'assistant';
+  role: ChatRole;
   content: string;
 }
 
@@ -40,6 +42,15 @@ export interface ChatOptions {
    * 代理的响应对象
    */
   pipe: NextApiResponse;
+}
+
+export interface ErrorResponse {
+  error: {
+    message: string;
+    type: string;
+    param?: any;
+    code?: any;
+  };
 }
 
 function getAgent(url: URL) {
@@ -85,26 +96,51 @@ export function chat(options: ChatOptions) {
   });
 
   request.on('response', response => {
-    // header
-    for (const headerName of Object.keys(response.headers)) {
-      const header = response.headers[headerName];
-      if (header) {
-        pipe.setHeader(headerName, header);
+    if (response.statusCode === 200 && response.headers['content-type'] === 'text/event-stream') {
+      // 正常响应
+      // header
+      for (const headerName of Object.keys(response.headers)) {
+        const header = response.headers[headerName];
+        if (header) {
+          pipe.setHeader(headerName, header);
+        }
       }
+
+      pipe.setHeader('Transfer-Encoding', 'chunked');
+
+      pipe.writeHead(response.statusCode || 200);
+
+      response.on('data', () => {
+        // 这个方法实际上不属于 ServerResponse, 而是 compression 库的，
+        // 执行这个方法是为了快速将结果响应到客户端
+        // @ts-expect-error
+        pipe.flush();
+      });
+
+      response.pipe(pipe);
+    } else if (response.headers['content-type']?.startsWith('application/json')) {
+      // 如果 openai 返回了错误, 通常是 json 格式
+      // 读取 json
+      let chunks = '';
+
+      response.on('data', chunk => {
+        chunks += chunk;
+      });
+
+      response.on('end', () => {
+        const result = JSON.parse(chunks) as ErrorResponse;
+
+        pipe.statusCode = response.statusCode! || 400;
+
+        pipe.json(createFailResponse(result.error.code ?? 400, result.error.message));
+      });
+    } else {
+      // 未知错误
+      pipe.statusCode = 500;
+      pipe.json(
+        createFailResponse(500, `接收到未知的响应: ${response.statusCode} ${response.headers['content-type']}`)
+      );
     }
-
-    pipe.setHeader('Transfer-Encoding', 'chunked');
-
-    pipe.writeHead(response.statusCode || 200);
-
-    response.on('data', () => {
-      // 这个方法实际上不属于 ServerResponse, 而是 compression 库的，
-      // 执行这个方法是为了快速将结果响应到客户端
-      // @ts-expect-error
-      pipe.flush();
-    });
-
-    response.pipe(pipe);
   });
 
   request.on('error', e => {

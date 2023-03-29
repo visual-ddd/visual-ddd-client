@@ -4,7 +4,7 @@ import { delay } from '@wakeapp/utils';
 import { NextApiHandler } from 'next';
 import { chat } from '../proxy';
 
-export const echo: NextApiHandler = allowMethod('POST', async (req, res) => {
+export const summary: NextApiHandler = allowMethod('POST', async (req, res) => {
   const text = req.body?.text as string;
 
   if (text == null) {
@@ -12,14 +12,14 @@ export const echo: NextApiHandler = allowMethod('POST', async (req, res) => {
     return;
   }
 
-  await delay(3000);
+  await delay(10000);
 
   chat({
     pipe: res,
     messages: [
       {
         role: 'system',
-        content: '你是一个 echo 服务，我发给你什么，你就返回什么',
+        content: '简要总结一下你和用户的对话，用作后续的上下文提示 prompt，控制在 50 字以内',
       },
       {
         role: 'user',

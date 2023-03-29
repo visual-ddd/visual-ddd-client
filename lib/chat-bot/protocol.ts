@@ -48,18 +48,36 @@ export interface Message {
    * 消息的时间戳, 毫秒
    */
   timestamp: number;
+
+  /**
+   * 会话总结
+   */
+  summary?: string;
 }
 
 export interface IBot {
   /**
    * 最近的消息
    */
-  recentlyMessages: Message[];
+  getRecentlyMessages(): Message[];
 
   /**
    * 向控制台发送消息
    */
   responseMessage(message: string, extension?: Extension): void;
+
+  /**
+   * 计算 Token
+   * @param message
+   */
+  countToken(message: string[]): number;
+
+  /**
+   * 设置消息的总结
+   * @param messageId
+   * @param summary
+   */
+  updateSummary(messageId: string, summary: string): void;
 }
 
 export interface SendParams {
@@ -96,6 +114,12 @@ export interface ExtensionResponse {
    * 事件源
    */
   eventSource: OpenAIEventSourceModel;
+
+  /**
+   * 回收方法
+   * @returns
+   */
+  dispose: () => void;
 
   /**
    * 执行结果

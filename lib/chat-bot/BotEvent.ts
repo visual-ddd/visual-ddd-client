@@ -11,7 +11,7 @@ export interface BotEventDefinitions {
   MESSAGE_ADDED: { message: Message };
 
   /**
-   * 消息请求完成
+   * 消息请求完成, 可能成功，也可能失败
    */
   MESSAGE_FINISHED: { message: Message };
 
@@ -19,6 +19,11 @@ export interface BotEventDefinitions {
    * 消息删除
    */
   MESSAGE_REMOVED: { message: Message };
+
+  /**
+   * 消息更新
+   */
+  MESSAGE_UPDATED: { message: Message };
 
   /**
    * 显示聊天窗

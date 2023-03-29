@@ -4,7 +4,7 @@ import { Mentions, message } from 'antd';
 import type { MentionsRef } from 'antd/es/mentions';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { useBotContext } from './Context';
 import s from './Prompt.module.scss';
@@ -58,13 +58,17 @@ export const Prompt = observer(function Prompt() {
     }
   };
 
-  useEventBusListener(bot.event, on => {
-    on('SHOW', () => {
-      requestAnimationFrame(() => {
-        mentionsRef.current?.focus();
-      });
+  const focus = () => {
+    requestAnimationFrame(() => {
+      mentionsRef.current?.focus();
     });
+  };
+
+  useEventBusListener(bot.event, on => {
+    on('SHOW', focus);
   });
+
+  useEffect(focus, []);
 
   return (
     <div className={s.root}>

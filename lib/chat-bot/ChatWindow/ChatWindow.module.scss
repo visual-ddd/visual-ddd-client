@@ -1,14 +1,37 @@
 .dialogRoot {
-  :global(.ant-drawer-content-wrapper) {
-    border-radius: 10px;
-    overflow: hidden;
-    margin: 1em;
-    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.06);
-    border: 1px solid var(--vd-color-gray-300);
-  }
-}
+  $border-radius: 12px;
 
-.dialog {
+  :global(.ant-drawer-content-wrapper) {
+    margin: 1em;
+    box-shadow: -3rem 0 3rem -2rem #d1d0d0;
+    border-radius: $border-radius;
+
+    &::before {
+      content: '';
+      $width: 3px;
+      background: linear-gradient(
+        130deg,
+        var(--vd-color-primary-900),
+        var(--vd-color-primary-200) 41.07%,
+        var(--vd-color-secondary-800) 76.05%
+      );
+      position: absolute;
+      top: -$width;
+      left: -$width;
+      bottom: -$width;
+      right: -$width;
+      z-index: 0;
+      border-radius: $border-radius;
+    }
+  }
+
+  :global(.ant-drawer-content) {
+    z-index: 2;
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+  }
+
   :global(.ant-drawer-body) {
     padding: 0;
     background-color: #f4f6fb;

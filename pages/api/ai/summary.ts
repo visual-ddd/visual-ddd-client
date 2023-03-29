@@ -4,4 +4,4 @@ export const config = {
   },
 };
 
-export { echo as default } from '@/modules/ai';
+export { summary as default } from '@/modules/ai';

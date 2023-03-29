@@ -1,6 +1,7 @@
 import { action, makeObservable, observable } from 'mobx';
 import { makeAutoBindThis } from '@/lib/store';
-import { IDisposable } from '@/lib/utils';
+import { IDisposable, tryDispose } from '@/lib/utils';
+import { EventStream, EventStreamOptions } from './stream';
 
 interface Usage {
   prompt_tokens: number;
@@ -49,7 +50,7 @@ export class OpenAIEventSourceModel<Result = any> implements IDisposable {
 
   private disposed = false;
 
-  private eventSource?: EventSource;
+  private eventStream?: EventStream;
   private options: OpenAIEventSourceModelOptions<Result>;
 
   constructor(options: OpenAIEventSourceModelOptions<Result>) {
@@ -63,7 +64,13 @@ export class OpenAIEventSourceModel<Result = any> implements IDisposable {
    * 打开链接
    * @param url
    */
-  async open(url: string | URL): Promise<Result> {
+  async open(
+    url: string | URL,
+    options?: {
+      method?: EventStreamOptions['method'];
+      body?: EventStreamOptions['body'];
+    }
+  ): Promise<Result> {
     if (this.loading) {
       throw new Error('正在加载中, 不能重复打开');
     }
@@ -77,29 +84,37 @@ export class OpenAIEventSourceModel<Result = any> implements IDisposable {
       this.setResult('');
       this.setError(undefined);
 
-      return await new Promise<Result>((resolve, reject) => {
-        const source = (this.eventSource = new EventSource(url, { withCredentials: true }));
-        source.onmessage = event => {
-          const data = event.data as string;
-
-          try {
-            if (data === DONE) {
-              source.close();
-              resolve(this.handleDone());
-            } else {
-              // FIXME: 这里耦合了 chat 接口协议
-              const payload = JSON.parse(data) as ChatCompletion;
-              const result = this.result + payload.choices.map(choice => choice.delta.content ?? '').join('');
-              this.setResult(result);
+      return await new Promise<Result>(async (resolve, reject) => {
+        const source = (this.eventStream = new EventStream({
+          ...options,
+          url,
+          onMessage: event => {
+            if (this.disposed) {
+              return;
             }
-          } catch (err) {
-            reject(err);
-          }
-        };
-        source.onerror = error => {
-          console.error(`EventSource error: `, error);
-          reject(new Error(`数据加载失败`));
-        };
+
+            const data = event.data as string;
+
+            try {
+              if (data === DONE) {
+                resolve(this.handleDone());
+              } else {
+                // FIXME: 这里耦合了 chat 接口协议
+                const payload = JSON.parse(data) as ChatCompletion;
+                const result = this.result + payload.choices.map(choice => choice.delta.content ?? '').join('');
+                this.setResult(result);
+              }
+            } catch (err) {
+              reject(err);
+            }
+          },
+        }));
+
+        try {
+          await source.send();
+        } catch (err) {
+          reject(err);
+        }
       });
     } catch (err) {
       this.setError(err as Error);
@@ -110,8 +125,12 @@ export class OpenAIEventSourceModel<Result = any> implements IDisposable {
   }
 
   dispose() {
+    if (this.disposed) {
+      return;
+    }
+
     this.disposed = true;
-    this.eventSource?.close();
+    tryDispose(this.eventStream);
   }
 
   private handleDone() {
@@ -134,4 +153,10 @@ export class OpenAIEventSourceModel<Result = any> implements IDisposable {
   private setError(error?: Error) {
     this.error = error;
   }
+}
+
+export function createIdentityOpenAIEventSourceModel() {
+  return new OpenAIEventSourceModel<string>({
+    decode: result => result,
+  });
 }
