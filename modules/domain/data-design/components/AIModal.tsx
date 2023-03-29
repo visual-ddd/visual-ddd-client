@@ -35,6 +35,10 @@ const placeholder = [
   '请描述你的业务场景，例如：我是一个电商平台，我有一个订单系统，订单系统有一个订单列表，订单列表有一个订单详情，订单详情有一个订单状态，订单状态有一个订单状态名称，订单状态名称有一个订单状态名称值',
 ];
 
+/**
+ * TODO: 移除
+ * @deprecated 使用 chat bot 代替
+ */
 export const AIModal = observer(function AIModal(props: AIModalProps) {
   const [visible, setVisible] = useState(false);
   const { model } = useEditorModel();

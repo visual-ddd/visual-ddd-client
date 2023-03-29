@@ -22,10 +22,10 @@ import { UbiquitousLanguage } from '../ubiquitous-language-design';
 import { ProductDesign } from '../product-design';
 import { MapperEditor } from '../mapper-design';
 
-import { DomainDesignerContextProvider } from './Context';
 import { DomainDesignerHeader } from './Header';
 import { DomainDesignerLoading } from './Loading';
 import { DomainDesignerTabs, DomainDesignerTabsMap, DomainDesignerModel } from './model';
+import { DesignerContextProvider } from '@/lib/designer';
 
 export interface DomainDescription {
   id: string | number;
@@ -272,7 +272,7 @@ const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerPro
   usePreventUnload(!readonly);
 
   return (
-    <DomainDesignerContextProvider value={model}>
+    <DesignerContextProvider model={model}>
       <UbiquitousLanguageCompletionProvider list={ubiquitousLanguages}>
         <CompletionContextProvider words={autoCompletionWords}>
           <DesignerLayout
@@ -294,7 +294,7 @@ const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerPro
           </DesignerLayout>
         </CompletionContextProvider>
       </UbiquitousLanguageCompletionProvider>
-    </DomainDesignerContextProvider>
+    </DesignerContextProvider>
   );
 });
 

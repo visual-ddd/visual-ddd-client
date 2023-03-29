@@ -4,7 +4,7 @@ import { Mentions, message } from 'antd';
 import type { MentionsRef } from 'antd/es/mentions';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 
 import { useBotContext } from './Context';
 import s from './Prompt.module.scss';
@@ -19,6 +19,7 @@ const AUTO_SIZE = {
 const UNREACHABLE_PREFIX = '$$_$__$$$$__$_$';
 
 export const Prompt = observer(function Prompt() {
+  const rootRef = useRef<HTMLDivElement>(null);
   const bot = useBotContext();
   const mentionsRef = useRef<MentionsRef>(null);
   const isMacOs = useIsMacos();
@@ -27,9 +28,19 @@ export const Prompt = observer(function Prompt() {
     : '说点什么吧。 输入 # 使用指令, Ctrl + Enter 发送消息';
   const SEND_PLACEHOLDER = isMacOs ? 'Command + Enter 发送消息' : 'Ctrl + Enter 发送消息';
 
-  const options = bot.availableExtensionsExceptGlobal.map(i => {
-    return { label: i.match, value: i.match, key: i.key };
-  });
+  const options = useMemo(() => {
+    return bot.availableExtensionsExceptGlobal.map(i => {
+      return {
+        label: (
+          <div>
+            <span className="u-link">#{i.match}</span>
+          </div>
+        ),
+        value: i.match,
+        key: i.key,
+      };
+    });
+  }, [bot.availableExtensionsExceptGlobal]);
 
   const enableMention = bot.prompt.match(/^(#[^\s#]*)?$/);
   const disabled = !bot.prompt.trim();
@@ -71,7 +82,7 @@ export const Prompt = observer(function Prompt() {
   useEffect(focus, []);
 
   return (
-    <div className={s.root}>
+    <div className={s.root} ref={rootRef}>
       <div className={s.prompt}>
         <Mentions
           ref={mentionsRef}
@@ -79,6 +90,7 @@ export const Prompt = observer(function Prompt() {
           autoSize={AUTO_SIZE}
           autoFocus
           value={bot.prompt}
+          getPopupContainer={() => rootRef.current!}
           onChange={bot.setPrompt}
           prefix={enableMention ? '#' : UNREACHABLE_PREFIX}
           notFoundContent="未找到相关指令"

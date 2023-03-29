@@ -94,22 +94,41 @@ export class EventStream implements IDisposable {
         throw new Error('Response body is null');
       }
 
-      const parser = createParser(evt => {
-        if (evt.type === 'event') {
-          this.options.onMessage(evt as any);
+      await new Promise<void>(async (resolve, reject) => {
+        let stop = false;
+        const fail = (reason: any) => {
+          if (stop) return;
+          stop = true;
+          reject(reason);
+        };
+
+        const parser = createParser(evt => {
+          if (stop) {
+            return;
+          }
+
+          if (evt.type === 'event') {
+            try {
+              this.options.onMessage(evt as any);
+            } catch (err) {
+              fail(err);
+            }
+          }
+        });
+
+        const reader = res.body!.getReader();
+        while (!stop) {
+          const { done, value } = await reader.read();
+
+          parser.feed(decoder.decode(value));
+
+          if (done) {
+            break;
+          }
         }
+
+        resolve();
       });
-
-      const reader = res.body.getReader();
-      while (true) {
-        const { done, value } = await reader.read();
-
-        parser.feed(decoder.decode(value));
-
-        if (done) {
-          break;
-        }
-      }
     } finally {
       this.abortController = undefined;
     }

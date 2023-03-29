@@ -1,6 +1,10 @@
 .root {
   display: flex;
   align-items: center;
+
+  :global(.ant-mentions-dropdown-menu-item-active) {
+    background-color: var(--vd-color-gray-300);
+  }
 }
 
 .prompt {

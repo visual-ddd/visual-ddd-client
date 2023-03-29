@@ -1,11 +1,6 @@
-import { createContext, useContext } from 'react';
+import { useDesignerContext } from '@/lib/designer';
 import { DomainDesignerModel } from './model';
 
-const CONTEXT = createContext<DomainDesignerModel | null>(null);
-CONTEXT.displayName = 'DomainDesignerContext';
-
 export function useDomainDesignerContext() {
-  return useContext(CONTEXT);
+  return useDesignerContext<DomainDesignerModel>();
 }
-
-export const DomainDesignerContextProvider = CONTEXT.Provider;

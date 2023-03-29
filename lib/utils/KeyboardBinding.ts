@@ -25,7 +25,19 @@ export interface KeyboardBindingDescriptor {
   key: string | string[] | { macos: string | string[]; other: string | string[] };
 
   /**
-   * 处理器
+   * 是否阻止默认行为，默认 true
+   */
+  preventDefault?: boolean;
+
+  /**
+   * 快捷键级别的 guard, 默认 true
+   * @returns
+   */
+  guard?: () => boolean;
+
+  /**
+   * 处理器, 默认会通过 preventDefault 阻止默认事件
+   * 可以通过 guard 决定是否阻止
    */
   handler: () => void;
 }
@@ -88,7 +100,7 @@ export class KeyboardBinding implements IDisposable {
     this.registry = registry;
 
     for (const desc of this.bound.values()) {
-      const { handler } = desc;
+      const { handler, guard, preventDefault = true } = desc;
       const finalKey = this.getBindingKey(desc);
 
       registry.bind(finalKey, e => {
@@ -96,9 +108,14 @@ export class KeyboardBinding implements IDisposable {
           return;
         }
 
-        if (e?.preventDefault) {
+        if (guard && !guard()) {
+          return;
+        }
+
+        if (preventDefault && e?.preventDefault) {
           e.preventDefault();
         }
+
         handler();
       });
     }

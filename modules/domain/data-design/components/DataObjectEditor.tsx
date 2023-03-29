@@ -19,7 +19,7 @@ import { DataObjectEditorModel } from '../model/DataObjectEditorModel';
 import { DomainObjectReferenceEdges } from './DataObjectReferenceEdges';
 import { ShapeTitle } from './ShapeTitle';
 import { ShapeTree } from './ShapeTree';
-import { AIModal } from './AIModal';
+import { useDataDesignBot } from '../bot-extension';
 
 export interface DataObjectEditorProps {
   /**
@@ -32,6 +32,12 @@ export interface DataObjectEditorProps {
    */
   active?: boolean;
 }
+
+const Bot = () => {
+  useDataDesignBot();
+
+  return null;
+};
 
 /**
  * 数据模型编辑器
@@ -63,15 +69,12 @@ export const DataObjectEditor = observer(function DataObjectEditor(props: DataOb
                 )
               }
               right={<EditorInspectPanel />}
-              toolbar={
-                <EditorToolbar>
-                  <AIModal />
-                </EditorToolbar>
-              }
+              toolbar={<EditorToolbar></EditorToolbar>}
             >
               <Canvas>
                 {/* 扩展连线 */}
                 <DomainObjectReferenceEdges />
+                <Bot />
               </Canvas>
             </EditorLayout>
           </EditorConfigurationProvider>

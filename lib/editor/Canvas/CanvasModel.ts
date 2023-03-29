@@ -401,6 +401,9 @@ export class CanvasModel implements IDisposable {
           title: '拷贝',
           description: '拷贝选中图形',
           key: { macos: 'command+c', other: 'ctrl+c' },
+          guard: () => {
+            return this.graphHovering;
+          },
           handler: this.handleCopy,
         })
         .bindKey({
@@ -686,7 +689,7 @@ export class CanvasModel implements IDisposable {
   };
 
   handleMouseLeave = () => {
-    this.graphHovering = true;
+    this.graphHovering = false;
   };
 
   handleBlankContextMenu: GraphBindingProps['onBlank$Contextmenu'] = evt => {

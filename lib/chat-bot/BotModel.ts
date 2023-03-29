@@ -1,10 +1,11 @@
 import { action, makeObservable, observable } from 'mobx';
-import { captureException } from '@sentry/nextjs';
+import { captureException, addBreadcrumb } from '@sentry/nextjs';
 import { v4 } from 'uuid';
 import { Disposer } from '@wakeapp/utils';
 import { IDisposable, tryDispose } from '@/lib/utils';
-import { command, derive, makeAutoBindThis, mutation } from '@/lib/store';
+import { command, derive, effect, makeAutoBindThis, mutation } from '@/lib/store';
 import findLastIndex from 'lodash/findLastIndex';
+import type { OpenAIEventSourceModel } from '@/lib/openai-event-source';
 
 import { ExtensionType, GLOBAL_EXTENSION_KEY, IBot, Role } from './protocol';
 import type { Extension, Message } from './protocol';
@@ -135,8 +136,8 @@ export class BotModel implements IDisposable, IBot {
   /**
    * 提交 prompt
    */
-  @command('COMMIT')
-  commit() {
+  @effect('COMMIT')
+  async commit() {
     if (!this.prompt.trim()) {
       return;
     }
@@ -187,34 +188,39 @@ export class BotModel implements IDisposable, IBot {
 
       const resMsg = this.getMessageById(responseMessageId)!;
 
-      response.result
-        .then(() => {
+      // 保留话题
+      if (extension !== this.defaultExtension) {
+        this.setPrompt(`#${extension.match} `);
+      } else {
+        this.setPrompt('');
+      }
+
+      try {
+        await response.result;
+        if (extension.type === ExtensionType.Message) {
           this.updateMessageContent(responseMessageId, response.eventSource.result);
-        })
-        .catch(err => {
-          console.error(`[BotModel] commit error: `, err);
+        }
+      } catch (err) {
+        console.error(`[BotModel] commit error: `, err);
 
-          if (err instanceof DOMException && err.name === 'AbortError') {
-            // 用户终止了
-            return;
-          }
+        if (err instanceof DOMException && err.name === 'AbortError') {
+          // 用户终止了
+          return;
+        }
 
-          // 回复错误信息
-          const errorMessage = `❌ 抱歉，出现了错误: ${err.message}`;
-          captureException(err);
+        // 回复错误信息
+        const errorMessage = `❌ 抱歉，出现了错误: ${(err as Error).message}`;
+        this.captureException(err as Error, resMsg, response.eventSource);
 
-          if (extension.type === ExtensionType.Message) {
-            this.updateMessageContent(responseMessageId, errorMessage);
-          } else {
-            this.responseMessage(errorMessage, extension);
-          }
-        })
-        .finally(() => {
-          this.resetMessagePending(responseMessageId);
-          this.event.emit('MESSAGE_FINISHED', { message: resMsg });
-        });
-
-      this.setPrompt('');
+        if (extension.type === ExtensionType.Message) {
+          this.updateMessageContent(responseMessageId, errorMessage);
+        } else {
+          this.responseMessage(errorMessage, extension);
+        }
+      } finally {
+        this.resetMessagePending(responseMessageId);
+        this.event.emit('MESSAGE_FINISHED', { message: resMsg });
+      }
     } catch (err) {
       console.error(err);
       captureException(err);
@@ -238,14 +244,16 @@ export class BotModel implements IDisposable, IBot {
    * @param message
    * @param extension
    */
-  @mutation('ADD_MESSAGE', false)
+  @command('ADD_MESSAGE')
   responseMessage(message: string, extension?: Extension): void {
-    this.addMessage({
-      uuid: v4(),
-      role: Role.Assistant,
-      content: message,
-      timestamp: Date.now(),
-      extension: (extension && this.activeExtension)?.key,
+    Promise.resolve().then(() => {
+      this.addMessage({
+        uuid: v4(),
+        role: Role.Assistant,
+        content: message,
+        timestamp: Date.now(),
+        extension: (extension && this.activeExtension)?.key,
+      });
     });
   }
 
@@ -366,5 +374,20 @@ export class BotModel implements IDisposable, IBot {
     const pendingTasks = Array.from(this.pending.values());
     this.pending.clear();
     pendingTasks.forEach(i => i());
+  }
+
+  private captureException(err: Error, message: Message, source: OpenAIEventSourceModel) {
+    addBreadcrumb({
+      category: 'openai-ask',
+      message: message.content,
+      level: 'info',
+    });
+    addBreadcrumb({
+      category: 'openai-response',
+      message: source.result,
+      level: 'info',
+    });
+
+    captureException(err);
   }
 }

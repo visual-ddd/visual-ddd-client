@@ -100,17 +100,13 @@ export class OpenAIEventSourceModel<Result = any> implements IDisposable {
 
             const data = event.data as string;
 
-            try {
-              if (data === DONE) {
-                resolve(this.handleDone());
-              } else {
-                // FIXME: 这里耦合了 chat 接口协议
-                const payload = JSON.parse(data) as ChatCompletion;
-                const result = this.result + payload.choices.map(choice => choice.delta.content ?? '').join('');
-                this.setResult(result);
-              }
-            } catch (err) {
-              reject(err);
+            if (data === DONE) {
+              resolve(this.handleDone());
+            } else {
+              // FIXME: 这里耦合了 chat 接口协议
+              const payload = JSON.parse(data) as ChatCompletion;
+              const result = this.result + payload.choices.map(choice => choice.delta.content ?? '').join('');
+              this.setResult(result);
             }
           },
         }));

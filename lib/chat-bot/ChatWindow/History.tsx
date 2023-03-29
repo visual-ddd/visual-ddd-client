@@ -49,16 +49,16 @@ const MessageItem = observer(function MessageItem(props: { item: Message }) {
       })}
       ref={elRef}
     >
-      <div className={s.content}>
-        {!!showExtension && <span className={s.extension}>#{extension}</span>}
-        {content || (showExtension ? undefined : <LoadingIcon className={s.loading} />)}
-        <MinusCircleFilled className={s.remove} onClick={remove} />
-      </div>
       {!!(item.pending && isCommand) && (
         <div className={s.pending}>
           <Loading model={item.pending?.response.eventSource} />
         </div>
       )}
+      <div className={s.content}>
+        {!!showExtension && <span className={s.extension}>#{extension}</span>}
+        {content || (showExtension ? undefined : <LoadingIcon className={s.loading} />)}
+        <MinusCircleFilled className={s.remove} onClick={remove} />
+      </div>
     </div>
   );
 });
@@ -98,19 +98,15 @@ export const History = observer(function History(props: HistoryProps) {
           <code>Visual DDD ChatBot</code> 是基于 <code>ChatGPT</code> 的聊天机器人，你可以问它任何关于 DDD
           的问题。基本用法如下：{' '}
         </p>
-        <p>
-          <ol>
-            <li>
-              {' '}
-              你可以使用快捷键(<code>Ctrl+shift+U</code> 或 MacOS 下 <code>Command+Shift+U</code>) 唤醒我
-            </li>
-            <li>
-              {' '}
-              我也支持一些特定的指令，你可以输入 <code>#</code> 选择并激活特定指令
-            </li>
-            <li> 随便聊聊吧 </li>
-          </ol>
-        </p>
+        <ol>
+          <li>
+            你可以使用快捷键(<code>Ctrl+shift+U</code> 或 MacOS 下 <code>Command+Shift+U</code>) 唤醒我
+          </li>
+          <li>
+            我也支持一些特定的指令，你可以输入 <code>#</code> 选择并激活特定指令
+          </li>
+          <li> 随便聊聊吧 </li>
+        </ol>
         <p>
           目前，
           <b>
