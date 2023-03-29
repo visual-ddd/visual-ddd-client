@@ -56,6 +56,8 @@ export interface Message {
 }
 
 export interface IBot {
+  availableExtensionsExceptGlobal: Extension[];
+
   /**
    * 最近的消息
    */
@@ -78,6 +80,11 @@ export interface IBot {
    * @param summary
    */
   updateSummary(messageId: string, summary: string): void;
+
+  /**
+   * 清理会话
+   */
+  clearHistory(): void;
 }
 
 export interface SendParams {
@@ -146,6 +153,11 @@ export interface Extension<T = any> {
    * 通常全局只能有一个默认的回复机器人
    */
   match?: string;
+
+  /**
+   * 描述
+   */
+  description: string;
 
   /**
    * 响应消息发送

@@ -1,3 +1,5 @@
+import './extensions';
+
 export * from './ChatWindow';
 export * from './protocol';
 export * from './BotModel';

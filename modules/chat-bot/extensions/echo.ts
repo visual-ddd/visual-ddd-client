@@ -10,6 +10,7 @@ registerExtension({
   key: 'ECHO',
   match: 'ECHO',
   type: ExtensionType.Command,
+  description: '你发送给我什么，我就返回给你什么',
   onSend({ message, bot, currentTarget }) {
     const disposer = new Disposer();
     const eventSource = new OpenAIEventSourceModel({ decode: i => i });

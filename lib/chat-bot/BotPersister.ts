@@ -63,6 +63,10 @@ export class BotPersister implements IDisposable {
       this.event.on('SIZE_CHANGE', params => {
         this.size = params.size;
         this.save();
+      }),
+      this.event.on('HISTORY_CLEARED', () => {
+        this.list = [];
+        this.save();
       })
     );
 

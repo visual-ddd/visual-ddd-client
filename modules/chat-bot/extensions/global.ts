@@ -10,6 +10,7 @@ import findLast from 'lodash/findLast';
 registerExtension({
   key: GLOBAL_EXTENSION_KEY,
   type: ExtensionType.Message,
+  description: '随便聊聊',
   onSend({ message, bot }) {
     const disposer = new Disposer();
     const context = bot.getRecentlyMessages();

@@ -101,9 +101,7 @@ export class BotModel implements IDisposable, IBot {
       () => tryDispose(this.keybinding),
       () => tryDispose(this.persister),
       () => {
-        const pendingTasks = Array.from(this.pending.values());
-        this.pending.clear();
-        pendingTasks.forEach(i => i());
+        this.clearPendingTask();
       },
       registry.subscribe(() => {
         this.setAvailableExtensions();
@@ -317,6 +315,17 @@ export class BotModel implements IDisposable, IBot {
     this.size = storage.size;
   }
 
+  /**
+   * 清理消息
+   */
+  @mutation('CLEAR_HISTORY', false)
+  clearHistory(): void {
+    this.history = [];
+    this.clearPendingTask();
+
+    this.event.emit('HISTORY_CLEARED');
+  }
+
   @action
   private updateMessageContent(id: string, content: string) {
     const message = this.history.find(i => i.uuid === id);
@@ -351,5 +360,11 @@ export class BotModel implements IDisposable, IBot {
     }
 
     return value;
+  }
+
+  private clearPendingTask() {
+    const pendingTasks = Array.from(this.pending.values());
+    this.pending.clear();
+    pendingTasks.forEach(i => i());
   }
 }

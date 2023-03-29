@@ -32,6 +32,7 @@ interface ChatCompletion {
 const DONE = '[DONE]';
 
 export interface OpenAIEventSourceModelOptions<Result = any> {
+  initialMessage?: string;
   decode: (result: string) => Result;
 }
 
@@ -55,6 +56,10 @@ export class OpenAIEventSourceModel<Result = any> implements IDisposable {
 
   constructor(options: OpenAIEventSourceModelOptions<Result>) {
     this.options = options;
+
+    if (this.options.initialMessage) {
+      this.result = this.options.initialMessage;
+    }
 
     makeAutoBindThis(this);
     makeObservable(this);
@@ -158,5 +163,12 @@ export class OpenAIEventSourceModel<Result = any> implements IDisposable {
 export function createIdentityOpenAIEventSourceModel() {
   return new OpenAIEventSourceModel<string>({
     decode: result => result,
+  });
+}
+
+export function createStaticOpenAIEventSourceModel<Result = any>(message: string, result: Result) {
+  return new OpenAIEventSourceModel<Result>({
+    initialMessage: message,
+    decode: () => result,
   });
 }
