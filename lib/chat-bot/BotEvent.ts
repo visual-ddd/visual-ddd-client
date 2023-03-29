@@ -29,6 +29,11 @@ export interface BotEventDefinitions {
    * 显示聊天窗
    */
   SHOW: never;
+
+  /**
+   * 尺寸变化
+   */
+  SIZE_CHANGE: { size: number };
 }
 
 export type BotEventsWithoutArg = EventsWithoutArg<BotEventDefinitions>;

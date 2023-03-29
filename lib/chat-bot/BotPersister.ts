@@ -4,21 +4,28 @@ import { IDisposable } from '../utils';
 import { cloneDeep, debounce, Disposer, omit } from '@wakeapp/utils';
 import { Message } from './protocol';
 import { toJS } from 'mobx';
+import { DEFAULT_SIZE } from './constants';
 
 const KEY = 'chat-bot';
 
 type PersistMessage = Omit<Message, 'pending'>;
+
+export interface BotStorage {
+  history: PersistMessage[];
+  size: number;
+}
 
 const OMIT_KEYS: (keyof Message)[] = ['pending'];
 
 export class BotPersister implements IDisposable {
   private event: BotEvent;
   private list: PersistMessage[] = [];
-  private onLoad: (list: PersistMessage[]) => void;
+  private onLoad: (list: BotStorage) => void;
+  private size: number = DEFAULT_SIZE;
 
   private disposer = new Disposer();
 
-  constructor(inject: { event: BotEvent; onLoad: (list: PersistMessage[]) => void }) {
+  constructor(inject: { event: BotEvent; onLoad: (data: BotStorage) => void }) {
     this.event = inject.event;
     this.onLoad = inject.onLoad;
 
@@ -52,14 +59,27 @@ export class BotPersister implements IDisposable {
         }
       }),
       this.event.on('MESSAGE_UPDATED', handleMessageUpdate),
-      this.event.on('MESSAGE_FINISHED', handleMessageUpdate)
+      this.event.on('MESSAGE_FINISHED', handleMessageUpdate),
+      this.event.on('SIZE_CHANGE', params => {
+        this.size = params.size;
+        this.save();
+      })
     );
 
-    const list = await localforage.getItem<Message[]>(KEY);
+    const data = await localforage.getItem<BotStorage>(KEY);
 
-    if (list) {
-      this.list = list;
-      this.onLoad(cloneDeep(list));
+    if (data) {
+      const { history, size } = data;
+      this.list = history ?? [];
+      this.size = size ?? DEFAULT_SIZE;
+
+      // 避免修改到原始数据
+      this.onLoad(
+        cloneDeep({
+          history: this.list,
+          size: this.size,
+        })
+      );
     }
   }
 
@@ -73,6 +93,9 @@ export class BotPersister implements IDisposable {
   private save = debounce(() => {
     this.list = this.list.slice(-100);
 
-    localforage.setItem(KEY, this.list);
+    localforage.setItem<BotStorage>(KEY, {
+      history: this.list,
+      size: this.size,
+    });
   }, 5000);
 }

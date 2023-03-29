@@ -13,7 +13,8 @@ import { BotEvent } from './BotEvent';
 import { BotKeyBinding } from './BotKeyBinding';
 import { extraMention } from './util';
 import { BotPersister } from './BotPersister';
-import { MAX_CONTEXT_MESSAGE } from './constants';
+import type { BotStorage } from './BotPersister';
+import { DEFAULT_SIZE, MAX_CONTEXT_MESSAGE } from './constants';
 
 /**
  * 机器人
@@ -30,6 +31,9 @@ export class BotModel implements IDisposable, IBot {
    * 待回收资源
    */
   private pending: Map<string, Function> = new Map();
+
+  @observable
+  size: number = DEFAULT_SIZE;
 
   @observable
   history: Message[] = [];
@@ -122,6 +126,12 @@ export class BotModel implements IDisposable, IBot {
   @command('SHOW')
   show() {
     this.event.emit('SHOW');
+  }
+
+  @mutation('SET_SIZE', false)
+  setSize(size: number) {
+    this.size = size;
+    this.event.emit('SIZE_CHANGE', { size });
   }
 
   /**
@@ -302,8 +312,9 @@ export class BotModel implements IDisposable, IBot {
   }
 
   @mutation('LOAD_HISTORY', false)
-  private loadHistory(history: Message[]) {
-    this.history = history;
+  private loadHistory(storage: BotStorage) {
+    this.history = storage.history;
+    this.size = storage.size;
   }
 
   @action
