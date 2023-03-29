@@ -1,3 +1,3 @@
 import './extensions';
 
-export { BotButton as default } from './BotButton';
+export { ShowBotWhenLogged as default } from './ShowBotWhenLogged';

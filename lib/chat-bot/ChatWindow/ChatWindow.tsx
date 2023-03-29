@@ -10,15 +10,17 @@ import { History } from './History';
 import { CloseOutlined } from '@ant-design/icons';
 import { BotModel } from '../BotModel';
 import { useEventBusListener } from '@/lib/hooks';
+import classNames from 'classnames';
 
 export interface ChatWindowProps {
   children?: React.ReactNode;
+  className?: string;
 }
 
 const MIN_WIDTH = 500;
 
 export const ChatWindow = observer(function ChatWindow(props: ChatWindowProps) {
-  const { children } = props;
+  const { children, className } = props;
   const [visible, setVisible] = useState(false);
   const bot = useMemo(() => new BotModel(), []);
 
@@ -83,7 +85,7 @@ export const ChatWindow = observer(function ChatWindow(props: ChatWindowProps) {
       <Drawer
         rootClassName={s.dialogRoot}
         open={visible}
-        className={s.dialog}
+        className={classNames(s.dialog, className)}
         title={null}
         mask={false}
         closable={false}

@@ -4,7 +4,7 @@ import { BotIcon } from './BotIcon';
 
 export const BotButton = () => {
   return (
-    <ChatWindow>
+    <ChatWindow className={'vd-chat-bot'}>
       <FloatButton icon={<BotIcon />} type="primary"></FloatButton>
     </ChatWindow>
   );
