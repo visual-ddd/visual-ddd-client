@@ -1,4 +1,5 @@
 import { Tiktoken } from '@dqbd/tiktoken/lite';
+import LRUCache from 'lru-cache';
 
 let encoding: Tiktoken | undefined;
 
@@ -12,7 +13,9 @@ export async function encode(text: string): Promise<Uint32Array> {
   return encoding.encode(text);
 }
 
-const cache: Map<string, number> = new Map();
+const cache = new LRUCache<string, number>({
+  max: 100,
+});
 
 export async function getTokenCount(text: string): Promise<number> {
   if (cache.has(text)) {

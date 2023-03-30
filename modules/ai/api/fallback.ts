@@ -1,7 +1,8 @@
 import { allowMethod } from '@/lib/api';
 import { createFailResponse } from '@/modules/backend-node';
 import { NextApiHandler } from 'next';
-import { chat, ChatMessage, ChatRole } from '../proxy';
+import { chat } from '../proxy';
+import { ChatMessage, ChatRole } from '../constants';
 
 type Payload = {
   text: string;

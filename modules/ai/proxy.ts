@@ -1,57 +1,11 @@
 import http from 'http';
 import https from 'https';
-import { NextApiResponse } from 'next';
 
 import { createFailResponse } from '../backend-node';
 
 import { OPENAI_API_KEY, OPENAI_BASE_PATH } from './config';
-
-const CHAT_API_ENDPOINT = '/chat/completions';
-
-export type ChatRole = 'system' | 'user' | 'assistant';
-
-export interface ChatMessage {
-  role: ChatRole;
-  content: string;
-}
-
-export interface ChatOptions {
-  /**
-   * 模型名，默认为 gpt-3.5-turbo
-   * TODO: GPT 4 支持
-   */
-  model?: 'gpt-3.5-turbo' | 'gpt-3.5-turbo-0301';
-
-  /**
-   * 消息
-   * 即最近的聊天记录
-   */
-  messages: ChatMessage[];
-
-  /**
-   * 随机性，默认为 1
-   */
-  temperature?: number;
-
-  /**
-   * 最大token 限制
-   */
-  max_tokens?: number;
-
-  /**
-   * 代理的响应对象
-   */
-  pipe: NextApiResponse;
-}
-
-export interface ErrorResponse {
-  error: {
-    message: string;
-    type: string;
-    param?: any;
-    code?: any;
-  };
-}
+import { countToken, normalizeModel } from './encoding';
+import { ChatModel, DEFAULT_MAX_TOKEN, MAX_TOKENS, ChatOptions, CHAT_API_ENDPOINT, ErrorResponse } from './constants';
 
 function getAgent(url: URL) {
   if (url.protocol === 'https:') {
@@ -72,10 +26,22 @@ function getAgent(url: URL) {
  * }
  */
 export function chat(options: ChatOptions) {
-  const { model = 'gpt-3.5-turbo', pipe, ...other } = options;
+  let { model = ChatModel.GPT3_5_TURBO_0301, pipe, ...other } = options;
+
+  model = normalizeModel(model);
+  const token = countToken(options.messages, model);
+  const maxToken = MAX_TOKENS[model] ?? DEFAULT_MAX_TOKEN;
+
+  // 消息超长
+  if (token > maxToken) {
+    pipe.status(400).json(createFailResponse(400, '消息超长'));
+    return;
+  }
+
   const content = {
     stream: true,
     model,
+    max_tokens: maxToken - token,
     ...other,
   };
 
