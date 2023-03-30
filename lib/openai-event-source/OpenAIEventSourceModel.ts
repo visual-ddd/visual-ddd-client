@@ -141,7 +141,7 @@ export class OpenAIEventSourceModel<Result = any> implements IDisposable {
   }
 
   @action
-  private setResult(result: string) {
+  setResult(result: string) {
     this.result = result;
   }
 

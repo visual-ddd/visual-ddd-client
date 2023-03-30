@@ -212,6 +212,7 @@ export class BaseEditorModel implements IDisposable {
 
   /**
    * 数据验证
+   * 如果验证失败则返回 true
    * @returns
    */
   validate() {

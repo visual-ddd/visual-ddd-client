@@ -56,7 +56,7 @@ const MessageItem = observer(function MessageItem(props: { item: Message }) {
       )}
       <div className={s.content}>
         {!!showExtension && <span className={s.extension}>#{extension}</span>}
-        {content || (showExtension ? undefined : <LoadingIcon className={s.loading} />)}
+        {content || (showExtension && !item.pending ? undefined : <LoadingIcon className={s.loading} />)}
         <MinusCircleFilled className={s.remove} onClick={remove} />
       </div>
     </div>

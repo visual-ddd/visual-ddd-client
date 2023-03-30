@@ -1,6 +1,5 @@
 import { allowMethod } from '@/lib/api';
 import { createFailResponse } from '@/modules/backend-node';
-import { delay } from '@wakeapp/utils';
 import { NextApiHandler } from 'next';
 import { chat } from '../proxy';
 
@@ -11,8 +10,6 @@ export const summary: NextApiHandler = allowMethod('POST', async (req, res) => {
     res.status(400).json(createFailResponse(400, 'text is required'));
     return;
   }
-
-  await delay(10000);
 
   chat({
     pipe: res,
