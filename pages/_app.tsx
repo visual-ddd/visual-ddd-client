@@ -15,6 +15,7 @@ import 'antd/dist/reset.css';
 import '../styles/theme.css';
 import '../styles/globals.css';
 import '../styles/override.css';
+import '../styles/markdown.scss';
 
 configure({
   enforceActions: 'always',

@@ -74,7 +74,7 @@ export class BotPersister implements IDisposable {
 
     if (data) {
       const { history, size } = data;
-      this.list = history ?? [];
+      this.list = (history ?? []).filter(i => i.content);
       this.size = size ?? DEFAULT_SIZE;
 
       // 避免修改到原始数据

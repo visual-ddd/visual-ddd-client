@@ -1,10 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
+import { Markdown } from '@/lib/components/Markdown';
 import { useEventBusListener } from '@/lib/hooks';
 import { Loading, LoadingIcon } from '@/lib/openai-event-source';
 import { MinusCircleFilled } from '@ant-design/icons';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { Message, Role, ExtensionType, GLOBAL_EXTENSION_KEY } from '../protocol';
 
 import { useBotContext } from './Context';
@@ -41,6 +42,14 @@ const MessageItem = observer(function MessageItem(props: { item: Message }) {
     }
   }, [item.pending, content, isLastItem]);
 
+  const normalizedContent = useMemo(() => {
+    if (showExtension) {
+      return `\`#${extension}\` ${content}`;
+    } else {
+      return content;
+    }
+  }, [showExtension, extension, content]);
+
   return (
     <div
       className={classNames(s.item, {
@@ -55,8 +64,11 @@ const MessageItem = observer(function MessageItem(props: { item: Message }) {
         </div>
       )}
       <div className={s.content}>
-        {!!showExtension && <span className={s.extension}>#{extension}</span>}
-        {content || (showExtension && !item.pending ? undefined : <LoadingIcon className={s.loading} />)}
+        {content ? (
+          <Markdown content={normalizedContent} className="dark"></Markdown>
+        ) : showExtension && !item.pending ? undefined : (
+          <LoadingIcon className={s.loading} />
+        )}
         <MinusCircleFilled className={s.remove} onClick={remove} />
       </div>
     </div>
