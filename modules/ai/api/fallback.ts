@@ -3,15 +3,11 @@ import { createFailResponse } from '@/modules/backend-node';
 import { NextApiHandler } from 'next';
 import { chat, ChatMessage, ChatRole } from '../proxy';
 
-type Payload =
-  | {
-      text: string;
-      summary: string;
-    }
-  | {
-      text: string;
-      context: [string, string][];
-    };
+type Payload = {
+  text: string;
+  summary?: string;
+  context: [string, string][];
+};
 
 export const fallback: NextApiHandler = allowMethod('POST', async (req, res) => {
   const payload = req.body as Payload;
@@ -34,12 +30,14 @@ export const fallback: NextApiHandler = allowMethod('POST', async (req, res) => 
 - 使用 ‘#列举指令’ 可以列举所有支持的指令。 `,
   });
 
-  if ('summary' in payload) {
+  if (payload.summary) {
     messages.push({
       role: 'user',
       content: `以上是之前聊天对话的总结：\n${payload.summary}`,
     });
-  } else if ('context' in payload) {
+  }
+
+  if (payload.context) {
     payload.context.forEach(([role, value]) => {
       messages.push({
         role: role as ChatRole,

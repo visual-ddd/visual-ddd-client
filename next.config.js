@@ -71,6 +71,15 @@ const nextConfig = {
     'rc-tooltip',
   ],
   experimental: {},
+  webpack(config, { isServer, dev }) {
+    // 支持 WebAssembly
+    config.experiments = {
+      asyncWebAssembly: true,
+      layers: true,
+    };
+
+    return config;
+  },
   sentry: {
     // 禁止 sentry source map 上传
     hideSourcemaps: false,

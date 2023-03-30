@@ -46,7 +46,7 @@ export const Prompt = observer(function Prompt() {
   const disabled = !bot.prompt.trim();
   const pending = bot.pendingHistory.length > 3;
 
-  const commit = () => {
+  const commit = async () => {
     if (disabled) {
       return;
     }
@@ -56,7 +56,12 @@ export const Prompt = observer(function Prompt() {
       return;
     }
 
-    bot.commit();
+    try {
+      await bot.commit();
+    } catch (err) {
+      console.error(err);
+      message.error((err as Error).message);
+    }
   };
 
   const handleKeyUp = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {

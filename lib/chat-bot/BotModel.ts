@@ -1,13 +1,12 @@
 import { action, makeObservable, observable } from 'mobx';
 import { captureException, addBreadcrumb } from '@sentry/nextjs';
 import { v4 } from 'uuid';
-import { Disposer } from '@wakeapp/utils';
+import { Disposer, NoopArray } from '@wakeapp/utils';
 import { IDisposable, tryDispose } from '@/lib/utils';
 import { command, derive, effect, makeAutoBindThis, mutation } from '@/lib/store';
-import findLastIndex from 'lodash/findLastIndex';
 import type { OpenAIEventSourceModel } from '@/lib/openai-event-source';
 
-import { ExtensionType, GLOBAL_EXTENSION_KEY, IBot, Role } from './protocol';
+import { ChatContext, ExtensionType, GLOBAL_EXTENSION_KEY, IBot, Role } from './protocol';
 import type { Extension, Message } from './protocol';
 import { registry } from './registry';
 import { BotEvent } from './BotEvent';
@@ -15,7 +14,9 @@ import { BotKeyBinding } from './BotKeyBinding';
 import { extraMention } from './util';
 import { BotPersister } from './BotPersister';
 import type { BotStorage } from './BotPersister';
-import { DEFAULT_SIZE, MAX_CONTEXT_MESSAGE } from './constants';
+import { DEFAULT_WINDOW_SIZE, MAX_CONTEXT_PROMPT_LENGTH, MAX_CONTEXT_MESSAGE } from './constants';
+import { calculateContext } from './chat-context';
+import { getTokenCount } from './tokenizer';
 
 /**
  * 机器人
@@ -34,7 +35,7 @@ export class BotModel implements IDisposable, IBot {
   private pending: Map<string, Function> = new Map();
 
   @observable
-  size: number = DEFAULT_SIZE;
+  size: number = DEFAULT_WINDOW_SIZE;
 
   @observable
   history: Message[] = [];
@@ -143,7 +144,12 @@ export class BotModel implements IDisposable, IBot {
     }
 
     const message = this.getNormalizedPrompt();
+    const token = await this.countToken(message);
     const extension = this.activeExtension;
+
+    if (token > MAX_CONTEXT_PROMPT_LENGTH) {
+      throw new Error('文本长度过长，请裁剪后发送');
+    }
 
     try {
       const response = extension.onSend({ message, bot: this, currentTarget: extension });
@@ -158,6 +164,7 @@ export class BotModel implements IDisposable, IBot {
           content: message,
           timestamp: Date.now(),
           extension: extension.key,
+          token,
         });
 
         this.addMessage({
@@ -179,6 +186,7 @@ export class BotModel implements IDisposable, IBot {
           content: message,
           timestamp: Date.now(),
           extension: extension.key,
+          token,
           pending: {
             extension,
             response,
@@ -264,19 +272,25 @@ export class BotModel implements IDisposable, IBot {
   /**
    * 获取上下文信息
    */
-  getRecentlyMessages() {
-    const lastSummaryIndex = findLastIndex(this.history, i => !!i.summary);
+  getChatContext(prompt: string): Promise<ChatContext> {
+    // 拷贝一下，避免 history 后面修改了
+    return calculateContext(prompt, this.history.slice(-(MAX_CONTEXT_MESSAGE * 2)));
+  }
 
-    const sliced = this.history.slice(lastSummaryIndex + 1);
-
-    const filtered = sliced.filter(i => !i.pending).slice(-MAX_CONTEXT_MESSAGE);
-
-    if (filtered.length < MAX_CONTEXT_MESSAGE && lastSummaryIndex > 0) {
-      // 补全
-      filtered.unshift(this.history[lastSummaryIndex]);
+  /**
+   * 获取待总结的消息
+   * @param target
+   * @returns
+   */
+  async getMessagesToSummary(target: Message): Promise<Message[]> {
+    const index = this.history.findIndex(i => i.uuid === target.uuid);
+    if (index === -1) {
+      return NoopArray;
     }
 
-    return filtered;
+    const { messages } = await calculateContext('', this.history.slice(0, index + 1));
+
+    return messages;
   }
 
   /**
@@ -284,14 +298,8 @@ export class BotModel implements IDisposable, IBot {
    * @param message
    * @returns
    */
-  countToken(message: string[]): number {
-    return message.reduce((acc, cur) => {
-      const token = cur.trim();
-      if (token) {
-        return acc + token.length;
-      }
-      return acc;
-    }, 0);
+  countToken(message: string): Promise<number> {
+    return getTokenCount(message);
   }
 
   @mutation('UPDATE_SUMMARY', false)
@@ -301,6 +309,17 @@ export class BotModel implements IDisposable, IBot {
       message.summary = summary;
       this.event.emit('MESSAGE_UPDATED', { message });
     }
+  }
+
+  /**
+   * 清理消息
+   */
+  @mutation('CLEAR_HISTORY', false)
+  clearHistory(): void {
+    this.history = [];
+    this.clearPendingTask();
+
+    this.event.emit('HISTORY_CLEARED');
   }
 
   /**
@@ -321,17 +340,6 @@ export class BotModel implements IDisposable, IBot {
   private loadHistory(storage: BotStorage) {
     this.history = storage.history;
     this.size = storage.size;
-  }
-
-  /**
-   * 清理消息
-   */
-  @mutation('CLEAR_HISTORY', false)
-  clearHistory(): void {
-    this.history = [];
-    this.clearPendingTask();
-
-    this.event.emit('HISTORY_CLEARED');
   }
 
   @action

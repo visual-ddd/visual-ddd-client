@@ -4,7 +4,7 @@ import { IDisposable } from '../utils';
 import { cloneDeep, debounce, Disposer, omit } from '@wakeapp/utils';
 import { Message } from './protocol';
 import { toJS } from 'mobx';
-import { DEFAULT_SIZE } from './constants';
+import { DEFAULT_WINDOW_SIZE } from './constants';
 
 const KEY = 'chat-bot';
 
@@ -21,7 +21,7 @@ export class BotPersister implements IDisposable {
   private event: BotEvent;
   private list: PersistMessage[] = [];
   private onLoad: (list: BotStorage) => void;
-  private size: number = DEFAULT_SIZE;
+  private size: number = DEFAULT_WINDOW_SIZE;
 
   private disposer = new Disposer();
 
@@ -75,7 +75,7 @@ export class BotPersister implements IDisposable {
     if (data) {
       const { history, size } = data;
       this.list = (history ?? []).filter(i => i.content);
-      this.size = size ?? DEFAULT_SIZE;
+      this.size = size ?? DEFAULT_WINDOW_SIZE;
 
       // 避免修改到原始数据
       this.onLoad(

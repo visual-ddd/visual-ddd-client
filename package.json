@@ -31,6 +31,7 @@
     "@dnd-kit/core": "^6.0.8",
     "@dnd-kit/sortable": "^7.0.2",
     "@dnd-kit/utilities": "^3.2.1",
+    "@dqbd/tiktoken": "^1.0.2",
     "@sentry/nextjs": "^7.44.2",
     "@tiptap/core": "2.0.0-beta.220",
     "@tiptap/extension-code-block": "2.0.0-beta.220",

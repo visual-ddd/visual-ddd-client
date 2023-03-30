@@ -53,6 +53,19 @@ export interface Message {
    * 会话总结
    */
   summary?: string;
+
+  /**
+   * 计算出来的 token
+   */
+  token?: number;
+}
+
+export interface ChatContext {
+  prompt: string;
+  promptToken: number;
+  token: number;
+  messages: Message[];
+  recommendToSummary?: Message;
 }
 
 export interface IBot {
@@ -61,18 +74,18 @@ export interface IBot {
   /**
    * 最近的消息
    */
-  getRecentlyMessages(): Message[];
+  getChatContext(prompt: string): Promise<ChatContext>;
+
+  /**
+   * 获取需要总结的消息
+   * @param target
+   */
+  getMessagesToSummary(target: Message): Promise<Message[]>;
 
   /**
    * 向控制台发送消息
    */
   responseMessage(message: string, extension?: Extension): void;
-
-  /**
-   * 计算 Token
-   * @param message
-   */
-  countToken(message: string[]): number;
 
   /**
    * 设置消息的总结
