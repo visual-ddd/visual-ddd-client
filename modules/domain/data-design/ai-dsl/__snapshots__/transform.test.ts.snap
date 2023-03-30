@@ -1,0 +1,46 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`transform index 1`] = `
+"Table my_table (
+  in_primary_key: Long, PrimaryKey; #主键
+  in_string: String; #字符串
+  in_integer: Integer; #整数
+  in_not_null: Date, NotNull; #非空
+  my_name: String; #自定义属性名
+)
+
+Index my_table.MyIndex (
+	type: Normal;
+	method: BTREE;
+	fields: in_primary_key, in_string;
+)
+
+"
+`;
+
+exports[`transform simpleTable 1`] = `
+"#我的表格
+Table my_table (
+  in_primary_key: Long, PrimaryKey; #主键
+  in_string: String; #字符串
+  in_integer: Integer; #整数
+  in_not_null: Date, NotNull; #非空
+  my_name: String; #自定义属性名
+)
+
+"
+`;
+
+exports[`transform tableReference 1`] = `
+"Table a (
+  in_primary_key: Long, PrimaryKey; #主键
+  in_string: String; #字符串
+)
+
+Table untitled (
+  in_primary_key: Long, PrimaryKey; #主键
+  untitled: Reference(a.in_primary_key);
+)
+
+"
+`;
