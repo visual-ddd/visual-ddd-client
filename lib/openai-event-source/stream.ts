@@ -18,6 +18,13 @@ export interface EventStreamOptions {
   onMessage: (message: MessageEvent) => void;
 }
 
+function isAbort(err: any) {
+  if (err instanceof DOMException && err.name === 'AbortError') {
+    return true;
+  }
+  return false;
+}
+
 /**
  * 消费 SSE
  * 为什么不直接使用 EventSource 类?
@@ -116,19 +123,29 @@ export class EventStream implements IDisposable {
           }
         });
 
-        const reader = res.body!.getReader();
-        while (!stop) {
-          const { done, value } = await reader.read();
+        try {
+          const reader = res.body!.getReader();
+          while (!stop) {
+            const { done, value } = await reader.read();
 
-          parser.feed(decoder.decode(value));
+            parser.feed(decoder.decode(value));
 
-          if (done) {
-            break;
+            if (done) {
+              break;
+            }
           }
-        }
 
-        resolve();
+          resolve();
+        } catch (err) {
+          fail(err);
+        }
       });
+    } catch (err) {
+      if (isAbort(err)) {
+        return;
+      }
+
+      throw err;
     } finally {
       this.abortController = undefined;
     }

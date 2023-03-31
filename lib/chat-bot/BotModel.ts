@@ -110,6 +110,11 @@ export class BotModel implements IDisposable, IBot {
       })
     );
 
+    // 预热 encode, 这个需要加载较多的数据
+    setTimeout(() => {
+      this.countToken('');
+    }, 4000);
+
     // @ts-expect-error
     globalThis.__BOT__ = this;
   }
@@ -210,11 +215,6 @@ export class BotModel implements IDisposable, IBot {
         }
       } catch (err) {
         console.error(`[BotModel] commit error: `, err);
-
-        if (err instanceof DOMException && err.name === 'AbortError') {
-          // 用户终止了
-          return;
-        }
 
         // 回复错误信息
         const errorMessage = `❌ 抱歉，出现了错误: ${

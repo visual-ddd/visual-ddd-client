@@ -95,6 +95,12 @@ export const History = observer(function History(props: HistoryProps) {
         if (element) {
           scrollIntoView(element);
           return;
+        } else {
+          // 加一个延时，因为消息插入时 DOM 未必已经挂载
+          setTimeout(() => {
+            scrollToBottom();
+          }, 500);
+          return;
         }
       }
       if (containerRef.current) {
@@ -108,10 +114,7 @@ export const History = observer(function History(props: HistoryProps) {
       scrollToBottom();
     });
     on('MESSAGE_ADDED', ({ message }) => {
-      // 加一个延时，因为消息插入时 DOM 未必已经挂载
-      setTimeout(() => {
-        scrollToBottom(message.uuid);
-      }, 500);
+      scrollToBottom(message.uuid);
     });
   });
 
