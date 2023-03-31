@@ -1,55 +1,26 @@
-import { BaseEditorEvent, BaseEditorModel, BaseNode } from '@/lib/editor';
-import { debounce } from '@wakeapp/utils';
-import { NameDSL } from '../dsl';
-import { DomainObject } from './DomainObject';
+import { BaseEditorEvent, BaseEditorValidateManager, BaseEditorValidateManagerInject, BaseNode } from '@/lib/editor';
 import { DomainObjectEvent } from './DomainObjectEvent';
 import { DomainObjectStore } from './DomainObjectStore';
-
-enum CheckScope {
-  /**
-   * 命名校验
-   */
-  Name,
-
-  /**
-   * 根节点校验
-   */
-  Root,
-
-  /**
-   * 完整校验
-   */
-  Full,
-
-  /**
-   * 不需要处理
-   */
-  Never,
-}
 
 /**
  * 校验管理器
  */
-export class DomainValidateManager {
+export class DomainValidateManager extends BaseEditorValidateManager {
   private event: BaseEditorEvent;
   private domainObjectEvent: DomainObjectEvent;
-  private editorModel: BaseEditorModel;
   private store: DomainObjectStore;
 
-  /**
-   * 请求队列
-   */
-  private queue: Map<string, Set<CheckScope>> = new Map();
+  constructor(
+    inject: {
+      event: BaseEditorEvent;
+      store: DomainObjectStore;
+      domainObjectEvent: DomainObjectEvent;
+    } & BaseEditorValidateManagerInject
+  ) {
+    super(inject);
 
-  constructor(inject: {
-    event: BaseEditorEvent;
-    editorModel: BaseEditorModel;
-    store: DomainObjectStore;
-    domainObjectEvent: DomainObjectEvent;
-  }) {
     this.domainObjectEvent = inject.domainObjectEvent;
     this.event = inject.event;
-    this.editorModel = inject.editorModel;
     this.store = inject.store;
 
     this.eventHandler();
@@ -62,7 +33,7 @@ export class DomainValidateManager {
     this.event.on('NODE_CREATED', evt => {
       const { node } = evt;
 
-      this.checkFull(node);
+      this.checkFull(node.id);
       this.cancelNever(node.id);
     });
 
@@ -91,7 +62,7 @@ export class DomainValidateManager {
     this.event.on('NODE_REMOVED', evt => {
       // IGNORE
       const { node } = evt;
-      this.push(node.id, CheckScope.Never);
+      this.checkNever(node.id);
     });
 
     /**
@@ -101,7 +72,7 @@ export class DomainValidateManager {
       const { node } = evt;
 
       // 全量检查自身
-      this.checkFull(node);
+      this.checkFull(node.id);
 
       // 检查名冲突
       this.checkNameConflict(node);
@@ -132,18 +103,14 @@ export class DomainValidateManager {
    * @param node
    */
   private handleRelationShipChange(node: BaseNode) {
-    this.push(node.id, CheckScope.Root);
-    this.push(node.id, CheckScope.Name);
+    this.checkRoot(node.id);
+    this.checkName(node.id);
 
     // 检查依赖关系
     this.checkDependencies(node);
 
     // 检查容器, 同级别命名冲突
     this.checkNameConflict(node);
-  }
-
-  private checkFull(node: BaseNode) {
-    this.push(node.id, CheckScope.Full);
   }
 
   private checkDependencies(node: BaseNode) {
@@ -154,7 +121,7 @@ export class DomainValidateManager {
 
     // 触发依赖关系检查
     for (const obj of object.objectsDependentOnMe) {
-      this.push(obj.id, CheckScope.Root);
+      this.checkRoot(obj.id);
     }
   }
 
@@ -165,84 +132,16 @@ export class DomainValidateManager {
     }
 
     // 自身命名检查
-    this.push(object.id, CheckScope.Name);
+    this.checkName(object.id);
 
     // 容器检查
     if (object.package) {
-      this.push(object.package.id, CheckScope.Root);
+      this.checkRoot(object.package.id);
     }
 
     // 同作用域命名冲突检查
     for (const obj of object.objectInSameNameScope) {
-      this.push(obj.id, CheckScope.Name);
+      this.checkName(obj.id);
     }
-  }
-
-  private push(id: string, scope: CheckScope) {
-    if (!this.queue.has(id)) {
-      this.queue.set(id, new Set([scope]));
-    } else {
-      this.queue.get(id)?.add(scope);
-    }
-
-    this.validate();
-  }
-
-  private cancelNever(id: string) {
-    if (this.queue.has(id)) {
-      this.queue.get(id)?.delete(CheckScope.Never);
-    }
-  }
-
-  /**
-   * 进行验证
-   */
-  private validate = debounce(() => {
-    const queue = this.queue;
-    this.queue = new Map();
-
-    for (const [id, scopes] of queue) {
-      const object = this.store.getObjectById(id);
-      if (!object) {
-        continue;
-      }
-
-      if (scopes.has(CheckScope.Never)) {
-        // 已删除，不需要验证
-        continue;
-      }
-
-      if (scopes.has(CheckScope.Full)) {
-        // 全量检查
-        this.validateFull(object);
-      } else {
-        if (scopes.has(CheckScope.Name)) {
-          this.validateName(object);
-        }
-
-        if (scopes.has(CheckScope.Root)) {
-          this.validateRoot(object);
-        }
-      }
-    }
-  }, 600);
-
-  private validateFull(object: DomainObject<NameDSL>) {
-    console.log(`---- check full: ${object.id}  ${object.readableTitle}  ----`);
-    return this.getFormModel(object)?.validateAll();
-  }
-
-  private validateName(object: DomainObject<NameDSL>) {
-    console.log(`---- check name: ${object.id} ${object.readableTitle} ----`);
-    return this.getFormModel(object)?.validateField('name');
-  }
-
-  private validateRoot(object: DomainObject<NameDSL>) {
-    console.log(`---- check root: ${object.id}  ${object.readableTitle}  ----`);
-    return this.getFormModel(object)?.validateRoot();
-  }
-
-  private getFormModel(object: DomainObject<NameDSL>) {
-    return this.editorModel.formStore.getFormModel(object.id);
   }
 }

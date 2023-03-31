@@ -60,6 +60,9 @@ defineShape({
   description: '命令',
   icon: icon,
   shapeType: 'node',
+  validatorConfiguration: {
+    checkConflict: ['name', 'category'],
+  },
   rules: {
     fields: {
       [ROOT_FIELD]: {

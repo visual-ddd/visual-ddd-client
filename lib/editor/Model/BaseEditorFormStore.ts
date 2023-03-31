@@ -3,7 +3,7 @@ import { debounce } from '@wakeapp/utils';
 import { makeObservable, observable } from 'mobx';
 import { tryDispose } from '@/lib/utils';
 
-import { getRules } from '../Shape';
+import { getValidator } from '../Shape';
 
 import { BaseEditorEvent } from './BaseEditorEvent';
 import { BaseEditorModel } from './BaseEditorModel';
@@ -97,15 +97,16 @@ export class BaseEditorFormStore {
   @command('FORM_STORE:ADD_NODE')
   protected handleAddNode(params: { node: BaseNode }) {
     const { node } = params;
-    const rules = getRules(node.name);
+    const validator = getValidator(node.name);
 
     this.addFormModel({
       node,
       model: new FormModel({
         node,
-        rules: rules ?? DEFAULT_RULES,
+        rules: validator?.rules ?? DEFAULT_RULES,
         store: this.store,
         editorModel: this.editorModel,
+        configuration: validator?.validatorConfiguration,
       }),
     });
   }

@@ -4,6 +4,7 @@ import { debounce } from '@wakeapp/utils';
 enum CheckScope {
   /**
    * 命名校验
+   * TODO: 这个未来会重命名为 冲突(Conflict), 专门用于检查节点之间冲突，而不仅仅是命名
    */
   Name,
 
@@ -23,6 +24,10 @@ enum CheckScope {
   Never,
 }
 
+export interface BaseEditorValidateManagerInject {
+  editorModel: BaseEditorModel;
+}
+
 /**
  * 校验管理器
  * 实验性
@@ -37,7 +42,7 @@ export class BaseEditorValidateManager {
    */
   private queue: Map<string, Set<CheckScope>> = new Map();
 
-  constructor(inject: { editorModel: BaseEditorModel }) {
+  constructor(inject: BaseEditorValidateManagerInject) {
     this.editorModel = inject.editorModel;
   }
 
@@ -57,6 +62,14 @@ export class BaseEditorValidateManager {
    */
   protected checkFull(id: string) {
     this.push(id, CheckScope.Full);
+  }
+
+  /**
+   * 节点检查
+   * @param id
+   */
+  protected checkRoot(id: string) {
+    this.push(id, CheckScope.Root);
   }
 
   /**
@@ -118,7 +131,7 @@ export class BaseEditorValidateManager {
 
   protected validateName(object: FormModel) {
     console.log(`---- check name: ${object.id} ----`, object);
-    object.validateField('name');
+    object.validateConflict();
   }
 
   private validateRoot(object: FormModel) {

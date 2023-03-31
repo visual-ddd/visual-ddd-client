@@ -6,7 +6,7 @@ import { StaticImageData } from 'next/image';
 import { BaseEditorModel, BaseNode, Properties, ShapeType } from '../Model';
 import { CopyPayload } from '../Canvas/ClipboardUtils';
 import { EditorContextMenu } from '../Canvas/ContextMenuController';
-import { FormModel, FormRules } from '../Model/FormModel';
+import { FormModel, FormRules, ValidatorConfiguration } from '../Model/FormModel';
 
 export interface ShapeCoreInfo {
   type: string;
@@ -96,6 +96,11 @@ export interface ShapeConfiguration {
    * 验证规则
    */
   rules?: FormRules;
+
+  /**
+   * 扩展一些验证规则
+   */
+  validatorConfiguration?: ValidatorConfiguration;
 
   /**
    * 是否支持尺寸调整, 默认 false

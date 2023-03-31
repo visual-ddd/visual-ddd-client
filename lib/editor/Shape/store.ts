@@ -19,6 +19,15 @@ export function getShape(name: string): ShapeConfiguration | undefined {
  * @param name
  * @returns
  */
-export function getRules(name: string) {
-  return getShape(name)?.rules;
+export function getValidator(name: string) {
+  const shape = getShape(name);
+
+  if (shape) {
+    return {
+      rules: shape.rules,
+      validatorConfiguration: shape.validatorConfiguration,
+    };
+  }
+
+  return undefined;
 }

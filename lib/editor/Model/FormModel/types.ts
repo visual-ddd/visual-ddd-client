@@ -91,3 +91,34 @@ export interface FormRuleError {
   rule: FormRuleItem;
   message: string[];
 }
+
+export interface IValidator<T = any> {
+  /**
+   * 当前表单的所有值
+   */
+  readonly values: T;
+
+  /**
+   * 字段验证
+   * @param fieldPath
+   * @returns
+   */
+  validateField: (fieldPath: string) => any;
+
+  /**
+   * 验证所有
+   * @returns
+   */
+  validateAll: () => any;
+}
+
+/**
+ * 验证器配置
+ */
+export interface ValidatorConfiguration {
+  /**
+   * 自定义冲突检查规则
+   * 默认验证 name
+   */
+  checkConflict?: string | string[] | ((validator: IValidator) => void);
+}

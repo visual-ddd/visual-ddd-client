@@ -2,6 +2,7 @@ import { makeObservable, observable, runInAction } from 'mobx';
 import memoize from 'lodash/memoize';
 import { cloneDeep, debounce } from '@wakeapp/utils';
 import { command, derive, effect, makeAutoBindThis, mutation } from '@/lib/store';
+import { toArray } from '@/lib/utils';
 
 import { BaseNode } from '../BaseNode';
 import {
@@ -14,7 +15,7 @@ import {
   ruleToValidator,
   spreadPathPattern,
 } from './utils';
-import { FormRules, FormItemValidateStatus, FormRuleReportType } from './types';
+import { FormRules, FormItemValidateStatus, FormRuleReportType, ValidatorConfiguration, IValidator } from './types';
 import { BaseEditorStore } from '../BaseEditorStore';
 import { BaseEditorModel } from '../BaseEditorModel';
 import { ROOT_FIELD } from './constants';
@@ -25,12 +26,13 @@ import { StatusTree } from './StatusTree';
  * TODO: 验证上下文
  * TODO: 验证性能优化
  */
-export class FormModel {
+export class FormModel implements IValidator {
   readonly node: BaseNode;
 
   private rules: FormRules;
   private store: BaseEditorStore;
   private statusTree: StatusTree;
+  private configuration?: ValidatorConfiguration;
 
   /**
    * 更新队列
@@ -51,6 +53,13 @@ export class FormModel {
    */
   get properties() {
     return this.node.properties;
+  }
+
+  /**
+   * @alias properties
+   */
+  get values() {
+    return this.properties;
   }
 
   /**
@@ -113,9 +122,16 @@ export class FormModel {
     return this.errorType === FormRuleReportType.Warning;
   }
 
-  constructor(inject: { node: BaseNode; rules: FormRules; store: BaseEditorStore; editorModel: BaseEditorModel }) {
+  constructor(inject: {
+    node: BaseNode;
+    rules: FormRules;
+    configuration?: ValidatorConfiguration;
+    store: BaseEditorStore;
+    editorModel: BaseEditorModel;
+  }) {
     this.node = inject.node;
     this.store = inject.store;
+    this.configuration = inject.configuration;
 
     // 规范化规则
     const clone = cloneDeep(inject.rules);
@@ -214,6 +230,26 @@ export class FormModel {
   @effect('VALIDATE_ROOT')
   async validateRoot() {
     this.validateField(ROOT_FIELD);
+  }
+
+  /**
+   * 冲突检查
+   */
+  @effect('VALIDATE_CONFLICT')
+  async validateConflict() {
+    if (this.configuration?.checkConflict) {
+      if (typeof this.configuration.checkConflict === 'function') {
+        this.configuration.checkConflict(this);
+      } else {
+        const fields = toArray(this.configuration.checkConflict);
+        fields.forEach(i => {
+          this.validateField(i);
+        });
+      }
+    } else {
+      // 默认检查名称
+      this.validateField('name');
+    }
   }
 
   /**
