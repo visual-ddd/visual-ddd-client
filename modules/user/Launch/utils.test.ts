@@ -21,14 +21,14 @@ test('verifyRedirect', () => {
   expect(
     verifyRedirect('/organization/2', { accountOrganizationInfoList: [{ organizationDTO: { id: 1 } }] } as any)
   ).toBe(undefined);
-  expect(verifyRedirect('/team/1', { teamDTOList: [{ teamDTO: { id: 1, name: 'hello' } }] } as any)).toEqual({
+  expect(verifyRedirect('/team/1', { accountTeamInfoList: [{ teamDTO: { id: 1, name: 'hello' } }] } as any)).toEqual({
     entry: VDSessionEntry.Team,
     entryName: 'hello',
     isManager: false,
     entryId: 1,
   });
-  expect(verifyRedirect('/team/2', { teamDTOList: [{ teamDTO: { id: 1 } }] } as any)).toBe(undefined);
+  expect(verifyRedirect('/team/2', { accountTeamInfoList: [{ teamDTO: { id: 1 } }] } as any)).toBe(undefined);
 
   // 未知
-  expect(verifyRedirect('/unknown', { teamDTOList: [{ teamDTO: { id: 1 } }] } as any)).toBe(undefined);
+  expect(verifyRedirect('/unknown', { accountTeamInfoList: [{ teamDTO: { id: 1 } }] } as any)).toBe(undefined);
 });

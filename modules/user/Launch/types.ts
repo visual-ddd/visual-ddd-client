@@ -14,6 +14,6 @@ export interface AccountOrganizationInfoList {
 export interface LaunchInfo {
   id: number;
   isSysAdmin: boolean;
-  teamDTOList: TeamDTOList[];
+  accountTeamInfoList: TeamDTOList[];
   accountOrganizationInfoList: AccountOrganizationInfoList[];
 }

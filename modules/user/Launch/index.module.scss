@@ -68,3 +68,12 @@
     bottom: 0;
   }
 }
+
+.name {
+  flex: 1;
+}
+
+.subName {
+  color: var(--vd-color-gray-400);
+  justify-self: flex-end;
+}

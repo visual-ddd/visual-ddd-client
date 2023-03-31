@@ -49,8 +49,8 @@ export function verifyRedirect(from: string | undefined, launchInfo: LaunchInfo)
     }
 
     // 团队
-    if (path.startsWith('/team') && launchInfo.teamDTOList?.length) {
-      const team = launchInfo.teamDTOList.find(i => path.startsWith(`/team/${i.teamDTO.id}`));
+    if (path.startsWith('/team') && launchInfo.accountTeamInfoList?.length) {
+      const team = launchInfo.accountTeamInfoList.find(i => path.startsWith(`/team/${i.teamDTO.id}`));
 
       if (team) {
         return {

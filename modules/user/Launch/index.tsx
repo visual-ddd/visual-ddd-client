@@ -29,7 +29,7 @@ export function Launch({ data }: LaunchProps) {
   const router = useRouter();
   const session = useSession();
   const organizations = data.accountOrganizationInfoList;
-  const isEmpty = !data.isSysAdmin && !organizations.length && !data.teamDTOList.length;
+  const isEmpty = !data.isSysAdmin && !organizations.length && !data.accountTeamInfoList.length;
 
   const handleRefresh = () => {
     router.replace(router.asPath);
@@ -117,7 +117,7 @@ export function Launch({ data }: LaunchProps) {
             </>
           )}
 
-          {!!data.teamDTOList.length && (
+          {!!data.accountTeamInfoList.length && (
             <>
               <div className={s.head}>
                 <span className={s.logo}>
@@ -125,7 +125,7 @@ export function Launch({ data }: LaunchProps) {
                 </span>
                 团队
               </div>
-              {data.teamDTOList.map(item => {
+              {data.accountTeamInfoList.map(item => {
                 return (
                   <div
                     className={s.item}
@@ -139,7 +139,10 @@ export function Launch({ data }: LaunchProps) {
                       })
                     }
                   >
-                    {item.teamDTO.name}
+                    <span className={s.name}>{item.teamDTO.name}</span>
+                    {item.teamDTO.organizationDTO && (
+                      <div className={s.subName}>{item.teamDTO.organizationDTO.name}</div>
+                    )}
                     <ArrowRightOutlined className={s.arrow} />
                   </div>
                 );
