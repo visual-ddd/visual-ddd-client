@@ -2,7 +2,13 @@ import type { FormValidatorContext } from '@/lib/editor';
 import { getPaths } from '@/lib/utils';
 import { get } from '@wakeapp/utils';
 
-import { DomainObject, DomainEditorModel, DomainObjectFactory, IDomainObjectUnderAggregation } from '../model';
+import {
+  DomainObject,
+  DomainObjectCommand,
+  DomainEditorModel,
+  DomainObjectFactory,
+  IDomainObjectUnderAggregation,
+} from '../model';
 import { NameDSL } from './dsl';
 
 /**
@@ -140,6 +146,26 @@ export function checkSameTypeObjectNameConflict(value: string, context: FormVali
 
   if (objects.filter(i => i.name === value).length > 1) {
     throw new Error(`名称 ${value} 已重复`);
+  }
+}
+
+/**
+ * 检查命令的分类是否重复
+ * @param value
+ * @param context
+ * @returns
+ */
+export function checkCommandCategoryConflict(value: string, context: FormValidatorContext) {
+  if (!value) {
+    return;
+  }
+
+  const model = getDomainObjectFromValidatorContext(context) as DomainObjectCommand;
+
+  for (const obj of model.objectsInSameScope) {
+    if (obj.category && obj.category === value) {
+      throw new Error(`分类在同一个聚合下，建议保持唯一, 这样可以更好地区分代码`);
+    }
   }
 }
 

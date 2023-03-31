@@ -27,6 +27,14 @@ export class DomainObjectCommand extends DomainObject<CommandDSL> implements IDo
   }
 
   /**
+   * 命令的分类
+   */
+  @derive
+  get category() {
+    return this.dsl.category;
+  }
+
+  /**
    * 同一作用域下下的命令
    */
   @derive

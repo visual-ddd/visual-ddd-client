@@ -14,6 +14,7 @@ import {
   checkReferenceError,
   checkAggregationRootReference,
   checkSameTypeObjectNameConflict,
+  checkCommandCategoryConflict,
 } from '../../dsl';
 import { createCopyAsMenu } from '@/modules/domain/transform';
 
@@ -112,6 +113,15 @@ defineShape({
 
               validateCron(v.schedule.value);
             }
+          },
+        },
+      },
+      category: {
+        $self: {
+          reportType: FormRuleReportType.Warning,
+          async validator(value, context) {
+            // 命令的分类在同一个聚合下建议唯一
+            checkCommandCategoryConflict(value, context);
           },
         },
       },
