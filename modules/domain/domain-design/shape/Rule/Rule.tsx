@@ -44,7 +44,7 @@ defineShape({
           {
             // 检查是否在聚合下
             async validator(value, context) {
-              checkUnderPackage(context, '命令');
+              checkUnderPackage(context, '命令或查询');
             },
             reportType: FormRuleReportType.Warning,
           },
