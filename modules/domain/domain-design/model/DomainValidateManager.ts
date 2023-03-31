@@ -173,7 +173,7 @@ export class DomainValidateManager {
     }
 
     // 同作用域命名冲突检查
-    for (const obj of object.objectsInSameScope) {
+    for (const obj of object.objectInSameNameScope) {
       this.push(obj.id, CheckScope.Name);
     }
   }

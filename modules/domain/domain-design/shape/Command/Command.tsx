@@ -13,7 +13,7 @@ import {
   SourceDSL,
   checkReferenceError,
   checkAggregationRootReference,
-  checkSameTypeObjectNameConflict,
+  checkDomainObjectNameConflict,
   checkCommandCategoryConflict,
 } from '../../dsl';
 import { createCopyAsMenu } from '@/modules/domain/transform';
@@ -87,9 +87,7 @@ defineShape({
           {
             async validator(value, context) {
               // 检查命名是否冲突
-              // checkDomainObjectNameConflict(value, context);
-              // 命令需要全局唯一
-              checkSameTypeObjectNameConflict(value, context);
+              checkDomainObjectNameConflict(value, context);
             },
           },
         ],

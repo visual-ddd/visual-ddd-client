@@ -132,6 +132,16 @@ export abstract class DomainObject<DSL extends NameDSL> implements IDisposable {
   abstract objectsInSameScope: DomainObject<NameDSL>[];
 
   /**
+   * 和当前对象处于相同命名空间的对象
+   *
+   * 大部分情况下等价于 objectsInSameScope
+   * 但是某些对象可能比较特殊，比如命令，命令的命名空间是全局的
+   */
+  get objectInSameNameScope() {
+    return this.objectsInSameScope;
+  }
+
+  /**
    * 获取依赖当前对象的对象
    */
   abstract objectsDependentOnMe: DomainObject<NameDSL>[];

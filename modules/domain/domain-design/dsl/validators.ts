@@ -122,7 +122,7 @@ export function checkDomainObjectNameConflict(value: string, context: FormValida
 
   const model = getDomainObjectFromValidatorContext(context) as DomainObject<NameDSL>;
 
-  for (const obj of model.objectsInSameScope) {
+  for (const obj of model.objectInSameNameScope) {
     if (obj.name === value) {
       throw new Error(`名称 ${value} 已重复`);
     }

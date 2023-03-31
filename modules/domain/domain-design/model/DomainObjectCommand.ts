@@ -42,6 +42,20 @@ export class DomainObjectCommand extends DomainObject<CommandDSL> implements IDo
     return this.aggregation?.commands.filter(i => i.id !== this.id) || NoopArray;
   }
 
+  /**
+   * 同一个命名空间的命令
+   */
+  override get objectInSameNameScope(): DomainObjectCommand[] {
+    const parent = this.node.parent;
+    if (!parent) {
+      return NoopArray;
+    }
+
+    return parent.children
+      .map(i => this.store.getObjectById(i.id))
+      .filter((i): i is DomainObjectCommand => !!i && i instanceof DomainObjectCommand && i.id !== this.id);
+  }
+
   @derive
   get objectsDependentOnMe(): DomainObject<NameDSL>[] {
     const list: DomainObject<NameDSL>[] = [];
