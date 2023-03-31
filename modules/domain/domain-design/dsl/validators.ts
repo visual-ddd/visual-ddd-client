@@ -123,6 +123,26 @@ export function checkDomainObjectNameConflict(value: string, context: FormValida
   }
 }
 
+/**
+ * 检查画布内相同类型的对象是否存在冲突
+ * @param value
+ * @param context
+ */
+export function checkSameTypeObjectNameConflict(value: string, context: FormValidatorContext) {
+  if (!value) {
+    return null;
+  }
+
+  const store = getDomainObjectStoreFromFormValidatorContext(context);
+  const model = getDomainObjectFromValidatorContext(context) as DomainObject<NameDSL>;
+
+  const objects = store.getObjectsInType(model.constructor as typeof DomainObject);
+
+  if (objects.filter(i => i.name === value).length > 1) {
+    throw new Error(`名称 ${value} 已重复`);
+  }
+}
+
 export function checkReferenceError(context: FormValidatorContext) {
   const model = getDomainObjectFromValidatorContext(context) as DomainObject<NameDSL>;
 

@@ -205,6 +205,15 @@ export class DomainObjectStore {
   }
 
   /**
+   * 获取指定类型的对象
+   * @param type
+   * @returns
+   */
+  getObjectsInType(type: typeof DomainObject) {
+    return this.objectsInArray.filter(i => i instanceof type);
+  }
+
+  /**
    * 通过 UUID 获取对象实例
    * @param id
    * @returns
