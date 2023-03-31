@@ -1,6 +1,6 @@
 import { action, makeObservable, observable } from 'mobx';
 import { makeAutoBindThis } from '@/lib/store';
-import { IDisposable, tryDispose } from '@/lib/utils';
+import { IDisposable, TimeoutController, tryDispose } from '@/lib/utils';
 import { EventStream, EventStreamOptions } from './stream';
 
 interface Usage {
@@ -30,6 +30,7 @@ interface ChatCompletion {
 }
 
 const DONE = '[DONE]';
+const TIMEOUT = 60 * 1000;
 
 export interface OpenAIEventSourceModelOptions<Result = any> {
   initialMessage?: string;
@@ -84,44 +85,52 @@ export class OpenAIEventSourceModel<Result = any> implements IDisposable {
       throw new Error('已经被销毁, 不能再打开');
     }
 
+    const timeoutController = new TimeoutController(TIMEOUT);
+
     try {
       this.setLoading(true);
       this.setResult('');
       this.setError(undefined);
 
-      return await new Promise<Result>(async (resolve, reject) => {
-        const source = (this.eventStream = new EventStream({
-          ...options,
-          url,
-          onMessage: event => {
-            if (this.disposed) {
-              return;
-            }
+      return await Promise.race([
+        timeoutController.start(),
+        new Promise<Result>(async (resolve, reject) => {
+          const source = (this.eventStream = new EventStream({
+            ...options,
+            url,
+            onMessage: event => {
+              if (this.disposed) {
+                return;
+              }
 
-            const data = event.data as string;
+              timeoutController.refresh();
 
-            if (data === DONE) {
-              resolve(this.handleDone());
-            } else {
-              // FIXME: 这里耦合了 chat 接口协议
-              const payload = JSON.parse(data) as ChatCompletion;
-              const result = this.result + payload.choices.map(choice => choice.delta.content ?? '').join('');
-              this.setResult(result);
-            }
-          },
-        }));
+              const data = event.data as string;
 
-        try {
-          await source.send();
-        } catch (err) {
-          reject(err);
-        }
-      });
+              if (data === DONE) {
+                resolve(this.handleDone());
+              } else {
+                // FIXME: 这里耦合了 chat 接口协议
+                const payload = JSON.parse(data) as ChatCompletion;
+                const result = this.result + payload.choices.map(choice => choice.delta.content ?? '').join('');
+                this.setResult(result);
+              }
+            },
+          }));
+
+          try {
+            await source.send();
+          } catch (err) {
+            reject(err);
+          }
+        }),
+      ]);
     } catch (err) {
       this.setError(err as Error);
       throw err;
     } finally {
       this.setLoading(false);
+      timeoutController.dispose();
     }
   }
 

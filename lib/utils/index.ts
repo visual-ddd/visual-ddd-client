@@ -10,6 +10,7 @@ export * from './Clipboard';
 export * from './assert';
 export * from './name-case';
 export * from './array';
+export * from './TimeoutController';
 
 export function makeSet(contentSplitByComma: string) {
   return new Set<string>(contentSplitByComma.split(',').map(i => i.trim()));
