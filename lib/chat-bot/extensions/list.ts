@@ -15,9 +15,12 @@ registerExtension({
     const eventSource = createStaticOpenAIEventSourceModel(
       `当前上下文支持以下指令:\n\n${bot.availableExtensionsExceptGlobal
         .map((i, idx) => {
-          return `${idx + 1}. #${i.match} ${i.description}`;
+          return `${idx + 1}. \`#${i.match}\` ${i.description}`;
         })
-        .join('\n')}\n\n需要注意的是，插件是根据当前所处的页面动态注册，比如你在数据建模时，可以使用数据建模相关的属性`,
+        .join('\n')}\n\n需要注意的是:
+- **指令是根据当前所处的页面动态注册的**，比如你在数据建模时，可以使用\`#数据建模\`、\`#SQL专家\`等指令
+- **指令不会记忆聊天上下文**
+`,
       undefined
     );
 

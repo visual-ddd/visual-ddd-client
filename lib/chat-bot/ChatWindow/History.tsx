@@ -3,6 +3,7 @@ import { Markdown } from '@/lib/components/Markdown';
 import { useEventBusListener } from '@/lib/hooks';
 import { Loading, LoadingIcon } from '@/lib/openai-event-source';
 import { MinusCircleFilled } from '@ant-design/icons';
+import { rafDebounce } from '@wakeapp/utils';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
 import { useEffect, useMemo, useRef } from 'react';
@@ -14,6 +15,13 @@ import s from './History.module.scss';
 export interface HistoryProps {
   className?: string;
   style?: React.CSSProperties;
+}
+
+function scrollIntoView(el: HTMLDivElement) {
+  el.scrollIntoView({
+    behavior: 'smooth',
+    block: 'end',
+  });
 }
 
 const MessageItem = observer(function MessageItem(props: { item: Message }) {
@@ -35,10 +43,9 @@ const MessageItem = observer(function MessageItem(props: { item: Message }) {
   useEffect(() => {
     if (item.pending && isLastItem) {
       // 滚动底部
-      elRef.current?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'end',
-      });
+      if (elRef.current) {
+        scrollIntoView(elRef.current);
+      }
     }
   }, [item.pending, content, isLastItem]);
 
@@ -56,6 +63,7 @@ const MessageItem = observer(function MessageItem(props: { item: Message }) {
         request: item.role === Role.User,
         response: item.role !== Role.User,
       })}
+      data-uuid={item.uuid}
       ref={elRef}
     >
       {!!(item.pending && isCommand) && (
@@ -64,9 +72,9 @@ const MessageItem = observer(function MessageItem(props: { item: Message }) {
         </div>
       )}
       <div className={s.content}>
-        {content ? (
+        {normalizedContent ? (
           <Markdown content={normalizedContent} className="dark"></Markdown>
-        ) : showExtension && !item.pending ? undefined : (
+        ) : !item.pending ? undefined : (
           <LoadingIcon className={s.loading} />
         )}
         <MinusCircleFilled className={s.remove} onClick={remove} />
@@ -80,20 +88,30 @@ export const History = observer(function History(props: HistoryProps) {
   const bot = useBotContext();
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = () => {
-    requestAnimationFrame(() => {
+  const scrollToBottom = useMemo(() => {
+    return rafDebounce((messageId?: string) => {
+      if (messageId) {
+        const element = document.querySelector(`[data-uuid="${messageId}"]`) as HTMLDivElement | undefined;
+        if (element) {
+          scrollIntoView(element);
+          return;
+        }
+      }
       if (containerRef.current) {
         containerRef.current.scrollTop = containerRef.current.scrollHeight;
       }
     });
-  };
+  }, []);
 
   useEventBusListener(bot.event, on => {
     on('SHOW', () => {
       scrollToBottom();
     });
-    on('MESSAGE_ADDED', () => {
-      scrollToBottom();
+    on('MESSAGE_ADDED', ({ message }) => {
+      // 加一个延时，因为消息插入时 DOM 未必已经挂载
+      setTimeout(() => {
+        scrollToBottom(message.uuid);
+      }, 500);
     });
   });
 
