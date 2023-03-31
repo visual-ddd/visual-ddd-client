@@ -483,6 +483,11 @@ export class CanvasModel implements IDisposable {
         if (this.editorViewStore.focusingNode?.id !== evt.nodeId) {
           this.handleSelect({ cellIds: [evt.nodeId] });
         }
+
+        // 字段定位, 需要打开侧边栏
+        if (evt.path && this.editorViewStore.viewState.rightSidebarFolded) {
+          this.editorCommandHandler.setViewStateDebounce({ key: 'rightSidebarFolded', value: false });
+        }
       })
     );
   }

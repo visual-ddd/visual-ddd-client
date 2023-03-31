@@ -43,7 +43,7 @@ export const EditorInspectPanel = observer(function EditorInspectPanel() {
       centered
       // type="card"
       size="small"
-      tabBarGutter={16}
+      tabBarGutter={30}
       activeKey={viewStore.viewState.inspectTab}
       onChange={handleTabChange as any}
       items={[

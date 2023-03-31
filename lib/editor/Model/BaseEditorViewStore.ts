@@ -48,6 +48,16 @@ export interface BaseEditorViewState {
   mouseDragMode: 'select' | 'panning';
 
   /**
+   * 左侧侧边栏是否折叠，默认 false
+   */
+  leftSidebarFolded?: boolean;
+
+  /**
+   * 右侧侧边栏是否折叠，默认 false
+   */
+  rightSidebarFolded?: boolean;
+
+  /**
    * 画布缩放状态
    */
   canvasScale?: {

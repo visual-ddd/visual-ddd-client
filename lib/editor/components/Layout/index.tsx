@@ -5,6 +5,7 @@ import { useEditorModel } from '../../Model';
 import { EditorFormPortalContextProvider } from '../Form';
 
 import s from './index.module.scss';
+import { SidebarFolder } from './SidebarFolder';
 
 export * from './PanelLayout';
 
@@ -41,7 +42,9 @@ export const EditorLayout = observer(function EditorLayout(props: EditorLayoutPr
   const content = (
     <SplitBox
       primary="second"
-      size={model.viewStore.viewState.inspectPanelWidth ?? SIDE_WIDTH}
+      size={
+        model.viewStore.viewState.rightSidebarFolded ? 0 : model.viewStore.viewState.inspectPanelWidth ?? SIDE_WIDTH
+      }
       onResizeEnd={newSize => {
         model.commandHandler.setViewState({ key: 'inspectPanelWidth', value: newSize });
       }}
@@ -51,8 +54,30 @@ export const EditorLayout = observer(function EditorLayout(props: EditorLayoutPr
       <div className={classNames('vd-editor-layout__body', s.body)}>
         {toolbar && <div className={classNames('vd-editor-layout__toolbar', s.toolbar)}>{toolbar}</div>}
         <div className={classNames('vd-editor-layout__canvas', s.canvas)}>{children}</div>
+        {!!left && (
+          <SidebarFolder
+            placement="left"
+            folded={model.viewStore.viewState.leftSidebarFolded}
+            onFoldedChange={folded => {
+              model.commandHandler.setViewState({ key: 'leftSidebarFolded', value: folded });
+            }}
+          />
+        )}
+        <SidebarFolder
+          placement="right"
+          folded={model.viewStore.viewState.rightSidebarFolded}
+          onFoldedChange={folded => {
+            model.commandHandler.setViewState({ key: 'rightSidebarFolded', value: folded });
+          }}
+        />
       </div>
-      <div className={classNames('vd-editor-layout__right-side', s.right)}>{right}</div>
+      <div
+        className={classNames('vd-editor-layout__right-side', s.right, {
+          folded: model.viewStore.viewState.rightSidebarFolded,
+        })}
+      >
+        {right}
+      </div>
     </SplitBox>
   );
 
@@ -64,7 +89,9 @@ export const EditorLayout = observer(function EditorLayout(props: EditorLayoutPr
       {left ? (
         <SplitBox
           split="vertical"
-          size={model.viewStore.viewState.sidebarPanelWidth ?? SIDE_WIDTH}
+          size={
+            model.viewStore.viewState.leftSidebarFolded ? 0 : model.viewStore.viewState.sidebarPanelWidth ?? SIDE_WIDTH
+          }
           onResizeEnd={newSize => {
             model.commandHandler.setViewState({ key: 'sidebarPanelWidth', value: newSize });
           }}
