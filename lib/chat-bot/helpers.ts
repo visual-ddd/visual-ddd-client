@@ -1,13 +1,19 @@
 import { Noop } from '@wakeapp/utils';
 import { createStaticOpenAIEventSourceModel } from '../openai-event-source';
-import { ExtensionResponse } from './protocol';
+import { ExtensionResponse, ExtensionType, SendParams } from './protocol';
 
 /**
  * 直接响应字符串
  * @param message
  * @returns
  */
-export function responseMessage(message: string): ExtensionResponse {
+export function responseMessage(message: string, context: SendParams): ExtensionResponse {
+  const { currentTarget } = context;
+
+  if (currentTarget.type === ExtensionType.Command) {
+    context.bot.responseMessage(message, context.currentTarget);
+  }
+
   const eventSource = createStaticOpenAIEventSourceModel(message, undefined);
 
   return {

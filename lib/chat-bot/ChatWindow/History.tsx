@@ -35,6 +35,7 @@ const MessageItem = observer(function MessageItem(props: { item: Message }) {
   const isLastItem = bot.history[bot.history.length - 1] === item;
 
   const content = item.pending ? (isCommand ? item.content : item.pending.response.eventSource.result) : item.content;
+  const loading = item.pending && !isCommand;
 
   const remove = () => {
     bot.removeMessage(item.uuid);
@@ -73,10 +74,10 @@ const MessageItem = observer(function MessageItem(props: { item: Message }) {
       )}
       <div className={s.content}>
         {normalizedContent ? (
-          <Markdown content={normalizedContent} className="dark"></Markdown>
-        ) : !item.pending ? undefined : (
+          <Markdown content={normalizedContent} className={classNames('dark', { loading })}></Markdown>
+        ) : loading ? (
           <LoadingIcon className={s.loading} />
-        )}
+        ) : undefined}
         <MinusCircleFilled className={s.remove} onClick={remove} />
       </div>
     </div>

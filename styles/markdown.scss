@@ -71,6 +71,23 @@
   margin-bottom: 0 !important;
 }
 
+@keyframes cursor-blink {
+  0% {
+    opacity: 0;
+  }
+}
+
+.markdown-body.loading > *:last-child::after {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 1em;
+  margin-left: 4px;
+  vertical-align: text-bottom;
+  background-color: var(--vd-color-gray-600);
+  animation: cursor-blink 1s steps(2) infinite;
+}
+
 .markdown-body a:not([href]) {
   color: inherit;
   text-decoration: none;

@@ -53,11 +53,12 @@ export function useDataObjectSqlMasterBot() {
       match: 'SQL专家',
       type: ExtensionType.Message,
       description: '配合数据模型，快速生成 SQL 语句、意见咨询等等',
-      onSend({ message }) {
+      onSend(context) {
+        const { message } = context;
         const content = message.trim();
 
         if (!content) {
-          return responseMessage(TIP);
+          return responseMessage(TIP, context);
         }
 
         const eventSource = createIdentityOpenAIEventSourceModel();

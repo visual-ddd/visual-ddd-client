@@ -134,14 +134,14 @@ export class OpenAIEventSourceModel<Result = any> implements IDisposable {
     }
   }
 
-  dispose() {
+  dispose = () => {
     if (this.disposed) {
       return;
     }
 
     this.disposed = true;
     tryDispose(this.eventStream);
-  }
+  };
 
   private handleDone() {
     const result = this.options.decode(this.result);

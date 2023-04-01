@@ -73,3 +73,13 @@ BACKEND=http://172.26.57.49:8080 pnpm dev
 # 资源
 
 SWAGGER https://ddd.wakedt.cn/wd/visual/doc.html
+
+# OPENAI nginx 代理服务器配置
+
+```
+       location ~* /(v1|dashboard) {
+             proxy_pass https://api.openai.com;
+             proxy_ssl_server_name on;
+             proxy_buffering off;
+        }
+```
