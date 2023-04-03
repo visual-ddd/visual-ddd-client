@@ -1,10 +1,9 @@
-import { useSession, VDSessionEntry, VDSessionState } from '@/modules/session';
+import { useLogout, useSession, VDSessionEntry, VDSessionState } from '@/modules/session';
 import { useRouter } from 'next/router';
 import { observer } from 'mobx-react';
 import { Avatar, Dropdown, MenuProps } from 'antd';
 import { useMemo } from 'react';
 import classNames from 'classnames';
-import { request } from '@/modules/backend-client';
 import { AccountSetting, useAccountSetting } from '@/modules/user/AccountSetting';
 import type { MenuItemType, ItemType } from 'antd/es/menu/hooks/useItems';
 
@@ -31,6 +30,7 @@ export const User = observer(function User(props: UserProps) {
   const router = useRouter();
   const { session } = useSession();
   const accountSetting = useAccountSetting();
+  const logout = useLogout();
 
   const menus = useMemo<MenuProps>(() => {
     const items: ItemType[] = actions.map(i => {
@@ -88,8 +88,7 @@ export const User = observer(function User(props: UserProps) {
         key: 'logout',
         label: '退出登录',
         onClick: async () => {
-          await request.requestByPost('/api/logout');
-          router.push('/login');
+          logout();
         },
       }
     );

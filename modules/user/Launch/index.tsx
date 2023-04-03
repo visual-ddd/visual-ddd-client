@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { VDSessionEntry, VDSessionState } from '@/modules/session/server';
 import { request } from '@/modules/backend-client';
 import { Alert, Button, Space } from 'antd';
-import { useSession } from '@/modules/session';
+import { useLogout, useSession } from '@/modules/session';
 
 import s from './index.module.scss';
 import { Layout } from '../Login/Layout';
@@ -30,14 +30,10 @@ export function Launch({ data }: LaunchProps) {
   const session = useSession();
   const organizations = data.accountOrganizationInfoList;
   const isEmpty = !data.isSysAdmin && !organizations.length && !data.accountTeamInfoList.length;
+  const logout = useLogout();
 
   const handleRefresh = () => {
     router.replace(router.asPath);
-  };
-
-  const handleLogout = async () => {
-    await request.requestByPost('/api/logout');
-    router.push('/login');
   };
 
   const handleGo = async (params: VDSessionState) => {
@@ -65,7 +61,7 @@ export function Launch({ data }: LaunchProps) {
                       <Button type="primary" onClick={handleRefresh}>
                         刷新看看
                       </Button>
-                      <Button onClick={handleLogout}>退出登录</Button>
+                      <Button onClick={logout}>退出登录</Button>
                     </Space>
                   </div>
                 </div>
