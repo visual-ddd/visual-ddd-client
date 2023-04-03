@@ -33,6 +33,11 @@ export interface ChatOptions {
   max_tokens?: number;
 
   /**
+   * 终止字符
+   */
+  stop?: string | string[];
+
+  /**
    * 代理的响应对象
    */
   pipe: NextApiResponse;

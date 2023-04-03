@@ -31,6 +31,19 @@ Table my_table (
 "
 `;
 
+exports[`transform simpleTable 2`] = `
+"#我的表格
+Table MyTable (
+  inPrimaryKey: Long, PrimaryKey; #主键
+  inString: String; #字符串
+  inInteger: Integer; #整数
+  inNotNull: Date, NotNull; #非空
+  customPropertyName: String; #自定义属性名
+)
+
+"
+`;
+
 exports[`transform tableReference 1`] = `
 "Table a (
   in_primary_key: Long, PrimaryKey; #主键

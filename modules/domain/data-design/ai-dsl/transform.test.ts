@@ -35,6 +35,9 @@ describe('transform', () => {
     t.properties.push(inPrimaryKey, inString, inInteger, inNotNull, customPropertyName);
 
     expect(transform([t], [t])).toMatchSnapshot();
+
+    // for conception
+    expect(transform([t], [t], { useCase: 'conception' })).toMatchSnapshot();
   });
 
   test('index', () => {

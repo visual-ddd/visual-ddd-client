@@ -4,12 +4,34 @@ import { UntitledInHumanReadable } from '../../domain-design/dsl/constants';
 import snakeCase from 'lodash/snakeCase';
 import { assert } from '@/lib/utils';
 
+interface TransformConfig {
+  /**
+   * 转换的场景：
+   * sql SQL 语句, 默认
+   * conception 概念模型
+   */
+  useCase?: 'sql' | 'conception';
+}
+
+let transformConfig: TransformConfig;
+const DEFAULT_CONFIG: Required<TransformConfig> = {
+  useCase: 'sql',
+};
+
+function setTransformConfig(config: TransformConfig = DEFAULT_CONFIG) {
+  transformConfig = config;
+}
+
+function getTransformConfig() {
+  return transformConfig ?? DEFAULT_CONFIG;
+}
+
 function getTableName(table: DataObjectDSL) {
-  return table.tableName || snakeCase(table.name);
+  return getTransformConfig().useCase === 'sql' ? table.tableName || snakeCase(table.name) : table.name;
 }
 
 function getPropertyName(property: DataObjectPropertyDSL) {
-  return property.propertyName || snakeCase(property.name);
+  return getTransformConfig().useCase === 'sql' ? property.propertyName || snakeCase(property.name) : property.name;
 }
 
 function stringifyType(type: DataObjectTypeDSL, tables: DataObjectDSL[]) {
@@ -95,7 +117,9 @@ function stringifyIndex(table: DataObjectDSL): string {
 /**
  * 将数据表 DSL 转换为 AI 容易识别的，简洁的格式
  */
-export function transform(tables: DataObjectDSL[], allTables: DataObjectDSL[]): string {
+export function transform(tables: DataObjectDSL[], allTables: DataObjectDSL[], config?: TransformConfig): string {
+  setTransformConfig(config);
+
   let dsl = '';
 
   for (const table of tables) {

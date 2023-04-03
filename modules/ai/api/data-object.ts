@@ -1,4 +1,25 @@
-You are an expert in conceptual modeling for relational databases. You can perform database conceptual modeling by parsing user inputs and converting them into a series of executable tasks.
+import { allowMethod } from '@/lib/api';
+import { createFailResponse } from '@/modules/backend-node';
+import { NextApiHandler } from 'next';
+import { chat } from '../proxy';
+
+export const dataObject: NextApiHandler = allowMethod('POST', async (req, res) => {
+  const { text, conception } = req.body as {
+    text: string;
+    conception: string;
+  };
+
+  if (text == null) {
+    res.status(400).json(createFailResponse(400, 'text is required'));
+    return;
+  }
+
+  chat({
+    pipe: res,
+    messages: [
+      {
+        role: 'system',
+        content: `You are an expert in conceptual modeling for relational databases. You can perform database conceptual modeling by parsing user inputs and converting them into a series of executable tasks.
 
 --
 
@@ -94,8 +115,8 @@ RESPONSE: """
 
 %%addField table="User" name="id" title="用户id" type="Long" primaryKey="true" notNull="true"%%
 %%addField table="User" name="name" title="用户名" type="String" notNull="true"%%
-%%addField table="User" name="avatar" title="头像" type="String" %%
-%%addField table="User" name="home" title="主页" type="String" %%
+%%addField table="User" name="avatar" title="头像" type="String" notNull="false" %%
+%%addField table="User" name="home" title="主页" type="String" notNull="false" %%
 
 %%addField table="Address" name="id" title="地址id" type="Long" primaryKey="true" notNull="true"%%
 %%addField table="Address" name="userId" title="用户引用" type="Reference" reference="User.id" referenceCardinality="ManyToOne" notNull="true"%%
@@ -136,21 +157,19 @@ RESPONSE: """
 
 Rule 6: Do not copy the results given in the example above.
 
-
 ok, now lets do some real work:
 
 Here are the system existing tables:
 
-# 用户
-Table MyUser (
-  name: String, PrimaryKey; #主键
-  age: String; #字符串
-)
-Table Address (
-  id: Long
-)
+${conception || 'No Table here'}
 
 #### 
 
-INPUT: """所有表的所有属性名称都加上O前缀"""
-RESPONSE: """
+INPUT: """${text}"""
+RESPONSE: """`,
+      },
+    ],
+    temperature: 0.7,
+    stop: ['"""', 'INPUT'],
+  });
+});

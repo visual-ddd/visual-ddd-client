@@ -118,6 +118,15 @@ export class DataObjectStore {
   }
 
   /**
+   * 根据 name 获取对象
+   * @param name
+   * @returns
+   */
+  getObjectByName(name: string) {
+    return this.objectsInArray.find(i => i.name === name);
+  }
+
+  /**
    * 触发对象名称变更事件
    * @param params
    */

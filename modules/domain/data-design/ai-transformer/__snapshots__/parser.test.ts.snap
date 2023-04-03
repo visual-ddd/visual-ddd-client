@@ -1,0 +1,259 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`groupByTable simple 1`] = `
+[
+  {
+    "fieldDirectives": [
+      {
+        "params": {
+          "name": "id",
+          "notNull": true,
+          "primaryKey": true,
+          "table": "Product",
+          "title": "商品id",
+          "type": "Long",
+        },
+        "type": "addField",
+      },
+      {
+        "params": {
+          "name": "name",
+          "notNull": true,
+          "table": "Product",
+          "title": "商品名",
+          "type": "String",
+        },
+        "type": "addField",
+      },
+      {
+        "params": {
+          "name": "price",
+          "notNull": true,
+          "table": "Product",
+          "title": "价格",
+          "type": "Decimal",
+        },
+        "type": "addField",
+      },
+      {
+        "params": {
+          "name": "description",
+          "notNull": true,
+          "table": "Product",
+          "title": "描述",
+          "type": "LongText",
+        },
+        "type": "addField",
+      },
+    ],
+    "table": "Product",
+    "tableDirectives": [
+      {
+        "params": {
+          "name": "Product",
+          "title": "商品",
+        },
+        "type": "createTable",
+      },
+    ],
+  },
+  {
+    "fieldDirectives": [
+      {
+        "params": {
+          "name": "id",
+          "notNull": true,
+          "primaryKey": true,
+          "table": "Order",
+          "title": "订单id",
+          "type": "Long",
+        },
+        "type": "addField",
+      },
+      {
+        "params": {
+          "name": "productId",
+          "notNull": true,
+          "reference": "Product.id",
+          "referenceCardinality": "ManyToOne",
+          "table": "Order",
+          "title": "商品引用",
+          "type": "Reference",
+        },
+        "type": "addField",
+      },
+      {
+        "params": {
+          "name": "quantity",
+          "notNull": true,
+          "table": "Order",
+          "title": "数量",
+          "type": "Integer",
+        },
+        "type": "addField",
+      },
+      {
+        "params": {
+          "name": "totalPrice",
+          "notNull": true,
+          "table": "Order",
+          "title": "总价",
+          "type": "Decimal",
+        },
+        "type": "addField",
+      },
+    ],
+    "table": "Order",
+    "tableDirectives": [
+      {
+        "params": {
+          "name": "Order",
+          "title": "订单",
+        },
+        "type": "createTable",
+      },
+    ],
+  },
+]
+`;
+
+exports[`groupByTable table renamed 1`] = `
+[
+  {
+    "fieldDirectives": [
+      {
+        "params": {
+          "name": "id",
+          "notNull": true,
+          "primaryKey": true,
+          "table": "Product",
+          "title": "商品id",
+          "type": "Long",
+        },
+        "type": "addField",
+      },
+      {
+        "params": {
+          "name": "name",
+          "notNull": true,
+          "table": "Product",
+          "title": "商品名",
+          "type": "String",
+        },
+        "type": "addField",
+      },
+      {
+        "params": {
+          "name": "price",
+          "notNull": true,
+          "table": "Good",
+          "title": "价格",
+          "type": "Decimal",
+        },
+        "type": "addField",
+      },
+      {
+        "params": {
+          "name": "description",
+          "notNull": true,
+          "table": "Good",
+          "title": "描述",
+          "type": "LongText",
+        },
+        "type": "addField",
+      },
+    ],
+    "table": "Product",
+    "tableDirectives": [
+      {
+        "params": {
+          "name": "Product",
+          "newName": "Good",
+        },
+        "type": "renameTable",
+      },
+    ],
+  },
+  {
+    "fieldDirectives": [
+      {
+        "params": {
+          "name": "id",
+          "notNull": true,
+          "primaryKey": true,
+          "table": "Order",
+          "title": "订单id",
+          "type": "Long",
+        },
+        "type": "addField",
+      },
+      {
+        "params": {
+          "name": "id",
+          "newName": "orderNo",
+          "table": "Order",
+        },
+        "type": "renameField",
+      },
+      {
+        "params": {
+          "name": "productId",
+          "notNull": true,
+          "reference": "Product.id",
+          "referenceCardinality": "ManyToOne",
+          "table": "Order",
+          "title": "商品引用",
+          "type": "Reference",
+        },
+        "type": "addField",
+      },
+      {
+        "params": {
+          "name": "quantity",
+          "notNull": true,
+          "table": "Order",
+          "title": "数量",
+          "type": "Integer",
+        },
+        "type": "addField",
+      },
+      {
+        "params": {
+          "name": "totalPrice",
+          "notNull": true,
+          "table": "Order",
+          "title": "总价",
+          "type": "Decimal",
+        },
+        "type": "addField",
+      },
+      {
+        "params": {
+          "name": "id",
+          "table": "Order",
+          "title": "订单编号",
+        },
+        "type": "updateField",
+      },
+      {
+        "params": {
+          "name": "id",
+          "table": "Order",
+          "type": "String",
+        },
+        "type": "updateField",
+      },
+    ],
+    "table": "Order",
+    "tableDirectives": [
+      {
+        "params": {
+          "name": "Order",
+          "title": "订单",
+        },
+        "type": "createTable",
+      },
+    ],
+  },
+]
+`;
