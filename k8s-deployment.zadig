@@ -32,6 +32,12 @@ spec:
               value: {{ .OPENAI_API_KEY }}
             - name: OPENAI_BASE_PATH
               value: {{ .OPENAI_BASE_PATH }}
+            - name: PINECONE_API_KEY
+              value: {{ .PINECONE_API_KEY }}
+            - name: PINECONE_ENVIRONMENT
+              value: {{ .PINECONE_ENVIRONMENT }}
+            - name: PINECONE_INDEX
+              value: {{ .PINECONE_INDEX }}
         # 信令服务
         - name: visual-ddd-signaling
           image: wkfe/visual-ddd-signaling:latest

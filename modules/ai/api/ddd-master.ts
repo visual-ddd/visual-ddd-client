@@ -16,6 +16,11 @@ async function querySimilar(text: string) {
     return pineconeStore.similaritySearch(text, 1);
   }
 
+  if (!PINECONE_API_KEY || !PINECONE_ENVIRONMENT || !PINECONE_INDEX) {
+    console.error(`请配置 PINECONE_API_KEY、PINECONE_ENVIRONMENT、PINECONE_INDEX`);
+    throw new Error(`服务未配置，请联系管理员`);
+  }
+
   const client = new PineconeClient();
   await client.init({
     apiKey: PINECONE_API_KEY,

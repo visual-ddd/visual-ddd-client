@@ -12,10 +12,6 @@ export let OPENAI_BASE_PATH = process.env.OPENAI_BASE_PATH && removeTrailingSlas
 
 assert(OPENAI_API_KEY, 'OPEN_AI_API_KEY is not defined');
 
-export const PINECONE_API_KEY = process.env.PINECONE_API_KEY as string;
-export const PINECONE_ENVIRONMENT = process.env.PINECONE_ENVIRONMENT as string;
-export const PINECONE_INDEX = process.env.PINECONE_INDEX as string;
-
-assert(PINECONE_API_KEY, 'PINECONE_API_KEY is not defined');
-assert(PINECONE_ENVIRONMENT, 'PINECONE_ENVIRONMENT is not defined');
-assert(PINECONE_INDEX, 'PINECONE_INDEX is not defined');
+export const PINECONE_API_KEY = process.env.PINECONE_API_KEY;
+export const PINECONE_ENVIRONMENT = process.env.PINECONE_ENVIRONMENT;
+export const PINECONE_INDEX = process.env.PINECONE_INDEX;
