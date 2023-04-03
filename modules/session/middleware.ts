@@ -127,6 +127,12 @@ export const pageAuthMiddleware: Middleware = async (req, next) => {
   return redirect;
 };
 
+/**
+ * 页面入口权限验证和重定向
+ * @param req
+ * @param next
+ * @returns
+ */
 export const pageEntryRedirectMiddleware: Middleware = async (req, next) => {
   const pathname = req.nextUrl.pathname;
 
@@ -155,7 +161,7 @@ export const pageEntryRedirectMiddleware: Middleware = async (req, next) => {
     return next();
   }
 
-  // TODO: 旧的入口可能已经销毁了？
+  // 旧的入口可能已经销毁了？ -> 404 处理，CheckSession 客户端检查会话
 
   return NextResponse.redirect(new URL(expectedEntry, req.url));
 };

@@ -1,7 +1,7 @@
 import { normalizeUrl } from '@/lib/utils';
 import type { TeamDetail } from '@/modules/organization/types';
 import { withWakedataRequestSsr } from '@/modules/session/server';
-import { Launch, LaunchProps, LaunchInfo, verifyRedirect } from '@/modules/user/Launch';
+import { Launch, LaunchProps, LaunchInfo, verifyRedirect, normalizeLaunchInfo } from '@/modules/user/Launch';
 
 /**
  * 启动页
@@ -18,7 +18,7 @@ export const getServerSideProps = withWakedataRequestSsr<LaunchProps>(async cont
   );
 
   // 过滤掉非管理员的组织
-  data.accountOrganizationInfoList = data.accountOrganizationInfoList?.filter(i => i.isOrganizationAdmin);
+  normalizeLaunchInfo(data);
 
   if (from) {
     const getTeamInfo = async (teamId: string | number) => {

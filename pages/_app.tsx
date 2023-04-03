@@ -33,6 +33,7 @@ type AppPropsWithLayout = AppProps & {
 };
 
 const Bot = dynamic(() => import('@/modules/chat-bot'), { ssr: false });
+const VerifyPermission = dynamic(() => import('@/modules/user/Launch/VerifyPermission'), { ssr: false });
 
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout || (page => page);
@@ -45,6 +46,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
           <title>Visual DDD</title>
         </Head>
         <Bot />
+        <VerifyPermission />
         {getLayout(<Component {...pageProps} />, pageTitle)}
       </ConfigProvider>
     </SWRConfig>

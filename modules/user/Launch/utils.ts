@@ -1,6 +1,22 @@
 import { VDSessionEntry, VDSessionState } from '@/modules/session/types';
 import type { LaunchInfo } from './types';
 import type { TeamDetail } from '@/modules/organization/types';
+import { ENTRY_PREFIX } from '@/modules/session/config';
+
+/**
+ * 是否为入口路径
+ * @param path
+ * @returns
+ */
+export function isEntry(path: string) {
+  return ENTRY_PREFIX.some(i => path.startsWith(i));
+}
+
+export function normalizeLaunchInfo(launchInfo: LaunchInfo) {
+  launchInfo.accountOrganizationInfoList = launchInfo.accountOrganizationInfoList?.filter(i => i.isOrganizationAdmin);
+
+  return launchInfo;
+}
 
 export function createRedirectUrl(params: VDSessionState) {
   switch (params.entry) {
