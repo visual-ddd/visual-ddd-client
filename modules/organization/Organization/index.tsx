@@ -76,12 +76,14 @@ export function Organization() {
       title: '创建时间',
       dataIndex: 'createTime',
       hideInSearch: true,
+      width: 180,
     },
 
     {
       title: '操作',
       valueType: 'option',
       key: 'option',
+      width: 200,
       render: (text, record, index, action) => [
         <Popconfirm
           key="deleteTable"
@@ -95,6 +97,15 @@ export function Organization() {
         </Popconfirm>,
         <Button type="link" key="editTable" onClick={() => handleEdit(record)}>
           编辑
+        </Button>,
+        <Button
+          key="entry"
+          type="link"
+          onClick={() => {
+            router.push(`/launch?from=/team/${record.id}`);
+          }}
+        >
+          进入空间
         </Button>,
       ],
     },

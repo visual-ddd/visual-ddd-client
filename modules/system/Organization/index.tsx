@@ -7,8 +7,10 @@ import { request } from '@/modules/backend-client';
 import type { OrganizationDetail } from '@/modules/system/types';
 import { useLayoutTitle } from '@/modules/Layout';
 import { UserSelect } from '../User';
+import { useRouter } from 'next/router';
 
 export function Organization() {
+  const router = useRouter();
   const actionRef = useRef<ActionType>();
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -101,13 +103,14 @@ export function Organization() {
       title: '创建时间',
       dataIndex: 'createTime',
       hideInSearch: true,
+      width: 180,
     },
 
     {
       title: '操作',
       valueType: 'option',
       key: 'option',
-      width: 120,
+      width: 180,
       render: (text, record, index, action) => [
         <Popconfirm
           key="deleteTable"
@@ -121,6 +124,9 @@ export function Organization() {
         </Popconfirm>,
         <Button type="link" key="editTable" onClick={() => handleEdit(record)}>
           编辑
+        </Button>,
+        <Button type="link" key="entry" onClick={() => router.push(`/launch?from=/organization/${record.id}`)}>
+          进入空间
         </Button>,
       ],
     },
