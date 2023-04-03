@@ -1,4 +1,5 @@
 import { normalizeUrl } from '@/lib/utils';
+import type { TeamDetail } from '@/modules/organization/types';
 import { withWakedataRequestSsr } from '@/modules/session/server';
 import { Launch, LaunchProps, LaunchInfo, verifyRedirect } from '@/modules/user/Launch';
 
@@ -20,7 +21,16 @@ export const getServerSideProps = withWakedataRequestSsr<LaunchProps>(async cont
   data.accountOrganizationInfoList = data.accountOrganizationInfoList?.filter(i => i.isOrganizationAdmin);
 
   if (from) {
-    const shouldRedirect = verifyRedirect(from, data);
+    const getTeamInfo = async (teamId: string | number) => {
+      return context.req.request<TeamDetail>(
+        '/wd/visual/web/team/team-detail-query',
+        { id: teamId },
+        { method: 'GET' }
+      );
+    };
+
+    // 验证权限
+    const shouldRedirect = await verifyRedirect(from, data, getTeamInfo);
 
     if (shouldRedirect) {
       context.req.session.content!.state = shouldRedirect;
