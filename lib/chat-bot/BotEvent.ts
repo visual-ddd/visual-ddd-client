@@ -31,14 +31,9 @@ export interface BotEventDefinitions {
   HISTORY_CLEARED: never;
 
   /**
-   * 显示聊天窗
+   * 激活
    */
-  SHOW: never;
-
-  /**
-   * 尺寸变化
-   */
-  SIZE_CHANGE: { size: number };
+  ACTIVE: never;
 }
 
 export type BotEventsWithoutArg = EventsWithoutArg<BotEventDefinitions>;

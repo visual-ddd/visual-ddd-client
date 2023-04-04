@@ -1,11 +1,11 @@
 import { KeyboardBinding } from '@/lib/utils';
-import type { BotModel } from './BotModel';
+import type { BotWindowModel } from './BotWindowModel';
 import MouseTrap from 'mousetrap';
 
-export class BotKeyBinding extends KeyboardBinding {
-  bot: BotModel;
+export class BotWindowKeyBinding extends KeyboardBinding {
+  bot: BotWindowModel;
 
-  constructor(inject: { bot: BotModel }) {
+  constructor(inject: { bot: BotWindowModel }) {
     super();
     this.bot = inject.bot;
 

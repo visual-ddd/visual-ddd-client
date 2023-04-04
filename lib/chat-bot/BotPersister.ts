@@ -4,28 +4,31 @@ import { IDisposable } from '../utils';
 import { cloneDeep, debounce, Disposer, omit } from '@wakeapp/utils';
 import { Message } from './protocol';
 import { toJS } from 'mobx';
-import { DEFAULT_WINDOW_SIZE } from './constants';
 
-const KEY = 'chat-bot';
+const KEY_PREFIX = 'chat-bot-history-';
 
 type PersistMessage = Omit<Message, 'pending'>;
 
 export interface BotStorage {
   history: PersistMessage[];
-  size: number;
 }
 
 const OMIT_KEYS: (keyof Message)[] = ['pending'];
 
 export class BotPersister implements IDisposable {
+  private uuid: string;
   private event: BotEvent;
   private list: PersistMessage[] = [];
   private onLoad: (list: BotStorage) => void;
-  private size: number = DEFAULT_WINDOW_SIZE;
+
+  private get key() {
+    return `${KEY_PREFIX}${this.uuid}`;
+  }
 
   private disposer = new Disposer();
 
-  constructor(inject: { event: BotEvent; onLoad: (data: BotStorage) => void }) {
+  constructor(inject: { uuid: string; event: BotEvent; onLoad: (data: BotStorage) => void }) {
+    this.uuid = inject.uuid;
     this.event = inject.event;
     this.onLoad = inject.onLoad;
 
@@ -60,28 +63,22 @@ export class BotPersister implements IDisposable {
       }),
       this.event.on('MESSAGE_UPDATED', handleMessageUpdate),
       this.event.on('MESSAGE_FINISHED', handleMessageUpdate),
-      this.event.on('SIZE_CHANGE', params => {
-        this.size = params.size;
-        this.save();
-      }),
       this.event.on('HISTORY_CLEARED', () => {
         this.list = [];
         this.save();
       })
     );
 
-    const data = await localforage.getItem<BotStorage>(KEY);
+    const data = await localforage.getItem<BotStorage>(this.key);
 
     if (data) {
-      const { history, size } = data;
+      const { history } = data;
       this.list = (history ?? []).filter(i => i.content || i.extension);
-      this.size = size ?? DEFAULT_WINDOW_SIZE;
 
       // 避免修改到原始数据
       this.onLoad(
         cloneDeep({
           history: this.list,
-          size: this.size,
         })
       );
     }
@@ -97,9 +94,8 @@ export class BotPersister implements IDisposable {
   private save = debounce(() => {
     this.list = this.list.slice(-100);
 
-    localforage.setItem<BotStorage>(KEY, {
+    localforage.setItem<BotStorage>(this.key, {
       history: this.list,
-      size: this.size,
     });
-  }, 5000);
+  }, 2000);
 }

@@ -1,7 +1,8 @@
-import { createContext, useContext, useMemo } from 'react';
-import { BotModel } from '../BotModel';
+import { createContext, useContext } from 'react';
+import { BotModel } from './BotModel';
 
 const CONTEXT = createContext<BotModel | null>(null);
+CONTEXT.displayName = 'BotContext';
 
 export function useBotContext() {
   const context = useContext(CONTEXT);
@@ -13,14 +14,10 @@ export function useBotContext() {
 }
 
 export interface BotProviderProps {
-  bot?: BotModel;
+  bot: BotModel;
   children: React.ReactNode;
 }
 
 export function BotProvider({ bot, children }: BotProviderProps) {
-  const model = useMemo(() => {
-    return bot || new BotModel();
-  }, [bot]);
-
-  return <CONTEXT.Provider value={model}>{children}</CONTEXT.Provider>;
+  return <CONTEXT.Provider value={bot}>{children}</CONTEXT.Provider>;
 }

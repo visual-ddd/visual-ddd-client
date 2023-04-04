@@ -10,13 +10,20 @@ import { ChatContext, ExtensionType, GLOBAL_EXTENSION_KEY, IBot, Role } from './
 import type { Extension, Message } from './protocol';
 import { registry } from './registry';
 import { BotEvent } from './BotEvent';
-import { BotKeyBinding } from './BotKeyBinding';
 import { extraMention } from './util';
 import { BotPersister } from './BotPersister';
 import type { BotStorage } from './BotPersister';
-import { DEFAULT_WINDOW_SIZE, MAX_CONTEXT_PROMPT_LENGTH, MAX_CONTEXT_MESSAGE } from './constants';
+import { MAX_CONTEXT_PROMPT_LENGTH, MAX_CONTEXT_MESSAGE } from './constants';
 import { calculateContext } from './chat-context';
 import { getTokenCount } from './tokenizer';
+
+export interface BotModelOptions {
+  uuid: string;
+  metaInfo: {
+    name: string;
+    system: string;
+  };
+}
 
 /**
  * 机器人
@@ -27,15 +34,11 @@ export class BotModel implements IDisposable, IBot {
    */
   readonly event = new BotEvent();
 
-  readonly keybinding: BotKeyBinding;
   private persister: BotPersister;
   /**
    * 待回收资源
    */
   private pending: Map<string, Function> = new Map();
-
-  @observable
-  size: number = DEFAULT_WINDOW_SIZE;
 
   @observable
   history: Message[] = [];
@@ -84,9 +87,16 @@ export class BotModel implements IDisposable, IBot {
     return this.history.filter(i => i.pending);
   }
 
-  private disposer = new Disposer();
+  get uuid() {
+    return this.options.uuid;
+  }
 
-  constructor() {
+  private disposer = new Disposer();
+  private options: BotModelOptions;
+
+  constructor(options: BotModelOptions) {
+    this.options = options;
+
     makeObservable(this);
     makeAutoBindThis(this);
 
@@ -96,11 +106,9 @@ export class BotModel implements IDisposable, IBot {
       throw new Error('Global extension not found');
     }
 
-    this.keybinding = new BotKeyBinding({ bot: this });
-    this.persister = new BotPersister({ event: this.event, onLoad: this.loadHistory });
+    this.persister = new BotPersister({ uuid: this.options.uuid, event: this.event, onLoad: this.loadHistory });
 
     this.disposer.push(
-      () => tryDispose(this.keybinding),
       () => tryDispose(this.persister),
       () => {
         this.clearPendingTask();
@@ -114,9 +122,6 @@ export class BotModel implements IDisposable, IBot {
     setTimeout(() => {
       this.countToken('');
     }, 4000);
-
-    // @ts-expect-error
-    globalThis.__BOT__ = this;
   }
 
   dispose() {
@@ -127,17 +132,6 @@ export class BotModel implements IDisposable, IBot {
   setPrompt = (value: string) => {
     this.prompt = value;
   };
-
-  @command('SHOW')
-  show() {
-    this.event.emit('SHOW');
-  }
-
-  @mutation('SET_SIZE', false)
-  setSize(size: number) {
-    this.size = size;
-    this.event.emit('SIZE_CHANGE', { size });
-  }
 
   /**
    * 提交 prompt
@@ -267,6 +261,16 @@ export class BotModel implements IDisposable, IBot {
     });
   }
 
+  /**
+   * 激活
+   */
+  @command('ACTIVE')
+  active() {
+    requestAnimationFrame(() => {
+      this.event.emit('ACTIVE');
+    });
+  }
+
   getMessageById(id: string) {
     return this.history.find(i => i.uuid === id);
   }
@@ -341,7 +345,6 @@ export class BotModel implements IDisposable, IBot {
   @mutation('LOAD_HISTORY', false)
   private loadHistory(storage: BotStorage) {
     this.history = storage.history;
-    this.size = storage.size;
   }
 
   @action

@@ -1,16 +1,18 @@
 import { observer } from 'mobx-react';
+import { Drawer } from 'antd';
+import { cloneElement, isValidElement, useEffect, useMemo, useState } from 'react';
+import { CloseOutlined } from '@ant-design/icons';
+import { useEventBusListener } from '@/lib/hooks';
+import classNames from 'classnames';
 import clamp from 'lodash/clamp';
-import { BotProvider } from './Context';
+import { tryDispose } from '@/lib/utils';
+
+import { BotWindowModel } from '../BotWindowModel';
+import { BotProvider } from '../BotContext';
 
 import s from './ChatWindow.module.scss';
 import { Prompt } from './Prompt';
-import { cloneElement, isValidElement, useMemo, useState } from 'react';
-import { Drawer } from 'antd';
 import { History } from './History';
-import { CloseOutlined } from '@ant-design/icons';
-import { BotModel } from '../BotModel';
-import { useEventBusListener } from '@/lib/hooks';
-import classNames from 'classnames';
 
 export interface ChatWindowProps {
   children?: React.ReactNode;
@@ -22,7 +24,7 @@ const MIN_WIDTH = 500;
 export const ChatWindow = observer(function ChatWindow(props: ChatWindowProps) {
   const { children, className } = props;
   const [visible, setVisible] = useState(false);
-  const bot = useMemo(() => new BotModel(), []);
+  const windowModel = useMemo(() => new BotWindowModel(), []);
 
   const handleClose = () => {
     setVisible(false);
@@ -37,7 +39,7 @@ export const ChatWindow = observer(function ChatWindow(props: ChatWindowProps) {
     let parent = target.closest('.ant-drawer-content-wrapper')! as HTMLDivElement;
     let startX = e.pageX;
     let disposed = false;
-    let relativeWidth = bot.size;
+    let relativeWidth = windowModel.size;
     const MAX_WIDTH = window.innerWidth - 100;
 
     const handleMove = (evt: MouseEvent) => {
@@ -66,7 +68,7 @@ export const ChatWindow = observer(function ChatWindow(props: ChatWindowProps) {
 
       dispose();
       const newWidth = parent.offsetWidth;
-      bot.setSize(newWidth);
+      windowModel.setSize(newWidth);
     };
 
     document.addEventListener('mousemove', handleMove);
@@ -74,14 +76,22 @@ export const ChatWindow = observer(function ChatWindow(props: ChatWindowProps) {
     document.addEventListener('mouseleave', handleEnd);
   };
 
-  useEventBusListener(bot.event, on => {
+  useEventBusListener(windowModel.event, on => {
     on('SHOW', () => {
       setVisible(true);
     });
   });
 
+  useEffect(() => {
+    return () => {
+      tryDispose(windowModel);
+    };
+  }, [windowModel]);
+
+  const show = windowModel.show;
+
   return (
-    <BotProvider bot={bot}>
+    <>
       <Drawer
         rootClassName={s.dialogRoot}
         open={visible}
@@ -90,31 +100,35 @@ export const ChatWindow = observer(function ChatWindow(props: ChatWindowProps) {
         mask={false}
         closable={false}
         onClose={handleClose}
-        width={bot.size}
+        width={windowModel.size}
       >
         <div className={s.resizer} onMouseDown={handleResizeStart}></div>
         <div className={s.root}>
           <header className={s.head}>
             <div className={s.title}>
               Visual DDD AI ChatBot{' '}
-              <span className={s.keybinding}>{bot.keybinding.getReadableKeyBinding('show').key}</span>
+              <span className={s.keybinding}>{windowModel.keybinding.getReadableKeyBinding('show').key}</span>
             </div>
             <CloseOutlined className={s.close} onClick={handleClose} />
           </header>
-          <div className={s.history}>
-            <History />
-          </div>
-          <div className={s.prompt}>
-            <Prompt />
-          </div>
+          {windowModel.store.currentActiveSession?.model && (
+            <BotProvider bot={windowModel.store.currentActiveSession.model}>
+              <div className={s.history}>
+                <History />
+              </div>
+              <div className={s.prompt}>
+                <Prompt />
+              </div>
+            </BotProvider>
+          )}
         </div>
       </Drawer>
 
       {isValidElement(children) &&
         cloneElement(children, {
           // @ts-expect-error
-          onClick: bot.show,
+          onClick: show,
         })}
-    </BotProvider>
+    </>
   );
 });

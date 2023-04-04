@@ -7,9 +7,10 @@ import { rafDebounce } from '@wakeapp/utils';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
 import { useEffect, useMemo, useRef } from 'react';
-import { Message, Role, ExtensionType, GLOBAL_EXTENSION_KEY } from '../protocol';
 
-import { useBotContext } from './Context';
+import { Message, Role, ExtensionType, GLOBAL_EXTENSION_KEY } from '../protocol';
+import { useBotContext } from '../BotContext';
+
 import s from './History.module.scss';
 
 export interface HistoryProps {
@@ -111,7 +112,7 @@ export const History = observer(function History(props: HistoryProps) {
   }, []);
 
   useEventBusListener(bot.event, on => {
-    on('SHOW', () => {
+    on('ACTIVE', () => {
       scrollToBottom();
     });
     on('MESSAGE_ADDED', ({ message }) => {

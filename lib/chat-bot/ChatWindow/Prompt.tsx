@@ -6,7 +6,8 @@ import classNames from 'classnames';
 import { observer } from 'mobx-react';
 import { useEffect, useMemo, useRef } from 'react';
 
-import { useBotContext } from './Context';
+import { useBotContext } from '../BotContext';
+
 import s from './Prompt.module.scss';
 
 export interface PromptProps {}
@@ -81,7 +82,7 @@ export const Prompt = observer(function Prompt() {
   };
 
   useEventBusListener(bot.event, on => {
-    on('SHOW', focus);
+    on('ACTIVE', focus);
   });
 
   useEffect(focus, []);
