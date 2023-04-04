@@ -107,7 +107,7 @@ export const Sidebar = observer(function Sidebar(props: SidebarProps) {
   return (
     <div className={s.root}>
       <div className={s.sessions}>
-        <div className={s.session} onClick={handleAddSession}>
+        <div className={s.session} onClick={handleAddSession} id="chat-page-add-session">
           <PlusOutlined className={s.addSession} />
           <div className={s.sessionName}>新增会话</div>
         </div>

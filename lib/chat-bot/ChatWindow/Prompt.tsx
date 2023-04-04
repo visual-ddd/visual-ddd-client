@@ -89,7 +89,7 @@ export const Prompt = observer(function Prompt() {
 
   return (
     <div className={s.root} ref={rootRef}>
-      <div className={s.prompt}>
+      <div className={s.prompt} id="chat-bot-prompt">
         <Mentions
           ref={mentionsRef}
           className={s.input}
