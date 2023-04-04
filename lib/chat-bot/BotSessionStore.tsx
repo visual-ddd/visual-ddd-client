@@ -5,11 +5,9 @@ import { v4 } from 'uuid';
 
 import { BotSession } from './BotSession';
 import { BotSessionStoreEvent } from './BotSessionStoreEvent';
+import { DEFAULT_NAME, DEFAULT_SESSION_PROMPT, DEFAULT_SESSION_ID } from './constants';
 
 const KEY = 'chat-bot-sessions';
-const DEFAULT_SESSION_ID = 'default';
-const DEFAULT_NAME = 'Visual DDD';
-const DEFAULT_SESSION_PROMPT = '你是一个领域驱动设计(DDD)的专家，你也是 Visual DDD 专门开发的服务于开发者的机器人。';
 
 /**
  * 聊天多会话支持

@@ -137,6 +137,10 @@ export class BotModel implements IDisposable, IBot, IDestroyable {
     this.prompt = value;
   };
 
+  getSystemPrompt(): string | undefined {
+    return this.options.metaInfo.system;
+  }
+
   /**
    * 提交 prompt
    */

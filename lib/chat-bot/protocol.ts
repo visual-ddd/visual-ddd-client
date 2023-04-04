@@ -72,6 +72,11 @@ export interface IBot {
   availableExtensionsExceptGlobal: Extension[];
 
   /**
+   * 获取系统提示
+   */
+  getSystemPrompt(): string | undefined;
+
+  /**
    * 最近的消息
    */
   getChatContext(prompt: string): Promise<ChatContext>;

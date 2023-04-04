@@ -22,3 +22,7 @@ export const DEFAULT_WINDOW_SIZE = 500;
  * 默认侧边栏宽度
  */
 export const DEFAULT_SIDEBAR_SIZE = 250;
+
+export const DEFAULT_NAME = 'Visual DDD';
+export const DEFAULT_SESSION_PROMPT = '你是一个领域驱动设计(DDD)的专家，是 Visual DDD 专门开发的服务于开发者的机器人。';
+export const DEFAULT_SESSION_ID = 'default';
