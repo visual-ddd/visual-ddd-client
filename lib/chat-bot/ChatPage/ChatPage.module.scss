@@ -1,0 +1,24 @@
+.root {
+  background-color: #539bf538;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  padding: var(--vd-spacing-xs) var(--vd-spacing-sm);
+
+  :global {
+    .x6-split-box-resizer {
+      background-color: transparent;
+      width: 1px;
+      border-radius: 10px;
+      transition: width ease 0.3s, background-color ease 0.3s;
+      transform: translateX(-50%);
+
+      &:hover,
+      &:active {
+        width: 5px;
+        background-color: #00000045;
+      }
+    }
+  }
+}

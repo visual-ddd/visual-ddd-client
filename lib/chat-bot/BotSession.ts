@@ -47,7 +47,8 @@ export class BotSession implements IDisposable {
   /**
    * 是否支持删除
    */
-  readonly removable: boolean;
+  @observable
+  removable: boolean;
 
   /**
    * 持久化
@@ -67,6 +68,7 @@ export class BotSession implements IDisposable {
       uuid: this.uuid,
       onLoad: this.onLoad,
       initial: {
+        removable: this.removable,
         uuid: this.uuid,
         name: this.name,
         system: this.system,
@@ -124,6 +126,7 @@ export class BotSession implements IDisposable {
   private onLoad(data: BotSessionStorage) {
     this.name = data.name;
     this.system = data.system;
+    this.removable = data.removable;
   }
 
   private save = debounce(() => {
@@ -131,6 +134,7 @@ export class BotSession implements IDisposable {
       uuid: this.uuid,
       name: this.name,
       system: this.system,
+      removable: this.removable,
     });
   }, 1000);
 }

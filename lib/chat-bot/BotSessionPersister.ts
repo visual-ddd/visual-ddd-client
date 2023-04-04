@@ -4,6 +4,7 @@ export interface BotSessionStorage {
   uuid: string;
   name: string;
   system: string;
+  removable: boolean;
 }
 
 export interface BotSessionPersisterOptions {

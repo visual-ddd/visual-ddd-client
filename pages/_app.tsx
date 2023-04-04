@@ -32,7 +32,7 @@ type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
 
-const Bot = dynamic(() => import('@/modules/chat-bot'), { ssr: false });
+const Bot = dynamic(() => import('@/modules/chat-bot/ShowBotWhenLogged'), { ssr: false });
 const VerifyPermission = dynamic(() => import('@/modules/user/Launch/VerifyPermission'), { ssr: false });
 
 export default function App({ Component, pageProps }: AppPropsWithLayout) {

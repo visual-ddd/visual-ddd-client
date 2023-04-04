@@ -4,6 +4,7 @@ import { IDisposable, tryDispose } from '@/lib/utils';
 import { v4 } from 'uuid';
 
 import { BotSession } from './BotSession';
+import { BotSessionStoreEvent } from './BotSessionStoreEvent';
 
 const KEY = 'chat-bot-sessions';
 const DEFAULT_SESSION_ID = 'default';
@@ -14,6 +15,8 @@ const DEFAULT_SESSION_PROMPT = '你是一个领域驱动设计(DDD)的专家，�
  * 聊天多会话支持
  */
 export class BotSessionStore implements IDisposable {
+  readonly event = new BotSessionStoreEvent();
+
   /**
    * 当前会话, 惰性初始化
    */
@@ -60,6 +63,7 @@ export class BotSessionStore implements IDisposable {
     if (session) {
       session.active();
       this.active = id;
+      this.event.emit('SESSION_CHANGE', { sessionId: id });
     }
   }
 
@@ -111,7 +115,13 @@ export class BotSessionStore implements IDisposable {
     } else {
       // 初始化
       this.sessions = [
-        new BotSession({ uuid: DEFAULT_SESSION_ID, name: DEFAULT_NAME, system: DEFAULT_SESSION_PROMPT }),
+        new BotSession({
+          uuid: DEFAULT_SESSION_ID,
+          name: DEFAULT_NAME,
+          system: DEFAULT_SESSION_PROMPT,
+          // 默认会话不支持删除
+          removable: false,
+        }),
       ];
       this.save();
     }

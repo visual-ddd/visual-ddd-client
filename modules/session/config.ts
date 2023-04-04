@@ -29,6 +29,7 @@ export const ENTRY_PREFIX = [
 export const PAGE_AUTH_BLACK_LIST = [
   // 启动页
   '/launch',
+  '/chat',
   ...ENTRY_PREFIX,
 ];
 

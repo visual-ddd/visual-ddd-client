@@ -1,0 +1,60 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.sessions {
+  flex: 1;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: var(--vd-spacing-xs);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.session {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-radius: 10px;
+  gap: 4px;
+  cursor: pointer;
+
+  &:hover,
+  &:global(.active) {
+    background-color: rgba($color: #000000, $alpha: 0.1);
+  }
+
+  .removeSession {
+    visibility: hidden;
+    color: rgba($color: #000000, $alpha: 0.3);
+
+    &:hover {
+      color: rgba($color: #000000, $alpha: 0.7);
+    }
+  }
+
+  &:hover .removeSession {
+    visibility: visible;
+  }
+
+  .sessionName {
+    flex: 1;
+    outline: none;
+    word-break: break-all;
+    user-select: none;
+  }
+
+  .sessionName:not([contenteditable='true']) {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &:global(.active) .sessionName {
+    font-weight: 600;
+  }
+}

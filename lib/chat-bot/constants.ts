@@ -17,3 +17,8 @@ export const MAX_CONTEXT_PROMPT_LENGTH = MAX_TOKEN * 0.65;
  * 默认窗口宽度
  */
 export const DEFAULT_WINDOW_SIZE = 500;
+
+/**
+ * 默认侧边栏宽度
+ */
+export const DEFAULT_SIDEBAR_SIZE = 250;
