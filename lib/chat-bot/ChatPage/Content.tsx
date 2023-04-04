@@ -22,7 +22,30 @@ const Item = observer(function Item(props: { item: BotSession; active: boolean }
     <BotProvider bot={item.model!}>
       <div className={classNames(s.session, { active })}>
         <div className={s.history}>
-          <History />
+          <History
+            intro={
+              <>
+                <p>
+                  <code>Visual DDD ChatBot</code> 是一个 AI 聊天机器人，你可以问它任何关于 DDD 的问题。基本用法如下：{' '}
+                </p>
+                <ol>
+                  <li>你可以通过侧边栏，为不同的主题新建不同的会话</li>
+                  <li>你可以点击上面修改主题描述，定义聊天的规则</li>
+                  <li>
+                    我也支持一些特定的指令，你可以输入 <code>#</code> 选择并激活特定指令
+                  </li>
+                  <li> 随便聊聊吧 </li>
+                </ol>
+                <p>
+                  目前，
+                  <b>
+                    ChatBot 还是一个实验性的功能, 如果你遇到任何问题，可以 <code>#BUG</code> 给我们反馈问题, 谢谢
+                  </b>
+                  。
+                </p>
+              </>
+            }
+          />
         </div>
         <div className={s.prompt}>
           <Prompt />
