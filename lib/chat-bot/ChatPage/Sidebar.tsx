@@ -54,7 +54,7 @@ const Item = observer(function Item(props: { item: BotSession; active: boolean }
     });
   };
 
-  const handleBlur = (evt: React.FocusEvent) => {
+  const handleBlur = (evt: React.FocusEvent | React.KeyboardEvent) => {
     const target = evt.currentTarget as HTMLDivElement;
     const value = target.textContent;
     if (value?.trim()) {
@@ -72,6 +72,14 @@ const Item = observer(function Item(props: { item: BotSession; active: boolean }
     }
   };
 
+  const handleKeyUp = (evt: React.KeyboardEvent) => {
+    if (evt.key === 'Enter') {
+      evt.preventDefault();
+      evt.stopPropagation();
+      handleBlur(evt);
+    }
+  };
+
   return (
     <div className={classNames(s.session, { active })} onClick={handleActive}>
       <span
@@ -79,6 +87,7 @@ const Item = observer(function Item(props: { item: BotSession; active: boolean }
         className={s.sessionName}
         contentEditable={editing}
         onBlur={handleBlur}
+        onKeyUp={handleKeyUp}
         dangerouslySetInnerHTML={{ __html: item.name }}
         onClick={handleClick}
       ></span>
