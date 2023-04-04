@@ -6,7 +6,7 @@ import type { GetServerSideProps, PreviewData } from 'next';
 import type { ParsedUrlQuery } from 'querystring';
 import { isResponseError, request } from '@/modules/backend-node';
 
-import { IRON_SESSION_OPTIONS, UNAUTH_CODE } from './config';
+import { IRON_SESSION_OPTIONS, NOT_FOUND_CODE, UNAUTH_CODE } from './config';
 
 /**
  * 注入 session 到 getServerSideProps 处理器
@@ -57,6 +57,12 @@ export function withWakedataRequestSsr<
         if (code === UNAUTH_CODE) {
           return {
             redirect: { permanent: false, destination: `/login?from=${req.url}&flash=true` },
+          };
+        } else if (code === NOT_FOUND_CODE) {
+          console.warn(`资源未找到: ${req.url}`);
+          // 资源未找到
+          return {
+            notFound: true,
           };
         }
       }

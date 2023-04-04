@@ -1,0 +1,29 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo {
+  font-size: 150px;
+}
+
+.code {
+  font-size: 40px;
+  font-weight: bold;
+}
+
+.message {
+  margin-top: 18px;
+  font-size: 16px;
+  color: var(--vd-color-gray-800);
+}
+
+.actions {
+  margin-top: 20px;
+  display: flex;
+  gap: var(--vd-spacing-xs);
+}

@@ -33,7 +33,9 @@ export const PAGE_AUTH_BLACK_LIST = [
 ];
 
 export const UNAUTH_CODE = 401;
+export const NOT_FOUND_CODE = 404;
 
 export const WAKEDATA_CODE_MAP: Record<string, number> = {
   [UNAUTH_CODE]: UNAUTH_CODE,
+  [NOT_FOUND_CODE]: NOT_FOUND_CODE,
 };

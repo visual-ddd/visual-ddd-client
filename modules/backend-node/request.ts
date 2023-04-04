@@ -21,7 +21,7 @@ request.initial({
   fetch: fetch.bind(globalThis),
   interceptor: compose(
     (request, next) => {
-      request.headers['Accept-Language'] = 'zh-cn';
+      request.headers['Accept-Language'] = 'zh';
       return next();
     },
     (request, next) => {
