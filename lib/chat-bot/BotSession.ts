@@ -1,5 +1,5 @@
 import { makeObservable, observable } from 'mobx';
-import { IDisposable, tryDispose } from '@/lib/utils';
+import { IDestroyable, IDisposable, tryDispose } from '@/lib/utils';
 import debounce from 'lodash/debounce';
 import { makeAutoBindThis, mutation } from '@/lib/store';
 
@@ -20,7 +20,7 @@ const DEFAULT_NAME = '随便聊聊';
 /**
  * 聊天会话
  */
-export class BotSession implements IDisposable {
+export class BotSession implements IDisposable, IDestroyable {
   /**
    * 会话唯一 id
    */
@@ -81,6 +81,11 @@ export class BotSession implements IDisposable {
     tryDispose(this.persister);
     tryDispose(this.model);
   };
+
+  destroy(): void {
+    this.persister.destroy();
+    this.model?.destroy();
+  }
 
   active() {
     if (this.model == null) {

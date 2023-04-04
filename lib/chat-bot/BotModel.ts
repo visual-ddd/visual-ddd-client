@@ -2,7 +2,7 @@ import { action, makeObservable, observable } from 'mobx';
 import { captureException, addBreadcrumb } from '@sentry/nextjs';
 import { v4 } from 'uuid';
 import { Disposer, NoopArray } from '@wakeapp/utils';
-import { IDisposable, TimeoutError, tryDispose } from '@/lib/utils';
+import { IDestroyable, IDisposable, TimeoutError, tryDispose } from '@/lib/utils';
 import { command, derive, effect, makeAutoBindThis, mutation } from '@/lib/store';
 import type { OpenAIEventSourceModel } from '@/lib/openai-event-source';
 
@@ -28,7 +28,7 @@ export interface BotModelOptions {
 /**
  * 机器人
  */
-export class BotModel implements IDisposable, IBot {
+export class BotModel implements IDisposable, IBot, IDestroyable {
   /**
    * 事件
    */
@@ -126,6 +126,10 @@ export class BotModel implements IDisposable, IBot {
 
   dispose() {
     this.disposer.release();
+  }
+
+  destroy(): void {
+    this.persister.destroy();
   }
 
   @action

@@ -99,10 +99,11 @@ export class BotSessionStore implements IDisposable {
         this.activeSession(this.sessions[0].uuid);
       }
 
-      // TODO: 删除历史记录
-
       // 销毁
       tryDispose(removed);
+
+      // 删除历史记录
+      removed.destroy();
 
       this.save();
     }

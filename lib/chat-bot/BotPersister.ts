@@ -1,6 +1,6 @@
 import type { BotEvent } from './BotEvent';
 import localforage from 'localforage';
-import { IDisposable } from '../utils';
+import { IDestroyable, IDisposable } from '../utils';
 import { cloneDeep, debounce, Disposer, omit } from '@wakeapp/utils';
 import { Message } from './protocol';
 import { toJS } from 'mobx';
@@ -15,7 +15,7 @@ export interface BotStorage {
 
 const OMIT_KEYS: (keyof Message)[] = ['pending'];
 
-export class BotPersister implements IDisposable {
+export class BotPersister implements IDisposable, IDestroyable {
   private uuid: string;
   private event: BotEvent;
   private list: PersistMessage[] = [];
@@ -38,6 +38,10 @@ export class BotPersister implements IDisposable {
   dispose() {
     this.disposer.release();
     this.save.cancel();
+  }
+
+  destroy(): void {
+    localforage.removeItem(this.key);
   }
 
   private async initial() {

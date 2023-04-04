@@ -1,4 +1,5 @@
 import localforage from 'localforage';
+import { IDestroyable } from '@/lib/utils';
 
 export interface BotSessionStorage {
   uuid: string;
@@ -15,7 +16,7 @@ export interface BotSessionPersisterOptions {
 
 const KEY_PREFIX = 'chat-bot-session-';
 
-export class BotSessionPersister {
+export class BotSessionPersister implements IDestroyable {
   private options: BotSessionPersisterOptions;
   private get key() {
     return `${KEY_PREFIX}${this.options.uuid}`;
@@ -29,6 +30,10 @@ export class BotSessionPersister {
 
   save(value: BotSessionStorage) {
     localforage.setItem(this.key, value);
+  }
+
+  destroy(): void {
+    localforage.removeItem(this.key);
   }
 
   private async initial() {
