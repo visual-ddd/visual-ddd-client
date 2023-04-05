@@ -58,7 +58,8 @@ const Item = observer(function Item(props: { item: BotSession; active: boolean }
     const target = evt.currentTarget as HTMLDivElement;
     const value = target.textContent;
     if (value?.trim()) {
-      item.setName(value);
+      // 最多限制 50 个字符
+      item.setName(value.slice(0, 50));
     } else {
       target.innerText = item.name;
     }
@@ -72,10 +73,13 @@ const Item = observer(function Item(props: { item: BotSession; active: boolean }
     }
   };
 
-  const handleKeyUp = (evt: React.KeyboardEvent) => {
-    if (evt.key === 'Enter') {
+  const handleKeyDown = (evt: React.KeyboardEvent) => {
+    const prevent = () => {
       evt.preventDefault();
       evt.stopPropagation();
+    };
+    if (evt.key === 'Enter') {
+      prevent();
       handleBlur(evt);
     }
   };
@@ -87,7 +91,7 @@ const Item = observer(function Item(props: { item: BotSession; active: boolean }
         className={s.sessionName}
         contentEditable={editing}
         onBlur={handleBlur}
-        onKeyUp={handleKeyUp}
+        onKeyDown={handleKeyDown}
         dangerouslySetInnerHTML={{ __html: item.name }}
         onClick={handleClick}
       ></span>

@@ -12,7 +12,7 @@ const AUTO_SIZE = {
 export function usePrompt() {
   const [modal, holder] = Modal.useModal();
 
-  const show = (options: { title: React.ReactNode; value: string; placeholder: string }) => {
+  const show = (options: { title: React.ReactNode; value: string; placeholder: string; maxLength?: number }) => {
     const state = observable({ value: options.value || '' });
     const setValue = action((value: string) => {
       state.value = value;
@@ -30,6 +30,8 @@ export function usePrompt() {
                   <Input.TextArea
                     value={state.value}
                     onChange={e => setValue(e.target.value)}
+                    maxLength={options.maxLength}
+                    showCount
                     autoFocus
                     autoSize={AUTO_SIZE}
                     placeholder={options.placeholder}

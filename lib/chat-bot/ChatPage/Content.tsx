@@ -65,6 +65,7 @@ export const Content = observer(function Content(props: ContentProps) {
       title: '修改主题',
       value: store.currentActiveSession?.system || '',
       placeholder: '输入主题，比如请润色我说的每一句话',
+      maxLength: 500,
     });
 
     if (system?.trim()) {

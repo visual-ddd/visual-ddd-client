@@ -1,2 +1,13 @@
 .root {
+  :global {
+    .ant-modal-confirm-btns {
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    .ant-modal-confirm-content {
+      margin-inline-start: 0 !important;
+      max-width: unset !important;
+    }
+  }
 }
