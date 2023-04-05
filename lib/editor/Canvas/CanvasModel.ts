@@ -242,7 +242,7 @@ export class CanvasModel implements IDisposable {
 
       // 缩放限制
       scaling: {
-        min: 0.5,
+        min: 0.1,
         max: 3.5,
       },
 

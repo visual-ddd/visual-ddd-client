@@ -75,6 +75,8 @@ export const EditorToolbar = observer(function EditorToolbar(props: EditorToolba
           onClick={handleZoomTo}
           dropdown={
             <Menu>
+              <Menu.Item name="10">10%</Menu.Item>
+              <Menu.Item name="30">30%</Menu.Item>
               <Menu.Item name="50">50%</Menu.Item>
               <Menu.Item name="75">75%</Menu.Item>
               <Menu.Item name="100">100%</Menu.Item>
