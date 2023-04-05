@@ -66,6 +66,14 @@ export interface BaseEditorViewState {
     ox: number;
     oy: number;
   };
+
+  /**
+   * 画布的偏移状态
+   */
+  canvasTranslate?: {
+    tx: number;
+    ty: number;
+  };
 }
 
 /**
@@ -232,6 +240,7 @@ export class BaseEditorViewStore implements IDisposable {
 
   dispose() {
     this.disposer.release();
+    this.saveViewState.cancel();
   }
 
   async initial() {
@@ -241,6 +250,8 @@ export class BaseEditorViewStore implements IDisposable {
         Object.assign(this.viewState, state);
       });
     }
+
+    this.event.emit('EDITOR_VIEW_STATE_RECOVERED', { state: this.viewState });
   }
 
   @mutation('VIEW_STORE:SET_SELECTED')
@@ -295,5 +306,5 @@ export class BaseEditorViewStore implements IDisposable {
 
   protected saveViewState = debounce(() => {
     localforage.setItem(this.cacheKey, toJS(this.viewState));
-  });
+  }, 1000);
 }

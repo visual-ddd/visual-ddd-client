@@ -32,6 +32,7 @@ export const Canvas = memo((props: CanvasProps) => {
       minimapClassName={s.minimap}
       onDrop={canvasModel.handleDrop}
       onScale={canvasModel.handleScaleChange}
+      onTranslate={canvasModel.handleTranslateChange}
       onMouseMove={canvasModel.handleMouseMove}
       onMouseEnter={canvasModel.handleMouseEnter}
       onMouseLeave={canvasModel.handleMouseLeave}

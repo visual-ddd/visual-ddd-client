@@ -481,6 +481,25 @@ export class CanvasModel implements IDisposable {
       this.editorModel.event.on('CMD_RE_LAYOUT', () => {
         this.handleLayout();
       }),
+      this.editorModel.event.on('EDITOR_VIEW_STATE_RECOVERED', ({ state }) => {
+        if (state.canvasScale != null) {
+          const { sx, sy, ox, oy } = state.canvasScale;
+          this.graph?.scale(sx, sy, ox, oy);
+        }
+
+        if (state.canvasTranslate != null) {
+          const { tx, ty } = state.canvasTranslate;
+          this.graph?.translate(tx, ty);
+        }
+
+        if (state.mouseDragMode != null) {
+          if (state.mouseDragMode === 'select') {
+            this.handleEnableMouseSelectMode();
+          } else {
+            this.handleEnableMousePanningMode();
+          }
+        }
+      }),
       this.contextMenuController.dispose,
       // 监听节点定位
       this.editorPropertyLocationObserver.subscribeAnonymous(evt => {
@@ -782,6 +801,19 @@ export class CanvasModel implements IDisposable {
     this.editorCommandHandler.setViewStateDebounce({
       key: 'canvasScale',
       value: { sx, sy, ox, oy },
+    });
+  };
+
+  /**
+   * 处理画布偏移
+   * @param evt
+   */
+  handleTranslateChange: GraphBindingProps['onTranslate'] = evt => {
+    const { tx, ty } = evt;
+
+    this.editorCommandHandler.setViewStateDebounce({
+      key: 'canvasTranslate',
+      value: { tx, ty },
     });
   };
 

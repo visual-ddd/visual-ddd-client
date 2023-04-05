@@ -1,5 +1,6 @@
 import { EventBus, EventsWithArg, EventsWithoutArg } from '@/lib/utils';
-import { BaseNode } from './BaseNode';
+import type { BaseNode } from './BaseNode';
+import type { BaseEditorViewState } from './BaseEditorViewStore';
 
 /**
  * 编辑器模型事件
@@ -20,6 +21,9 @@ export interface BaseEditorEventDefinitions {
   // 锁定
   NODE_LOCKED: { node: BaseNode };
   NODE_UNLOCKED: { node: BaseNode };
+
+  // 编辑器配置恢复
+  EDITOR_VIEW_STATE_RECOVERED: { state: BaseEditorViewState };
 
   // 外部命令，这里命令本身不由 model 层处理(Model 层仅处理状态)
   // model 仅作为中转，具体由下级依赖进行处理

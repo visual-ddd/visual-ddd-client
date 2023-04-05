@@ -79,6 +79,13 @@ export interface GraphBindingProps {
   onScale?: (evt: EventArgs['scale']) => void;
 
   /**
+   * 画布偏移
+   * @param evt
+   * @returns
+   */
+  onTranslate?: (evt: EventArgs['translate']) => void;
+
+  /**
    * 画布右键菜单
    * @param evt
    * @returns
