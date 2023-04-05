@@ -1249,18 +1249,13 @@ export class CanvasModel implements IDisposable {
   handleIncrementZIndex = (params: { cell: Cell; value?: number }) => {
     const { cell, value = 1 } = params;
 
-    const incrementZIndex = (cell: Cell) => {
-      const current = cell.getZIndex() ?? 1;
+    const incrementZIndex = (target: Cell) => {
+      const current = target.getZIndex() ?? 1;
       const next = current + value;
 
-      // 不能小于1
-      if (next < 1) {
-        return;
-      }
+      target.setZIndex(next);
 
-      cell.setZIndex(next);
-
-      const children = cell.getChildren();
+      const children = target.getChildren();
 
       if (children?.length) {
         for (const child of children) {
