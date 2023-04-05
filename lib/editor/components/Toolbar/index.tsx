@@ -1,5 +1,4 @@
 import { observer } from 'mobx-react';
-import { useMemo } from 'react';
 import { Toolbar, Menu } from '@antv/x6-react-components';
 import Icon, {
   ZoomInOutlined,
@@ -12,7 +11,6 @@ import Icon, {
   ExpandOutlined,
   LockOutlined,
 } from '@ant-design/icons';
-import memoize from 'lodash/memoize';
 
 import '@antv/x6-react-components/es/menu/style/index.css';
 import '@antv/x6-react-components/es/toolbar/style/index.css';
@@ -23,6 +21,7 @@ import { useCanvasModel } from '../../Canvas';
 import { GrabIcon } from './GrabIcon';
 import { SelectIcon } from './SelectIcon';
 import s from './index.module.scss';
+import { useCanvasModelCommandDescription } from '../../hooks';
 
 const Group = Toolbar.Group;
 const Item = Toolbar.Item;
@@ -41,13 +40,7 @@ export const EditorToolbar = observer(function EditorToolbar(props: EditorToolba
   const editorViewStore = model.editorViewStore;
   const readonly = model.readonly;
 
-  const getDesc = useMemo(() => {
-    return memoize((name: string) => {
-      const desc = model.getCommandDescription(name);
-
-      return { tooltip: `${desc.description ?? desc.title} (${desc.key.toUpperCase()})`, handler: desc.handler };
-    });
-  }, [model]);
+  const getDesc = useCanvasModelCommandDescription();
 
   const handleZoomTo = (value?: string) => {
     if (!value) {

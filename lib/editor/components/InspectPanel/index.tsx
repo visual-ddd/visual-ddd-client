@@ -1,10 +1,10 @@
 import { ExclamationCircleFilled } from '@ant-design/icons';
-import { Tabs } from 'antd';
+import { Tabs, Tooltip } from 'antd';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
 
 import { useCanvasModel } from '../../Canvas';
-import { usePropertyLocationSatisfy } from '../../hooks';
+import { useCanvasModelCommandDescription, usePropertyLocationSatisfy } from '../../hooks';
 import { EditorInspectTab } from '../../Model';
 import { EditorAttributes } from '../Attributes';
 import { EditorProblems } from '../Problems';
@@ -21,6 +21,8 @@ export const EditorInspectPanel = observer(function EditorInspectPanel() {
   const formModel = node && formStore.getFormModel(node);
   const hasIssue = formModel ? formModel.hasIssue : formStore.hasIssue;
   const hasError = hasIssue && (formModel ? formModel.hasError : formStore.hasError);
+
+  const getCommandDesc = useCanvasModelCommandDescription();
 
   const handleTabChange = (key: EditorInspectTab) => {
     commandHandler.setViewState({ key: 'inspectTab', value: key });
@@ -48,18 +50,24 @@ export const EditorInspectPanel = observer(function EditorInspectPanel() {
       onChange={handleTabChange as any}
       items={[
         {
-          label: '属性',
+          label: (
+            <Tooltip title={getCommandDesc('showAttributes').tooltip} placement="bottomRight" mouseEnterDelay={1}>
+              <span>属性</span>
+            </Tooltip>
+          ),
           key: EditorInspectTab.Attributes,
           children: <EditorAttributes />,
         },
         {
           label: (
-            <span>
-              告警
-              {!!hasIssue && (
-                <ExclamationCircleFilled className={hasError ? 'u-danger' : 'u-warning'} style={{ marginLeft: 4 }} />
-              )}
-            </span>
+            <Tooltip title={getCommandDesc('showProblems').tooltip} placement="bottomRight" mouseEnterDelay={1}>
+              <span>
+                告警
+                {!!hasIssue && (
+                  <ExclamationCircleFilled className={hasError ? 'u-danger' : 'u-warning'} style={{ marginLeft: 4 }} />
+                )}
+              </span>
+            </Tooltip>
           ),
           key: EditorInspectTab.Problems,
           children: <EditorProblems />,

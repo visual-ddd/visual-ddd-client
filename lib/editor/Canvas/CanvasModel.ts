@@ -9,7 +9,7 @@ import { GraphBindingOptions, GraphBindingProps } from '@/lib/g6-binding';
 import { IDisposable } from '@/lib/utils';
 
 import { CanvasEvent } from './CanvasEvent';
-import { BaseEditorModel, BaseNode } from '../Model';
+import { BaseEditorModel, BaseNode, EditorInspectTab } from '../Model';
 import { NormalizedAutoResizeGroup, ShapeRegistry } from '../Shape';
 import { assertShapeInfo } from '../Shape';
 import { copyByCell, copyByPayload, CopyPayload, paste } from './ClipboardUtils';
@@ -428,6 +428,18 @@ export class CanvasModel implements IDisposable {
           title: '重做',
           key: { macos: 'shift+command+z', other: 'ctrl+y' },
           handler: this.handleRedo,
+        })
+        .bindKey({
+          name: 'showAttributes',
+          title: '显示属性面板',
+          key: { macos: 'command+shift+a', other: 'ctrl+shift+a' },
+          handler: this.handleShowAttributesTab,
+        })
+        .bindKey({
+          name: 'showProblems',
+          title: '显示问题面板',
+          key: { macos: 'command+shift+p', other: 'ctrl+shift+p' },
+          handler: this.handleShowProblemTab,
         });
     }
 
@@ -1346,6 +1358,36 @@ export class CanvasModel implements IDisposable {
   handleExportAsImage = () => {
     // FIXME: 会出现样式错乱，后面使用其他方案
     this.graph?.exportSVG(undefined, { copyStyles: true });
+  };
+
+  /**
+   * 显示属性面板
+   */
+  handleShowAttributesTab = () => {
+    this.editorCommandHandler.setViewState({
+      key: 'rightSidebarFolded',
+      value: false,
+    });
+
+    this.editorCommandHandler.setViewState({
+      key: 'inspectTab',
+      value: EditorInspectTab.Attributes,
+    });
+  };
+
+  /**
+   * 显示问题面板
+   */
+  handleShowProblemTab = () => {
+    this.editorCommandHandler.setViewState({
+      key: 'rightSidebarFolded',
+      value: false,
+    });
+
+    this.editorCommandHandler.setViewState({
+      key: 'inspectTab',
+      value: EditorInspectTab.Problems,
+    });
   };
 
   /**
