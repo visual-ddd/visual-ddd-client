@@ -231,6 +231,10 @@ export class CanvasModel implements IDisposable {
         enabled: true,
         // 通过滚动缩放大小
         zoomAtMousePosition: true,
+
+        // 缩放因子，默认是 1.2, 但是在 macos 触控板是会非常灵敏
+        // 因此这里设置稍微小一点
+        factor: 1.05,
         // 缩放大小的修饰符
         modifiers: ['meta', 'ctrl'],
       },
