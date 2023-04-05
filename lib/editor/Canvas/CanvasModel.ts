@@ -453,7 +453,7 @@ export class CanvasModel implements IDisposable {
       .bindKey({
         name: 'zoomIn',
         title: '放大',
-        key: { macos: ['command+plus', 'command+='], other: ['ctrl+plus', 'command+='] },
+        key: { macos: ['command+plus', 'command+='], other: ['ctrl+plus', 'ctrl+='] },
         handler: this.handleZoomIn,
       })
       .bindKey({
