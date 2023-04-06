@@ -324,7 +324,7 @@ export class Table implements ITable {
       }
 
       const property = cloneDeep(this.dataObject!.dsl.properties[propertyIndex]);
-      property.name = name;
+      property.name = newName;
       const clone = this.dataObject!.dsl.properties.slice();
       clone[propertyIndex] = property;
 
@@ -334,7 +334,7 @@ export class Table implements ITable {
         value: clone,
       });
 
-      this.tableStore.addLog(`删除数据对象 ${this.name}`);
+      this.tableStore.addLog(`重命名字段 ${this.name}.${name} 为 ${newName} `);
     });
   }
 }

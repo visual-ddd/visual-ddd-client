@@ -40,6 +40,12 @@ export interface ITable {
 export interface ITableStore {
   getTableByName(name: string): ITable | undefined;
   createTable: (name: string) => ITable;
+  /**
+   * 断言表存在, Table Store 可以在这里收集警告信息
+   * @param name
+   * @returns
+   */
+  assertTableExist: (name: string) => void;
 }
 
 type Task = () => void;
@@ -70,7 +76,11 @@ export class Executor {
             table = this.store.createTable(tableName);
             table.setTitle(tableDirective.params.title);
           });
+
+          continue;
         }
+
+        this.store.assertTableExist(tableName);
 
         if (tableDirective.type === DirectiveName.RemoveTable) {
           tasks.unshift(() => {
@@ -95,6 +105,10 @@ export class Executor {
       }
 
       this.runTask(hightTasks);
+
+      if (group.fieldDirectives.length) {
+        this.store.assertTableExist(tableName);
+      }
 
       // 表不存在，没有必要继续操作字段了
       if (table == null) {

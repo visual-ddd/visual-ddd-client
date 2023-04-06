@@ -5,7 +5,6 @@ import { createIdentityOpenAIEventSourceModel } from '@/lib/openai-event-source'
 import { tryDispose } from '@/lib/utils';
 import { useRefValue } from '@wakeapp/hooks';
 import { useEffect } from 'react';
-import { message as msg } from 'antd';
 import uniq from 'lodash/uniq';
 
 import type { DataObjectEditorModel } from '../../model';
@@ -114,12 +113,15 @@ export function useDataObjectBot() {
 
             if (warning.length) {
               console.debug('AI数据建模警告: ', warning);
-              addLog('\n执行完善，以下是一些警告信息: \n\n' + uniq(warning).join('  \n'));
+              addLog(
+                '\n执行完成，以下是一些警告信息: \n\n' +
+                  uniq(warning)
+                    .map(i => `- ${i}`)
+                    .join('  \n')
+              );
             } else {
               addLog('\n执行成功');
             }
-
-            msg.success('执行成功');
           } catch (err) {
             if (AITransformerParseError.isAITransformerParseError(err)) {
               context.bot.responseMessage(rawResponse!, context.currentTarget);

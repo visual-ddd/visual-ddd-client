@@ -59,6 +59,12 @@ export class TableStore implements ITableStore {
     return table;
   }
 
+  assertTableExist(name: string) {
+    if (!this.tables.has(name)) {
+      this.warning.push(`数据对象 ${name} 不存在`);
+    }
+  }
+
   getTableByName(name: string): ITable | undefined {
     if (this.tables.has(name)) {
       return this.tables.get(name)!;
