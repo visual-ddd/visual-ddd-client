@@ -36,6 +36,8 @@ const EnumAttributeComponent = () => {
   return <EnumEditor />;
 };
 
+const NUM_REG = /^-?\d+(\.\d+)?$/;
+
 /**
  * 实体
  */
@@ -90,7 +92,7 @@ defineShape({
               $self: [
                 { required: true, message: '编码不能为空' },
                 {
-                  async validator(value, context) {
+                  async validator(value: string, context) {
                     const baseType = context.model.getProperty('baseType') as EnumBaseType;
                     value = value.trim();
 
@@ -99,7 +101,7 @@ defineShape({
                     }
 
                     if (baseType === 'number') {
-                      if (Number.isNaN(parseFloat(value))) {
+                      if (!value.match(NUM_REG)) {
                         throw new Error(`编码必须是数字`);
                       }
                     }
