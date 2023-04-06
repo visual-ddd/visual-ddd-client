@@ -62,16 +62,17 @@ BACKEND=http://172.26.57.49:8080 pnpm dev
 
 环境变量
 
-| 名称                 | 说明                                        |
-| -------------------- | ------------------------------------------- |
-| BACKEND              | 后端服务地址, 例如 http://172.26.57.49:8080 |
-| SESSION_SECRET       | 会话加密密钥                                |
-| PASS_THROUGH_SESSION | 登录时是否透传后端的会话信息， 默认 false   |
-| OPENAI_API_KEY       | OPENAI 开发密钥                             |
-| OPENAI_BASE_PATH     | OPENAI 代理地址                             |
-| PINECONE_API_KEY     |                                             |
-| PINECONE_ENVIRONMENT |                                             |
-| PINECONE_INDEX       |                                             |
+| 名称                  | 说明                                        |
+| --------------------- | ------------------------------------------- |
+| BACKEND               | 后端服务地址, 例如 http://172.26.57.49:8080 |
+| SESSION_SECRET        | 会话加密密钥                                |
+| PASS_THROUGH_SESSION  | 登录时是否透传后端的会话信息， 默认 false   |
+| OPENAI_API_KEY        | OPENAI 开发密钥                             |
+| OPENAI_BASE_PATH      | OPENAI 代理地址                             |
+| PINECONE_API_KEY      |                                             |
+| PINECONE_ENVIRONMENT  |                                             |
+| PINECONE_INDEX        |                                             |
+| PRODUCTION_SOURCE_MAP | 是否开启生产环境 sourcemap, 默认 false      |
 
 # 资源
 
