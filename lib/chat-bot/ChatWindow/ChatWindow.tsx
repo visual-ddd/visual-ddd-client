@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react';
-import { Drawer } from 'antd';
+import { Drawer, Tooltip } from 'antd';
 import { cloneElement, isValidElement, useEffect, useMemo, useState } from 'react';
 import { CloseOutlined } from '@ant-design/icons';
 import { useEventBusListener } from '@/lib/hooks';
@@ -13,6 +13,7 @@ import { BotProvider } from '../BotContext';
 import s from './ChatWindow.module.scss';
 import { Prompt } from './Prompt';
 import { History } from './History';
+import { NewWindowIcon } from './NewWindowIcon';
 
 export interface ChatWindowProps {
   children?: React.ReactNode;
@@ -76,6 +77,10 @@ export const ChatWindow = observer(function ChatWindow(props: ChatWindowProps) {
     document.addEventListener('mouseleave', handleEnd);
   };
 
+  const handleOpenChat = () => {
+    window.open('/chat', 'chat');
+  };
+
   useEventBusListener(windowModel.event, on => {
     on('SHOW', () => {
       setVisible(true);
@@ -109,7 +114,12 @@ export const ChatWindow = observer(function ChatWindow(props: ChatWindowProps) {
               Visual DDD AI ChatBot{' '}
               <span className={s.keybinding}>{windowModel.keybinding.getReadableKeyBinding('show').key}</span>
             </div>
-            <CloseOutlined className={s.close} onClick={handleClose} />
+            <Tooltip title="新页面打开聊天窗" placement="bottom" mouseEnterDelay={0.5}>
+              <NewWindowIcon className={s.newWindow} onClick={handleOpenChat} />
+            </Tooltip>
+            <Tooltip placement="bottom" title="关闭 (Esc)" mouseEnterDelay={0.5}>
+              <CloseOutlined className={s.close} onClick={handleClose} title="关闭" />
+            </Tooltip>
           </header>
           {windowModel.store.currentActiveSession?.model && (
             <BotProvider bot={windowModel.store.currentActiveSession.model}>
