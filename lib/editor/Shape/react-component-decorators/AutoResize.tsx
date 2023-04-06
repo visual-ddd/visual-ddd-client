@@ -27,32 +27,34 @@ export const AutoResizeDecorator: ReactDecorator = Input => {
         return;
       }
 
-      const update = debounce(
-        ({ width, height }: { width: number; height: number }) => {
-          // resize 有一定几率会报 width 和 height 为 0 的错误
-          if (!width && !height) {
-            return;
-          }
+      const update = ({ width, height }: { width: number; height: number }) => {
+        // resize 有一定几率会报 width 和 height 为 0 的错误
+        if (!width && !height) {
+          return;
+        }
 
-          const size = props.node.getSize();
-          if (size.width !== width || size.height !== height) {
-            props.node.resize(width, height, { autoResize: true });
+        const size = props.node.getSize();
+        if (size.width !== width || size.height !== height) {
+          props.node.resize(width, height, { autoResize: true });
+        }
+      };
+
+      const listener = debounce(
+        (entries: ResizeObserverEntry[]) => {
+          for (const entry of entries) {
+            update({ width: entry.contentRect.width, height: entry.contentRect.height });
           }
         },
         100,
         { leading: true }
       );
 
-      const observer = new ResizeObserver(entries => {
-        for (const entry of entries) {
-          update({ width: entry.contentRect.width, height: entry.contentRect.height });
-        }
-      });
+      const observer = new ResizeObserver(listener);
 
       observer.observe(containerRef.current);
 
       return () => {
-        update.cancel();
+        listener.cancel();
         observer.disconnect();
       };
     }, []);
