@@ -8,11 +8,29 @@
   align-items: center;
 }
 
+.header {
+  display: flex;
+  align-items: center;
+  padding: 0 64px;
+  margin-top: 32px;
+  margin-bottom: 64px;
+  width: 100%;
+
+  .menu {
+    color: var(--vd-color-gray-800);
+    font-size: 16px;
+    margin: 0 16px;
+    margin: 0 16px;
+  }
+}
+
 .body {
   margin: 12vh 0 18vh 0;
 }
 
 .logo {
+  flex: 1;
+
   img {
     width: 80px;
     height: 80px;
