@@ -90,7 +90,10 @@ export interface IBot {
   /**
    * 向控制台发送消息
    */
-  responseMessage(message: string, extension?: Extension): void;
+  responseMessage(
+    message: string,
+    extension?: Extension
+  ): (newValue: string | ((currentValue: string) => string)) => void;
 
   /**
    * 设置消息的总结

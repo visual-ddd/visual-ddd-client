@@ -42,6 +42,8 @@ export interface ITableStore {
   createTable: (name: string) => ITable;
 }
 
+type Task = () => void;
+
 export class Executor {
   private store: ITableStore;
   constructor(inject: { store: ITableStore }) {
@@ -55,12 +57,15 @@ export class Executor {
       const tableName = group.table;
       let table = this.getTable(tableName);
 
-      const hightTasks: Array<() => void> = [];
-      const tasks: Array<() => void> = [];
+      // 高优先级任务, 比如创建表、创建对象；需要先创建表之后才能继续执行字段操作
+      const hightTasks: Task[] = [];
+      // 普通任务
+      const tasks: Task[] = [];
 
       // Table directive execute
       for (const tableDirective of group.tableDirectives) {
         if (tableDirective.type === DirectiveName.CreateTable) {
+          // 创建表优先级最高
           hightTasks.unshift(() => {
             table = this.store.createTable(tableName);
             table.setTitle(tableDirective.params.title);
@@ -81,6 +86,7 @@ export class Executor {
         }
 
         if (tableDirective.type === DirectiveName.RenameTable) {
+          // rename 放到最后, 避免因为重命名导致通过 name 找不到对应对象
           tasks.push(() => {
             const { newName } = tableDirective.params;
             table?.rename(newName);
@@ -90,6 +96,7 @@ export class Executor {
 
       this.runTask(hightTasks);
 
+      // 表不存在，没有必要继续操作字段了
       if (table == null) {
         continue;
       }

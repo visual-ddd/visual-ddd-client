@@ -11,6 +11,9 @@ import { createDataObjectDSL, createDataObjectPropertyDSL, createDataObjectType 
 import { DataObject, DataObjectEditorModel, DataObjectStore } from '../../model';
 import { TableStore } from './TableStore';
 
+/**
+ * 数据表操作抽象
+ */
 export class Table implements ITable {
   readonly name: string;
   private dataObject?: DataObject;
@@ -87,6 +90,8 @@ export class Table implements ITable {
         path: 'title',
         value: title,
       });
+
+      this.tableStore.addLog(`设置数据对象 ${this.name} 标题为 ${title}`);
     });
   }
 
@@ -97,6 +102,8 @@ export class Table implements ITable {
         path: 'name',
         value: newName,
       });
+
+      this.tableStore.addLog(`重命名数据对象 ${this.name} 为 ${newName}`);
     });
   }
 
@@ -105,6 +112,8 @@ export class Table implements ITable {
       this.editorModel.commandHandler.removeNode({
         node: this.dataObject!.node,
       });
+
+      this.tableStore.addLog(`删除数据对象 ${this.name}`);
     });
   }
 
@@ -185,6 +194,8 @@ export class Table implements ITable {
         path: 'properties',
         value: clone,
       });
+
+      this.tableStore.addLog(`新增字段 ${this.name}.${name}`);
     });
   }
 
@@ -280,6 +291,8 @@ export class Table implements ITable {
         path: 'properties',
         value: clone,
       });
+
+      this.tableStore.addLog(`更新字段 ${this.name}.${name}`);
     });
   }
 
@@ -298,6 +311,8 @@ export class Table implements ITable {
         path: 'properties',
         value: clone,
       });
+
+      this.tableStore.addLog(`删除字段 ${this.name}.${name}`);
     });
   }
 
@@ -318,6 +333,8 @@ export class Table implements ITable {
         path: 'properties',
         value: clone,
       });
+
+      this.tableStore.addLog(`删除数据对象 ${this.name}`);
     });
   }
 }

@@ -257,16 +257,29 @@ export class BotModel implements IDisposable, IBot, IDestroyable {
    * @param extension
    */
   @command('ADD_MESSAGE')
-  responseMessage(message: string, extension?: Extension): void {
+  responseMessage(message: string, extension?: Extension) {
+    const msg: Message = {
+      uuid: v4(),
+      role: Role.Assistant,
+      content: message,
+      timestamp: Date.now(),
+      extension: (extension && this.activeExtension)?.key,
+    };
+
     Promise.resolve().then(() => {
-      this.addMessage({
-        uuid: v4(),
-        role: Role.Assistant,
-        content: message,
-        timestamp: Date.now(),
-        extension: (extension && this.activeExtension)?.key,
-      });
+      this.addMessage(msg);
     });
+
+    const update = async (newValue: string | ((currentValue: string) => string)) => {
+      await Promise.resolve();
+      const currentMsg = this.getMessageById(msg.uuid);
+      if (currentMsg != null) {
+        const newContent = typeof newValue === 'function' ? newValue(currentMsg.content) : newValue;
+        this.updateMessageContent(msg.uuid, newContent);
+      }
+    };
+
+    return update;
   }
 
   /**

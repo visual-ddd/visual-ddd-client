@@ -3,6 +3,9 @@ import { ITable, ITableStore } from '../../ai-transformer';
 import { DataObjectEditorModel, DataObjectStore } from '../../model';
 import { Table } from './Table';
 
+/**
+ * 表容器
+ */
 export class TableStore implements ITableStore {
   private editorModel: DataObjectEditorModel;
   private dataObjectStore: DataObjectStore;
@@ -12,12 +15,21 @@ export class TableStore implements ITableStore {
    * 警告信息
    */
   readonly warning: string[] = [];
+  private onMessage?: (message: string) => void;
 
-  constructor(inject: { editorModel: DataObjectEditorModel }) {
+  constructor(inject: { editorModel: DataObjectEditorModel; onMessage?: (message: string) => void }) {
+    this.onMessage = inject.onMessage;
     this.editorModel = inject.editorModel;
     this.dataObjectStore = inject.editorModel.dataObjectStore;
   }
 
+  addLog(message: string) {
+    this.onMessage?.(message);
+  }
+
+  /**
+   * 执行任务
+   */
   exec() {
     runInAction(() => {
       this.tables.forEach(table => table.execTasks());
@@ -32,6 +44,8 @@ export class TableStore implements ITableStore {
       this.warning.push(`数据对象 ${name} 已存在, 不能重复创建`);
       return existing;
     }
+
+    this.addLog(`创建数据对象 ${name}...`);
 
     const table = new Table({
       name,

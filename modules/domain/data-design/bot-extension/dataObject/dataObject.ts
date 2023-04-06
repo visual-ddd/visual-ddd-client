@@ -6,6 +6,7 @@ import { tryDispose } from '@/lib/utils';
 import { useRefValue } from '@wakeapp/hooks';
 import { useEffect } from 'react';
 import { message as msg } from 'antd';
+import uniq from 'lodash/uniq';
 
 import type { DataObjectEditorModel } from '../../model';
 import { DomainDesignerTabs } from '../../../constants';
@@ -56,9 +57,10 @@ export function useDataObjectBot() {
     return conception;
   };
 
-  const run = async (result: string) => {
+  const run = async (result: string, onMessage: (message: string) => void) => {
     const store = new TableStore({
       editorModel: model,
+      onMessage,
     });
     const transformer = new AITransformer(store);
     transformer.transform(result);
@@ -98,10 +100,23 @@ export function useDataObjectBot() {
               method: 'POST',
             }));
 
+            const logMessage = context.bot.responseMessage('执行中...', context.currentTarget);
+            const addLog = (log: string) => {
+              logMessage(cur => {
+                return cur + '  \n' + log;
+              });
+            };
+
             console.debug('AI数据建模:', res);
-            const warning = await runRef.current(res);
+            const warning = await runRef.current(res, log => {
+              addLog(log);
+            });
+
             if (warning.length) {
               console.debug('AI数据建模警告: ', warning);
+              addLog('\n执行完善，以下是一些警告信息: \n\n' + uniq(warning).join('  \n'));
+            } else {
+              addLog('\n执行成功');
             }
 
             msg.success('执行成功');
