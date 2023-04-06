@@ -9,6 +9,8 @@ const pkg = require('./package.json');
 const now = new Date();
 const snapshot = `${now.getFullYear()}${now.getMonth() + 1}${now.getDate()}`;
 
+const ENABLE_SENTRY_CLI = process.env.SENTRY_AUTH_TOKEN && process.env.SENTRY_ORG && process.env.SENTRY_PROJECT;
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false, // 暂时关闭，打开 react 会模拟 useEffect 多次执行
@@ -81,11 +83,15 @@ const nextConfig = {
     return config;
   },
   sentry: {
-    // 禁止 sentry source map 上传
     hideSourcemaps: false,
-    disableServerWebpackPlugin: true,
-    disableClientWebpackPlugin: true,
+    // 禁止 sentry source map 上传
+    disableServerWebpackPlugin: !ENABLE_SENTRY_CLI,
+    disableClientWebpackPlugin: !ENABLE_SENTRY_CLI,
   },
 };
 
-module.exports = withSentryConfig(nextConfig);
+module.exports = withSentryConfig(nextConfig, {
+  errorHandler: err => {
+    console.error('sentry error', err);
+  },
+});

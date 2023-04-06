@@ -60,19 +60,28 @@ BACKEND=http://172.26.57.49:8080 pnpm dev
 
 # 部署配置
 
-环境变量
+运行时环境变量
 
-| 名称                  | 说明                                        |
-| --------------------- | ------------------------------------------- |
-| BACKEND               | 后端服务地址, 例如 http://172.26.57.49:8080 |
-| SESSION_SECRET        | 会话加密密钥                                |
-| PASS_THROUGH_SESSION  | 登录时是否透传后端的会话信息， 默认 false   |
-| OPENAI_API_KEY        | OPENAI 开发密钥                             |
-| OPENAI_BASE_PATH      | OPENAI 代理地址                             |
-| PINECONE_API_KEY      |                                             |
-| PINECONE_ENVIRONMENT  |                                             |
-| PINECONE_INDEX        |                                             |
-| PRODUCTION_SOURCE_MAP | 是否开启生产环境 sourcemap, 默认 false      |
+| 名称                 | 说明                                        |
+| -------------------- | ------------------------------------------- |
+| BACKEND              | 后端服务地址, 例如 http://172.26.57.49:8080 |
+| SESSION_SECRET       | 会话加密密钥                                |
+| PASS_THROUGH_SESSION | 登录时是否透传后端的会话信息， 默认 false   |
+| OPENAI_API_KEY       | OPENAI 开发密钥                             |
+| OPENAI_BASE_PATH     | OPENAI 代理地址                             |
+| PINECONE_API_KEY     |                                             |
+| PINECONE_ENVIRONMENT |                                             |
+| PINECONE_INDEX       |                                             |
+
+# 构建时环境变量
+
+| 名称                  | 说明                                   |
+| --------------------- | -------------------------------------- |
+| PRODUCTION_SOURCE_MAP | 是否开启生产环境 sourcemap, 默认 false |
+| SENTRY_DSN            | The DSN to use to connect to sentry    |
+| SENTRY_AUTH_TOKEN     | Sentry 鉴权 Token 用于上传 sourceMap   |
+| SENTRY_ORG            | Sentry 组织名称                        |
+| SENTRY_PROJECT        | Sentry 项目名称                        |
 
 # 资源
 
