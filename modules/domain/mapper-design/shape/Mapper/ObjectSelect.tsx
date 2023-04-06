@@ -67,7 +67,8 @@ export const ObjectSelect = observer(function ObjectSelect(props: ObjectSelectPr
     <Cascader
       showSearch
       className="u-fw"
-      expandTrigger="hover"
+      expandTrigger="click"
+      placement="bottomRight"
       placeholder="请选择对象"
       options={store.options}
       value={normalizedValue}
