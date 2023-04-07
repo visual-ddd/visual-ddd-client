@@ -84,7 +84,7 @@ specifiers:
   lodash: ^4.17.21
   lowlight: ^2.8.1
   lru-cache: ^8.0.5
-  mermaid: ^10.1.0
+  mermaid: 10.0.2
   mobx: ^6.9.0
   mobx-react: ^7.6.0
   mousetrap: ^1.6.5
@@ -191,7 +191,7 @@ dependencies:
   lodash: 4.17.21
   lowlight: 2.8.1
   lru-cache: 8.0.5
-  mermaid: 10.1.0_biqbaboplfbrettd7655fr4n2y
+  mermaid: 10.0.2
   mobx: 6.9.0
   mobx-react: 7.6.0_lrdhi4fih7ii4kmeak7ov4c3ha
   mousetrap: 1.6.5
@@ -1621,18 +1621,6 @@ packages:
       '@jridgewell/resolve-uri': 3.1.0
       '@jridgewell/sourcemap-codec': 1.4.14
     dev: true
-
-  /@khanacademy/simple-markdown/0.8.6_biqbaboplfbrettd7655fr4n2y:
-    resolution:
-      { integrity: sha512-mAUlR9lchzfqunR89pFvNI51jQKsMpJeWYsYWw0DQcUXczn/T/V6510utgvm7X0N3zN87j1SvuKk8cMbl9IAFw== }
-    peerDependencies:
-      react: 16.14.0
-      react-dom: 16.14.0
-    dependencies:
-      '@types/react': 18.0.33
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
-    dev: false
 
   /@linaria/core/3.0.0-beta.13:
     resolution:
@@ -4463,9 +4451,9 @@ packages:
       dagre: ^0.8.5
     dev: false
 
-  /dagre-d3-es/7.0.10:
+  /dagre-d3-es/7.0.9:
     resolution:
-      { integrity: sha512-qTCQmEhcynucuaZgY5/+ti3X/rnszKZhEQH/ZdWdtP1tA/y3VoHJzcVrO9pjjJCNpigfscAtoUB5ONcd2wNn0A== }
+      { integrity: sha512-rYR4QfVmy+sR44IBDvVtcAmOReGBvRCWDpO2QjYwqgh9yijw6eSHBqaPG/LIOEy7aBsniLvtMW6pg19qJhq60w== }
     dependencies:
       d3: 7.8.4
       lodash-es: 4.17.21
@@ -4689,9 +4677,9 @@ packages:
       webidl-conversions: 7.0.0
     dev: true
 
-  /dompurify/2.4.5:
+  /dompurify/2.4.3:
     resolution:
-      { integrity: sha512-jggCCd+8Iqp4Tsz0nIvpcb22InKEBrGz5dw3EQJMs8HPJDsKbFIO3STYtAvCfDx26Muevn1MHVI0XxjgFfmiSA== }
+      { integrity: sha512-q6QaLcakcRjebxjg8/+NP+h0rPfatOgOzc46Fst9VAA3jF2ApfKBNKMzdP4DYTqtUMXSCd5pRS/8Po/OmoCHZQ== }
     dev: false
 
   /electron-to-chromium/1.4.355:
@@ -7549,19 +7537,18 @@ packages:
     engines: { node: '>= 8' }
     dev: true
 
-  /mermaid/10.1.0_biqbaboplfbrettd7655fr4n2y:
+  /mermaid/10.0.2:
     resolution:
-      { integrity: sha512-LYekSMNJygI1VnMizAPUddY95hZxOjwZxr7pODczILInO0dhQKuhXeu4sargtnuTwCilSuLS7Uiq/Qn7HTVrmA== }
+      { integrity: sha512-slwoB9WdNUT+/W9VhxLYRLZ0Ey12fIE+cAZjm3FmHTD+0F1uoJETfsNbVS1POnvQZhFYzfT6/z6hJZXgecqVBA== }
     dependencies:
       '@braintree/sanitize-url': 6.0.2
-      '@khanacademy/simple-markdown': 0.8.6_biqbaboplfbrettd7655fr4n2y
       cytoscape: 3.23.0
       cytoscape-cose-bilkent: 4.1.0_cytoscape@3.23.0
       cytoscape-fcose: 2.2.0_cytoscape@3.23.0
       d3: 7.8.4
-      dagre-d3-es: 7.0.10
+      dagre-d3-es: 7.0.9
       dayjs: 1.11.7
-      dompurify: 2.4.5
+      dompurify: 2.4.3
       elkjs: 0.8.2
       khroma: 2.0.0
       lodash-es: 4.17.21
@@ -7570,9 +7557,6 @@ packages:
       ts-dedent: 2.2.0
       uuid: 9.0.0
       web-worker: 1.2.0
-    transitivePeerDependencies:
-      - react
-      - react-dom
     dev: false
 
   /micromark-core-commonmark/1.0.6:

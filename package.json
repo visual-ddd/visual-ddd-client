@@ -77,7 +77,7 @@
     "lodash": "^4.17.21",
     "lowlight": "^2.8.1",
     "lru-cache": "^8.0.5",
-    "mermaid": "^10.1.0",
+    "mermaid": "10.0.2",
     "mobx": "^6.9.0",
     "mobx-react": "^7.6.0",
     "mousetrap": "^1.6.5",
