@@ -41,7 +41,7 @@ export function chat(options: ChatOptions) {
   const content = {
     stream: true,
     model,
-    max_tokens: maxToken - token,
+    // max_tokens: maxToken - token,
     ...other,
   };
 
