@@ -45,6 +45,10 @@ export function Launch({ data }: LaunchProps) {
     router.push(url);
   };
 
+  const handleGoHome = () => {
+    router.push('/');
+  };
+
   return (
     <Layout title="启动">
       <div className={classNames('vd-launch', s.root)}>
@@ -61,6 +65,7 @@ export function Launch({ data }: LaunchProps) {
                       <Button type="primary" onClick={handleRefresh}>
                         刷新看看
                       </Button>
+                      <Button onClick={handleGoHome}>前往首页</Button>
                       <Button onClick={logout}>退出登录</Button>
                     </Space>
                   </div>
