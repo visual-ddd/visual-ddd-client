@@ -87,6 +87,11 @@ export class OpenAIEventSourceModel<Result = any> implements IDisposable {
 
     const timeoutController = new TimeoutController(TIMEOUT);
 
+    const ending = () => {
+      this.setLoading(false);
+      timeoutController.dispose();
+    };
+
     try {
       this.setLoading(true);
       this.setResult('');
@@ -122,6 +127,8 @@ export class OpenAIEventSourceModel<Result = any> implements IDisposable {
             await source.send();
           } catch (err) {
             reject(err);
+          } finally {
+            ending();
           }
         }),
       ]);
@@ -129,8 +136,7 @@ export class OpenAIEventSourceModel<Result = any> implements IDisposable {
       this.setError(err as Error);
       throw err;
     } finally {
-      this.setLoading(false);
-      timeoutController.dispose();
+      ending();
     }
   }
 
