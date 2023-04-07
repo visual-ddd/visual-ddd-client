@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+import { message } from 'antd';
 import { Markdown } from '@/lib/components/Markdown';
 import { useEventBusListener } from '@/lib/hooks';
 import { Loading, LoadingIcon } from '@/lib/openai-event-source';
@@ -12,6 +13,7 @@ import { Message, Role, ExtensionType, GLOBAL_EXTENSION_KEY } from '../protocol'
 import { useBotContext } from '../BotContext';
 
 import s from './History.module.scss';
+import { CopyIcon } from './CopyIcon';
 
 export interface HistoryProps {
   className?: string;
@@ -60,6 +62,19 @@ const MessageItem = observer(function MessageItem(props: { item: Message }) {
     }
   }, [showExtension, extension, content]);
 
+  const handleCopy = () => {
+    const text = showExtension ? `#${extension} ${content}` : content;
+
+    navigator.clipboard
+      .writeText(text)
+      .then(res => {
+        message.success('已复制');
+      })
+      .catch(err => {
+        message.success(`复制失败: ${err.message}`);
+      });
+  };
+
   return (
     <div
       className={classNames(s.item, {
@@ -80,7 +95,10 @@ const MessageItem = observer(function MessageItem(props: { item: Message }) {
         ) : loading ? (
           <LoadingIcon className={s.loading} />
         ) : undefined}
-        <MinusCircleFilled className={s.remove} onClick={remove} />
+        <div className={s.actions}>
+          <CopyIcon className={s.copy} onClick={handleCopy} />
+          <MinusCircleFilled className={s.remove} onClick={remove} />
+        </div>
       </div>
     </div>
   );

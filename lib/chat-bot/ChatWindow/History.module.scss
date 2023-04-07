@@ -9,7 +9,7 @@
 .item {
   display: flex;
   width: 100%;
-  padding: 6px var(--vd-spacing-base);
+  padding: 0 var(--vd-spacing-base) 18px;
   position: relative;
   align-items: flex-end;
 
@@ -50,18 +50,35 @@
     margin-right: 4px;
   }
 
-  .remove {
-    color: var(--vd-color-danger-300);
-    cursor: pointer;
+  .actions {
     position: absolute;
-    right: calc(-1em + -4px);
-    top: 50%;
-    transform: translateY(-50%);
+    right: 0;
+    bottom: -16px;
+    // transform: translateY(-50%);
     display: none;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--vd-color-gray-500);
+
+    & > * {
+      opacity: 0.7;
+      cursor: pointer;
+    }
+
+    & > *:hover {
+      opacity: 1;
+    }
+
+    .remove {
+      color: var(--vd-color-danger-200);
+    }
+
+    .copy {
+    }
   }
 
-  &:hover .remove {
-    display: block;
+  &:hover .actions {
+    display: flex;
   }
 }
 
