@@ -316,9 +316,9 @@ export const AppReversion = (props: AppReversionProps) => {
               <Button size="small" type="primary" onClick={handleOpenScenarios}>
                 关联业务场景
               </Button>
-              <Button size="small" type="primary">
+              {/* <Button size="small" type="primary">
                 接口列表
-              </Button>
+              </Button> */}
               <Button size="small" type="primary" onClick={handleDownload}>
                 下载脚手架
               </Button>
