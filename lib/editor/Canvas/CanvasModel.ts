@@ -428,18 +428,6 @@ export class CanvasModel implements IDisposable {
           title: '重做',
           key: { macos: 'shift+command+z', other: 'ctrl+y' },
           handler: this.handleRedo,
-        })
-        .bindKey({
-          name: 'showAttributes',
-          title: '显示属性面板',
-          key: { macos: 'command+shift+a', other: 'ctrl+shift+a' },
-          handler: this.handleShowAttributesTab,
-        })
-        .bindKey({
-          name: 'showProblems',
-          title: '显示问题面板',
-          key: { macos: 'command+shift+p', other: 'ctrl+shift+p' },
-          handler: this.handleShowProblemTab,
         });
     }
 
@@ -479,6 +467,18 @@ export class CanvasModel implements IDisposable {
         title: '适配内容',
         key: { macos: 'shift+command+f', other: 'shift+ctrl+f' },
         handler: this.handleZoomToFit,
+      })
+      .bindKey({
+        name: 'showAttributes',
+        title: '显示属性面板',
+        key: { macos: 'command+shift+a', other: 'ctrl+shift+a' },
+        handler: this.handleShowAttributesTab,
+      })
+      .bindKey({
+        name: 'showProblems',
+        title: '显示问题面板',
+        key: { macos: 'command+shift+p', other: 'ctrl+shift+p' },
+        handler: this.handleShowProblemTab,
       });
 
     // 监听 EditorModel 事件
