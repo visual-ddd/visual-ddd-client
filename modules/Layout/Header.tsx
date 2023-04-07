@@ -6,6 +6,7 @@ import type { LayoutAction, LayoutMenu, LayoutMenuItem } from './types';
 import { LogoIcon } from './LogoIcon';
 import s from './Header.module.scss';
 import { openMenu } from './utils';
+import Link from 'next/link';
 
 const User = dynamic(() => import('./User'), { ssr: false });
 
@@ -35,9 +36,9 @@ export const Header = observer(function Header(props: HeaderProps) {
 
   return (
     <div className={classNames('vd-layout-header', className, s.root)} {...other}>
-      <div className={classNames('vd-layout-header__logo', s.logo)}>
+      <Link className={classNames('vd-layout-header__logo', s.logo)} href="/">
         <LogoIcon />
-      </div>
+      </Link>
       <div className={classNames('vd-layout-header__content', s.content)}>
         {!!(activeMenuItem && subMenu.length) && (
           <>
