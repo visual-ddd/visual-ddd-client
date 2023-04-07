@@ -109,7 +109,22 @@ export const Prompt = observer(function Prompt() {
     }
   };
 
-  const { placeholder, handleKeyDown, sendTooltip } = useCommit('enter', commit);
+  const { placeholder, handleKeyDown: commitIfNeed, sendTooltip } = useCommit('enter', commit);
+
+  const handleKeyDown = (evt: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // arrow up select previous history
+    if (evt.key === 'ArrowUp' && bot.prompt === '') {
+      evt.preventDefault();
+      const content = bot.selectPreviousMessage();
+      if (content) {
+        evt.currentTarget?.select();
+      }
+
+      return;
+    }
+
+    commitIfNeed(evt);
+  };
 
   const focus = () => {
     requestAnimationFrame(() => {

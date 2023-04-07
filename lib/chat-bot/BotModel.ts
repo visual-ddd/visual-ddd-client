@@ -5,6 +5,7 @@ import { Disposer, NoopArray } from '@wakeapp/utils';
 import { IDestroyable, IDisposable, TimeoutError, tryDispose } from '@/lib/utils';
 import { command, derive, effect, makeAutoBindThis, mutation } from '@/lib/store';
 import type { OpenAIEventSourceModel } from '@/lib/openai-event-source';
+import findLastIndex from 'lodash/findLastIndex';
 
 import { ChatContext, ExtensionType, GLOBAL_EXTENSION_KEY, IBot, Role } from './protocol';
 import type { Extension, Message } from './protocol';
@@ -347,6 +348,27 @@ export class BotModel implements IDisposable, IBot, IDestroyable {
     this.clearPendingTask();
 
     this.event.emit('HISTORY_CLEARED');
+  }
+
+  @command('SELECT_PREVIOUS_MESSAGE')
+  selectPreviousMessage(): string | undefined {
+    if (this.prompt.length) {
+      return;
+    }
+
+    const idx = findLastIndex(this.history, i => {
+      return !!(i.role === Role.User);
+    });
+
+    if (idx !== -1) {
+      const message = this.history[idx];
+      const content = `${
+        message.extension && message.extension !== GLOBAL_EXTENSION_KEY ? `#${message.extension} ` : ''
+      }${message.content}`;
+      this.setPrompt(content);
+
+      return content;
+    }
   }
 
   /**
