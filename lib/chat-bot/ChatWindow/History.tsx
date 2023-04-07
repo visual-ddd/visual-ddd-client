@@ -116,6 +116,11 @@ export const History = observer(function History(props: HistoryProps) {
     on('ACTIVE', () => {
       scrollToBottom();
     });
+    on('HISTORY_LOADED', () => {
+      setTimeout(() => {
+        scrollToBottom();
+      }, 100);
+    });
     on('MESSAGE_ADDED', ({ message }) => {
       scrollToBottom(message.uuid);
     });

@@ -366,6 +366,8 @@ export class BotModel implements IDisposable, IBot, IDestroyable {
   @mutation('LOAD_HISTORY', false)
   private loadHistory(storage: BotStorage) {
     this.history = storage.history;
+
+    this.event.emit('HISTORY_LOADED');
   }
 
   @action

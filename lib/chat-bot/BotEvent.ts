@@ -26,6 +26,11 @@ export interface BotEventDefinitions {
   MESSAGE_UPDATED: { message: Message };
 
   /**
+   * 消息加载完毕
+   */
+  HISTORY_LOADED: never;
+
+  /**
    * 消息清理
    */
   HISTORY_CLEARED: never;
