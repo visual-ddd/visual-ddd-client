@@ -9,7 +9,11 @@ const pkg = require('./package.json');
 const now = new Date();
 const snapshot = `${now.getFullYear()}${now.getMonth() + 1}${now.getDate()}`;
 
-const ENABLE_SENTRY_CLI = process.env.SENTRY_AUTH_TOKEN && process.env.SENTRY_ORG && process.env.SENTRY_PROJECT;
+const ENABLE_SENTRY_CLI =
+  process.env.NODE_ENV === 'production' &&
+  process.env.SENTRY_AUTH_TOKEN &&
+  process.env.SENTRY_ORG &&
+  process.env.SENTRY_PROJECT;
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {

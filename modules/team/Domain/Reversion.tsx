@@ -93,15 +93,10 @@ export const DomainReversion = (props: DomainReversionProps) => {
   const handlePublish: VersionPublishProps['onSubmit'] = async values => {
     const { id, description } = values;
 
-    await Promise.all([
-      request.requestByPost('/wd/visual/web/domain-design-version/domain-design-version-update', {
-        id,
-        description,
-      }),
-      request.requestByPost('/wd/visual/web/domain-design-version/domain-design-version-publish', {
-        id,
-      }),
-    ]);
+    await request.requestByPost('/wd/visual/web/domain-design-version/domain-design-version-publish', {
+      id,
+      description,
+    });
 
     versionListRef.current?.hide();
 

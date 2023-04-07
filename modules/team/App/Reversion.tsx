@@ -183,15 +183,10 @@ export const AppReversion = (props: AppReversionProps) => {
   const handlePublish: VersionPublishProps['onSubmit'] = async values => {
     const { id, description } = values;
 
-    await Promise.all([
-      request.requestByPost('/wd/visual/web/application-version/application-version-update', {
-        id,
-        description,
-      }),
-      request.requestByPost('/wd/visual/web/application-version/application-version-publish', {
-        id,
-      }),
-    ]);
+    await request.requestByPost('/wd/visual/web/application-version/application-version-publish', {
+      id,
+      description,
+    });
 
     versionListRef.current?.hide();
 

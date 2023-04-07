@@ -97,16 +97,10 @@ export const ScenarioReversion = (props: ScenarioReversionProps) => {
   const handlePublish: VersionPublishProps['onSubmit'] = async values => {
     const { id, description } = values;
 
-    await Promise.all([
-      request.requestByPost('/wd/visual/web/business-scene-version/business-scene-version-update', {
-        id,
-        description,
-      }),
-      request.requestByPost('/wd/visual/web/business-scene-version/business-scene-version-pblish', {
-        id,
-      }),
-    ]);
-
+    await request.requestByPost('/wd/visual/web/business-scene-version/business-scene-version-pblish', {
+      id,
+      description,
+    });
     versionListRef.current?.hide();
 
     // 刷新当前页面
