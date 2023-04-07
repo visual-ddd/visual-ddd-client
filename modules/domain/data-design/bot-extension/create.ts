@@ -80,6 +80,7 @@ export function useDataObjectCreateBot() {
       match: '数据建模',
       type: ExtensionType.Command,
       description: '通过自然语言创建数据对象',
+      keepMatch: true,
       onSend({ message, bot, currentTarget }) {
         const content = message.trim();
 

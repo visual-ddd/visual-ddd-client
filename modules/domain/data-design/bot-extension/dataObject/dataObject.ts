@@ -83,6 +83,7 @@ export function useDataObjectBot() {
       match: '数据建模(测试)',
       type: ExtensionType.Command,
       description: '数据模型创建和修改',
+      keepMatch: true,
       onSend(context) {
         const { message } = context;
         const content = message.trim();

@@ -176,6 +176,11 @@ export interface Extension<T = any> {
   match?: string;
 
   /**
+   * 是否保留匹配的指令前缀，默认 false
+   */
+  keepMatch?: boolean;
+
+  /**
    * 描述
    */
   description: string;

@@ -204,7 +204,7 @@ export class BotModel implements IDisposable, IBot, IDestroyable {
       const resMsg = this.getMessageById(responseMessageId)!;
 
       // 保留话题
-      if (extension !== this.defaultExtension) {
+      if (extension !== this.defaultExtension && extension.keepMatch) {
         this.setPrompt(`#${extension.match} `);
       } else {
         this.setPrompt('');

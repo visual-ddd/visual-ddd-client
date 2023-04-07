@@ -9,6 +9,7 @@ registerExtension({
   match: 'DDD专家',
   type: ExtensionType.Message,
   description: 'DDD 领域问题咨询',
+  keepMatch: true,
   onSend(context) {
     const { message } = context;
     if (!message.trim()) {
