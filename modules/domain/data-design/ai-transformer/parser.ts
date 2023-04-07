@@ -12,8 +12,10 @@ import {
   RenameFieldDirective,
   isTableDirective,
   TableFieldReference,
+  isFieldDirective,
 } from './protocol';
 import { NoopArray } from '@wakeapp/utils';
+import { toNameCase } from '@/lib/utils';
 
 const DELIMITER = '%%';
 const DIRECTIVE_REG = /%%(.+)%%/gm;
@@ -26,6 +28,40 @@ function normalizedValue(value: string) {
   }
 
   return value;
+}
+
+/**
+ * 规范化指令命名
+ * @param dir
+ */
+function normalizeDirective(dir: TransformDirective) {
+  if (isTableDirective(dir)) {
+    dir.params.name = toNameCase('CamelCase', dir.params.name);
+
+    if (dir.type === DirectiveName.RenameTable) {
+      dir.params.newName = toNameCase('CamelCase', dir.params.newName);
+    }
+  }
+
+  if (isFieldDirective(dir)) {
+    dir.params.table = toNameCase('CamelCase', dir.params.table);
+    dir.params.name = toNameCase('camelCase', dir.params.name);
+
+    if (dir.type === DirectiveName.RenameField) {
+      dir.params.newName = toNameCase('camelCase', dir.params.newName);
+    } else if (
+      (dir.type === DirectiveName.AddField || dir.type === DirectiveName.UpdateField) &&
+      dir.params.reference
+    ) {
+      let { table, field } = parseReference(dir.params.reference);
+      table = toNameCase('CamelCase', table);
+      field = toNameCase('camelCase', field);
+
+      dir.params.reference = `${table}.${field}`;
+    }
+  }
+
+  return dir;
 }
 
 function parseItem(text: string): TransformDirective | null {
@@ -57,10 +93,14 @@ function parseItem(text: string): TransformDirective | null {
     return acc;
   }, {});
 
-  return {
+  const dir = {
     type: directive,
     params,
   } as TransformDirective;
+
+  normalizeDirective(dir);
+
+  return dir;
 }
 
 export function parse(input: string): TransformDirective[] | null {

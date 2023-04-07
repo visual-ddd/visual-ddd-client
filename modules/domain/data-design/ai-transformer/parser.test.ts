@@ -70,6 +70,61 @@ test('parse', () => {
   ]);
 });
 
+test('table name normalized', () => {
+  expect(
+    parse(`
+%%createTable name="myUser" title="用户"%%
+%%addField table="MyUser" name="CreatedAt" title="创建时间" type="DateTime" notNull="true"%%
+%%addField table="MyUser" name="updated_at" title="更新时间" type="DateTime" notNull="true"%%
+%%renameField table="MyUser" name="hello" newName="OK"%%
+%%renameTable name="MyUser" newName="account" %%
+  `)
+  ).toEqual([
+    {
+      params: {
+        name: 'MyUser',
+        title: '用户',
+      },
+      type: 'createTable',
+    },
+    {
+      params: {
+        name: 'createdAt',
+        notNull: true,
+        table: 'MyUser',
+        title: '创建时间',
+        type: 'DateTime',
+      },
+      type: 'addField',
+    },
+    {
+      params: {
+        name: 'updatedAt',
+        notNull: true,
+        table: 'MyUser',
+        title: '更新时间',
+        type: 'DateTime',
+      },
+      type: 'addField',
+    },
+    {
+      params: {
+        name: 'hello',
+        newName: 'ok',
+        table: 'MyUser',
+      },
+      type: 'renameField',
+    },
+    {
+      params: {
+        name: 'MyUser',
+        newName: 'Account',
+      },
+      type: 'renameTable',
+    },
+  ]);
+});
+
 describe('groupByTable', () => {
   test('simple', () => {
     expect(
