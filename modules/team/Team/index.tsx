@@ -3,6 +3,7 @@ import { useLayoutTitle } from '@/modules/Layout';
 import { TeamDetail } from '@/modules/organization/types';
 import { Card, Statistic } from 'antd';
 import { useRouter } from 'next/router';
+import { observer } from 'mobx-react';
 import { useTeamLayoutModel } from '../TeamLayout';
 import s from './index.module.scss';
 
@@ -15,7 +16,7 @@ export interface TeamHomeProps {
 /**
  * 团队首页
  */
-export function TeamHome(props: TeamHomeProps) {
+export const TeamHome = observer(function TeamHome(props: TeamHomeProps) {
   const router = useRouter();
   const { detail } = props;
   const teamId = detail.id;
@@ -70,6 +71,6 @@ export function TeamHome(props: TeamHomeProps) {
       }
     ></PreviewPageLayout>
   );
-}
+});
 
 export default TeamHome;
