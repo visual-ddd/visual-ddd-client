@@ -1,6 +1,7 @@
 import { Title } from '@/lib/components/Title';
 import { LogoIcon } from '@/modules/Layout/LogoIcon';
 import classNames from 'classnames';
+import Link from 'next/link';
 
 import s from './Layout.module.scss';
 
@@ -19,12 +20,12 @@ export const Layout = function Layout(props: LayoutProps) {
     <div className={classNames('vd-entry', className, s.root)} {...other}>
       <Title>{title}</Title>
       <div className={classNames('vd-entry__body', s.body)}>
-        <header className={classNames('vd-entry__head', s.head)}>
+        <Link href="/" className={classNames('vd-entry__head', s.head)}>
           <span className={classNames('vd-entry__logo', s.logo)}>
             <LogoIcon />
           </span>
           <span className={classNames('vd-entry__title', s.title)}>{title}</span>
-        </header>
+        </Link>
         <main className={classNames('vd-entry__content', s.content)}>{children}</main>
         <footer className={classNames('vd-entry__footer', s.footer)}>
           版权所有 ©2022-{new Date().getFullYear()} 惟客数据 系统版本({process.env.VERSION})

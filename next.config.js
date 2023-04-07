@@ -35,17 +35,9 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   // https://nextjs.org/docs/api-reference/next.config.js/redirects
-  redirects: async () => {
-    return [
-      {
-        source: '/system',
-        destination: '/system/user',
-
-        // TODO: 临时解决方案，后续需要优化
-        permanent: false,
-      },
-    ];
-  },
+  // redirects: async () => {
+  //   return [];
+  // },
   transpilePackages: [
     '@wakeapp/inversify',
     '@wakeapp/framework-core',
