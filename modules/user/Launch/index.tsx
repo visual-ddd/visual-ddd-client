@@ -9,6 +9,7 @@ import { useLogout, useSession } from '@/modules/session';
 import s from './index.module.scss';
 import { Layout } from '../Login/Layout';
 import { SystemIcon } from './SystemIcon';
+import { BotIcon } from './BotIcon';
 import { OrganizationIcon } from './OrganizationIcon';
 import { TeamIcon } from './TeamIcon';
 import { LaunchInfo } from './types';
@@ -45,6 +46,10 @@ export function Launch({ data }: LaunchProps) {
     router.push(url);
   };
 
+  const handleGoChat = () => {
+    router.push('/chat');
+  };
+
   const handleGoHome = () => {
     router.push('/');
   };
@@ -66,6 +71,7 @@ export function Launch({ data }: LaunchProps) {
                         刷新看看
                       </Button>
                       <Button onClick={handleGoHome}>前往首页</Button>
+                      <Button onClick={handleGoChat}>Chat</Button>
                       <Button onClick={logout}>退出登录</Button>
                     </Space>
                   </div>
@@ -150,6 +156,14 @@ export function Launch({ data }: LaunchProps) {
               })}
             </>
           )}
+
+          <div className={classNames(s.head, s.hoverable)} onClick={handleGoChat}>
+            <span className={s.logo}>
+              <BotIcon />
+            </span>
+            Chat
+            <ArrowRightOutlined className={s.arrow} />
+          </div>
         </div>
       </div>
     </Layout>
