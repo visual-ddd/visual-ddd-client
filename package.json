@@ -1,6 +1,6 @@
 {
   "name": "visual-ddd",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "DDD 可视化前端",
   "imageName": "wkfe/visual-ddd",
   "workload": "wakeadmin-visual-ddd",
@@ -81,7 +81,7 @@
     "mobx": "^6.9.0",
     "mobx-react": "^7.6.0",
     "mousetrap": "^1.6.5",
-    "next": "13.3.0",
+    "next": "13.2.2",
     "panzoom": "^9.4.3",
     "prosemirror-commands": "^1.5.1",
     "prosemirror-dropcursor": "^1.8.0",
