@@ -109,3 +109,35 @@
     overflow: hidden;
   }
 }
+
+@media screen and (max-width: 768px) {
+  .header {
+    padding: 0 32px;
+
+    .menu {
+      font-size: 14px;
+    }
+  }
+
+  .main {
+    h1 {
+      font-size: 34px;
+    }
+
+    h2 {
+      font-size: 14px;
+    }
+  }
+
+  .logo {
+    img {
+      width: 40px;
+      height: 40px;
+      line-height: 40px;
+    }
+
+    span {
+      font-size: 20px;
+    }
+  }
+}
