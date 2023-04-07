@@ -22,3 +22,9 @@
     }
   }
 }
+
+@media screen and (max-width: 576px) {
+  .root {
+    padding: 0;
+  }
+}

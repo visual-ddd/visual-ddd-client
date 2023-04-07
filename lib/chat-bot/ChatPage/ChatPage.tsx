@@ -3,6 +3,7 @@ import { Tour, TourStepProps } from 'antd';
 import { SplitBox } from '@antv/x6-react-components';
 import { useEffect, useMemo, useState } from 'react';
 import { tryDispose } from '@/lib/utils';
+import { useResponsive } from 'ahooks';
 
 import { BotSessionStoreProvider } from '../BotSessionStoreContext';
 import { BotPageModel } from '../BotPageModel';
@@ -43,6 +44,8 @@ export const ChatPage = observer(function ChatPage(props: ChatPageProps) {
   const pageModel = useMemo(() => {
     return new BotPageModel();
   }, []);
+  const responsive = useResponsive();
+  const hideSidebar = !responsive.sm || pageModel.sidebarFolded;
 
   useEffect(() => {
     return () => {
@@ -65,8 +68,8 @@ export const ChatPage = observer(function ChatPage(props: ChatPageProps) {
       <div className={s.root}>
         <SplitBox
           split="vertical"
-          size={pageModel.sidebarFolded ? 0 : pageModel.size}
-          resizable={!pageModel.sidebarFolded}
+          size={hideSidebar ? 0 : pageModel.size}
+          resizable={!hideSidebar}
           onResizeEnd={pageModel.setSize}
           maxSize={400}
           minSize={180}

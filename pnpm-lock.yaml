@@ -57,6 +57,7 @@ specifiers:
   '@wakeapp/hooks': ^1.0.7
   '@wakeapp/utils': ^1.0.7
   '@wakeapp/wakedata-backend': ^1.0.7
+  ahooks: ^3.7.6
   antd: ^5.4.0
   async-validator: ^4.2.5
   classnames: ^2.3.2
@@ -169,6 +170,7 @@ dependencies:
   '@wakeapp/hooks': 1.0.7_zrp62gez7omnrwllyfdlincg3a
   '@wakeapp/utils': 1.0.7_lodash@4.17.21
   '@wakeapp/wakedata-backend': 1.0.7_lodash@4.17.21
+  ahooks: 3.7.6_react@18.2.0
   antd: 5.4.0_biqbaboplfbrettd7655fr4n2y
   async-validator: 4.2.5
   classnames: 2.3.2
@@ -2840,6 +2842,11 @@ packages:
       pretty-format: 29.5.0
     dev: true
 
+  /@types/js-cookie/2.2.7:
+    resolution:
+      { integrity: sha512-aLkWa0C0vO5b4Sr798E26QgOkss68Un0bLjs7u9qxzPT5CG+8DuNTffWES58YzJs3hrVAOs1wonycqEBqNJubA== }
+    dev: false
+
   /@types/jsdom/20.0.1:
     resolution:
       { integrity: sha512-d0r18sZPmMQr1eG35u12FZfhIXNrnsPU/g5wvRKCUf/tOGilKKwYMYGqh33BNR6ba+2gkHw1EUiHoN3mn7E5IQ== }
@@ -3264,6 +3271,31 @@ packages:
       debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
+
+  /ahooks-v3-count/1.0.0:
+    resolution:
+      { integrity: sha512-V7uUvAwnimu6eh/PED4mCDjE7tokeZQLKlxg9lCTMPhN+NjsSbtdacByVlR1oluXQzD3MOw55wylDmQo4+S9ZQ== }
+    dev: false
+
+  /ahooks/3.7.6_react@18.2.0:
+    resolution:
+      { integrity: sha512-p+2j4H/BI9vqXR0fZI7S/q6fUPxPklQnHqvU7zAVBljMFNSFeYRWB2iHHbjpXGOwUTOBYCh2OuvIHyJYj6Lpag== }
+    engines: { node: '>=8.0.0' }
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      '@babel/runtime': 7.21.0
+      '@types/js-cookie': 2.2.7
+      ahooks-v3-count: 1.0.0
+      dayjs: 1.11.7
+      intersection-observer: 0.12.2
+      js-cookie: 2.2.1
+      lodash: 4.17.21
+      react: 18.2.0
+      resize-observer-polyfill: 1.5.1
+      screenfull: 5.2.0
+      tslib: 2.5.0
+    dev: false
 
   /ajv/6.12.6:
     resolution:
@@ -6010,6 +6042,11 @@ packages:
     engines: { node: '>=12' }
     dev: false
 
+  /intersection-observer/0.12.2:
+    resolution:
+      { integrity: sha512-7m1vEcPCxXYI8HqnL8CKI6siDyD+eIWSwgB3DZA+ZTogxk9I4CDnj4wilt9x/+/QbHI4YG5YZNmC6458/e9Ktg== }
+    dev: false
+
   /invariant/2.2.4:
     resolution:
       { integrity: sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA== }
@@ -6867,6 +6904,11 @@ packages:
   /js-base64/3.7.5:
     resolution:
       { integrity: sha512-3MEt5DTINKqfScXKfJFrRbxkrnk2AxPWGBL/ycjz4dK8iqiSJ06UxD8jh8xuh6p10TX4t2+7FsBYVxxQbMg+qA== }
+    dev: false
+
+  /js-cookie/2.2.1:
+    resolution:
+      { integrity: sha512-HvdH2LzI/EAZcUwA8+0nKNtWHqS+ZmijLA30RwZA0bo7ToCckjK5MkGhjED9KoRcXO6BaGI3I9UIzSA1FKFPOQ== }
     dev: false
 
   /js-sdsl/4.4.0:
@@ -9949,6 +9991,12 @@ packages:
       { integrity: sha512-CtuThmgHNg7zIZWAXi3AsyIzA3n4xx7aNyjwC2VJldO2LMVDhFK+63xGqq6CsJH4rTAt6/M+N4GhZiDYPx9eUw== }
     dependencies:
       loose-envify: 1.4.0
+
+  /screenfull/5.2.0:
+    resolution:
+      { integrity: sha512-9BakfsO2aUQN2K9Fdbj87RJIEZ82Q9IGim7FqM5OsebfoFC6ZHXgDq/KvniuLTPdeM8wY2o6Dj3WQ7KeQCj3cA== }
+    engines: { node: '>=0.10.0' }
+    dev: false
 
   /scroll-into-view-if-needed/3.0.7:
     resolution:
