@@ -19,16 +19,60 @@ const AUTO_SIZE = {
 
 const UNREACHABLE_PREFIX = '$$_$__$$$$__$_$';
 
+function useCommit(mode: 'ctrl+enter' | 'enter', commit: () => void) {
+  const isMacOs = useIsMacos();
+  const sendTooltip =
+    mode === 'ctrl+enter'
+      ? isMacOs
+        ? '⌘ + Enter 发送消息'
+        : 'Ctrl + Enter 发送消息'
+      : 'Enter 发送消息, Shift + Enter 换行';
+  const placeholder = `说点什么吧。输入 # 使用指令，${sendTooltip}`;
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    const target = e.currentTarget as HTMLTextAreaElement;
+    const submit = () => {
+      e.preventDefault();
+      e.stopPropagation();
+      commit();
+    };
+
+    const isEnter = e.key === 'Enter';
+    if (!isEnter) {
+      return;
+    }
+
+    // this event could be fired after a user starts entering a Chinese character using a Pinyin IME.
+    if (isEnter && e.nativeEvent.isComposing) {
+      return;
+    }
+
+    // 已经激活了下拉菜单
+    if (target.nextElementSibling && target.nextElementSibling.classList.contains('ant-mentions-measure')) {
+      return;
+    }
+
+    if (mode === 'ctrl+enter') {
+      if (e.ctrlKey || e.metaKey) {
+        submit();
+      }
+    } else if (!e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey) {
+      // 没有使用任何修饰符
+      submit();
+    }
+  };
+
+  return {
+    sendTooltip,
+    placeholder,
+    handleKeyDown,
+  };
+}
+
 export const Prompt = observer(function Prompt() {
   const rootRef = useRef<HTMLDivElement>(null);
   const bot = useBotContext();
   const mentionsRef = useRef<MentionsRef>(null);
-  const isMacOs = useIsMacos();
-  const PLACEHOLDER = isMacOs
-    ? '说点什么吧。 输入 # 使用指令, Command + Enter 发送消息'
-    : '说点什么吧。 输入 # 使用指令, Ctrl + Enter 发送消息';
-  const SEND_PLACEHOLDER = isMacOs ? 'Command + Enter 发送消息' : 'Ctrl + Enter 发送消息';
-
   const options = useMemo(() => {
     return bot.availableExtensionsExceptGlobal.map(i => {
       return {
@@ -65,15 +109,7 @@ export const Prompt = observer(function Prompt() {
     }
   };
 
-  const handleKeyUp = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.ctrlKey || e.metaKey) {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        e.stopPropagation();
-        commit();
-      }
-    }
-  };
+  const { placeholder, handleKeyDown, sendTooltip } = useCommit('enter', commit);
 
   const focus = () => {
     requestAnimationFrame(() => {
@@ -102,11 +138,11 @@ export const Prompt = observer(function Prompt() {
           notFoundContent="未找到相关指令"
           // 已选中禁用
           options={options}
-          placeholder={PLACEHOLDER}
-          onKeyDown={handleKeyUp}
+          placeholder={placeholder}
+          onKeyDown={handleKeyDown}
           placement="top"
         />
-        <SendOutlined className={classNames(s.send, { disable: disabled })} title={SEND_PLACEHOLDER} onClick={commit} />
+        <SendOutlined className={classNames(s.send, { disable: disabled })} title={sendTooltip} onClick={commit} />
       </div>
     </div>
   );
