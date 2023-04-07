@@ -157,13 +157,15 @@ export function Launch({ data }: LaunchProps) {
             </>
           )}
 
-          <div className={classNames(s.head, s.hoverable)} onClick={handleGoChat}>
-            <span className={s.logo}>
-              <BotIcon />
-            </span>
-            Chat
-            <ArrowRightOutlined className={s.arrow} />
-          </div>
+          {!isEmpty && (
+            <div className={classNames(s.head, s.hoverable)} onClick={handleGoChat}>
+              <span className={s.logo}>
+                <BotIcon />
+              </span>
+              Chat
+              <ArrowRightOutlined className={s.arrow} />
+            </div>
+          )}
         </div>
       </div>
     </Layout>
