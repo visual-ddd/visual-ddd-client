@@ -66,6 +66,11 @@ export function chat(options: ChatOptions) {
       // 正常响应
       // header
       for (const headerName of Object.keys(response.headers)) {
+        // 过滤掉一些不需要的 header
+        if (headerName.startsWith('openai-') || headerName === 'server' || headerName.startsWith('x-')) {
+          continue;
+        }
+
         const header = response.headers[headerName];
         if (header) {
           pipe.setHeader(headerName, header);
