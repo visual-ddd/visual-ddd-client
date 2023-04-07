@@ -40,6 +40,7 @@ export const proxyMiddleware: Middleware = async (req, next) => {
     }
 
     proxyRequest.headers.delete('content-length');
+    proxyRequest.headers.delete('transfer-encoding');
     // 这里对于自签名的域名请求可能会报错，
     // 可以开启 NODE_TLS_REJECT_UNAUTHORIZED=0 环境变量
     const res = await fetch(proxyRequest);
