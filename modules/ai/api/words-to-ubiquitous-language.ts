@@ -18,6 +18,7 @@ export const wordsToUbiquitousLanguage: NextApiHandler = allowMethod('GET', asyn
   );
 
   chat({
+    source: req,
     pipe: res,
     messages: [
       {

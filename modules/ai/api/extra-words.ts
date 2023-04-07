@@ -12,6 +12,7 @@ export const extraWords: NextApiHandler = allowMethod('GET', async (req, res) =>
   }
 
   chat({
+    source: req,
     pipe: res,
     messages: [
       {

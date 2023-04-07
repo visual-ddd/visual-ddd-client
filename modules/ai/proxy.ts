@@ -26,7 +26,7 @@ function getAgent(url: URL) {
  * }
  */
 export function chat(options: ChatOptions) {
-  let { model = ChatModel.GPT3_5_TURBO_0301, pipe, ...other } = options;
+  let { model = ChatModel.GPT3_5_TURBO_0301, source, pipe, ...other } = options;
 
   model = normalizeModel(model);
   const token = countToken(options.messages, model);
@@ -113,6 +113,15 @@ export function chat(options: ChatOptions) {
     pipe.status(500);
     pipe.json(createFailResponse(500, e.message));
     console.error(`ai proxy request failed:`, e);
+  });
+
+  source.on('error', e => {
+    if (e.message === 'aborted') {
+      // 取消
+      request.destroy();
+    } else {
+      console.error(`ai source request failed:`, e);
+    }
   });
 
   request.write(data);

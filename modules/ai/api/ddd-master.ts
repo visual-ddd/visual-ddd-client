@@ -57,6 +57,7 @@ export const dddMaster: NextApiHandler = allowMethod('POST', async (req, res) =>
   console.log(`ddd-master: ${text} => ${context}`);
 
   chat({
+    source: req,
     pipe: res,
     messages: [
       {

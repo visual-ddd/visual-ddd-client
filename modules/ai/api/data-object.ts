@@ -16,6 +16,7 @@ export const dataObject: NextApiHandler = allowMethod('POST', async (req, res) =
 
   chat({
     pipe: res,
+    source: req,
     messages: [
       {
         role: 'system',

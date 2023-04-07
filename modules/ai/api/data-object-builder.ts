@@ -13,6 +13,7 @@ export const dataObjectBuilder: NextApiHandler = allowMethod('GET', async (req, 
 
   chat({
     pipe: res,
+    source: req,
     messages: [
       {
         role: 'system',

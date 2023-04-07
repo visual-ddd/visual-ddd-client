@@ -12,6 +12,7 @@ export const summary: NextApiHandler = allowMethod('POST', async (req, res) => {
   }
 
   chat({
+    source: req,
     pipe: res,
     messages: [
       {

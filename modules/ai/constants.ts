@@ -1,5 +1,5 @@
 export const CHAT_API_ENDPOINT = '/chat/completions';
-import type { NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
 export type ChatRole = 'system' | 'user' | 'assistant';
 
@@ -41,6 +41,10 @@ export interface ChatOptions {
    * 代理的响应对象
    */
   pipe: NextApiResponse;
+  /**
+   * 代理的请求对象
+   */
+  source: NextApiRequest;
 }
 
 export interface ErrorResponse {

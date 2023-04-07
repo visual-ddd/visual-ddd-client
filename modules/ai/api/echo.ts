@@ -15,6 +15,7 @@ export const echo: NextApiHandler = allowMethod('POST', async (req, res) => {
   await delay(3000);
 
   chat({
+    source: req,
     pipe: res,
     messages: [
       {

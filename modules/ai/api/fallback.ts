@@ -50,6 +50,7 @@ export const fallback: NextApiHandler = allowMethod('POST', async (req, res) => 
   });
 
   chat({
+    source: req,
     pipe: res,
     messages,
     temperature: 1,
