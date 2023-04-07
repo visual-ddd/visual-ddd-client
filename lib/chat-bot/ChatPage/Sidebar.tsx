@@ -1,13 +1,14 @@
 import { observer } from 'mobx-react';
 import { EditOutlined, MinusCircleFilled, PlusOutlined } from '@ant-design/icons';
+import classNames from 'classnames';
+import { useRef, useState } from 'react';
+import { message } from 'antd';
+import Link from 'next/link';
 
 import { useBotSessionStoreContext } from '../BotSessionStoreContext';
 import type { BotSession } from '../BotSession';
 
 import s from './Sidebar.module.scss';
-import classNames from 'classnames';
-import { useRef, useState } from 'react';
-import { message } from 'antd';
 
 export interface SidebarProps {}
 
@@ -118,6 +119,11 @@ export const Sidebar = observer(function Sidebar(props: SidebarProps) {
         {store.sessions.map(i => {
           return <Item item={i} key={i.uuid} active={i.uuid === store.active} />;
         })}
+      </div>
+      <div className={s.footer}>
+        <Link href="/" className={s.logo}>
+          <img src="/logo.svg" alt="logo" />
+        </Link>
       </div>
     </div>
   );
