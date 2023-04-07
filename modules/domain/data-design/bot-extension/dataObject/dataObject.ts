@@ -1,4 +1,4 @@
-import { ExtensionType, registerExtension, ResponseError, responseMessage } from '@/lib/chat-bot';
+import { ExtensionType, IBot, registerExtension, ResponseError, responseMessage } from '@/lib/chat-bot';
 import { useDesignerContext } from '@/lib/designer';
 import { useCanvasModel } from '@/lib/editor';
 import { createIdentityOpenAIEventSourceModel } from '@/lib/openai-event-source';
@@ -21,6 +21,11 @@ const TIP = `请输入提示, 你可以:
 - 创建一个用户和房产，一个用户可以拥有多个房产，一个房产也可以被多个用户拥有
 - 描述你的业务场景，例如：我是一个电商平台，我有一个订单系统，订单系统有一个订单列表，订单列表有一个订单详情，订单详情有一个订单状态，订单状态有一个订单状态名称，订单状态名称有一个订单状态名称值
 - 对表进行操作, 例如: 给所有表添加创建时间和更新时间
+
+
+技巧：
+
+- 显式描述实体之间的关系：一对一，多对多，一对多，多对一等等
 `;
 
 export function useDataObjectBot() {
@@ -99,8 +104,11 @@ export function useDataObjectBot() {
               method: 'POST',
             }));
 
-            const logMessage = context.bot.responseMessage('执行中...', context.currentTarget);
+            let logMessage: ReturnType<IBot['responseMessage']>;
             const addLog = (log: string) => {
+              if (logMessage == null) {
+                logMessage = context.bot.responseMessage('执行中...', context.currentTarget);
+              }
               logMessage(cur => {
                 return cur + '  \n' + log;
               });

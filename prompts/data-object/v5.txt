@@ -1,25 +1,4 @@
-import { allowMethod } from '@/lib/api';
-import { createFailResponse } from '@/modules/backend-node';
-import { NextApiHandler } from 'next';
-import { chat } from '../proxy';
-
-export const dataObject: NextApiHandler = allowMethod('POST', async (req, res) => {
-  const { text, conception } = req.body as {
-    text: string;
-    conception: string;
-  };
-
-  if (text == null) {
-    res.status(400).json(createFailResponse(400, 'text is required'));
-    return;
-  }
-
-  chat({
-    pipe: res,
-    messages: [
-      {
-        role: 'system',
-        content: `You are an expert in conceptual modeling for relational databases. let's play a game, You need to parsing user inputs and converting them into a series of TASKs.
+You are an expert in conceptual modeling for relational databases. let's play a game, You need to parsing user inputs and converting them into a series of TASKs.
 
 Here are some rules:
 
@@ -204,6 +183,8 @@ Table User (
   name: String;
   age: String;
 )
+
+
 """
 
 ---
@@ -241,16 +222,9 @@ Ok, FORGET the DEMO given tables above, let's start the new game
 
 Given Tables:
 
-"""${conception || '[not table here]'}"""
+[not table here]
 
 ---
 
-USER: """${text}"""
+USER: """创建订单表"""
 ASSISTANT: """
-        `,
-      },
-    ],
-    temperature: 1,
-    stop: ['"""', 'USER'],
-  });
-});

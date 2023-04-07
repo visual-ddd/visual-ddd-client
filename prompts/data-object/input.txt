@@ -57,3 +57,11 @@
 %%addField table="Order" name="productId" title="商品引用" type="Reference" reference="Product.id" referenceCardinality="ManyToOne" notNull="true"%%
 %%addField table="Order" name="quantity" title="数量" type="Integer" notNull="true"%%
 %%addField table="Order" name="totalPrice" title="总价" type="Decimal" notNull="true"%%
+
+---
+# 假设没有任何表存在
+所有表的所有属性名称都加上O前缀
+
+无需操作，因为不存在任何表和属性。
+
+---

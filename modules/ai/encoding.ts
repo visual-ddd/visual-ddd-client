@@ -8,7 +8,6 @@ const getEncoding = memoize((model: ChatModel) => {
   let encoding: Tiktoken;
 
   try {
-    // @ts-expect-error
     encoding = encoding_for_model(model);
   } catch (error) {
     console.log('Warning: model not found. Using cl100k_base encoding.');
