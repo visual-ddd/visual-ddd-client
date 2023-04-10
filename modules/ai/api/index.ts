@@ -7,3 +7,4 @@ export * from './summary';
 export * from './sql-master';
 export * from './ddd-master';
 export * from './data-object';
+export * from './flow-builder';

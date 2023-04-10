@@ -12,3 +12,11 @@ export enum YJS_FIELD_NAME {
    */
   SERVICE = 'service',
 }
+
+/**
+ * 标签页
+ */
+export enum ScenarioDesignerTabs {
+  Scenario = 'scenario',
+  Service = 'service',
+}

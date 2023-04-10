@@ -1,11 +1,8 @@
 import { parse, groupByTable } from './parser';
 import { Executor, ITableStore } from './executor';
+import { AITransformerParseError } from '@/lib/ai-directive-parser';
 
-export class AITransformerParseError extends Error {
-  static isAITransformerParseError(error: any): error is AITransformerParseError {
-    return error && error instanceof AITransformerParseError;
-  }
-}
+export { AITransformerParseError } from '@/lib/ai-directive-parser';
 
 export type { ITable, ITableStore } from './executor';
 export { parseReference } from './parser';

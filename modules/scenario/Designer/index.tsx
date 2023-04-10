@@ -13,10 +13,10 @@ import {
 } from '@/lib/components/UbiquitousLanguageCompletion';
 import { usePreventUnload } from '@/lib/hooks';
 
-import { ScenarioDesignerContextProvider } from './Context';
 import { ScenarioDesignerTabs, ScenarioDesignerTabsMap, ScenarioDesignerModel } from './model';
 import { ScenarioEditor } from '../scenario-design';
 import { DomainEditor } from '../service-design';
+import { DesignerContextProvider } from '@/lib/designer';
 export interface ScenarioDescription {
   id: string | number;
 
@@ -164,7 +164,7 @@ const ScenarioDesigner = observer(function ScenarioDesigner(props: ScenarioDesig
   usePreventUnload(!readonly);
 
   return (
-    <ScenarioDesignerContextProvider value={model}>
+    <DesignerContextProvider model={model}>
       <UbiquitousLanguageCompletionProvider list={ubiquitousLanguages}>
         <CompletionContextProvider words={globalWords}>
           <DesignerLayout
@@ -190,7 +190,7 @@ const ScenarioDesigner = observer(function ScenarioDesigner(props: ScenarioDesig
           </DesignerLayout>
         </CompletionContextProvider>
       </UbiquitousLanguageCompletionProvider>
-    </ScenarioDesignerContextProvider>
+    </DesignerContextProvider>
   );
 });
 

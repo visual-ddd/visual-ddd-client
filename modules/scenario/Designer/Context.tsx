@@ -1,11 +1,6 @@
-import { createContext, useContext } from 'react';
 import { ScenarioDesignerModel } from './model';
-
-const CONTEXT = createContext<ScenarioDesignerModel | null>(null);
-CONTEXT.displayName = 'DomainDesignerContext';
+import { useDesignerContext } from '@/lib/designer';
 
 export function useScenarioDesignerContext() {
-  return useContext(CONTEXT);
+  return useDesignerContext<ScenarioDesignerModel>();
 }
-
-export const ScenarioDesignerContextProvider = CONTEXT.Provider;

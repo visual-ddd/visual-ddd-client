@@ -15,6 +15,7 @@ import { observer } from 'mobx-react';
 import { useMemo } from 'react';
 
 import { ScenarioEditorModel } from '../model';
+import { useBot } from '../bot-extensions';
 
 export interface ScenarioEditorProps {
   model: ScenarioEditorModel;
@@ -47,6 +48,12 @@ export const CANVAS_MODEL_OPTIONS: CanvasModelOptions = {
   },
 };
 
+const Bot = () => {
+  useBot();
+
+  return null;
+};
+
 export const ScenarioEditor = observer(function ScenarioEditor(props: ScenarioEditorProps) {
   const { model } = props;
   const readonly = model.readonly;
@@ -74,7 +81,9 @@ export const ScenarioEditor = observer(function ScenarioEditor(props: ScenarioEd
               right={<EditorInspectPanel />}
               toolbar={<EditorToolbar />}
             >
-              <Canvas></Canvas>
+              <Canvas>
+                <Bot />
+              </Canvas>
             </EditorLayout>
           </EditorConfigurationProvider>
         </CanvasModelProvider>
