@@ -1,7 +1,7 @@
 import { normalizeUrl } from '@/lib/utils';
 import type { TeamDetail } from '@/modules/organization/types';
 import { withWakedataRequestSsr } from '@/modules/session/server';
-import { Launch, LaunchProps, LaunchInfo, verifyRedirect, normalizeLaunchInfo } from '@/modules/user/Launch';
+import { Launch, LaunchProps, LaunchInfo, verifyRedirect, normalizeLaunchInfo, isEntry } from '@/modules/user/Launch';
 
 /**
  * 启动页
@@ -28,6 +28,13 @@ export const getServerSideProps = withWakedataRequestSsr<LaunchProps>(async cont
         { method: 'GET' }
       );
     };
+
+    // 非入口文件，可以直接跳转打开
+    if (!isEntry(from)) {
+      return {
+        redirect: { destination: normalizeUrl(from)!, statusCode: 302 },
+      };
+    }
 
     // 验证权限
     const shouldRedirect = await verifyRedirect(from, data, getTeamInfo);
