@@ -253,6 +253,7 @@ export class CanvasModel implements IDisposable {
       // 支持对齐线
       snapline: {
         enabled: !readonly,
+        tolerance: 30,
       },
 
       // 画布滚动

@@ -37,6 +37,9 @@ export const CANVAS_MODEL_OPTIONS: CanvasModelOptions = {
     // 使用 scroller 取代
     opts.panning = false;
 
+    // 关闭网格
+    opts.grid = undefined;
+
     opts.scroller = {
       enabled: true,
       // pageBreak: true,
