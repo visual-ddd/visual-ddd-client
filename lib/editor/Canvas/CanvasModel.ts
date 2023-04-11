@@ -287,9 +287,14 @@ export class CanvasModel implements IDisposable {
         snap: true,
         // 高亮所有可以链接的节点和连接桩
         highlight: true,
+        // 是否允许了解到另外一个边
+        allowEdge: false,
+        // 是否允许连接到空白
+        allowBlank: false,
         // 是否支持循环连线
         allowLoop: arg => {
-          return shapeRegistry.isAllowNodeConnect(arg);
+          const allow = shapeRegistry.isAllowNodeConnect(arg);
+          return allow;
         },
         // allowNode 不太靠谱，统一使用 allowLoop 验证
         // allowNode

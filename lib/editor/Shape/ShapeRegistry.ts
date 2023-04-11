@@ -264,6 +264,9 @@ export class ShapeRegistry {
       }
 
       return allow;
+    } else {
+      // 不能连接到 edge
+      return false;
     }
 
     return true;
