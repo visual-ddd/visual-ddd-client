@@ -23,6 +23,10 @@ export interface LaneShapeProps {
 export const LaneShape = observer(function LaneShape(props: LaneShapeProps) {
   const { dsl, formModel, graph, node, editorModel } = props;
   const readonly = editorModel.readonly;
+  const getNodesUnderNodeBBox = () => {
+    return graph.getNodesInArea(node.getBBox(), { strict: true }).filter(i => i.id !== node.id);
+  };
+
   const lanesDrag = useLanesDrag({
     direction: 'vertical',
     /**
@@ -30,7 +34,7 @@ export const LaneShape = observer(function LaneShape(props: LaneShapeProps) {
      * @returns
      */
     min: () => {
-      const children = node.getChildren() ?? NoopArray;
+      const children = getNodesUnderNodeBBox() ?? NoopArray;
       if (!children.length) {
         return DEFAULT_LANE_WIDTH;
       }
@@ -54,7 +58,7 @@ export const LaneShape = observer(function LaneShape(props: LaneShapeProps) {
   });
 
   const moveChildrenUnderLine = (y: number, delta: number) => {
-    const children = node.getChildren() ?? NoopArray;
+    const children = getNodesUnderNodeBBox() ?? NoopArray;
 
     if (!children.length) {
       return false;
