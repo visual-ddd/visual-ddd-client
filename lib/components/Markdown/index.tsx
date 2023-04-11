@@ -2,6 +2,7 @@
 import ReactMarkdown, { Options } from 'react-markdown';
 import RemarkMath from 'remark-math';
 import RehypeKatex from 'rehype-katex';
+import RemarkBreaks from 'remark-breaks';
 import RemarkGfm from 'remark-gfm';
 
 // 代码高亮
@@ -53,7 +54,7 @@ export interface MarkdownProps {
 export const Markdown = memo((props: MarkdownProps) => {
   return (
     <ReactMarkdown
-      remarkPlugins={[RemarkMath, RemarkGfm]}
+      remarkPlugins={[RemarkMath, RemarkGfm, RemarkBreaks]}
       rehypePlugins={[RehypeKatex, [RehypePrsim, { ignoreMissing: true }]]}
       className={classNames('vd-markdown markdown-body', s.root, props.className)}
       linkTarget="_blank"
