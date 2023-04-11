@@ -46,6 +46,8 @@ const nextConfig = {
     '@wakeapp/hooks',
     '@ant-design/pro-components',
     'lodash-es',
+    // lru-cache 包含了一些没有转换的特性
+    'lru-cache',
     // https://github.com/ant-design/pro-components/issues/4852
     'antd',
     '@ant-design/plots',
