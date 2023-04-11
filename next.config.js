@@ -15,6 +15,8 @@ const ENABLE_SENTRY_CLI =
   process.env.SENTRY_ORG &&
   process.env.SENTRY_PROJECT;
 
+const VERSION = `${pkg.version}-${snapshot}`;
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false, // 暂时关闭，打开 react 会模拟 useEffect 多次执行
@@ -27,7 +29,7 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   env: {
-    VERSION: `${pkg.version}-${snapshot}`,
+    VERSION,
   },
   eslint: {
     // Warning: This allows production builds to successfully complete even if
@@ -81,7 +83,7 @@ const nextConfig = {
     return config;
   },
   sentry: {
-    hideSourcemaps: false,
+    hideSourcemaps: true,
     // 禁止 sentry source map 上传
     disableServerWebpackPlugin: !ENABLE_SENTRY_CLI,
     disableClientWebpackPlugin: !ENABLE_SENTRY_CLI,
@@ -89,6 +91,7 @@ const nextConfig = {
 };
 
 module.exports = withSentryConfig(nextConfig, {
+  release: VERSION,
   errorHandler: err => {
     console.error('sentry error', err);
   },
