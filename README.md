@@ -72,6 +72,7 @@ BACKEND=http://172.26.57.49:8080 pnpm dev
 | PINECONE_API_KEY     |                                             |
 | PINECONE_ENVIRONMENT |                                             |
 | PINECONE_INDEX       |                                             |
+| BD_ANALYZE_KEY       | 百度统计 key                                |
 
 # 构建时环境变量
 
