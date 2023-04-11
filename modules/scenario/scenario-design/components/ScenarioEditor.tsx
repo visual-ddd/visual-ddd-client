@@ -16,6 +16,7 @@ import { useMemo } from 'react';
 
 import { ScenarioEditorModel } from '../model';
 import { useBot } from '../bot-extensions';
+import { ScenarioObjectName } from '../dsl';
 
 export interface ScenarioEditorProps {
   model: ScenarioEditorModel;
@@ -39,6 +40,13 @@ export const CANVAS_MODEL_OPTIONS: CanvasModelOptions = {
 
     // 关闭网格
     opts.grid = undefined;
+
+    if (opts.snapline) {
+      opts.snapline.filter = node => {
+        return node.shape !== ScenarioObjectName.Lane;
+      };
+      opts.snapline.clean = 1500;
+    }
 
     opts.scroller = {
       enabled: true,

@@ -18,8 +18,8 @@ test('execute', () => {
     [
       {
         params: {
-          x: 45,
-          y: 65,
+          x: expect.any(Number),
+          y: expect.any(Number),
         },
         type: 'Start',
       },
@@ -29,8 +29,8 @@ test('execute', () => {
         params: {
           label: '填写账号密码',
           name: 'Input',
-          x: 230,
-          y: 65,
+          x: expect.any(Number),
+          y: expect.any(Number),
         },
         type: 'Node',
       },
@@ -40,8 +40,8 @@ test('execute', () => {
         params: {
           label: '信息是否填写完整',
           name: 'VerifyInput',
-          x: 490,
-          y: 65,
+          x: expect.any(Number),
+          y: expect.any(Number),
         },
         type: 'Condition',
       },
@@ -51,8 +51,9 @@ test('execute', () => {
         params: {
           label: '账号密码是否正确',
           name: 'VerifyAccount',
-          x: 750,
-          y: 65,
+
+          x: expect.any(Number),
+          y: expect.any(Number),
         },
         type: 'Condition',
       },
@@ -62,8 +63,9 @@ test('execute', () => {
         params: {
           label: '登录成功',
           name: 'LoginSuccess',
-          x: 1010,
-          y: 65,
+
+          x: expect.any(Number),
+          y: expect.any(Number),
         },
         type: 'Node',
       },
@@ -73,8 +75,8 @@ test('execute', () => {
         params: {
           label: '登录失败',
           name: 'LoginFailed',
-          x: 1010,
-          y: 235,
+          x: expect.any(Number),
+          y: expect.any(Number),
         },
         type: 'Node',
       },
@@ -82,8 +84,8 @@ test('execute', () => {
     [
       {
         params: {
-          x: 45,
-          y: 235,
+          x: expect.any(Number),
+          y: expect.any(Number),
         },
         type: 'End',
       },

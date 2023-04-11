@@ -48,6 +48,7 @@ export const EditorLayout = observer(function EditorLayout(props: EditorLayoutPr
       onResizeEnd={newSize => {
         model.commandHandler.setViewState({ key: 'inspectPanelWidth', value: newSize });
       }}
+      resizable={!model.viewStore.viewState.rightSidebarFolded}
       minSize={MIN_SIDE_WIDTH}
       maxSize={MAX_SIDE_WIDTH}
     >
@@ -92,6 +93,7 @@ export const EditorLayout = observer(function EditorLayout(props: EditorLayoutPr
           size={
             model.viewStore.viewState.leftSidebarFolded ? 0 : model.viewStore.viewState.sidebarPanelWidth ?? SIDE_WIDTH
           }
+          resizable={!model.viewStore.viewState.leftSidebarFolded}
           onResizeEnd={newSize => {
             model.commandHandler.setViewState({ key: 'sidebarPanelWidth', value: newSize });
           }}

@@ -26,9 +26,8 @@ export function autoLayout(directives: ScenarioDirective[]) {
   const layout = new DagreLayout({
     type: 'dagre',
     rankdir: 'LR',
-    align: 'UL',
     nodesep: 40,
-    ranksep: 20,
+    ranksep: 30,
   });
 
   const input: { nodes: NodeBBox[]; edges: EdgeModel[] } = {
@@ -51,13 +50,24 @@ export function autoLayout(directives: ScenarioDirective[]) {
         });
         break;
       }
-      case DirectiveName.Node:
-      case DirectiveName.Condition: {
+      case DirectiveName.Node: {
         input.nodes.push({
           id: dir.params.name,
           size: {
             width: 200,
             height: 50,
+          },
+          x: 0,
+          y: 0,
+        });
+        break;
+      }
+      case DirectiveName.Condition: {
+        input.nodes.push({
+          id: dir.params.name,
+          size: {
+            width: 85,
+            height: 85,
           },
           x: 0,
           y: 0,
