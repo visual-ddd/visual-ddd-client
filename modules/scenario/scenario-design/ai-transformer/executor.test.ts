@@ -18,8 +18,8 @@ test('execute', () => {
     [
       {
         params: {
-          x: 100,
-          y: 100,
+          x: 45,
+          y: 65,
         },
         type: 'Start',
       },
@@ -29,8 +29,8 @@ test('execute', () => {
         params: {
           label: '填写账号密码',
           name: 'Input',
-          x: 250,
-          y: 100,
+          x: 230,
+          y: 65,
         },
         type: 'Node',
       },
@@ -40,8 +40,8 @@ test('execute', () => {
         params: {
           label: '信息是否填写完整',
           name: 'VerifyInput',
-          x: 400,
-          y: 100,
+          x: 490,
+          y: 65,
         },
         type: 'Condition',
       },
@@ -51,8 +51,8 @@ test('execute', () => {
         params: {
           label: '账号密码是否正确',
           name: 'VerifyAccount',
-          x: 400,
-          y: 200,
+          x: 750,
+          y: 65,
         },
         type: 'Condition',
       },
@@ -62,8 +62,8 @@ test('execute', () => {
         params: {
           label: '登录成功',
           name: 'LoginSuccess',
-          x: 550,
-          y: 50,
+          x: 1010,
+          y: 65,
         },
         type: 'Node',
       },
@@ -73,8 +73,8 @@ test('execute', () => {
         params: {
           label: '登录失败',
           name: 'LoginFailed',
-          x: 550,
-          y: 250,
+          x: 1010,
+          y: 235,
         },
         type: 'Node',
       },
@@ -82,8 +82,8 @@ test('execute', () => {
     [
       {
         params: {
-          x: 700,
-          y: 150,
+          x: 45,
+          y: 235,
         },
         type: 'End',
       },

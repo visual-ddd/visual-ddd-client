@@ -476,6 +476,13 @@ export class CanvasModel implements IDisposable {
         key: { macos: 'shift+command+p', other: 'shift+ctrl+p' },
         handler: this.handleEnableMousePanningMode,
       })
+      .bindKey({
+        name: 'selectAll',
+        title: '全选',
+        description: '全选所有节点',
+        key: { macos: 'command+a', other: 'ctrl+a' },
+        handler: this.handleSelectAll,
+      })
 
       .bindKey({
         name: 'zoomIn',

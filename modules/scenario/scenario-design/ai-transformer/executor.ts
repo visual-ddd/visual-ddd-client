@@ -1,5 +1,6 @@
 import { Directive } from '@/lib/ai-directive-parser';
 import { DirectiveName, ScenarioDirective } from './protocol';
+import { autoLayout } from './layout';
 
 type Task = () => void;
 
@@ -16,6 +17,8 @@ export class Executor {
 
   execute(directives: ScenarioDirective[]) {
     console.log(`执行场景编辑: `, directives);
+
+    autoLayout(directives);
 
     const highTasks: Task[] = [];
     const task: Task[] = [];
