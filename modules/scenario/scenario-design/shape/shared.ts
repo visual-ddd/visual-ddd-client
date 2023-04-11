@@ -46,9 +46,9 @@ export const PORTS: { ports: PortManager.Metadata } = {
 const EdgeConnector: Edge.BaseOptions['connector'] = { name: 'rounded' };
 
 const EdgeRouter: Edge.BaseOptions['router'] = {
-  name: 'manhattan',
+  name: 'er',
   args: {
-    step: 10,
+    offset: 'center',
   },
 };
 const EdgeAttrs: Edge.BaseOptions['attrs'] = {

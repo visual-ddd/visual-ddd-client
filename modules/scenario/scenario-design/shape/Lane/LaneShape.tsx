@@ -24,7 +24,7 @@ export const LaneShape = observer(function LaneShape(props: LaneShapeProps) {
   const { dsl, formModel, graph, node, editorModel } = props;
   const readonly = editorModel.readonly;
   const getNodesUnderNodeBBox = () => {
-    return graph.getNodesInArea(node.getBBox(), { strict: true }).filter(i => i.id !== node.id);
+    return graph.getNodesInArea(node.getBBox(), { strict: false }).filter(i => i.id !== node.id);
   };
 
   const lanesDrag = useLanesDrag({
