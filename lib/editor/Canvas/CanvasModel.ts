@@ -430,6 +430,32 @@ export class CanvasModel implements IDisposable {
           key: { macos: 'shift+command+z', other: 'ctrl+y' },
           handler: this.handleRedo,
         });
+
+      this.keyboardBinding
+        .bindKey({
+          name: 'up',
+          title: '向上移动',
+          key: { macos: 'up', other: 'up' },
+          handler: this.handleMoveSelected.bind(this, { direction: 'y', value: -1 }),
+        })
+        .bindKey({
+          name: 'down',
+          title: '向下移动',
+          key: { macos: 'down', other: 'down' },
+          handler: this.handleMoveSelected.bind(this, { direction: 'y', value: 1 }),
+        })
+        .bindKey({
+          name: 'left',
+          title: '向左移动',
+          key: { macos: 'left', other: 'left' },
+          handler: this.handleMoveSelected.bind(this, { direction: 'x', value: -1 }),
+        })
+        .bindKey({
+          name: 'right',
+          title: '向右移动',
+          key: { macos: 'right', other: 'right' },
+          handler: this.handleMoveSelected.bind(this, { direction: 'x', value: 1 }),
+        });
     }
 
     // 选项初始化完毕
@@ -850,6 +876,29 @@ export class CanvasModel implements IDisposable {
     if (!current) {
       this.graph?.unselect(cell.id);
     }
+  };
+
+  handleMoveSelected = (params: { direction: 'x' | 'y'; value: number }) => {
+    const { direction, value } = params;
+    const cells = this.graph?.getSelectedCells()?.filter((i): i is Node => i.isNode());
+    if (cells?.length !== 1) {
+      return;
+    }
+
+    const cell = cells[0];
+
+    if (!this.canMove(cell)) {
+      return;
+    }
+
+    const point = { ...cell.getPosition() };
+    if (direction === 'x') {
+      point.x += value;
+    } else {
+      point.y += value;
+    }
+
+    cell.setPosition(point);
   };
 
   /**
