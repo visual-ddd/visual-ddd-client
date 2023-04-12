@@ -14,6 +14,7 @@ import {
 
 export interface NodeBBox {
   id: string;
+  shape: string;
   size: {
     width: number;
     height: number;
@@ -26,8 +27,8 @@ export function autoLayout(directives: ScenarioDirective[]) {
   const layout = new DagreLayout({
     type: 'dagre',
     rankdir: 'LR',
-    nodesep: 40,
-    ranksep: 30,
+    nodesep: 60,
+    ranksep: 40,
   });
 
   const input: { nodes: NodeBBox[]; edges: EdgeModel[] } = {
@@ -40,10 +41,11 @@ export function autoLayout(directives: ScenarioDirective[]) {
       case DirectiveName.Start:
       case DirectiveName.End: {
         input.nodes.push({
+          shape: 'rect',
           id: dir.type,
           size: {
-            width: 50,
-            height: 50,
+            width: 45,
+            height: 45,
           },
           x: 0,
           y: 0,
@@ -53,6 +55,7 @@ export function autoLayout(directives: ScenarioDirective[]) {
       case DirectiveName.Node: {
         input.nodes.push({
           id: dir.params.name,
+          shape: 'rect',
           size: {
             width: 200,
             height: 50,
@@ -65,9 +68,10 @@ export function autoLayout(directives: ScenarioDirective[]) {
       case DirectiveName.Condition: {
         input.nodes.push({
           id: dir.params.name,
+          shape: 'rect',
           size: {
-            width: 85,
-            height: 85,
+            width: 75,
+            height: 75,
           },
           x: 0,
           y: 0,
@@ -88,27 +92,30 @@ export function autoLayout(directives: ScenarioDirective[]) {
 
   for (const node of (output.nodes ?? NoopArray) as NodeBBox[]) {
     const id = node.id;
+    let dir: StartDirective | EndDirective | ConditionDirective | NodeDirective | undefined;
+
     switch (id) {
       case DirectiveName.Start:
       case DirectiveName.End: {
-        const dir = directives.find((i): i is StartDirective | EndDirective => i.type === id);
-        if (dir) {
-          dir.params.x = node.x;
-          dir.params.y = node.y;
-        }
+        dir = directives.find((i): i is StartDirective | EndDirective => i.type === id);
+
         break;
       }
       default: {
-        const dir = directives.find(
+        dir = directives.find(
           (i): i is ConditionDirective | NodeDirective =>
             (i.type == DirectiveName.Condition || i.type === DirectiveName.Node) && i.params.name === id
         );
-        if (dir) {
-          dir.params.x = node.x;
-          dir.params.y = node.y;
-        }
+
         break;
       }
+    }
+
+    if (dir) {
+      // FIXME: layout 返回的xy 是左上角的
+      const { width, height } = node.size;
+      dir.params.x = node.x - width / 2;
+      dir.params.y = node.y - height / 2;
     }
   }
 }
