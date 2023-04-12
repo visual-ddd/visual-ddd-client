@@ -1,7 +1,15 @@
-import { normalizeUrl } from '@/lib/utils';
+import { normalizeUrl, toUrl } from '@/lib/utils';
 import type { TeamDetail } from '@/modules/organization/types';
 import { withWakedataRequestSsr } from '@/modules/session/server';
-import { Launch, LaunchProps, LaunchInfo, verifyRedirect, normalizeLaunchInfo, isEntry } from '@/modules/user/Launch';
+import {
+  Launch,
+  LaunchProps,
+  LaunchInfo,
+  verifyRedirect,
+  normalizeLaunchInfo,
+  isEntry,
+  isLaunch,
+} from '@/modules/user/Launch';
 
 /**
  * 启动页
@@ -19,8 +27,30 @@ export const getServerSideProps = withWakedataRequestSsr<LaunchProps>(async cont
 
   // 过滤掉非管理员的组织
   normalizeLaunchInfo(data);
+  const defaultResponse = {
+    props: { data },
+  };
 
   if (from) {
+    const fromUrl = toUrl(from);
+
+    // 无效 url
+    if (fromUrl == null) {
+      return defaultResponse;
+    }
+
+    // 启动页
+    if (isLaunch(fromUrl.pathname)) {
+      return defaultResponse;
+    }
+
+    // 非入口文件，可以直接跳转打开
+    if (!isEntry(fromUrl.pathname)) {
+      return {
+        redirect: { destination: normalizeUrl(from)!, statusCode: 302 },
+      };
+    }
+
     const getTeamInfo = async (teamId: string | number) => {
       return context.req.request<TeamDetail>(
         '/wd/visual/web/team/team-detail-query',
@@ -28,13 +58,6 @@ export const getServerSideProps = withWakedataRequestSsr<LaunchProps>(async cont
         { method: 'GET' }
       );
     };
-
-    // 非入口文件，可以直接跳转打开
-    if (!isEntry(from)) {
-      return {
-        redirect: { destination: normalizeUrl(from)!, statusCode: 302 },
-      };
-    }
 
     // 验证权限
     const shouldRedirect = await verifyRedirect(from, data, getTeamInfo);
@@ -50,5 +73,5 @@ export const getServerSideProps = withWakedataRequestSsr<LaunchProps>(async cont
     }
   }
 
-  return { props: { data } };
+  return defaultResponse;
 });

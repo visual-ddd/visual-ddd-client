@@ -1,7 +1,7 @@
 import { VDSessionEntry, VDSessionState } from '@/modules/session/types';
 import type { LaunchInfo } from './types';
 import type { TeamDetail } from '@/modules/organization/types';
-import { ENTRY_PREFIX } from '@/modules/session/config';
+import { ENTRY_PREFIX, PAGE_LAUNCH } from '@/modules/session/config';
 
 /**
  * 是否为入口路径
@@ -10,6 +10,15 @@ import { ENTRY_PREFIX } from '@/modules/session/config';
  */
 export function isEntry(path: string) {
   return ENTRY_PREFIX.some(i => path.startsWith(i));
+}
+
+/**
+ * 是否为启动页
+ * @param path
+ * @returns
+ */
+export function isLaunch(path: string) {
+  return path.startsWith(PAGE_LAUNCH);
 }
 
 export function normalizeLaunchInfo(launchInfo: LaunchInfo) {

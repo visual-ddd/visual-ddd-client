@@ -24,11 +24,16 @@ export const ENTRY_PREFIX = [
 ];
 
 /**
+ * 启动页
+ */
+export const PAGE_LAUNCH = '/launch';
+
+/**
  * 需要鉴权的页面
  */
 export const PAGE_AUTH_BLACK_LIST = [
   // 启动页
-  '/launch',
+  PAGE_LAUNCH,
   '/chat',
   ...ENTRY_PREFIX,
 ];
