@@ -17,6 +17,8 @@ import {
 export default Launch;
 
 export const getServerSideProps = withWakedataRequestSsr<LaunchProps>(async context => {
+  context.res.setHeader('Cache-Control', 'no-cache');
+
   const from = context.query.from as string | undefined;
 
   const data = await context.req.request<LaunchInfo>(
@@ -47,7 +49,7 @@ export const getServerSideProps = withWakedataRequestSsr<LaunchProps>(async cont
     // 非入口文件，可以直接跳转打开
     if (!isEntry(fromUrl.pathname)) {
       return {
-        redirect: { destination: normalizeUrl(from)!, statusCode: 302 },
+        redirect: { destination: normalizeUrl(from)!, permanent: false },
       };
     }
 
@@ -68,7 +70,7 @@ export const getServerSideProps = withWakedataRequestSsr<LaunchProps>(async cont
       await context.req.session.save();
 
       return {
-        redirect: { destination: normalizeUrl(from)!, statusCode: 302 },
+        redirect: { destination: normalizeUrl(from)!, permanent: false },
       };
     }
   }

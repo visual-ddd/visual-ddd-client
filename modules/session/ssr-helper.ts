@@ -55,6 +55,7 @@ export function withWakedataRequestSsr<
       if (isResponseError(err)) {
         const code = err.code;
         if (code === UNAUTH_CODE) {
+          context.res.setHeader('Cache-Control', 'no-cache');
           return {
             redirect: { permanent: false, destination: `/login?from=${req.url}&flash=true&capturer=ssr` },
           };

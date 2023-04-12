@@ -123,7 +123,11 @@ export const pageAuthMiddleware: Middleware = async (req, next) => {
   url.searchParams.append('flash', 'true');
   url.searchParams.append('capturer', 'middleware');
 
-  const redirect = NextResponse.redirect(url);
+  const redirect = NextResponse.redirect(url, {
+    headers: {
+      'Cache-Control': 'no-cache',
+    },
+  });
 
   return redirect;
 };
@@ -152,7 +156,11 @@ export const pageEntryRedirectMiddleware: Middleware = async (req, next) => {
 
   if (state == null) {
     // 导航到启动页
-    return NextResponse.redirect(new URL('/launch', req.url));
+    return NextResponse.redirect(new URL('/launch', req.url), {
+      headers: {
+        'Cache-Control': 'no-cache',
+      },
+    });
   }
 
   // check entry
@@ -164,5 +172,9 @@ export const pageEntryRedirectMiddleware: Middleware = async (req, next) => {
 
   // 旧的入口可能已经销毁了？ -> 404 处理，CheckSession 客户端检查会话
 
-  return NextResponse.redirect(new URL(expectedEntry, req.url));
+  return NextResponse.redirect(new URL(expectedEntry, req.url), {
+    headers: {
+      'Cache-Control': 'no-cache',
+    },
+  });
 };

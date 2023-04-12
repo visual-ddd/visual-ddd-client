@@ -7,7 +7,7 @@ export default function SystemIndex() {
 export const getServerSideProps: GetServerSideProps = async () => {
   return {
     redirect: {
-      statusCode: 302,
+      permanent: false,
       destination: '/system/organization',
     },
   };

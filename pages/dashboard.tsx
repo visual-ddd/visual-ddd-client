@@ -12,9 +12,11 @@ export default function Dashboard() {
 export const getServerSideProps: GetServerSideProps = withWakedataRequestSsr(async context => {
   const session = context.req.session.content;
 
+  context.res.setHeader('Cache-Control', 'no-cache');
+
   if (!session) {
     return {
-      redirect: { destination: '/login', statusCode: 302 },
+      redirect: { destination: '/login', permanent: false },
     };
   }
 
@@ -22,11 +24,11 @@ export const getServerSideProps: GetServerSideProps = withWakedataRequestSsr(asy
 
   if (state == null) {
     return {
-      redirect: { destination: '/launch', statusCode: 302 },
+      redirect: { destination: '/launch', permanent: false },
     };
   }
 
   return {
-    redirect: { destination: `/${state.entry}${state.entryId ? `/${state.entryId}` : ''}`, statusCode: 302 },
+    redirect: { destination: `/${state.entry}${state.entryId ? `/${state.entryId}` : ''}`, permanent: false },
   };
 });
