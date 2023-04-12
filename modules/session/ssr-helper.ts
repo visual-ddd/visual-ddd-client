@@ -56,7 +56,7 @@ export function withWakedataRequestSsr<
         const code = err.code;
         if (code === UNAUTH_CODE) {
           return {
-            redirect: { permanent: false, destination: `/login?from=${req.url}&flash=true` },
+            redirect: { permanent: false, destination: `/login?from=${req.url}&flash=true&capturer=ssr` },
           };
         } else if (code === NOT_FOUND_CODE) {
           console.warn(`资源未找到: ${req.url}`);

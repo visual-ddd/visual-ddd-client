@@ -11,6 +11,7 @@ export function gotoLogin() {
   const url = new URL('/login', globalThis.location.href);
   url.searchParams.append('from', router.asPath);
   url.searchParams.append('flash', 'true');
+  url.searchParams.append('capturer', 'client');
 
   router.push(url);
 }

@@ -121,6 +121,7 @@ export const pageAuthMiddleware: Middleware = async (req, next) => {
   const url = new URL('/login', req.url);
   url.searchParams.append('from', req.url);
   url.searchParams.append('flash', 'true');
+  url.searchParams.append('capturer', 'middleware');
 
   const redirect = NextResponse.redirect(url);
 
