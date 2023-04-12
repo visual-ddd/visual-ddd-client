@@ -1,5 +1,6 @@
 import http from 'http';
 import https from 'https';
+import { captureException } from '@sentry/nextjs';
 
 import { createFailResponse } from '../backend-node';
 
@@ -35,6 +36,8 @@ export function chat(options: ChatOptions) {
   // 消息超长
   if (token > maxToken) {
     pipe.status(400).json(createFailResponse(400, '消息超长'));
+
+    captureException(new Error(`ChatGPT 消息超长: ${JSON.stringify(options)}`));
     return;
   }
 

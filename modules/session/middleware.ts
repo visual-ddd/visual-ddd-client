@@ -114,15 +114,15 @@ export const pageAuthMiddleware: Middleware = async (req, next) => {
     return next();
   }
 
+  if (await checkAuthInMiddleware(req)) {
+    return next();
+  }
+
   const url = new URL('/login', req.url);
   url.searchParams.append('from', req.url);
   url.searchParams.append('flash', 'true');
 
   const redirect = NextResponse.redirect(url);
-
-  if (await checkAuthInMiddleware(req)) {
-    return next();
-  }
 
   return redirect;
 };
