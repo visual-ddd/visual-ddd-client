@@ -24,7 +24,7 @@ export const FormStatus: ReactDecorator = Input => {
             }
 
             return (
-              <div className={classNames('v-form-status-decorator', s.root, { error: formModel.hasError })}>
+              <div className={classNames('vd-form-status-decorator', s.root, { error: formModel.hasError })}>
                 <Popover
                   content={
                     <div>

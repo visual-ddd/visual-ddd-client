@@ -16,6 +16,7 @@ import { copyByCell, copyByPayload, CopyPayload, paste } from './ClipboardUtils'
 import { CanvasKeyboardBinding } from './KeyboardBinding';
 import { ContextMenuController } from './ContextMenuController';
 import { autoLayout } from './layout';
+import { exportAsImage } from './exportAsImage';
 
 const ResizingOptionsWithDefault: [keyof Transform.ResizingRaw, any][] = [
   ['minWidth', 0],
@@ -1417,9 +1418,21 @@ export class CanvasModel implements IDisposable {
   /**
    * 拷贝为图片
    */
-  handleExportAsImage = () => {
-    // FIXME: 会出现样式错乱，后面使用其他方案
-    this.graph?.exportSVG(undefined, { copyStyles: true });
+  handleExportAsImage = async () => {
+    const element = this.graph?.container;
+    if (element == null) {
+      return;
+    }
+
+    const bbox = this.graph?.getContentBBox()!;
+    const viewBox = this.graph?.graphToLocal(bbox)!;
+
+    try {
+      await exportAsImage(element, viewBox);
+      message.success(`导出成功`);
+    } catch (err) {
+      message.error(`导出失败： ${(err as Error).message}`);
+    }
   };
 
   /**
