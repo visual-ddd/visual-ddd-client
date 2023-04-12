@@ -494,9 +494,14 @@ export const GraphBinding = memo((props: GraphBindingProps) => {
   };
 
   const handleDrop = (evt: React.DragEvent) => {
-    const data = JSON.parse(evt.dataTransfer.getData('text/plain').slice(ALLOWED_DROP_SOURCE.length));
-    evt.persist();
-    onDrop?.({ componentData: data, nativeEvent: evt, graph: graphRef.current! });
+    try {
+      const data = JSON.parse(evt.dataTransfer.getData('text/plain').slice(ALLOWED_DROP_SOURCE.length));
+      evt.persist();
+      onDrop?.({ componentData: data, nativeEvent: evt, graph: graphRef.current! });
+    } catch (err) {
+      console.error(err);
+      // ignore
+    }
   };
 
   useEffect(() => {
