@@ -76,7 +76,7 @@ const AggregationAggregateEdge = observer(function AggregationAggregateEdge(prop
   const color = (source as DomainObjectAggregation).color;
   const attrs = useMemo(() => {
     const rgb = colorString.get.rgb(color);
-    rgb[3] = 0.4;
+    rgb[3] = 0.6;
 
     const stroke = colorString.to.rgb(rgb);
 
