@@ -2,6 +2,7 @@ import { useEditorModel } from '@/lib/editor';
 import { EdgeBinding, EdgeBindingProps } from '@/lib/g6-binding';
 import { observer } from 'mobx-react';
 import { memo, useMemo } from 'react';
+import colorString from 'color-string';
 import { NameDSL, RelationShipDSL } from '../dsl';
 import { DomainEditorModel, DomainObject, DomainObjectAggregation, DomainObjectFactory } from '../model';
 
@@ -36,7 +37,7 @@ const DependencyEdge = createEdge('DependencyEdge', {
     line: {
       strokeWidth: 1,
       strokeDasharray: 4,
-      stroke: '#8080809e',
+      stroke: '#8080804a',
     },
   },
 });
@@ -46,7 +47,7 @@ const AssociationEdge = createEdge('AssociationEdge', {
   attrs: {
     line: {
       strokeWidth: 1,
-      stroke: '#808080cf',
+      stroke: '#8080804a',
     },
   },
 });
@@ -56,7 +57,7 @@ const AggregationEdge = createEdge('AggregationEdge', {
   attrs: {
     line: {
       strokeWidth: 1,
-      stroke: '#8080809e',
+      stroke: '#8080804a',
       sourceMarker: {
         name: 'diamond',
         width: 18,
@@ -74,10 +75,15 @@ const AggregationAggregateEdge = observer(function AggregationAggregateEdge(prop
   const { source, id, target } = props;
   const color = (source as DomainObjectAggregation).color;
   const attrs = useMemo(() => {
+    const rgb = colorString.get.rgb(color);
+    rgb[3] = 0.4;
+
+    const stroke = colorString.to.rgb(rgb);
+
     return {
       line: {
         strokeWidth: 1,
-        stroke: color,
+        stroke,
         sourceMarker: {
           name: 'diamond',
           width: 18,
