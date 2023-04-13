@@ -39,6 +39,8 @@ declare global {
 type Resizing = GraphBindingOptions['resizing'];
 
 const DEFAULT_SELECTED_COLOR = '#1890ff';
+const MIN_SCALE = 0.1;
+const MAX_SCALE = 3.5;
 
 export interface CanvasModelOptions {
   /**
@@ -232,10 +234,13 @@ export class CanvasModel implements IDisposable {
         enabled: true,
         // 通过滚动缩放大小
         zoomAtMousePosition: true,
+        minScale: MIN_SCALE,
+        maxScale: MAX_SCALE,
 
         // 缩放因子，默认是 1.2, 但是在 macos 触控板是会非常灵敏
         // 因此这里设置稍微小一点
-        factor: 1.05,
+        // 展示注释，这个小于 1.2 会导致缩放异常
+        // factor: 1.05,
         // 缩放大小的修饰符
         modifiers: ['meta', 'ctrl'],
       },
@@ -247,8 +252,8 @@ export class CanvasModel implements IDisposable {
 
       // 缩放限制
       scaling: {
-        min: 0.1,
-        max: 3.5,
+        min: MIN_SCALE,
+        max: MAX_SCALE,
       },
 
       // 支持对齐线
