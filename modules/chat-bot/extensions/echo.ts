@@ -16,7 +16,7 @@ registerExtension({
     const eventSource = new OpenAIEventSourceModel({ decode: i => i });
     disposer.push(() => tryDispose(eventSource));
 
-    const result = eventSource.open(`/api/ai/echo`, {
+    const result = eventSource.open(`/api/rest/ai/echo`, {
       body: {
         text: message,
       },

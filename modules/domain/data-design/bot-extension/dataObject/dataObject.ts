@@ -97,7 +97,7 @@ export function useDataObjectBot() {
           let rawResponse: string;
           try {
             const conception = await getTablesRef.current();
-            const res = (rawResponse = await eventSource.open('/api/ai/data-object', {
+            const res = (rawResponse = await eventSource.open('/api/rest/ai/data-object', {
               body: {
                 conception,
                 text: message,

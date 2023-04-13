@@ -18,7 +18,7 @@ registerExtension({
 
     const eventSource = new OpenAIEventSourceModel({ decode: i => i });
 
-    const result = eventSource.open(`/api/ai/ddd-master`, {
+    const result = eventSource.open(`/api/rest/ai/ddd-master`, {
       body: {
         text: message,
       },

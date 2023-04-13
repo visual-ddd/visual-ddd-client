@@ -66,7 +66,7 @@ export function useDataObjectSqlMasterBot() {
         const result = (async () => {
           try {
             const conception = await getTablesRef.current();
-            await eventSource.open('/api/ai/sql-master', {
+            await eventSource.open('/api/rest/ai/sql-master', {
               body: {
                 conception,
                 prompt: message,

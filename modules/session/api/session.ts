@@ -4,6 +4,7 @@ import type { IncomingMessage } from 'http';
 import { withWakedataRequestApiRoute } from '../api-helper';
 import { VDSessionDetail, VDUser } from '../types';
 import { getGravatarUrl } from './utils';
+import omit from 'lodash/omit';
 
 export const getSession = async (req: IncomingMessage) => {
   const sessionCore = req.session.content!;
@@ -31,6 +32,8 @@ export const session = allowMethod(
   withWakedataRequestApiRoute(async (req, res) => {
     const result = await getSession(req);
 
-    res.status(200).json(createSuccessResponse(result));
+    const data = omit(result, 'cookies');
+
+    res.status(200).json(createSuccessResponse(data));
   })
 );

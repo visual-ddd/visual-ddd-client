@@ -33,7 +33,7 @@ const options: OpenAIEventSourceModelOptions<DataObjectDSL[]> = {
 };
 
 const url = (prompt: string) => {
-  return `/api/ai/data-object-builder?prompt=${prompt}`;
+  return `/api/rest/ai/data-object-builder?prompt=${prompt}`;
 };
 
 export function useDataObjectCreateBot() {

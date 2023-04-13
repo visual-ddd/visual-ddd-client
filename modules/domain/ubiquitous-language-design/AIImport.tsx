@@ -66,7 +66,7 @@ export const AIImport = observer(function AIImport(props: AIImportProps) {
     }
 
     try {
-      const ws = await detectWords.open(`/api/ai/extra-words?text=${paragraph}`);
+      const ws = await detectWords.open(`/api/rest/ai/extra-words?text=${paragraph}`);
       if (!openRef.current) {
         return;
       }
@@ -90,7 +90,7 @@ export const AIImport = observer(function AIImport(props: AIImportProps) {
     }
 
     try {
-      const items = await importWords.open(`/api/ai/words-to-ubiquitous-language?words=${words.join(',')}`);
+      const items = await importWords.open(`/api/rest/ai/words-to-ubiquitous-language?words=${words.join(',')}`);
 
       if (!openRef.current) {
         return;

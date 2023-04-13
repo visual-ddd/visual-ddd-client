@@ -54,6 +54,10 @@ export const ChatPage = observer(function ChatPage(props: ChatPageProps) {
   }, [pageModel]);
 
   useEffect(() => {
+    if (window.innerWidth < 500) {
+      return;
+    }
+
     const shouldShowTour = localStorage.getItem('chat-page-tour');
     if (shouldShowTour == null) {
       requestAnimationFrame(() => {

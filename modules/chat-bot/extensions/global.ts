@@ -31,7 +31,7 @@ registerExtension({
           const summarySource = createIdentityOpenAIEventSourceModel();
           disposer.push(() => tryDispose(summarySource));
 
-          summary = await summarySource.open(`/api/ai/summary`, {
+          summary = await summarySource.open(`/api/rest/ai/summary`, {
             method: 'POST',
             body: {
               text: messageToSummary
@@ -45,7 +45,7 @@ registerExtension({
         }
       }
 
-      return eventSource.open(`/api/ai/fallback`, {
+      return eventSource.open(`/api/rest/ai/fallback`, {
         method: 'POST',
         body: {
           text: message,

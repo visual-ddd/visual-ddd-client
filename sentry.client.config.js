@@ -16,5 +16,10 @@ Sentry.init({
   // `release` value here - use the environment variable `SENTRY_RELEASE`, so
   // that it will also get attached to your source maps
   enabled: process.env.NODE_ENV === 'production',
-  ignoreErrors: ['ResizeObserver loop limit exceeded', /attempted to hard navigate to the same URL/, 'network error'],
+  ignoreErrors: [
+    'ResizeObserver loop limit exceeded',
+    /attempted to hard navigate to the same URL/,
+    'network error',
+    '请登录后重试',
+  ],
 });

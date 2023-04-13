@@ -157,7 +157,7 @@ export function useScenarioBot() {
           try {
             // 激活标签页
             designer.setActiveTab({ tab: ScenarioDesignerTabs.Scenario });
-            const res = (rawResponse = await eventSource.open('/api/ai/flow-builder', {
+            const res = (rawResponse = await eventSource.open('/api/rest/ai/flow-builder', {
               body: {
                 text: message,
               },
