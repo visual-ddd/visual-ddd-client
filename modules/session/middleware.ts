@@ -125,6 +125,7 @@ export const pageAuthMiddleware: Middleware = async (req, next) => {
 
   const redirect = NextResponse.redirect(url, {
     headers: {
+      'x-middleware-cache': 'no-cache',
       'Cache-Control': 'no-cache',
     },
   });
@@ -158,6 +159,7 @@ export const pageEntryRedirectMiddleware: Middleware = async (req, next) => {
     // 导航到启动页
     return NextResponse.redirect(new URL('/launch', req.url), {
       headers: {
+        'x-middleware-cache': 'no-cache',
         'Cache-Control': 'no-cache',
       },
     });
@@ -174,6 +176,7 @@ export const pageEntryRedirectMiddleware: Middleware = async (req, next) => {
 
   return NextResponse.redirect(new URL(expectedEntry, req.url), {
     headers: {
+      'x-middleware-cache': 'no-cache',
       'Cache-Control': 'no-cache',
     },
   });
