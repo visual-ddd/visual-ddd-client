@@ -79,6 +79,14 @@ export const ShapeTree = observer(function ShapeTree(props: ShapeTreeProps) {
               return {
                 key: j.id,
                 title: () => renderTitle(j, handleContextMenu(j)),
+                children: DomainObjectFactory.isCommand(j)
+                  ? j.rules.map(k => {
+                      return {
+                        key: k.id,
+                        title: () => renderTitle(k, handleContextMenu(k)),
+                      };
+                    })
+                  : undefined,
               };
             }),
           };
@@ -97,6 +105,12 @@ export const ShapeTree = observer(function ShapeTree(props: ShapeTreeProps) {
             return {
               key: i.id,
               title: () => renderTitle(i, handleContextMenu(i)),
+              children: i.rules.map(j => {
+                return {
+                  key: j.id,
+                  title: () => renderTitle(j, handleContextMenu(j)),
+                };
+              }),
             };
           }),
         };
