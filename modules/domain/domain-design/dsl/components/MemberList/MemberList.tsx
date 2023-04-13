@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef } from 'react';
-import { Button, Checkbox, Dropdown, message, Popover, Space } from 'antd';
+import { Button, Checkbox, Dropdown, message, Space } from 'antd';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
 import { EditTwoTone, EllipsisOutlined } from '@ant-design/icons';
@@ -219,7 +219,7 @@ export interface MemberListContext<T extends IDDSL> {
   isSelected: (item: T) => boolean;
 }
 
-const DROPDOWN_TRIGGER = ['click', 'contextMenu'];
+const DROPDOWN_TRIGGER = ['click' as const, 'contextMenu' as const];
 
 const Member = observer(function Member<T extends IDDSL>(props: {
   value: T;
@@ -266,6 +266,10 @@ const Member = observer(function Member<T extends IDDSL>(props: {
   };
 
   const handleMouseUp = (evt: React.KeyboardEvent) => {
+    if (evt.target !== evt.currentTarget) {
+      return;
+    }
+
     let matched = true;
     switch (evt.key) {
       case 'Enter':
@@ -311,10 +315,9 @@ const Member = observer(function Member<T extends IDDSL>(props: {
         <div className={classNames('vd-member-list-item__actions', s.itemActions)}>
           {showError && <EditorFormTooltip path={pathWithIndex} aggregated></EditorFormTooltip>}
           {popoverEdit ? (
-            <Popover
-              trigger="click"
-              title={context.getEditorTitle()}
-              destroyTooltipOnHide
+            <Dropdown
+              trigger={DROPDOWN_TRIGGER}
+              destroyPopupOnHide
               open={editing}
               onOpenChange={v => {
                 if (!v) {
@@ -323,11 +326,26 @@ const Member = observer(function Member<T extends IDDSL>(props: {
                   handleEdit();
                 }
               }}
-              content={context.handleRenderEditor(pathWithIndex, value)}
-              placement="left"
+              arrow
+              dropdownRender={() => {
+                // Dropdown 会拦截处理 Tab 快捷键，因此这里禁止冒泡
+                const handleKeyDown = (evt: React.KeyboardEvent) => {
+                  if (evt.key === 'Tab') {
+                    evt.stopPropagation();
+                  }
+                };
+
+                return (
+                  <div className={s.popoverEditor} onKeyDown={handleKeyDown}>
+                    <header className={s.popoverEditorHeader}>{context.getEditorTitle()}</header>
+                    <div className={s.popoverEditorBody}>{context.handleRenderEditor(pathWithIndex, value)}</div>
+                  </div>
+                );
+              }}
+              placement="bottomRight"
             >
               <EditTwoTone onClick={handleEdit} />
-            </Popover>
+            </Dropdown>
           ) : (
             <EditTwoTone onClick={handleEdit} />
           )}
@@ -335,7 +353,7 @@ const Member = observer(function Member<T extends IDDSL>(props: {
             <Dropdown
               destroyPopupOnHide
               placement="topRight"
-              trigger={DROPDOWN_TRIGGER as any}
+              trigger={DROPDOWN_TRIGGER}
               menu={{
                 items: [
                   {

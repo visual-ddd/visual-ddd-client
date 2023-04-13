@@ -25,6 +25,8 @@ export interface ParameterEditorProps {
 
 type Item = ParameterDSL;
 
+const ITEM_STYLE = { width: '250px' };
+
 const renderItem = (value: Item, index: number) => {
   const { title } = value;
   return (
@@ -44,7 +46,7 @@ const renderEditor = (path: string) => {
         tooltip={NameTooltip['camelCase']}
         notify={replaceLastPathToPattern(path) + '.name'}
       >
-        <NameInput nameCase="camelCase" />
+        <NameInput nameCase="camelCase" style={ITEM_STYLE} />
       </EditorFormItem>
       <EditorFormItem path={p('title')} label="标题">
         <TitleInput />
