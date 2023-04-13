@@ -63,6 +63,7 @@ specifiers:
   classnames: ^2.3.2
   color-string: ^1.9.1
   cookie: ^0.5.0
+  core-js: ^3.30.0
   cron-parser: ^4.8.1
   dayjs: ^1.11.7
   eslint: 8.37.0
@@ -177,6 +178,7 @@ dependencies:
   classnames: 2.3.2
   color-string: 1.9.1
   cookie: 0.5.0
+  core-js: 3.30.0
   cron-parser: 4.8.1
   dayjs: 1.11.7
   eventsource-parser: 1.0.0
@@ -4064,6 +4066,12 @@ packages:
       { integrity: sha512-2KV8NhB5JqC3ky0r9PMCAZKbUHSwtEo4CwCs0KXgruG43gX5PMqDEBbVU4OUzw2MuAWUfsuFmWvEKG5QRfSnJA== }
     dependencies:
       toggle-selection: 1.0.6
+    dev: false
+
+  /core-js/3.30.0:
+    resolution:
+      { integrity: sha512-hQotSSARoNh1mYPi9O2YaWeiq/cEB95kOrFb4NCrO4RIFt1qqNpKsaE+vy/L3oiqvND5cThqXzUU3r9F7Efztg== }
+    requiresBuild: true
     dev: false
 
   /cose-base/1.0.3:

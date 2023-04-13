@@ -1,3 +1,4 @@
+import '@/lib/polyfill';
 import type { AppProps } from 'next/app';
 import { ConfigProvider } from 'antd';
 import { configure } from 'mobx';

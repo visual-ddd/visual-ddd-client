@@ -18,7 +18,9 @@ Sentry.init({
   enabled: process.env.NODE_ENV === 'production',
   ignoreErrors: [
     'ResizeObserver loop limit exceeded',
-    /attempted to hard navigate to the same URL/,
+    /attempted to hard navigate to the same URL/i,
+    /The user aborted a request/i,
+    /Failed to fetch/i,
     'network error',
     '请登录后重试',
   ],

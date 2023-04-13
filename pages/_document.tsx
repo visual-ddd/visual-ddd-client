@@ -32,11 +32,12 @@ export default function Document() {
   return (
     <Html>
       <Head>
-        <script
+        {/* 不是完全精确, 目前发现的问题是在 chrome mobile 中没有返回 globalThis */}
+        {/* <script
           defer
           noModule
           src="https://www.wakedt.cn/__polyfill__?features=es2022%2Ces2021%2Ces2020%2Ces2019%2Ces2018%2Ces2017%2Ces2016%2Ces2015%2Cdefault%2CglobalThis"
-        ></script>
+        ></script> */}
         <BaiduAnalyze />
       </Head>
       <body>

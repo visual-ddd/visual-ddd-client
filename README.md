@@ -84,6 +84,11 @@ BACKEND=http://172.26.57.49:8080 pnpm dev
 | SENTRY_ORG            | Sentry 组织名称                        |
 | SENTRY_PROJECT        | Sentry 项目名称                        |
 
+# rancher 配置注意事项
+
+- 详见 k8s-deployment-zadig 文件
+- 负载均衡中建议配置证书，可以自动拒绝 http 的请求
+
 # 资源
 
 SWAGGER https://ddd.wakedt.cn/wd/visual/doc.html
