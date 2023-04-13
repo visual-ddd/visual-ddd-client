@@ -72,17 +72,17 @@ BACKEND=http://172.26.57.49:8080 pnpm dev
 | PINECONE_API_KEY     |                                             |
 | PINECONE_ENVIRONMENT |                                             |
 | PINECONE_INDEX       |                                             |
-| BD_ANALYZE_KEY       | 百度统计 key                                |
 
 # 构建时环境变量
 
-| 名称                  | 说明                                   |
-| --------------------- | -------------------------------------- |
-| PRODUCTION_SOURCE_MAP | 是否开启生产环境 sourcemap, 默认 false |
-| SENTRY_DSN            | The DSN to use to connect to sentry    |
-| SENTRY_AUTH_TOKEN     | Sentry 鉴权 Token 用于上传 sourceMap   |
-| SENTRY_ORG            | Sentry 组织名称                        |
-| SENTRY_PROJECT        | Sentry 项目名称                        |
+| 名称                  | 说明                                                          |
+| --------------------- | ------------------------------------------------------------- |
+| PRODUCTION_SOURCE_MAP | 是否开启生产环境 sourcemap, 默认 false                        |
+| SENTRY_DSN            | The DSN to use to connect to sentry                           |
+| SENTRY_AUTH_TOKEN     | Sentry 鉴权 Token 用于上传 sourceMap                          |
+| SENTRY_ORG            | Sentry 组织名称                                               |
+| SENTRY_PROJECT        | Sentry 项目名称                                               |
+| BD_ANALYZE_KEY        | 百度统计 key (为什么这个是构建时，因为有部分页面是完全静态的) |
 
 # rancher 配置注意事项
 

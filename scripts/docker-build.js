@@ -9,6 +9,7 @@ build(
     SENTRY_ORG: process.env.SENTRY_ORG,
     SENTRY_PROJECT: process.env.SENTRY_PROJECT,
     PRODUCTION_SOURCE_MAP: process.env.PRODUCTION_SOURCE_MAP,
+    BD_ANALYZE_KEY: process.env.BD_ANALYZE_KEY,
   },
   '--progress plain'
 );

@@ -17,25 +17,37 @@ COPY --from=deps /app/node_modules /app/node_modules
 # COPY 源代码
 COPY . .
 
-<% if (typeof PRODUCTION_SOURCE_MAP !== 'undefined') { %>
-ENV PRODUCTION_SOURCE_MAP <%=PRODUCTION_SOURCE_MAP%>
-<% } %>
+<%
+const ENV = {}
+if (typeof PRODUCTION_SOURCE_MAP !== 'undefined') {
+	ENV.PRODUCTION_SOURCE_MAP = PRODUCTION_SOURCE_MAP
+} 
 
-<% if (typeof SENTRY_DSN !== 'undefined') { %>
-ENV SENTRY_DSN <%=SENTRY_DSN%>
-<% } %>
+if (typeof SENTRY_DSN !== 'undefined') {
+	ENV.SENTRY_DSN = SENTRY_DSN
+}
 
-<% if (typeof SENTRY_AUTH_TOKEN !== 'undefined') { %>
-ENV SENTRY_AUTH_TOKEN <%=SENTRY_AUTH_TOKEN%>
-<% } %>
+if (typeof SENTRY_AUTH_TOKEN !== 'undefined') {
+	ENV.SENTRY_AUTH_TOKEN = SENTRY_AUTH_TOKEN
+}
 
-<% if (typeof SENTRY_ORG !== 'undefined') { %>
-ENV SENTRY_ORG <%=SENTRY_ORG%>
-<% } %>
+if (typeof SENTRY_ORG !== 'undefined') {
+	ENV.SENTRY_ORG = SENTRY_ORG
+}
 
-<% if (typeof SENTRY_PROJECT !== 'undefined') { %>
-ENV SENTRY_PROJECT <%=SENTRY_PROJECT%>
-<% } %>
+if (typeof SENTRY_PROJECT !== 'undefined') {
+	ENV.SENTRY_PROJECT = SENTRY_PROJECT
+}
+
+if (typeof BD_ANALYZE_KEY !== 'undefined') {
+	ENV.BD_ANALYZE_KEY = BD_ANALYZE_KEY
+}
+
+const ENVInString = Object.keys(ENV).map(k => `ENV ${k} ${ENV[k]}`).join('\n')
+
+%>
+
+<%= ENVInString %>
 
 # COPY .env.production.sample .env.production
 RUN env && ls -a && npm run build
@@ -47,25 +59,8 @@ RUN env && ls -a && npm run build
 FROM base AS runner
 
 ENV NODE_ENV production
-<% if (typeof PRODUCTION_SOURCE_MAP !== 'undefined') { %>
-ENV PRODUCTION_SOURCE_MAP <%=PRODUCTION_SOURCE_MAP%>
-<% } %>
 
-<% if (typeof SENTRY_DSN !== 'undefined') { %>
-ENV SENTRY_DSN <%=SENTRY_DSN%>
-<% } %>
-
-<% if (typeof SENTRY_AUTH_TOKEN !== 'undefined') { %>
-ENV SENTRY_AUTH_TOKEN <%=SENTRY_AUTH_TOKEN%>
-<% } %>
-
-<% if (typeof SENTRY_ORG !== 'undefined') { %>
-ENV SENTRY_ORG <%=SENTRY_ORG%>
-<% } %>
-
-<% if (typeof SENTRY_PROJECT !== 'undefined') { %>
-ENV SENTRY_PROJECT <%=SENTRY_PROJECT%>
-<% } %>
+<%= ENVInString %>
 
 # Uncomment the following line in case you want to disable telemetry during runtime.
 # ENV NEXT_TELEMETRY_DISABLED 1
