@@ -48,11 +48,16 @@ export const ReferenceTypeDisplay = observer(function ReferenceTypeDisplay(props
 
   return (
     <Tooltip
-      color={DomainObjectColors[object.shapeName]}
       placement="right"
       title={
         <span>
-          《{object.objectTypeTitle}》 {object.readableTitle}
+          <span
+            style={{
+              color: DomainObjectColors[object.shapeName],
+            }}
+          >
+            《{object.objectTypeTitle}》{object.readableTitle}
+          </span>
           <div>
             <i>点击可跳转</i>
           </div>

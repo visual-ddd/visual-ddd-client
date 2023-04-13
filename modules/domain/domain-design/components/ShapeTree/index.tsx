@@ -4,7 +4,7 @@ import { Empty, Tree, TreeDataNode } from 'antd';
 import classNames from 'classnames';
 import { Observer, observer, useLocalObservable } from 'mobx-react';
 
-import { NameDSL } from '../../dsl';
+import { DomainObjectColors, NameDSL } from '../../dsl';
 import { DomainEditorModel, DomainObject, DomainObjectFactory } from '../../model';
 
 import s from './index.module.scss';
@@ -20,8 +20,16 @@ const renderTitle = (
       {() => (
         <div className={classNames('vd-shape-tree-item', s.item)} onContextMenu={handleContextMenu}>
           <div className={classNames('vd-shape-tree-item__body', s.itemBody)}>
-            <span className={classNames('vd-shape-tree-item__type', s.itemType)}>{item.objectTypeTitle}-</span>
-            <span>{item.readableTitle}</span>
+            <span
+              className={classNames('vd-shape-tree-item__type', s.itemType)}
+              style={{
+                // @ts-expect-error
+                '--color': DomainObjectFactory.isAggregation(item) ? item.color : DomainObjectColors[item.shapeName],
+              }}
+            >
+              {item.objectTypeTitle}
+            </span>
+            <span className={classNames('vd-shape-tree-item__title', s.itemTitle)}>{item.readableTitle}</span>
           </div>
           <div className={classNames('vd-shape-tree-item__extra', s.itemExtra)}>
             {DomainObjectFactory.isAggregation(item) && <EditorNodeVisibleControl node={item.id} includeChildren />}
@@ -150,6 +158,7 @@ export const ShapeTree = observer(function ShapeTree(props: ShapeTreeProps) {
           defaultExpandAll
           virtual={false}
           blockNode
+          showLine
           selectedKeys={store.selected}
           // 点击直接是多选的, 操作有点怪，先禁用
           // multiple

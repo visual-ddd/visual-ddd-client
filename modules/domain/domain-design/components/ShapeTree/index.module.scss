@@ -6,6 +6,15 @@
   :global(.ant-tree-indent-unit) {
     width: var(--vd-spacing-base);
   }
+
+  :global(.ant-tree-title) {
+    font-size: 12px;
+    color: var(--vd-color-gray-800);
+  }
+
+  :global(.ant-tree-switcher) {
+    color: var(--vd-color-gray-600);
+  }
 }
 
 .body {
@@ -13,7 +22,13 @@
 }
 
 .item {
-  padding-right: 4px;
+  padding: 0 4px;
+  width: 100%;
+  overflow: hidden;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
 }
 
 .item,
@@ -25,13 +40,29 @@
 
 .itemBody {
   flex: 1;
+  display: flex;
+  overflow: hidden;
 }
 
 .itemType {
   font-size: var(--vd-font-size-h6);
-  color: var(--vd-color-font-regular);
+  color: var(--vd-color-gray-900);
   white-space: nowrap;
+  flex-shrink: 0;
+  background-color: var(--color);
+  line-height: 1.3;
+  padding: 0 3px;
+  border-radius: 3px;
+  margin-right: 3px;
+}
+
+.itemTitle {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .itemExtra {
+  flex-shrink: 0;
 }

@@ -72,10 +72,10 @@ export const DomainObjectReadableName: Record<DomainObjectName, string> = {
 
 export const DomainObjectColors = {
   [DomainObjectName.Aggregation]: '#D9F7BE',
-  [DomainObjectName.Entity]: '#b1ed7c',
-  [DomainObjectName.ValueObject]: '#70cafa',
-  [DomainObjectName.Command]: '#f7f73d',
-  [DomainObjectName.Rule]: '#303133',
+  [DomainObjectName.Entity]: '#d9f7be',
+  [DomainObjectName.ValueObject]: '#bae7ff',
+  [DomainObjectName.Command]: '#ffffb8',
+  [DomainObjectName.Rule]: '#eaeaea',
   [DomainObjectName.Enum]: '#CDAEF2',
   [DomainObjectName.Query]: '#C2F3EC',
   [DomainObjectName.DTO]: '#d5d5d5',
