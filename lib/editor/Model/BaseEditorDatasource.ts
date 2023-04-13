@@ -12,6 +12,7 @@ import { NodePO } from './types';
 import { NodeYMap, MapTypeNode, MapTypeRoot, MapTypeProperties } from './Yjs/NodeYMap';
 import { BaseEditorEvent } from './BaseEditorEvent';
 import { BaseEditorIndex } from './BaseEditorIndex';
+import { sync } from './Yjs/sync';
 
 /**
  * yjs 数据库
@@ -105,6 +106,61 @@ export class BaseEditorDatasource implements IDisposable {
   clearUndoStack() {
     this.undoManager.clear();
     this.undoStackChange();
+  }
+
+  /**
+   * 强制保持一致性
+   */
+  forceSync(): Promise<void> {
+    const dangleNodes = this.index.getDangleNodes();
+    const tasks: Function[] = [];
+
+    // gc 删除悬挂节点
+    if (dangleNodes.length) {
+      for (const n of dangleNodes) {
+        tasks.push(() => {
+          console.warn(`正在删除悬挂节点`, n);
+          this.removeNode({ node: n });
+          this.handleRemoveNode({ nodeId: n.id });
+        });
+      }
+    }
+
+    // 同步节点信息
+    const nodes = this.index.getNodes();
+    for (const n of nodes) {
+      const map = this.datasource.get(n.id);
+      if (map == null) {
+        // 不存在，创建
+        tasks.push(() => {
+          this.addNode({ node: n });
+        });
+      } else {
+        const subTasks = sync(n, NodeYMap.fromYMap(map)!);
+        if (subTasks.length) {
+          tasks.push(...subTasks);
+        }
+      }
+    }
+
+    if (tasks.length) {
+      console.debug(`正在同步节点差异`);
+      const promise = new Promise<void>(resolve => {
+        tasks.push(() => {
+          this.doUpdate(resolve);
+        });
+      });
+
+      // 执行任务
+      tasks.forEach(i => i());
+
+      return promise.then(() => {
+        // 合并 undo 栈
+        this.mergeCapturing();
+      });
+    }
+
+    return Promise.resolve();
   }
 
   /**
@@ -329,7 +385,6 @@ export class BaseEditorDatasource implements IDisposable {
       this.store.unlock({ node: model });
     }
   }
-
   /**
    * 创建根节点
    * @returns

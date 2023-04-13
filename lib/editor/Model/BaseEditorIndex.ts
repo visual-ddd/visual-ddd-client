@@ -4,6 +4,7 @@ import { tryDispose } from '@/lib/utils';
 
 import { BaseEditorEvent } from './BaseEditorEvent';
 import { BaseNode } from './BaseNode';
+import { ROOT_ID } from './constants';
 
 /**
  * 编辑器索引信息
@@ -42,6 +43,25 @@ export class BaseEditorIndex {
    */
   getNodeById(id: string) {
     return this.nodeIndexById.get(id) || this.nodeWillBeRemoved.get(id);
+  }
+
+  /**
+   * 获取悬挂节点
+   */
+  getDangleNodes() {
+    const nodes = this.getNodes();
+    // 没有父节点也没有作为任何节点的子节点
+    const nodesWithoutParent = nodes.filter(node => !node.parent && node.id !== ROOT_ID);
+    const dangleNodes: BaseNode[] = [];
+
+    for (const node of nodesWithoutParent) {
+      const parent = nodes.find(n => n.children.find(c => BaseNode.isEqual(c, node)));
+      if (!parent) {
+        dangleNodes.push(node);
+      }
+    }
+
+    return dangleNodes;
   }
 
   private addNode = (params: { node: BaseNode }) => {

@@ -215,8 +215,15 @@ export class BaseEditorModel implements IDisposable {
    * 如果验证失败则返回 true
    * @returns
    */
-  validate() {
-    return this.formStore.validate();
+  async validate() {
+    const invalid = await this.formStore.validate();
+
+    if (!invalid) {
+      // 进行一次同步和校准
+      await this.datasource.forceSync();
+    }
+
+    return invalid;
   }
 
   mergeUndoCapturing() {
