@@ -750,6 +750,7 @@ export class CanvasModel implements IDisposable {
 
     if (cell) {
       cell.setVisible(visible);
+      this.event.emit('NODE_VISIBLE_CHANGE', { id, visible });
 
       // 递归
       if (includeChildren) {

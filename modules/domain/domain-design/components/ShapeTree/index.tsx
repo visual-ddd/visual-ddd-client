@@ -5,11 +5,35 @@ import classNames from 'classnames';
 import { Observer, observer, useLocalObservable } from 'mobx-react';
 
 import { DomainObjectColors, NameDSL } from '../../dsl';
-import { DomainEditorModel, DomainObject, DomainObjectFactory } from '../../model';
+import { DomainEditorModel, DomainObject, DomainObjectAggregation, DomainObjectFactory } from '../../model';
 
 import s from './index.module.scss';
 
 export interface ShapeTreeProps {}
+
+const AggregationVisibleControl = observer(function AggregationVisibleControl(props: {
+  node: DomainObjectAggregation;
+}) {
+  const { node } = props;
+  const { model: canvasModel } = useCanvasModel();
+
+  const handleVisibleChange = (visible: boolean) => {
+    const setVisible = (n: DomainObject<any>) => {
+      canvasModel.handleSetNodeVisible({ id: n.id, visible });
+    };
+
+    const walk = (current: DomainObject<any>) => {
+      for (const n of current.compositions.concat(current.aggregations)) {
+        setVisible(n);
+        walk(n);
+      }
+    };
+
+    walk(node);
+  };
+
+  return <EditorNodeVisibleControl node={node.id} onVisibleChange={handleVisibleChange} />;
+});
 
 const renderTitle = (
   item: DomainObject<NameDSL>,
@@ -32,7 +56,11 @@ const renderTitle = (
             <span className={classNames('vd-shape-tree-item__title', s.itemTitle)}>{item.readableTitle}</span>
           </div>
           <div className={classNames('vd-shape-tree-item__extra', s.itemExtra)}>
-            {DomainObjectFactory.isAggregation(item) && <EditorNodeVisibleControl node={item.id} includeChildren />}
+            {DomainObjectFactory.isAggregation(item) ? (
+              <AggregationVisibleControl node={item} />
+            ) : (
+              <EditorNodeVisibleControl node={item.id} includeChildren />
+            )}
           </div>
         </div>
       )}
