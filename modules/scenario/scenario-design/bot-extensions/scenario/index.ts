@@ -1,6 +1,9 @@
 import { useCanvasModel } from '@/lib/editor';
+import { v4 } from 'uuid';
 import uniq from 'lodash/uniq';
 import { useDesignerContext } from '@/lib/designer';
+import { EdgeBindingProps } from '@/lib/g6-binding';
+import type { Rectangle } from '@antv/x6';
 import { useEffect } from 'react';
 import { ExtensionType, registerExtension, responseMessage } from '@/lib/chat-bot';
 import { createIdentityOpenAIEventSourceModel } from '@/lib/openai-event-source';
@@ -11,8 +14,6 @@ import { ScenarioDesignerTabs } from '@/modules/scenario/constants';
 import { ScenarioEditorModel } from '../../model';
 import { DirectiveName, IFlowStore, ScenarioDirective, scenarioAITransformer } from '../../ai-transformer';
 import { ScenarioObjectName, createActivityDSL, createDecisionDSL, createLabelEdge } from '../../dsl';
-import { v4 } from 'uuid';
-import { EdgeBindingProps } from '@/lib/g6-binding';
 
 const TIP = `请输入提示, 比如:
 
@@ -25,9 +26,18 @@ class FlowStore implements IFlowStore {
   editorModel: ScenarioEditorModel;
 
   private nameToId: Map<string, string> = new Map();
+  readonly offset: { x: number; y: number } = { x: 0, y: 0 };
 
-  constructor(inject: { editorModel: ScenarioEditorModel }) {
+  readonly insertedCells: string[] = [];
+
+  constructor(inject: { editorModel: ScenarioEditorModel; bbox: Rectangle | undefined | null }) {
     this.editorModel = inject.editorModel;
+    if (inject.bbox) {
+      this.offset = {
+        x: 100,
+        y: inject.bbox.y + inject.bbox.height,
+      };
+    }
   }
 
   createNode(directive: ScenarioDirective): void {
@@ -36,8 +46,8 @@ class FlowStore implements IFlowStore {
 
     if ('x' in directive.params && 'y' in directive.params) {
       position = {
-        x: directive.params.x,
-        y: directive.params.y,
+        x: directive.params.x + this.offset.x,
+        y: directive.params.y + this.offset.y,
       };
     }
 
@@ -53,6 +63,7 @@ class FlowStore implements IFlowStore {
         });
         this.nameToId.set(DirectiveName.Start, id);
         console.log('插入开始节点', id);
+        this.insertedCells.push(id);
         break;
       }
       case DirectiveName.End: {
@@ -66,6 +77,7 @@ class FlowStore implements IFlowStore {
         });
         this.nameToId.set(DirectiveName.End, id);
         console.log('插入结束节点', id);
+        this.insertedCells.push(id);
         break;
       }
       case DirectiveName.Node: {
@@ -80,6 +92,8 @@ class FlowStore implements IFlowStore {
         });
         this.nameToId.set(directive.params.name, node.uuid);
         console.log('插入节点', id, directive);
+
+        this.insertedCells.push(id);
         break;
       }
       case DirectiveName.Condition: {
@@ -95,6 +109,8 @@ class FlowStore implements IFlowStore {
 
         this.nameToId.set(directive.params.name, node.uuid);
         console.log('插入条件节点', id, directive);
+
+        this.insertedCells.push(id);
         break;
       }
       case DirectiveName.Edge: {
@@ -125,6 +141,8 @@ class FlowStore implements IFlowStore {
           directive
         );
 
+        this.insertedCells.push(id);
+
         break;
       }
     }
@@ -135,6 +153,26 @@ export function useScenarioBot() {
   const { model: canvasModel } = useCanvasModel();
   const model = canvasModel.editorModel as ScenarioEditorModel;
   const designer = useDesignerContext();
+
+  /**
+   * 获取已有内容的区域
+   */
+  const getContentBBox = () => {
+    const graph = canvasModel.graph;
+    if (!graph) {
+      return;
+    }
+
+    const children = graph.getNodes().filter(i => i.shape !== ScenarioObjectName.LabelEdge);
+
+    if (!children.length) {
+      return;
+    }
+
+    const bbox = graph.getCellsBBox(children);
+
+    return bbox;
+  };
 
   useEffect(() => {
     return registerExtension({
@@ -164,7 +202,8 @@ export function useScenarioBot() {
               method: 'POST',
             }));
 
-            const store = new FlowStore({ editorModel: model });
+            const bbox = getContentBBox();
+            const store = new FlowStore({ editorModel: model, bbox });
             const warning = scenarioAITransformer(res, store);
 
             if (warning.length) {
@@ -177,6 +216,11 @@ export function useScenarioBot() {
             } else {
               context.bot.responseMessage('执行完成', context.currentTarget);
             }
+
+            setTimeout(() => {
+              canvasModel.handleZoomToFit();
+              canvasModel.handleSelect({ cellIds: store.insertedCells });
+            }, 500);
           } catch (err) {
             if (AITransformerParseError.isAITransformerParseError(err)) {
               context.bot.responseMessage(rawResponse!, context.currentTarget);
@@ -193,5 +237,6 @@ export function useScenarioBot() {
         };
       },
     }) as any;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [model, designer]);
 }

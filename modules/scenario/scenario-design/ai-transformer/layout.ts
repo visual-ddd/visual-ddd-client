@@ -27,8 +27,8 @@ export function autoLayout(directives: ScenarioDirective[]) {
   const layout = new DagreLayout({
     type: 'dagre',
     rankdir: 'LR',
-    nodesep: 60,
-    ranksep: 40,
+    nodesep: 40,
+    ranksep: 20,
   });
 
   const input: { nodes: NodeBBox[]; edges: EdgeModel[] } = {

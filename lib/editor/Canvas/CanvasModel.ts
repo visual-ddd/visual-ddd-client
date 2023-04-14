@@ -484,7 +484,7 @@ export class CanvasModel implements IDisposable {
         name: 'mousePanningMode',
         title: '画布拖拽',
         description: '启用鼠标拖拽画布模式',
-        key: { macos: 'shift+command+p', other: 'shift+ctrl+p' },
+        key: { macos: 'shift+command+g', other: 'shift+ctrl+g' },
         handler: this.handleEnableMousePanningMode,
       })
       .bindKey({
@@ -1396,8 +1396,8 @@ export class CanvasModel implements IDisposable {
    * 节点选择
    * @param params
    */
-  handleSelect = (params: { cellIds: string[] }) => {
-    const { cellIds } = params;
+  handleSelect = (params: { cellIds: string[]; forceCenter?: boolean }) => {
+    const { cellIds, forceCenter } = params;
 
     if (cellIds.length) {
       const cells = cellIds
@@ -1407,7 +1407,7 @@ export class CanvasModel implements IDisposable {
 
       this.graph?.resetSelection(cells);
 
-      if (cells.length === 1) {
+      if (cells.length === 1 || forceCenter) {
         this.graph?.centerCell(cells[0]);
       }
     }
