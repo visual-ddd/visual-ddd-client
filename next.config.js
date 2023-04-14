@@ -71,6 +71,7 @@ const nextConfig = {
     'rc-util',
     'rc-tree',
     'rc-tooltip',
+    'camelcase',
   ],
   experimental: {},
   webpack(config, { isServer, dev }) {

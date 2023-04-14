@@ -1,4 +1,4 @@
-import { toNameCase } from '@/lib/utils';
+import { normalizedCamelCase } from '@/lib/utils';
 import { AVAILABLE_DIRECTIVES, DirectiveName, ScenarioDirective } from './protocol';
 import { parse as parseDirectives } from '@/lib/ai-directive-parser';
 
@@ -28,15 +28,15 @@ export function parse(input: string): ScenarioDirective[] | null {
     }
 
     if ('name' in i.params) {
-      i.params.name = toNameCase('CamelCase', i.params.name);
+      i.params.name = normalizedCamelCase(i.params.name, true);
     }
 
     if ('from' in i.params) {
-      i.params.from = toNameCase('CamelCase', i.params.from);
+      i.params.from = normalizedCamelCase(i.params.from, true);
     }
 
     if ('to' in i.params) {
-      i.params.to = toNameCase('CamelCase', i.params.to);
+      i.params.to = normalizedCamelCase(i.params.to, true);
     }
 
     directives.push(i as ScenarioDirective);

@@ -15,7 +15,7 @@ import {
   isFieldDirective,
 } from './protocol';
 import { NoopArray } from '@wakeapp/utils';
-import { toNameCase } from '@/lib/utils';
+import { normalizedCamelCase } from '@/lib/utils';
 
 const DELIMITER = '%%';
 const DIRECTIVE_REG = /%%(.+)%%/gm;
@@ -36,26 +36,26 @@ function normalizedValue(value: string) {
  */
 function normalizeDirective(dir: TransformDirective) {
   if (isTableDirective(dir)) {
-    dir.params.name = toNameCase('CamelCase', dir.params.name);
+    dir.params.name = normalizedCamelCase(dir.params.name, true);
 
     if (dir.type === DirectiveName.RenameTable) {
-      dir.params.newName = toNameCase('CamelCase', dir.params.newName);
+      dir.params.newName = normalizedCamelCase(dir.params.newName, true);
     }
   }
 
   if (isFieldDirective(dir)) {
-    dir.params.table = toNameCase('CamelCase', dir.params.table);
-    dir.params.name = toNameCase('camelCase', dir.params.name);
+    dir.params.table = normalizedCamelCase(dir.params.table, true);
+    dir.params.name = normalizedCamelCase(dir.params.name);
 
     if (dir.type === DirectiveName.RenameField) {
-      dir.params.newName = toNameCase('camelCase', dir.params.newName);
+      dir.params.newName = normalizedCamelCase(dir.params.newName);
     } else if (
       (dir.type === DirectiveName.AddField || dir.type === DirectiveName.UpdateField) &&
       dir.params.reference
     ) {
       let { table, field } = parseReference(dir.params.reference);
-      table = toNameCase('CamelCase', table);
-      field = toNameCase('camelCase', field);
+      table = normalizedCamelCase(table, true);
+      field = normalizedCamelCase(field);
 
       dir.params.reference = `${table}.${field}`;
     }

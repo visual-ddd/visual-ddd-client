@@ -5,6 +5,7 @@
     "antv",
     "bbox",
     "Cacheable",
+    "camelcase",
     "Cascader",
     "dbclick",
     "dont",

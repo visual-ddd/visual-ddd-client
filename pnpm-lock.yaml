@@ -60,6 +60,7 @@ specifiers:
   ahooks: ^3.7.6
   antd: ^5.4.1
   async-validator: ^4.2.5
+  camelcase: ^7.0.1
   classnames: ^2.3.2
   color-string: ^1.9.1
   cookie: ^0.5.0
@@ -175,6 +176,7 @@ dependencies:
   ahooks: 3.7.6_react@18.2.0
   antd: 5.4.1_biqbaboplfbrettd7655fr4n2y
   async-validator: 4.2.5
+  camelcase: 7.0.1
   classnames: 2.3.2
   color-string: 1.9.1
   cookie: 0.5.0
@@ -3798,6 +3800,12 @@ packages:
       { integrity: sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA== }
     engines: { node: '>=10' }
     dev: true
+
+  /camelcase/7.0.1:
+    resolution:
+      { integrity: sha512-xlx1yCK2Oc1APsPXDL2LdlNP6+uu8OCDdhOBSVT279M/S+y75O30C2VuD8T2ogdePBBl7PfPF4504tnLgX3zfw== }
+    engines: { node: '>=14.16' }
+    dev: false
 
   /caniuse-lite/1.0.30001477:
     resolution:
