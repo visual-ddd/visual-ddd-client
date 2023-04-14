@@ -67,6 +67,10 @@ export const UpdateApp = forwardRef<UpdateAppRef, UpdateAppProps>((props, ref) =
       message.success('已删除');
 
       router.replace(`/team/${detail.teamId}/app`);
+
+      model?.refreshAppList();
+
+      setVisible(false);
     } catch (err) {
       message.error((err as Error).message);
     }

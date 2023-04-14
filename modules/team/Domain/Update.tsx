@@ -69,6 +69,10 @@ export const UpdateDomain = forwardRef<UpdateDomainRef, UpdateDomainProps>((prop
       message.success('已删除');
 
       router.replace(`/team/${detail.teamId}/domain`);
+
+      model?.refreshDomainList();
+
+      setVisible(false);
     } catch (err) {
       message.error((err as Error).message);
     }

@@ -196,7 +196,7 @@ export const ScenarioReversion = (props: ScenarioReversionProps) => {
                     navigateToAction(detail.version.id, 'edit');
                   }}
                 >
-                  编辑
+                  开始设计
                 </Button>
               )}
             </Space>

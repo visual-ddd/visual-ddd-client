@@ -69,6 +69,9 @@ export const UpdateScenario = forwardRef<UpdateScenarioRef, UpdateScenarioProps>
       message.success('已删除');
 
       router.replace(`/team/${detail.teamId}/scenario`);
+      model?.refreshScenarioList();
+
+      setVisible(false);
     } catch (err) {
       message.error((err as Error).message);
     }

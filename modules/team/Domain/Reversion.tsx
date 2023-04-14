@@ -203,7 +203,7 @@ export const DomainReversion = (props: DomainReversionProps) => {
                     navigateToAction(detail.version.id, 'edit');
                   }}
                 >
-                  编辑
+                  开始设计
                 </Button>
               )}
               <Button size="small" type="primary" onClick={navigateToDoc}>
