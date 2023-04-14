@@ -1,6 +1,9 @@
-import { IGNORE_AUTH_ERROR, IMMUTABLE_REQUEST_CONFIG, useRequestByGet } from '@/modules/backend-client';
+import { IGNORE_AUTH_ERROR, IMMUTABLE_REQUEST_CONFIG, useRequestByGet, request } from '@/modules/backend-client';
+import { useEffect } from 'react';
 
 import type { VDSessionDetail } from '../types';
+
+let inMemoryCache: VDSessionDetail | undefined;
 
 /**
  * 获取会话信息
@@ -14,7 +17,11 @@ export function useSession(options?: { shouldRedirect?: boolean; immutable?: boo
 
   const { data, isLoading, mutate } = useRequestByGet<VDSessionDetail>('/api/session', undefined, {
     swrConfig: {
-      ...(immutable ? IMMUTABLE_REQUEST_CONFIG.swrConfig : undefined),
+      ...(immutable
+        ? IMMUTABLE_REQUEST_CONFIG.swrConfig
+        : {
+            revalidateOnFocus: false,
+          }),
       shouldRetryOnError: false,
     },
     meta: {
@@ -27,9 +34,27 @@ export function useSession(options?: { shouldRedirect?: boolean; immutable?: boo
     mutate();
   };
 
+  useEffect(() => {
+    inMemoryCache = data;
+  }, [data]);
+
   return {
     session: data,
     reload,
     isLoading,
   };
+}
+
+/**
+ * 获取用户会话信息，用于在组件树之外获取
+ * @returns
+ */
+export async function getSession() {
+  if (inMemoryCache) {
+    return inMemoryCache;
+  }
+
+  const res = await request.requestByGet<VDSessionDetail>('/api/session');
+
+  return res;
 }

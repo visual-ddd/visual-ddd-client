@@ -422,7 +422,7 @@ export class BotModel implements IDisposable, IBot, IDestroyable {
   private getNormalizedPrompt() {
     const value = this.prompt.trim();
     if (this.activeExtension !== this.defaultExtension) {
-      return value.slice(`#${this.activeExtension.match}`.length);
+      return value.slice(`#${this.activeExtension.match}`.length).trim();
     }
 
     return value;
