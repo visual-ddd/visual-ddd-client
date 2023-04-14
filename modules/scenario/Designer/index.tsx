@@ -185,6 +185,7 @@ const ScenarioDesigner = observer(function ScenarioDesigner(props: ScenarioDesig
               saving={model.saving || model.refreshing}
               onSave={() => model.keyboardBinding.trigger('save')}
               collaborators={awarenessUsers}
+              collaborationStatus={model.collaborationStatus}
               onGotoParent={onGotoParent}
             ></DesignerHeader>
           </DesignerLayout>

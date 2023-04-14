@@ -41,6 +41,7 @@ export const DomainDesignerHeader = observer(function DomainDesignerHeader(props
       saving={model.saving || model.refreshing}
       onSave={() => model.keyboardBinding.trigger('save')}
       collaborators={awarenessUsers}
+      collaborationStatus={model.collaborationStatus}
       onGotoParent={onGotoParent}
     ></DesignerHeader>
   );

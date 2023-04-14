@@ -1,6 +1,5 @@
 import { makeObservable, observable } from 'mobx';
 import { applyUpdate, Doc as YDoc, encodeStateAsUpdate, encodeStateVector } from 'yjs';
-import { WebrtcProvider } from 'y-webrtc';
 import { message } from 'antd';
 import Router from 'next/router';
 import { derive, effect, makeAutoBindThis, mutation } from '@/lib/store';
@@ -12,13 +11,30 @@ import { DesignerKeyboardBinding } from './DesignerKeyboardBinding';
 import { IDesignerTab } from './IDesignerTab';
 import { IDesigner } from './IDesigner';
 import { BaseDesignerAwarenessState, DesignerAwareness } from './DesignerAwareness';
-import { createYjsLocalProvider, createYjsProvider } from './createYjsProvider';
+import { createYjsLocalProvider, createYjsProvider, YjsProviderDisposer } from './createYjsProvider';
 import { DesignerAwarenessDelegate } from './DesignerAwarenessDelegate';
 
 export interface BaseDesignerModelOptions {
   name: string;
   id: string;
   readonly?: boolean;
+}
+
+/**
+ * 协作链接状态
+ */
+export enum CollaborationStatus {
+  Offline = 'offline',
+  Connected = 'connected',
+  Error = 'error',
+}
+
+export interface CollaborationDescription {
+  status: CollaborationStatus;
+  /**
+   * 状态描述
+   */
+  description?: string;
 }
 
 /**
@@ -41,6 +57,15 @@ export abstract class BaseDesignerModel<
   get rawAwareness() {
     return this.awareness.awareness;
   }
+
+  /**
+   * 多人协作状态
+   */
+  @observable
+  collaborationStatus: CollaborationDescription = {
+    status: CollaborationStatus.Offline,
+    description: undefined,
+  };
 
   /**
    * 当前激活的 Tab
@@ -73,7 +98,7 @@ export abstract class BaseDesignerModel<
 
   readonly ydoc: YDoc;
 
-  protected webrtcProvider?: WebrtcProvider;
+  protected remoteProvider?: YjsProviderDisposer;
 
   /**
    * Tab 模型
@@ -142,9 +167,9 @@ export abstract class BaseDesignerModel<
    * 销毁
    */
   dispose() {
-    if (this.webrtcProvider) {
-      this.webrtcProvider.destroy();
-      this.webrtcProvider = undefined;
+    if (this.remoteProvider) {
+      this.remoteProvider();
+      this.remoteProvider = undefined;
     }
 
     this.ydoc.destroy();
@@ -175,9 +200,9 @@ export abstract class BaseDesignerModel<
       }
 
       // 销毁旧的链接
-      if (this.webrtcProvider) {
-        this.webrtcProvider.destroy();
-        this.webrtcProvider = undefined;
+      if (this.remoteProvider) {
+        this.remoteProvider();
+        this.remoteProvider = undefined;
       }
 
       const buf = await this.loadData({ id: this.id });
@@ -189,10 +214,13 @@ export abstract class BaseDesignerModel<
 
       // 多人协作
       if (!this.readonly) {
-        this.webrtcProvider = createYjsProvider({
+        this.remoteProvider = createYjsProvider({
           doc: this.ydoc,
           id: key,
           awareness: this.awareness.awareness,
+          onConnected: this.onCollabConnected,
+          onClose: this.onCollabDisconnected,
+          onError: this.onCollabError,
         });
       }
 
@@ -326,5 +354,32 @@ export abstract class BaseDesignerModel<
 
   protected resetUndoManager() {
     this.tabs.forEach(i => i.model.clearUndoStack());
+  }
+
+  /**
+   * 多人协作已连接
+   */
+  @mutation('DESIGNER:COLLAB_CONNECTED', false)
+  protected onCollabConnected() {
+    this.collaborationStatus.status = CollaborationStatus.Connected;
+    this.collaborationStatus.description = '已连接, 信号良好';
+  }
+
+  /**
+   * 多人协作已断开
+   */
+  @mutation('DESIGNER:COLLAB_DISCONNECTED', false)
+  protected onCollabDisconnected() {
+    this.collaborationStatus.status = CollaborationStatus.Offline;
+    this.collaborationStatus.description = '协作网络已断开, 请检查';
+  }
+
+  /**
+   * 多人协作报错
+   */
+  @mutation('DESIGNER:COLLAB_ERROR', false)
+  protected onCollabError(err: Error) {
+    this.collaborationStatus.status = CollaborationStatus.Error;
+    this.collaborationStatus.description = err.message;
   }
 }

@@ -3,8 +3,10 @@ import { IUser, VersionStatus } from '@/lib/core';
 import { Avatar, Button, Tooltip } from 'antd';
 import { observer } from 'mobx-react';
 import { useRouter } from 'next/router';
+import type { CollaborationDescription } from '@/lib/designer';
 
 import s from './index.module.scss';
+import { CollabStatus } from './CollabStatus';
 
 export interface DesignerHeaderProps {
   name?: React.ReactNode;
@@ -23,6 +25,11 @@ export interface DesignerHeaderProps {
    */
   collaborators?: IUser[];
 
+  /**
+   * 多人协作的状态
+   */
+  collaborationStatus?: CollaborationDescription;
+
   // 插槽
   right?: React.ReactNode;
 }
@@ -37,6 +44,7 @@ export const DesignerHeader = observer(function DesignerHeader(props: DesignerHe
     title,
     readonly,
     collaborators,
+    collaborationStatus,
     saveTooltip,
     versionStatus,
     right,
@@ -79,7 +87,7 @@ export const DesignerHeader = observer(function DesignerHeader(props: DesignerHe
       <div className={s.aside}>
         {right}
 
-        {!!collaborators?.length && (
+        {!readonly && !!collaborators?.length && (
           <Avatar.Group maxCount={7} className={s.collaborators}>
             {collaborators.map(i => {
               return (
@@ -92,6 +100,7 @@ export const DesignerHeader = observer(function DesignerHeader(props: DesignerHe
             })}
           </Avatar.Group>
         )}
+        {!readonly && !!collaborationStatus && <CollabStatus status={collaborationStatus} />}
 
         {/* 保存按钮 */}
         {!readonly ? (
