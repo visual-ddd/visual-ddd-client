@@ -14,7 +14,7 @@ $ docker push 作用域/wkfe/visual-ddd-collab:版本号或latest
 
 # Run
 
-暴露 8080 端口
+暴露 9090 端口
 
 # 支持环境变量
 

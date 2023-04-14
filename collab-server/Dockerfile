@@ -22,6 +22,6 @@ COPY --chown=nextjs:nodejs ./index.mjs .
 
 USER nextjs
 
-EXPOSE 8080
+EXPOSE 9090
 
 CMD ["node", "index.mjs"]

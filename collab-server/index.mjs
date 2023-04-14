@@ -4,12 +4,13 @@ import { Logger } from '@hocuspocus/extension-logger';
 
 const MAIN_SERVER = process.env.MAIN_SERVER;
 const END_POINT = '/api/rest/session';
+const PORT = Number(process.env.PORT || 9090);
 
 const SHOULD_AUTH = !!MAIN_SERVER;
 
 const server = Server.configure({
   name: 'visual-ddd',
-  port: 8080,
+  port: PORT,
   extensions: [new Logger()],
   async onConnect(data) {
     if (SHOULD_AUTH && !data.connection.isAuthenticated) {
