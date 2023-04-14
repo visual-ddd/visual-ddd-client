@@ -175,6 +175,10 @@ export function useScenarioBot() {
   };
 
   useEffect(() => {
+    if (model.readonly) {
+      return;
+    }
+
     return registerExtension({
       key: '流程图(测试)',
       match: '流程图(测试)',

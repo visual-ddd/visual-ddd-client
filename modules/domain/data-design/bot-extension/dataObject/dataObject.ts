@@ -78,6 +78,10 @@ export function useDataObjectBot() {
   const runRef = useRefValue(run);
 
   useEffect(() => {
+    if (model.readonly) {
+      return;
+    }
+
     return registerExtension({
       key: '数据建模(测试)',
       match: '数据建模(测试)',
@@ -149,5 +153,5 @@ export function useDataObjectBot() {
         };
       },
     }) as any;
-  }, []);
+  }, [model]);
 }
