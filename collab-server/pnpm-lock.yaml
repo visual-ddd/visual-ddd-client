@@ -1,0 +1,128 @@
+lockfileVersion: 5.4
+
+specifiers:
+  '@hocuspocus/extension-logger': ^2.0.3
+  '@hocuspocus/server': ^2.0.3
+  yjs: ^13.5.52
+
+dependencies:
+  '@hocuspocus/extension-logger': 2.0.3_yjs@13.5.52
+  '@hocuspocus/server': 2.0.3_yjs@13.5.52
+  yjs: 13.5.52
+
+packages:
+  /@hocuspocus/common/2.0.3:
+    resolution:
+      { integrity: sha512-m+aFLDuO/miQCcPNL4GtIVa2NFegoh6mkZ6Y6+ogOoIlI9MY7uvhJQziPDgZ7SQ9nlROUzc015hX/QpJWjZL4A== }
+    dependencies:
+      lib0: 0.2.73
+    dev: false
+
+  /@hocuspocus/extension-logger/2.0.3_yjs@13.5.52:
+    resolution:
+      { integrity: sha512-YEhup7bBbMDwj26oLOZnaIu0gOfqVPI1zKp9Kw+/6qfee4VHeA/2mpxLQS+OOfTtKry/7uIzqnnMdGbnZvBqwg== }
+    dependencies:
+      '@hocuspocus/server': 2.0.3_yjs@13.5.52
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+      - y-protocols
+      - yjs
+    dev: false
+
+  /@hocuspocus/server/2.0.3_yjs@13.5.52:
+    resolution:
+      { integrity: sha512-ECl6pHKfmIB/N5ElX9b+jHoy7mh+3XhWH+qaZR0GgYk/1aJGaDMpebGIrE2z+JQLhqucsE8Mn71OKtXnFOVQhA== }
+    peerDependencies:
+      y-protocols: ^1.0.5
+      yjs: ^13.5.29
+    dependencies:
+      '@hocuspocus/common': 2.0.3
+      '@types/async-lock': 1.4.0
+      '@types/uuid': 9.0.1
+      '@types/ws': 8.5.4
+      async-lock: 1.4.0
+      kleur: 4.1.5
+      lib0: 0.2.73
+      uuid: 9.0.0
+      ws: 8.13.0
+      yjs: 13.5.52
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+    dev: false
+
+  /@types/async-lock/1.4.0:
+    resolution:
+      { integrity: sha512-2+rYSaWrpdbQG3SA0LmMT6YxWLrI81AqpMlSkw3QtFc2HGDufkweQSn30Eiev7x9LL0oyFrBqk1PXOnB9IEgKg== }
+    dev: false
+
+  /@types/node/18.15.11:
+    resolution:
+      { integrity: sha512-E5Kwq2n4SbMzQOn6wnmBjuK9ouqlURrcZDVfbo9ftDDTFt3nk7ZKK4GMOzoYgnpQJKcxwQw+lGaBvvlMo0qN/Q== }
+    dev: false
+
+  /@types/uuid/9.0.1:
+    resolution:
+      { integrity: sha512-rFT3ak0/2trgvp4yYZo5iKFEPsET7vKydKF+VRCxlQ9bpheehyAJH89dAkaLEq/j/RZXJIqcgsmPJKUP1Z28HA== }
+    dev: false
+
+  /@types/ws/8.5.4:
+    resolution:
+      { integrity: sha512-zdQDHKUgcX/zBc4GrwsE/7dVdAD8JR4EuiAXiiUhhfyIJXXb2+PrGshFyeXWQPMmmZ2XxgaqclgpIC7eTXc1mg== }
+    dependencies:
+      '@types/node': 18.15.11
+    dev: false
+
+  /async-lock/1.4.0:
+    resolution:
+      { integrity: sha512-coglx5yIWuetakm3/1dsX9hxCNox22h7+V80RQOu2XUUMidtArxKoZoOtHUPuR84SycKTXzgGzAUR5hJxujyJQ== }
+    dev: false
+
+  /isomorphic.js/0.2.5:
+    resolution:
+      { integrity: sha512-PIeMbHqMt4DnUP3MA/Flc0HElYjMXArsw1qwJZcm9sqR8mq3l8NYizFMty0pWwE/tzIGH3EKK5+jes5mAr85yw== }
+    dev: false
+
+  /kleur/4.1.5:
+    resolution:
+      { integrity: sha512-o+NO+8WrRiQEE4/7nwRJhN1HWpVmJm511pBHUxPLtp0BUISzlBplORYSmTclCnJvQq2tKu/sgl3xVpkc7ZWuQQ== }
+    engines: { node: '>=6' }
+    dev: false
+
+  /lib0/0.2.73:
+    resolution:
+      { integrity: sha512-aJJIElCLWnHMcYZPtsM07QoSfHwpxCy4VUzBYGXFYEmh/h2QS5uZNbCCfL0CqnkOE30b7Tp9DVfjXag+3qzZjQ== }
+    engines: { node: '>=14' }
+    hasBin: true
+    dependencies:
+      isomorphic.js: 0.2.5
+    dev: false
+
+  /uuid/9.0.0:
+    resolution:
+      { integrity: sha512-MXcSTerfPa4uqyzStbRoTgt5XIe3x5+42+q1sDuy3R5MDk66URdLMOZe5aPX/SQd+kuYAh0FdP/pO28IkQyTeg== }
+    hasBin: true
+    dev: false
+
+  /ws/8.13.0:
+    resolution:
+      { integrity: sha512-x9vcZYTrFPC7aSIbj7sRCYo7L/Xb8Iy+pW0ng0wt2vCJv7M9HOMy0UoN3rr+IFC7hb7vXoqS+P9ktyLLLhO+LA== }
+    engines: { node: '>=10.0.0' }
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: '>=5.0.2'
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+    dev: false
+
+  /yjs/13.5.52:
+    resolution:
+      { integrity: sha512-wTajR70VeI6uztpUk4kMcXYHSRzuUlNyJPdBG9NII0EcFf27DwGduZEm3XbP7VSzlGx5n6uenBhOPX+YuPH/tA== }
+    engines: { node: '>=16.0.0', npm: '>=8.0.0' }
+    dependencies:
+      lib0: 0.2.73
+    dev: false

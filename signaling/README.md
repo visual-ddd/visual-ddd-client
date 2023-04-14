@@ -1,5 +1,7 @@
 # yjs 信令服务器
 
+**deprecated**
+
 # Build
 
 ```shell

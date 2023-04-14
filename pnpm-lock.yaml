@@ -18,6 +18,7 @@ specifiers:
   '@dnd-kit/sortable': ^7.0.2
   '@dnd-kit/utilities': ^3.2.1
   '@dqbd/tiktoken': ^1.0.4
+  '@hocuspocus/provider': ^2.0.3
   '@pinecone-database/pinecone': ^0.0.12
   '@sentry/nextjs': ^7.47.0
   '@testing-library/jest-dom': ^5.16.5
@@ -150,6 +151,7 @@ dependencies:
   '@dnd-kit/sortable': 7.0.2_52scne4zmdeyjh2otzkgz2xfvu
   '@dnd-kit/utilities': 3.2.1_react@18.2.0
   '@dqbd/tiktoken': 1.0.4
+  '@hocuspocus/provider': 2.0.3_gki2cyfbquwjzbjx75iyfhl4ui
   '@pinecone-database/pinecone': 0.0.12
   '@sentry/nextjs': 7.47.0_next@13.2.2+react@18.2.0
   '@tiptap/core': 2.0.2_@tiptap+pm@2.0.2
@@ -1314,6 +1316,31 @@ packages:
     engines: { node: '>=16.15' }
     dev: false
 
+  /@hocuspocus/common/2.0.3:
+    resolution:
+      { integrity: sha512-m+aFLDuO/miQCcPNL4GtIVa2NFegoh6mkZ6Y6+ogOoIlI9MY7uvhJQziPDgZ7SQ9nlROUzc015hX/QpJWjZL4A== }
+    dependencies:
+      lib0: 0.2.73
+    dev: false
+
+  /@hocuspocus/provider/2.0.3_gki2cyfbquwjzbjx75iyfhl4ui:
+    resolution:
+      { integrity: sha512-dPw0cYdBvKggqIWJyRK5i2u4wrndC/A3nFqmFhZUuPo5GuRKNHMCjX8z5wSFNS2vsHELMFsxmnm1+TnB2cAP2w== }
+    peerDependencies:
+      y-protocols: ^1.0.5
+      yjs: ^13.5.29
+    dependencies:
+      '@hocuspocus/common': 2.0.3
+      '@lifeomic/attempt': 3.0.3
+      lib0: 0.2.73
+      ws: 7.5.9
+      y-protocols: 1.0.5
+      yjs: 13.5.52
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+    dev: false
+
   /@humanwhocodes/config-array/0.11.8:
     resolution:
       { integrity: sha512-UybHIJzJnR5Qc/MsD9Kr+RpO2h+/P1GhOwdiLPXK5TWk5sgTdu88bTD9UP+CKbPPh5Rni1u0GjAdYQLemG8g+g== }
@@ -1629,6 +1656,11 @@ packages:
       '@jridgewell/resolve-uri': 3.1.0
       '@jridgewell/sourcemap-codec': 1.4.14
     dev: true
+
+  /@lifeomic/attempt/3.0.3:
+    resolution:
+      { integrity: sha512-GlM2AbzrErd/TmLL3E8hAHmb5Q7VhDJp35vIbyPVA5Rz55LZuRr8pwL3qrwwkVNo05gMX1J44gURKb4MHQZo7w== }
+    dev: false
 
   /@linaria/core/3.0.0-beta.13:
     resolution:
@@ -11137,7 +11169,6 @@ packages:
       utf-8-validate:
         optional: true
     dev: false
-    optional: true
 
   /ws/8.13.0:
     resolution:
