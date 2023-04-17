@@ -47,7 +47,7 @@ export const getServerSideProps = withWakedataRequestSsr<LaunchProps>(async cont
     }
 
     // 非入口文件，可以直接跳转打开
-    if (!isEntry(fromUrl.pathname)) {
+    if (!isEntry(fromUrl.pathname) && !fromUrl.pathname.startsWith('/_')) {
       return {
         redirect: { destination: normalizeUrl(from)!, permanent: false },
       };
