@@ -161,7 +161,7 @@ export class OpenAIEventSourceModel<Result = any> implements IDisposable {
   }
 
   @action
-  private setLoading(loading: boolean) {
+  setLoading(loading: boolean) {
     this.loading = loading;
   }
 

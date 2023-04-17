@@ -100,6 +100,8 @@ SWAGGER https://ddd.wakedt.cn/wd/visual/doc.html
              proxy_pass https://api.openai.com;
              proxy_ssl_server_name on;
              proxy_buffering off;
+             proxy_send_timeout 5m;
+	       proxy_read_timeout 5m;
         }
 ```
 

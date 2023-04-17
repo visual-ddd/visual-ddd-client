@@ -93,6 +93,7 @@ specifiers:
   mobx-react: ^7.6.0
   mousetrap: ^1.6.5
   next: 13.2.2
+  openai: ^3.2.1
   panzoom: ^9.4.3
   prettier: ^2.8.7
   prettier-config-wk: ^0.2.4
@@ -205,6 +206,7 @@ dependencies:
   mobx-react: 7.6.0_lrdhi4fih7ii4kmeak7ov4c3ha
   mousetrap: 1.6.5
   next: 13.2.2_mublyuuz2b2dt2ayxcwwuulj4q
+  openai: 3.2.1
   panzoom: 9.4.3
   prosemirror-commands: 1.5.1
   prosemirror-dropcursor: 1.8.0

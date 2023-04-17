@@ -8,3 +8,4 @@ export * from './sql-master';
 export * from './ddd-master';
 export * from './data-object';
 export * from './flow-builder';
+export * from './dall-e';
