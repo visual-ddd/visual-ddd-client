@@ -17,13 +17,11 @@ import type { BotStorage } from './BotPersister';
 import { MAX_CONTEXT_PROMPT_LENGTH, MAX_CONTEXT_MESSAGE } from './constants';
 import { calculateContext } from './chat-context';
 import { getTokenCount } from './tokenizer';
+import { BotMeta } from './types';
 
 export interface BotModelOptions {
   uuid: string;
-  metaInfo: {
-    name: string;
-    system: string;
-  };
+  metaInfo: BotMeta;
 }
 
 /**
@@ -140,6 +138,10 @@ export class BotModel implements IDisposable, IBot, IDestroyable {
 
   getSystemPrompt(): string | undefined {
     return this.options.metaInfo.system;
+  }
+
+  getTemperature() {
+    return this.options.metaInfo.temperature;
   }
 
   /**

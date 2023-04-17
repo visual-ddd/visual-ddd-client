@@ -1,0 +1,12 @@
+.root {
+  height: 85vh;
+  overflow: hidden;
+
+  :global {
+    .ant-modal-content {
+      height: 100%;
+      padding: 0;
+      overflow: hidden;
+    }
+  }
+}

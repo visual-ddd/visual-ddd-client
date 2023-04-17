@@ -77,6 +77,11 @@ export interface IBot {
   getSystemPrompt(): string | undefined;
 
   /**
+   * 获取模型温度
+   */
+  getTemperature(): number | undefined;
+
+  /**
    * 最近的消息
    */
   getChatContext(prompt: string): Promise<ChatContext>;

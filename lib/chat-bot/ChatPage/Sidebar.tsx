@@ -7,8 +7,11 @@ import Link from 'next/link';
 
 import { useBotSessionStoreContext } from '../BotSessionStoreContext';
 import type { BotSession } from '../BotSession';
+import type { Prompt } from '../types';
+import { PromptLibraryModal } from '../PromptLibrary';
 
 import s from './Sidebar.module.scss';
+import { ExploreIcon } from './ExploreIcon';
 
 export interface SidebarProps {}
 
@@ -107,11 +110,23 @@ export const Sidebar = observer(function Sidebar(props: SidebarProps) {
 
   const handleAddSession = () => {
     store.addSession();
+    message.success('会话已创建');
+  };
+
+  const handleAddSessionFromLibrary = (prompt: Prompt) => {
+    store.addSessionFromPrompt(prompt);
+    message.success('已导入');
   };
 
   return (
     <div className={s.root}>
       <div className={s.sessions}>
+        <PromptLibraryModal onImport={handleAddSessionFromLibrary}>
+          <div className={classNames(s.session, 'u-secondary', 'drawn')}>
+            <ExploreIcon />
+            <div className={s.sessionName}>探索</div>
+          </div>
+        </PromptLibraryModal>
         <div className={s.session} onClick={handleAddSession} id="chat-page-add-session">
           <PlusOutlined className={s.addSession} />
           <div className={s.sessionName}>新增会话</div>

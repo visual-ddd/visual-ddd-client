@@ -8,6 +8,7 @@ type Payload = {
   system?: string;
   text: string;
   summary?: string;
+  temperature?: number;
   context: [string, string][];
 };
 
@@ -53,6 +54,6 @@ export const fallback: NextApiHandler = allowMethod('POST', async (req, res) => 
     source: req,
     pipe: res,
     messages,
-    temperature: 1,
+    temperature: payload.temperature ?? 0.7,
   });
 });

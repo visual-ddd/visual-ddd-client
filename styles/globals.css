@@ -49,6 +49,14 @@ a {
   color: var(--vd-color-danger);
 }
 
+.u-primary {
+  color: var(--vd-color-primary);
+}
+
+.u-secondary {
+  color: var(--vd-color-secondary);
+}
+
 .u-warning {
   color: var(--vd-color-warning);
 }

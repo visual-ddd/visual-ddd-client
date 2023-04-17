@@ -22,10 +22,16 @@
   border-radius: 10px;
   gap: 4px;
   cursor: pointer;
+  transition: all 0.2s ease-in-out;
 
   &:hover,
   &:global(.active) {
     background-color: rgba($color: #000000, $alpha: 0.1);
+    transform: scale(1.02);
+  }
+
+  &:global(.drawn) {
+    background-color: rgba($color: #000000, $alpha: 0.02);
   }
 
   .removeSession {

@@ -7,12 +7,13 @@ import RemarkGfm from 'remark-gfm';
 
 // 代码高亮
 import RehypePrsim from 'rehype-prism-plus';
-import { memo, useRef } from 'react';
+import { memo, useRef, useState } from 'react';
 import { message } from 'antd';
 import 'katex/dist/katex.min.css';
 
 import s from './index.module.scss';
 import classNames from 'classnames';
+import { CopyOutlined, PictureOutlined } from '@ant-design/icons';
 
 const copy = (text: string) => {
   navigator.clipboard
@@ -26,22 +27,47 @@ const copy = (text: string) => {
 };
 
 const COMPONENTS: Options['components'] = {
-  pre: (props: { children: any }) => {
+  pre: (props: { children: any; className?: string }) => {
     const ref = useRef<HTMLPreElement>(null);
+    const [svgContent, setSvgContent] = useState('');
+
+    const isSVG = props.className?.includes('language-svg');
 
     return (
-      <pre ref={ref}>
-        <span
-          className="copy-code-button"
-          onClick={() => {
-            if (ref.current) {
-              const code = ref.current.innerText;
-              copy(code);
-            }
-          }}
-        ></span>
-        {props.children}
-      </pre>
+      <div className={s.codeBlock}>
+        <div className={s.actions}>
+          {isSVG && (
+            <div
+              className={classNames(s.action, s.svg)}
+              onClick={() => {
+                if (ref.current) {
+                  const code = ref.current.innerText;
+                  setSvgContent(code);
+                }
+              }}
+            >
+              <PictureOutlined />
+            </div>
+          )}
+          <div
+            className={classNames(s.action, s.copy)}
+            onClick={() => {
+              if (ref.current) {
+                const code = ref.current.innerText;
+                copy(code);
+              }
+            }}
+          >
+            <CopyOutlined />
+          </div>
+        </div>
+        <pre ref={ref} className={props.className}>
+          {props.children}
+        </pre>
+        {!!(isSVG && svgContent) && (
+          <div className={s.svgPreview} dangerouslySetInnerHTML={{ __html: svgContent }}></div>
+        )}
+      </div>
     );
   },
 };

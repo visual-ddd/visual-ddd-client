@@ -11,6 +11,10 @@ export interface BotSessionOptions {
   uuid: string;
   name?: string;
   system?: string;
+  /**
+   * 模型温度，默认 0.7
+   */
+  temperature?: number;
   removable?: boolean;
 }
 
@@ -51,6 +55,11 @@ export class BotSession implements IDisposable, IDestroyable {
   removable: boolean;
 
   /**
+   * 模型温度
+   */
+  readonly temperature?: number;
+
+  /**
    * 持久化
    */
   private persister: BotSessionPersister;
@@ -60,6 +69,7 @@ export class BotSession implements IDisposable, IDestroyable {
     this.name = options.name || DEFAULT_NAME;
     this.system = options.system || DEFAULT_SYSTEM_PROMPT;
     this.removable = options.removable ?? true;
+    this.temperature = options.temperature;
 
     makeObservable(this);
     makeAutoBindThis(this);
@@ -94,6 +104,7 @@ export class BotSession implements IDisposable, IDestroyable {
       this.model = new BotModel({
         uuid: this.uuid,
         metaInfo: {
+          temperature: this.temperature,
           get name() {
             return self.name;
           },

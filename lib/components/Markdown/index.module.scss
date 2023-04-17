@@ -1,0 +1,49 @@
+.codeBlock {
+  position: relative;
+  border-radius: 6px;
+  overflow: hidden;
+
+  margin: 0.5em 0;
+
+  :global(pre[class*='language-']) {
+    margin: 0;
+  }
+
+  &:hover .actions {
+    display: flex;
+  }
+}
+
+.actions {
+  display: none;
+  position: absolute;
+  right: var(--vd-spacing-xs);
+  top: var(--vd-spacing-xs);
+  z-index: 100;
+  gap: var(--vd-spacing-xs);
+
+  .action {
+    color: white;
+    padding: var(--vd-spacing-xs);
+    background-color: var(--vd-color-gray-400);
+    line-height: 1;
+    cursor: pointer;
+    border-radius: 5px;
+    border: 1px solid var(--vd-color-gray-500);
+    opacity: 0.9;
+    color: var(--vd-color-gray-900);
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+.svgPreview {
+  max-width: 100%;
+  margin-top: 10px;
+
+  svg {
+    max-width: 100%;
+  }
+}

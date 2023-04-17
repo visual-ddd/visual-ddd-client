@@ -6,6 +6,7 @@ import { v4 } from 'uuid';
 import { BotSession } from './BotSession';
 import { BotSessionStoreEvent } from './BotSessionStoreEvent';
 import { DEFAULT_NAME, DEFAULT_SESSION_PROMPT, DEFAULT_SESSION_ID } from './constants';
+import type { Prompt } from './types';
 
 const KEY = 'chat-bot-sessions';
 
@@ -71,16 +72,27 @@ export class BotSessionStore implements IDisposable {
   @mutation('ADD_SESSION', false)
   addSession() {
     const session = new BotSession({ uuid: v4() });
-    this.sessions.unshift(session);
-    this.save();
 
-    // 立即激活
-    this.activeSession(session.uuid);
-
-    return session;
+    return this.unshiftSession(session);
   }
 
-  @mutation('ADD_SESSION', false)
+  /**
+   * 导入会话
+   * @param prompt
+   */
+  @mutation('ADD_SESSION_FROM_PROMPT', false)
+  addSessionFromPrompt(prompt: Prompt) {
+    const session = new BotSession({
+      uuid: v4(),
+      name: prompt.name,
+      system: prompt.system,
+      temperature: prompt.temperature,
+    });
+
+    return this.unshiftSession(session);
+  }
+
+  @mutation('REMOVE_SESSION', false)
   removeSession(id: string) {
     const idx = this.sessions.findIndex(s => s.uuid === id);
     if (idx >= 0) {
@@ -105,6 +117,16 @@ export class BotSessionStore implements IDisposable {
 
       this.save();
     }
+  }
+
+  private unshiftSession(session: BotSession) {
+    this.sessions.unshift(session);
+    this.save();
+
+    // 立即激活
+    this.activeSession(session.uuid);
+
+    return session;
   }
 
   private initial() {

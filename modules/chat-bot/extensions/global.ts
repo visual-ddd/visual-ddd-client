@@ -50,6 +50,7 @@ registerExtension({
         body: {
           text: message,
           summary,
+          temperature: bot.getTemperature(),
           system: bot.getSystemPrompt(),
           context: context.messages.map(i => {
             const d = i.summary ?? i.content;

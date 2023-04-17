@@ -1,3 +1,14 @@
+import colorString from 'color-string';
+
+export function getFrontColor(color: string): 'white' | 'black' {
+  const [red, green, blue] = colorString.get.rgb(color);
+
+  // 根据反色算法确定前景色
+  const threshold = 130;
+  const luminance = 0.2126 * red + 0.7152 * green + 0.0722 * blue;
+  return luminance > threshold ? 'black' : 'white';
+}
+
 export function getMappedColor(str: string): string {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
