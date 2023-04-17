@@ -5,6 +5,10 @@ export interface BotSessionStorage {
   uuid: string;
   name: string;
   system: string;
+  /**
+   * 模型温度，默认 0.7
+   */
+  temperature?: number;
   removable: boolean;
 }
 

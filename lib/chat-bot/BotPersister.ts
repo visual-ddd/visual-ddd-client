@@ -1,9 +1,11 @@
 import type { BotEvent } from './BotEvent';
 import localforage from 'localforage';
-import { IDestroyable, IDisposable } from '../utils';
-import { cloneDeep, debounce, Disposer, omit } from '@wakeapp/utils';
-import { Message } from './protocol';
 import { toJS } from 'mobx';
+import { cloneDeep, debounce, Disposer, omit } from '@wakeapp/utils';
+
+import { IDestroyable, IDisposable } from '../utils';
+import { Message } from './protocol';
+import { MAX_HISTORY_LENGTH } from './constants';
 
 const KEY_PREFIX = 'chat-bot-history-';
 
@@ -96,7 +98,7 @@ export class BotPersister implements IDisposable, IDestroyable {
    * 持久化
    */
   private save = debounce(() => {
-    this.list = this.list.slice(-100);
+    this.list = this.list.slice(-MAX_HISTORY_LENGTH);
 
     localforage.setItem<BotStorage>(this.key, {
       history: this.list,

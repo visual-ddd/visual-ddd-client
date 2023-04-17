@@ -4,6 +4,11 @@
 export const MAX_TOKEN = 4096;
 
 /**
+ * 最大历史消息数
+ */
+export const MAX_HISTORY_LENGTH = 200;
+
+/**
  * 最大上下文消息数
  */
 export const MAX_CONTEXT_MESSAGE = 8;

@@ -55,7 +55,7 @@ export class BotSession implements IDisposable, IDestroyable {
   removable: boolean;
 
   /**
-   * 模型温度
+   * 模型温度, 默认为 0.7
    */
   readonly temperature?: number;
 
@@ -104,7 +104,9 @@ export class BotSession implements IDisposable, IDestroyable {
       this.model = new BotModel({
         uuid: this.uuid,
         metaInfo: {
-          temperature: this.temperature,
+          get temperature() {
+            return self.temperature;
+          },
           get name() {
             return self.name;
           },
@@ -151,6 +153,7 @@ export class BotSession implements IDisposable, IDestroyable {
       name: this.name,
       system: this.system,
       removable: this.removable,
+      temperature: this.temperature,
     });
   }, 1000);
 }

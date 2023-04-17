@@ -64,11 +64,11 @@ export const Content = observer(function Content(props: ContentProps) {
     const system = await showPrompt({
       title: '修改主题',
       value: store.currentActiveSession?.system || '',
-      placeholder: '输入主题，比如请润色我说的每一句话',
-      maxLength: 500,
+      placeholder: '输入主题，比如"请润色我说的每一句话"',
+      maxLength: 1000,
     });
 
-    if (system?.trim()) {
+    if (system != null) {
       store.currentActiveSession?.setSystem(system);
     }
   };
