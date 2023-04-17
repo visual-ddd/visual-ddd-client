@@ -11,11 +11,15 @@ export interface BotSessionOptions {
   uuid: string;
   name?: string;
   system?: string;
+  removable?: boolean;
   /**
    * 模型温度，默认 0.7
    */
   temperature?: number;
-  removable?: boolean;
+  /**
+   * 最大上下文消息数
+   */
+  maxContextLength?: number;
 }
 
 const DEFAULT_SYSTEM_PROMPT = '';
@@ -57,7 +61,12 @@ export class BotSession implements IDisposable, IDestroyable {
   /**
    * 模型温度, 默认为 0.7
    */
-  readonly temperature?: number;
+  protected temperature?: number;
+
+  /**
+   * 最大上下文消息数
+   */
+  protected maxContextLength?: number;
 
   /**
    * 持久化
@@ -70,6 +79,7 @@ export class BotSession implements IDisposable, IDestroyable {
     this.system = options.system || DEFAULT_SYSTEM_PROMPT;
     this.removable = options.removable ?? true;
     this.temperature = options.temperature;
+    this.maxContextLength = options.maxContextLength;
 
     makeObservable(this);
     makeAutoBindThis(this);
@@ -77,12 +87,7 @@ export class BotSession implements IDisposable, IDestroyable {
     this.persister = new BotSessionPersister({
       uuid: this.uuid,
       onLoad: this.onLoad,
-      initial: {
-        removable: this.removable,
-        uuid: this.uuid,
-        name: this.name,
-        system: this.system,
-      },
+      initial: this.getDataToSave(),
     });
   }
 
@@ -106,6 +111,9 @@ export class BotSession implements IDisposable, IDestroyable {
         metaInfo: {
           get temperature() {
             return self.temperature;
+          },
+          get maxContextLength() {
+            return self.maxContextLength;
           },
           get name() {
             return self.name;
@@ -145,15 +153,22 @@ export class BotSession implements IDisposable, IDestroyable {
     this.name = data.name;
     this.system = data.system;
     this.removable = data.removable;
+    this.temperature = data.temperature;
+    this.maxContextLength = data.maxContextLength;
   }
 
-  private save = debounce(() => {
-    this.persister.save({
+  private getDataToSave(): BotSessionStorage {
+    return {
       uuid: this.uuid,
       name: this.name,
       system: this.system,
       removable: this.removable,
       temperature: this.temperature,
-    });
+      maxContextLength: this.maxContextLength,
+    };
+  }
+
+  private save = debounce(() => {
+    this.persister.save(this.getDataToSave());
   }, 1000);
 }

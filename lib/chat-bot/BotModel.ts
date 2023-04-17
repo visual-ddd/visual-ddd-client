@@ -145,6 +145,14 @@ export class BotModel implements IDisposable, IBot, IDestroyable {
   }
 
   /**
+   * 最大历史消息数
+   * @returns
+   */
+  getMaxContextLength() {
+    return this.options.metaInfo.maxContextLength || MAX_CONTEXT_MESSAGE;
+  }
+
+  /**
    * 提交 prompt
    */
   @effect('COMMIT')
@@ -304,7 +312,10 @@ export class BotModel implements IDisposable, IBot, IDestroyable {
    */
   getChatContext(prompt: string): Promise<ChatContext> {
     // 拷贝一下，避免 history 后面修改了
-    return calculateContext(prompt, this.history.slice(-(MAX_CONTEXT_MESSAGE * 2)));
+    const maxContextLength = this.getMaxContextLength();
+    return calculateContext(prompt, this.history.slice(-(maxContextLength * 2)), {
+      maxContextLength,
+    });
   }
 
   /**

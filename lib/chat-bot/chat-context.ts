@@ -8,7 +8,14 @@ import {
 /**
  * 聊天上下文计算
  */
-export async function calculateContext(prompt: string, history: Message[]): Promise<ChatContext> {
+export async function calculateContext(
+  prompt: string,
+  history: Message[],
+  options?: {
+    maxContextLength?: number;
+  }
+): Promise<ChatContext> {
+  const { maxContextLength = MAX_CONTEXT_MESSAGE_LENGTH } = options ?? {};
   /**
    * 当前 token
    */
@@ -45,7 +52,7 @@ export async function calculateContext(prompt: string, history: Message[]): Prom
     // 如果超过了最大上下文 token 数
     if (nextTokens > MAX_CONTEXT_TOKEN_LENGTH) {
       // 溢出了，推荐进行总结的点
-      if (list.length < MAX_CONTEXT_MESSAGE_LENGTH) {
+      if (list.length < maxContextLength) {
         // 推荐进行总结
         recommendToSummary = message;
       }
@@ -57,7 +64,7 @@ export async function calculateContext(prompt: string, history: Message[]): Prom
     contextToken = nextTokens;
 
     // 到达数量限制
-    if (list.length >= MAX_CONTEXT_MESSAGE_LENGTH) {
+    if (list.length >= maxContextLength) {
       break;
     }
 

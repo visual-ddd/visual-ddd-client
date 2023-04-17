@@ -5,11 +5,13 @@ export interface BotSessionStorage {
   uuid: string;
   name: string;
   system: string;
+  removable: boolean;
+
   /**
    * 模型温度，默认 0.7
    */
   temperature?: number;
-  removable: boolean;
+  maxContextLength?: number;
 }
 
 export interface BotSessionPersisterOptions {

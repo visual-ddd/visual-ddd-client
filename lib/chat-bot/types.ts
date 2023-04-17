@@ -16,6 +16,11 @@ export interface BotMeta {
    * 模型温度，默认 0.7
    */
   temperature?: number;
+
+  /**
+   * 最大上下文消息数
+   */
+  maxContextLength?: number;
 }
 
 /**
@@ -59,8 +64,14 @@ export interface Prompt {
    */
   date: `${number}/${number}/${number}`;
 
+  // 以下是一些高级配置
   /**
    * 模型文档，默认是 0.7
    */
   temperature?: number;
+
+  /**
+   * 最大上下文消息数
+   */
+  maxContextLength?: number;
 }

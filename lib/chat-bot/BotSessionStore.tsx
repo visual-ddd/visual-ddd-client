@@ -87,6 +87,7 @@ export class BotSessionStore implements IDisposable {
       name: prompt.name,
       system: prompt.system,
       temperature: prompt.temperature,
+      maxContextLength: prompt.maxContextLength,
     });
 
     return this.unshiftSession(session);
