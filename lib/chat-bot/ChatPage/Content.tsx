@@ -79,7 +79,7 @@ export const Content = observer(function Content(props: ContentProps) {
         <SidebarIcon className={s.fold} onClick={onToggleSidebar} id="chat-page-sidebar-folder" />
         <aside className={s.headerBody}>
           <div className={s.title}>{store.currentActiveSession?.name}</div>
-          <div className={classNames(s.system, 'u-line-clamp-3')} id="chat-page-change-system">
+          <div className={classNames(s.system, 'u-line-clamp-4')} id="chat-page-change-system">
             {store.currentActiveSession?.system || '随便聊聊'}
             <span className={classNames('u-link', s.editSystem)} onClick={handleEditSystem}>
               <EditOutlined /> 修改主题

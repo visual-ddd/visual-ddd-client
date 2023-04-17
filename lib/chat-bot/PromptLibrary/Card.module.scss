@@ -94,6 +94,10 @@
     & > * {
       margin-bottom: var(--vd-spacing-md);
     }
+
+    .prompt {
+      white-space: pre-wrap;
+    }
   }
 
   .close {
