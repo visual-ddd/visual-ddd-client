@@ -21,6 +21,7 @@ Sentry.init({
     /attempted to hard navigate to the same URL/i,
     /The user aborted a request/i,
     /Failed to fetch/i,
+    /NotAllowedError/i,
     'network error',
     '请登录后重试',
   ],

@@ -23,7 +23,7 @@ const nextConfig = {
   swcMinify: true,
   output: 'standalone',
   // TODO: 移除
-  productionBrowserSourceMaps: process.env.PRODUCTION_SOURCE_MAP === 'true',
+  productionBrowserSourceMaps: ENABLE_SENTRY_CLI ? false : process.env.PRODUCTION_SOURCE_MAP === 'true',
   typescript: {
     // 不需要执行，以为我们在提交时进行验证
     ignoreBuildErrors: true,
