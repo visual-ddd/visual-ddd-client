@@ -52,6 +52,7 @@ export const List = observer(function List(props: ListProps) {
               size="large"
               allowClear
               onChange={model.setCategory}
+              showSearch
               options={model.categories.map(i => {
                 return {
                   label: i,
