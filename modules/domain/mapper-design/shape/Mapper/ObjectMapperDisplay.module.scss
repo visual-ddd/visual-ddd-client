@@ -8,18 +8,23 @@
   gap: 6px;
 }
 
-.modifier {
-  color: var(--vd-color-gray-500);
-  margin-left: 4px;
-  white-space: nowrap;
-}
-
-.name {
-  font-weight: 600;
-}
-
 .object {
   display: flex;
   align-items: center;
   line-height: 1.8;
+  max-width: 16em;
+
+  .modifier {
+    color: var(--vd-color-gray-500);
+    margin-left: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .name {
+    flex: 1;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }

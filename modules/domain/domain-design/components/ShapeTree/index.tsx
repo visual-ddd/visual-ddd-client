@@ -53,7 +53,9 @@ const renderTitle = (
             >
               {item.objectTypeTitle}
             </span>
-            <span className={classNames('vd-shape-tree-item__title', s.itemTitle)}>{item.readableTitle}</span>
+            <span className={classNames('vd-shape-tree-item__title', s.itemTitle)} title={item.readableTitle}>
+              {item.readableTitle}
+            </span>
           </div>
           <div className={classNames('vd-shape-tree-item__extra', s.itemExtra)}>
             {DomainObjectFactory.isAggregation(item) ? (
@@ -87,7 +89,7 @@ export const ShapeTree = observer(function ShapeTree(props: ShapeTreeProps) {
         if (uncontrolledDomainObjects.length) {
           return {
             key: VIRTUAL_UNCONTROLLED_NODES,
-            title: '未关联聚合',
+            title: '未关联',
             selectable: false,
             children: uncontrolledDomainObjects.map(i => {
               return {

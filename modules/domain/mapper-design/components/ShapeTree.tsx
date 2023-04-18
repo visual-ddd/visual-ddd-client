@@ -15,7 +15,18 @@ const renderTitle = (item: Mapper, handleContextMenu: (evt: React.MouseEvent<HTM
       {() => (
         <div className={classNames('vd-shape-tree-item', s.item)} onContextMenu={handleContextMenu}>
           <div className={classNames('vd-shape-tree-item__body', s.itemBody)}>
-            <span>{item.readableTitle}</span>
+            <span
+              className={classNames('vd-shape-tree-item__type', s.itemType)}
+              style={{
+                // @ts-expect-error
+                '--color': '#c7e0ff',
+              }}
+            >
+              映射
+            </span>
+            <span className={classNames('vd-shape-tree-item__title', s.itemTitle)} title={item.readableTitle}>
+              {item.readableTitle}
+            </span>
           </div>
         </div>
       )}

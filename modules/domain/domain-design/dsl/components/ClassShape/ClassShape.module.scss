@@ -31,6 +31,9 @@
   font-size: var(--vd-font-size-h5);
   font-weight: bold;
   text-align: center;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
   &:global(.abstract) {
     font-style: italic;

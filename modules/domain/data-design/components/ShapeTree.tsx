@@ -15,7 +15,18 @@ const renderTitle = (item: DataObject, handleContextMenu: (evt: React.MouseEvent
       {() => (
         <div className={classNames('vd-shape-tree-item', s.item)} onContextMenu={handleContextMenu}>
           <div className={classNames('vd-shape-tree-item__body', s.itemBody)}>
-            <span>{item.readableTitle}</span>
+            <span
+              className={classNames('vd-shape-tree-item__type', s.itemType)}
+              style={{
+                // @ts-expect-error
+                '--color': '#c7e0ff',
+              }}
+            >
+              DO
+            </span>
+            <span className={classNames('vd-shape-tree-item__title', s.itemTitle)} title={item.readableTitle}>
+              {item.readableTitle}
+            </span>
           </div>
         </div>
       )}

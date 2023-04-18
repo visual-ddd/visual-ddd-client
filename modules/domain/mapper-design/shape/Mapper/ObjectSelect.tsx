@@ -68,7 +68,7 @@ export const ObjectSelect = observer(function ObjectSelect(props: ObjectSelectPr
       showSearch
       className="u-fw"
       expandTrigger="click"
-      placement="bottomRight"
+      placement="bottomLeft"
       placeholder="请选择对象"
       options={store.options}
       value={normalizedValue}
