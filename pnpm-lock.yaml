@@ -40,6 +40,7 @@ specifiers:
   '@tiptap/pm': 2.0.2
   '@tiptap/react': 2.0.2
   '@tiptap/starter-kit': 2.0.2
+  '@types/busboy': ^1.5.0
   '@types/color-string': ^1.5.2
   '@types/cookie': ^0.5.1
   '@types/fs-extra': ^11.0.1
@@ -62,6 +63,7 @@ specifiers:
   ahooks: ^3.7.6
   antd: ^5.4.1
   async-validator: ^4.2.5
+  busboy: ^1.6.0
   camelcase: ^7.0.1
   classnames: ^2.3.2
   color-string: ^1.9.1
@@ -183,6 +185,7 @@ dependencies:
   ahooks: 3.7.6_react@18.2.0
   antd: 5.4.1_biqbaboplfbrettd7655fr4n2y
   async-validator: 4.2.5
+  busboy: 1.6.0
   camelcase: 7.0.1
   classnames: 2.3.2
   color-string: 1.9.1
@@ -252,6 +255,7 @@ dependencies:
 devDependencies:
   '@testing-library/jest-dom': 5.16.5
   '@testing-library/react': 14.0.0_biqbaboplfbrettd7655fr4n2y
+  '@types/busboy': 1.5.0
   '@types/color-string': 1.5.2
   '@types/cookie': 0.5.1
   '@types/fs-extra': 11.0.1
@@ -2762,6 +2766,13 @@ packages:
       '@types/node': 18.15.11
     dev: false
 
+  /@types/busboy/1.5.0:
+    resolution:
+      { integrity: sha512-ncOOhwmyFDW76c/Tuvv9MA9VGYUCn8blzyWmzYELcNGDb0WXWLSmFi7hJq25YdRBYJrmMBB5jZZwUjlJe9HCjQ== }
+    dependencies:
+      '@types/node': 18.15.11
+    dev: true
+
   /@types/color-string/1.5.2:
     resolution:
       { integrity: sha512-hAhTmfFYVdzgsKwpC9Flc6h9Do64PhKoNxy3YxE0ze+0LIh3a7TrDQAxiujmANQbDRDgGduEz+9sMS+Zd+J7hA== }
@@ -3813,6 +3824,14 @@ packages:
     dependencies:
       base64-js: 1.5.1
       ieee754: 1.2.1
+    dev: false
+
+  /busboy/1.6.0:
+    resolution:
+      { integrity: sha512-8SFQbg/0hQ9xy3UNTB0YEnsNBbWfhf7RtnzpL7TkBiTBRfrQ9Fxcnz7VJsleJpyp6rVLvXiuORqjlHi5q+PYuA== }
+    engines: { node: '>=10.16.0' }
+    dependencies:
+      streamsearch: 1.1.0
     dev: false
 
   /call-bind/1.0.2:
@@ -10262,6 +10281,12 @@ packages:
     dependencies:
       internal-slot: 1.0.5
     dev: true
+
+  /streamsearch/1.1.0:
+    resolution:
+      { integrity: sha512-Mcc5wHehp9aXz1ax6bZUyY5afg9u2rv5cqQI3mRrYkGC8rW2hM02jWuwjtL++LS5qinSyhj2QfLyNsuc+VsExg== }
+    engines: { node: '>=10.0.0' }
+    dev: false
 
   /strict-uri-encode/2.0.0:
     resolution:

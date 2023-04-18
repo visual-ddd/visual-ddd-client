@@ -2,10 +2,11 @@ import { Doc as YDoc, encodeStateVectorFromUpdate, encodeStateAsUpdate, mergeUpd
 import { NextApiRequest } from 'next';
 import LRUCache from 'lru-cache';
 import { withWakedataRequestApiRoute } from '@/modules/session/api-helper';
+import { createFailResponse } from '@/modules/backend-node';
 
 import { allowMethod } from '../api';
 
-import { readBuffer, createDocFromUpdate } from './utils';
+import { readBuffer, createDocFromUpdate, readBufferFromMultipart } from './utils';
 import { RawYjsData, readRawData, toRawData } from './raw';
 
 export interface YjsDocMetaInfo {
@@ -192,6 +193,79 @@ export function createYjsStore(options: {
       // 恢复旧数据
       if (old) {
         cache.set(id, old);
+      } else {
+        cache.delete(id);
+      }
+
+      throw err;
+    }
+  });
+
+  /**
+   * 保存接口 v2
+   *
+   * 这个接口支持接收 vector
+   *
+   * 这个接口将返回更新而不是 DSL
+   */
+  const handleSaveV2 = withWakedataRequestApiRoute(async (req, res) => {
+    const id = req.query.id as string;
+
+    if (!req.headers['content-type']?.includes('multipart/form-data')) {
+      res.status(400).json(createFailResponse(400, 'content-type must be multipart/form-data'));
+      return;
+    }
+
+    if (id == null) {
+      res.status(400).json(createFailResponse(400, 'id is required'));
+      return;
+    }
+
+    const isDiff = req.query.diff === 'true';
+
+    const parts = (await readBufferFromMultipart(req)) as { vector?: Buffer; data: Buffer };
+
+    if (!parts.data) {
+      res.status(400).json(createFailResponse(400, 'data is required'));
+      return;
+    }
+
+    let update: Uint8Array;
+
+    if (isDiff) {
+      // 增量保存
+      const data = await getData(req);
+      const diff = parts.data;
+      update = mergeUpdates([data, diff]);
+    } else {
+      // 全量保存
+      update = parts.data;
+    }
+
+    // 执行保存
+    let old = cache.get(id);
+    try {
+      const buff = addCacheWithBuffer(id, Buffer.from(update));
+
+      await save(req, id, buff);
+
+      // 返回远程的增量更新
+      let diff: Uint8Array | undefined;
+      const fullUpdate = cache.get(id) || buff;
+      if (parts.vector) {
+        // 增量返回
+        diff = diffUpdate(fullUpdate, parts.vector);
+      } else {
+        // 全量返回
+        diff = fullUpdate;
+      }
+      res.status(200).send(Buffer.from(diff));
+    } catch (err) {
+      // 恢复旧数据
+      if (old) {
+        cache.set(id, old);
+      } else {
+        cache.delete(id);
       }
 
       throw err;
@@ -208,5 +282,6 @@ export function createYjsStore(options: {
     handleGetVector,
     handleGetDiff,
     handleSave,
+    handleSaveV2,
   };
 }

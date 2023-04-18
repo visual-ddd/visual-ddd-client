@@ -122,8 +122,24 @@ export abstract class BaseDesignerModel<
   /**
    * 保存数据
    * @param params
+   * @returns 返回保存后的数据
    */
-  protected abstract saveData(params: { id: string; data: Uint8Array; isDiff: boolean }): Promise<void>;
+  protected abstract saveData(params: {
+    id: string;
+    /**
+     * 本地 vector
+     */
+    vector: Uint8Array;
+
+    /**
+     * 待保存的数据
+     */
+    data: Uint8Array;
+    /**
+     * 是否为增量更新
+     */
+    isDiff: boolean;
+  }): Promise<Uint8Array>;
   /**
    * 加载保存向量
    * @param params
@@ -269,8 +285,17 @@ export abstract class BaseDesignerModel<
 
       const update = encodeStateAsUpdate(this.ydoc, vector);
 
-      // TODO: 拉取远程更新, 不同成员之间可能没有建立同步
-      await this.saveData({ id: this.id, data: update, isDiff: !!vector });
+      const remoteUpdate = await this.saveData({
+        id: this.id,
+        data: update,
+        vector: this.getLocalVector(),
+        isDiff: !!vector,
+      });
+
+      // 刷新远程数据
+      if (remoteUpdate.length) {
+        applyUpdate(this.ydoc, remoteUpdate);
+      }
 
       this.addHistory();
 
@@ -339,6 +364,14 @@ export abstract class BaseDesignerModel<
   @mutation('DESIGNER:SET_ERROR', false)
   protected setError(error?: Error) {
     this.error = error;
+  }
+
+  /**
+   * 获取本地 vector
+   * @returns
+   */
+  protected getLocalVector() {
+    return encodeStateVector(this.ydoc);
   }
 
   protected async getVector() {

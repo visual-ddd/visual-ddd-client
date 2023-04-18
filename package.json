@@ -59,6 +59,7 @@
     "ahooks": "^3.7.6",
     "antd": "^5.4.1",
     "async-validator": "^4.2.5",
+    "busboy": "^1.6.0",
     "camelcase": "^7.0.1",
     "classnames": "^2.3.2",
     "color-string": "^1.9.1",
@@ -128,6 +129,7 @@
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",
+    "@types/busboy": "^1.5.0",
     "@types/color-string": "^1.5.2",
     "@types/cookie": "^0.5.1",
     "@types/fs-extra": "^11.0.1",

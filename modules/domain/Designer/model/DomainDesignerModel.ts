@@ -289,14 +289,28 @@ export class DomainDesignerModel
     return await response.arrayBuffer();
   }
 
-  protected async saveData(params: { id: string; data: Uint8Array; isDiff: boolean }): Promise<void> {
-    const { id, data, isDiff } = params;
-    const response = await fetch(`/api/rest/domain/${id}?diff=${!!isDiff}`, { method: 'PUT', body: data });
+  protected async saveData(params: {
+    id: string;
+    vector: Uint8Array;
+    data: Uint8Array;
+    isDiff: boolean;
+  }): Promise<Uint8Array> {
+    const { id, data, isDiff, vector } = params;
+    const payload = new FormData();
+    const vectorBlob = new Blob([vector], { type: 'application/octet-stream' });
+    const dataBlob = new Blob([data], { type: 'application/octet-stream' });
+
+    payload.set('vector', vectorBlob);
+    payload.set('data', dataBlob);
+
+    const response = await fetch(`/api/rest/domain/${id}/v2?diff=${!!isDiff}`, { method: 'PUT', body: payload });
 
     if (!response.ok) {
       const message = await extraRestErrorMessage(response);
       throw new Error(message || '保存失败');
     }
+
+    return new Uint8Array(await response.arrayBuffer());
   }
 
   protected async getDiff(params: { id: string; vector: Uint8Array }): Promise<ArrayBuffer> {
