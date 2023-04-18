@@ -106,10 +106,12 @@ export class BotPromptLibraryModel {
     const list = (await res.json()) as Prompt[];
 
     this.setList(
-      list.map(i => {
-        i.uuid = v4();
-        return i;
-      })
+      list
+        .map(i => {
+          i.uuid = v4();
+          return i;
+        })
+        .sort((i, j) => (new Date(i.date) > new Date(j.date) ? -1 : 1))
     );
 
     // 清理缓存
