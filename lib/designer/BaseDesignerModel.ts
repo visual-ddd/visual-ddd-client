@@ -13,6 +13,7 @@ import { IDesigner } from './IDesigner';
 import { BaseDesignerAwarenessState, DesignerAwareness } from './DesignerAwareness';
 import { createYjsLocalProvider, createYjsProvider, YjsProviderDisposer } from './createYjsProvider';
 import { DesignerAwarenessDelegate } from './DesignerAwarenessDelegate';
+import { HistoryManager } from './HistoryManager';
 
 export interface BaseDesignerModelOptions {
   name: string;
@@ -53,6 +54,8 @@ export abstract class BaseDesignerModel<
   readonly keyboardBinding: DesignerKeyboardBinding;
 
   readonly awareness: DesignerAwareness<State>;
+
+  readonly historyManager: HistoryManager;
 
   get rawAwareness() {
     return this.awareness.awareness;
@@ -143,6 +146,7 @@ export abstract class BaseDesignerModel<
 
     this.keyboardBinding = new DesignerKeyboardBinding({ model: this });
     this.awareness = new DesignerAwareness({ doc: this.ydoc });
+    this.historyManager = new HistoryManager({ scope: `${name}-${id}` });
 
     makeAutoBindThis(this);
     makeObservable(this);
@@ -193,12 +197,6 @@ export abstract class BaseDesignerModel<
 
       const key = `${this.name}-${this.id}`;
 
-      // 加载本地数据
-      if (!this.localProviderSynced && !this.readonly) {
-        await createYjsLocalProvider({ id: key, doc: this.ydoc });
-        this.localProviderSynced = true;
-      }
-
       // 销毁旧的链接
       if (this.remoteProvider) {
         this.remoteProvider();
@@ -209,7 +207,15 @@ export abstract class BaseDesignerModel<
       const update = new Uint8Array(buf);
 
       if (update.length) {
+        // 获取到的是全量的远程数据
+        this.historyManager.updateRemote(update);
         applyUpdate(this.ydoc, update);
+      }
+
+      // 加载本地数据
+      if (!this.localProviderSynced && !this.readonly) {
+        await createYjsLocalProvider({ id: key, doc: this.ydoc });
+        this.localProviderSynced = true;
       }
 
       // 多人协作
@@ -263,7 +269,10 @@ export abstract class BaseDesignerModel<
 
       const update = encodeStateAsUpdate(this.ydoc, vector);
 
+      // TODO: 拉取远程更新, 不同成员之间可能没有建立同步
       await this.saveData({ id: this.id, data: update, isDiff: !!vector });
+
+      this.addHistory();
 
       this.setError(undefined);
       message.success('保存成功');
@@ -381,5 +390,10 @@ export abstract class BaseDesignerModel<
   protected onCollabError(err: Error) {
     this.collaborationStatus.status = CollaborationStatus.Error;
     this.collaborationStatus.description = err.message;
+  }
+
+  protected addHistory() {
+    const update = encodeStateAsUpdate(this.ydoc);
+    this.historyManager.unshift(update);
   }
 }
