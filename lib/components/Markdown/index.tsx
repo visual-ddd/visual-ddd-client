@@ -4,16 +4,20 @@ import RemarkMath from 'remark-math';
 import RehypeKatex from 'rehype-katex';
 import RemarkBreaks from 'remark-breaks';
 import RemarkGfm from 'remark-gfm';
+import type { PluggableList } from 'unified';
 
 // 代码高亮
 import RehypePrsim from 'rehype-prism-plus';
-import { memo, useRef, useState } from 'react';
+import { memo, useRef } from 'react';
 import { message } from 'antd';
 import 'katex/dist/katex.min.css';
+import classNames from 'classnames';
+import { CopyOutlined } from '@ant-design/icons';
+import { Base64 } from 'js-base64';
 
 import s from './index.module.scss';
-import classNames from 'classnames';
-import { CopyOutlined, PictureOutlined } from '@ant-design/icons';
+import { CodePreviewPlugin } from './CodePreviewPlugin';
+import { memoize } from 'lodash';
 
 const copy = (text: string) => {
   navigator.clipboard
@@ -29,26 +33,10 @@ const copy = (text: string) => {
 const COMPONENTS: Options['components'] = {
   pre: (props: { children: any; className?: string }) => {
     const ref = useRef<HTMLPreElement>(null);
-    const [svgContent, setSvgContent] = useState('');
-
-    const isSVG = props.className?.includes('language-svg');
 
     return (
       <div className={s.codeBlock}>
         <div className={s.actions}>
-          {isSVG && (
-            <div
-              className={classNames(s.action, s.svg)}
-              onClick={() => {
-                if (ref.current) {
-                  const code = ref.current.innerText;
-                  setSvgContent(code);
-                }
-              }}
-            >
-              <PictureOutlined />
-            </div>
-          )}
           <div
             className={classNames(s.action, s.copy)}
             onClick={() => {
@@ -64,9 +52,6 @@ const COMPONENTS: Options['components'] = {
         <pre ref={ref} className={props.className}>
           {props.children}
         </pre>
-        {!!(isSVG && svgContent) && (
-          <div className={s.svgPreview} dangerouslySetInnerHTML={{ __html: svgContent }}></div>
-        )}
       </div>
     );
   },
@@ -77,10 +62,50 @@ export interface MarkdownProps {
   content: string;
 }
 
+const toDataUri = memoize(
+  (svg: string, width?: number) => {
+    const element = document.createElement('div');
+    element.innerHTML = svg;
+    const svgElement = element.querySelector('svg');
+    if (svgElement) {
+      if (width) {
+        svgElement.setAttribute('width', `${width}px`);
+      }
+      const svgData = new XMLSerializer().serializeToString(svgElement).replace(/&nbsp;/g, '\u00a0');
+      const encodedData = Base64.encode(svgData);
+      return 'data:image/svg+xml;base64,' + encodedData;
+    }
+
+    return undefined;
+  },
+  (i, w) => `${i}-${w}`
+);
+
+const REMARK_PLUGINS: PluggableList = [
+  [
+    CodePreviewPlugin,
+    {
+      consumer: {
+        svg: {
+          validate(data: string) {
+            return data.trimEnd().endsWith('</svg>');
+          },
+          transform(data: string) {
+            return toDataUri(data, 500);
+          },
+        },
+      },
+    },
+  ],
+  RemarkMath,
+  RemarkGfm,
+  RemarkBreaks,
+];
+
 export const Markdown = memo((props: MarkdownProps) => {
   return (
     <ReactMarkdown
-      remarkPlugins={[RemarkMath, RemarkGfm, RemarkBreaks]}
+      remarkPlugins={REMARK_PLUGINS}
       rehypePlugins={[RehypeKatex, [RehypePrsim, { ignoreMissing: true }]]}
       className={classNames('vd-markdown markdown-body', s.root, props.className)}
       linkTarget="_blank"
