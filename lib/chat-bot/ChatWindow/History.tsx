@@ -111,10 +111,15 @@ export const History = observer(function History(props: HistoryProps) {
 
   const scrollToBottom = useMemo(() => {
     return rafDebounce((messageId?: string) => {
+      const scroll = () => {
+        if (containerRef.current) {
+          containerRef.current.scrollTop = containerRef.current.scrollHeight;
+        }
+      };
       if (messageId) {
         const element = document.querySelector(`[data-uuid="${messageId}"]`) as HTMLDivElement | undefined;
         if (element) {
-          scrollIntoView(element);
+          scroll();
           return;
         } else {
           // 加一个延时，因为消息插入时 DOM 未必已经挂载
@@ -124,9 +129,8 @@ export const History = observer(function History(props: HistoryProps) {
           return;
         }
       }
-      if (containerRef.current) {
-        containerRef.current.scrollTop = containerRef.current.scrollHeight;
-      }
+
+      scroll();
     });
   }, []);
 

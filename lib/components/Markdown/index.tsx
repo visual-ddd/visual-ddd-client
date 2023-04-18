@@ -5,7 +5,6 @@ import RehypeKatex from 'rehype-katex';
 import RemarkBreaks from 'remark-breaks';
 import RemarkGfm from 'remark-gfm';
 import type { PluggableList } from 'unified';
-
 // 代码高亮
 import RehypePrsim from 'rehype-prism-plus';
 import { memo, useRef } from 'react';
@@ -13,11 +12,10 @@ import { message } from 'antd';
 import 'katex/dist/katex.min.css';
 import classNames from 'classnames';
 import { CopyOutlined } from '@ant-design/icons';
-import { Base64 } from 'js-base64';
+import { MermaidComponent } from '@/lib/components/Mermaid';
 
 import s from './index.module.scss';
-import { CodePreviewPlugin } from './CodePreviewPlugin';
-import { memoize } from 'lodash';
+import { CodePreviewPlugin, IMAGE_TITLE } from './CodePreviewPlugin';
 
 const copy = (text: string) => {
   navigator.clipboard
@@ -30,7 +28,35 @@ const copy = (text: string) => {
     });
 };
 
+function isValidSvg(svg: string) {
+  return svg?.trimEnd().endsWith('</svg>');
+}
+
 const COMPONENTS: Options['components'] = {
+  img: props => {
+    if (props.title === IMAGE_TITLE) {
+      let src = props.src;
+
+      if (!src) {
+        return null;
+      }
+
+      src = decodeURI(src);
+
+      if (props.alt === 'svg') {
+        if (props.src && isValidSvg(src)) {
+          // SVG 渲染
+          return <div style={{ maxWidth: 500 }} dangerouslySetInnerHTML={{ __html: src }}></div>;
+        }
+      } else if (props.alt === 'mermaid') {
+        return <MermaidComponent style={{ background: 'white' }} code={src}></MermaidComponent>;
+      }
+
+      return null;
+    }
+
+    return <img src={props.src} />;
+  },
   pre: (props: { children: any; className?: string }) => {
     const ref = useRef<HTMLPreElement>(null);
 
@@ -62,41 +88,8 @@ export interface MarkdownProps {
   content: string;
 }
 
-const toDataUri = memoize(
-  (svg: string, width?: number) => {
-    const element = document.createElement('div');
-    element.innerHTML = svg;
-    const svgElement = element.querySelector('svg');
-    if (svgElement) {
-      if (width) {
-        svgElement.setAttribute('width', `${width}px`);
-      }
-      const svgData = new XMLSerializer().serializeToString(svgElement).replace(/&nbsp;/g, '\u00a0');
-      const encodedData = Base64.encode(svgData);
-      return 'data:image/svg+xml;base64,' + encodedData;
-    }
-
-    return undefined;
-  },
-  (i, w) => `${i}-${w}`
-);
-
 const REMARK_PLUGINS: PluggableList = [
-  [
-    CodePreviewPlugin,
-    {
-      consumer: {
-        svg: {
-          validate(data: string) {
-            return data.trimEnd().endsWith('</svg>');
-          },
-          transform(data: string) {
-            return toDataUri(data, 500);
-          },
-        },
-      },
-    },
-  ],
+  [CodePreviewPlugin, { consumer: ['svg', 'mermaid'] }],
   RemarkMath,
   RemarkGfm,
   RemarkBreaks,

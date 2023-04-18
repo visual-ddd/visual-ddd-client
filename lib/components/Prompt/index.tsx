@@ -41,6 +41,8 @@ export function usePrompt() {
             </Observer>
           </div>
         ),
+        maskClosable: false,
+        keyboard: false,
         closable: true,
         okText: '确定',
         onOk: () => {
