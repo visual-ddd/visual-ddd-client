@@ -1,7 +1,7 @@
 import { request, useRequestByGet } from '@/modules/backend-client';
 import { useSession, VDUser } from '@/modules/session';
 import { UserOutlined } from '@ant-design/icons';
-import { Avatar, Button, Form, Input, message } from 'antd';
+import { Avatar, Button, Form, Input, Tooltip, message } from 'antd';
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 
@@ -56,7 +56,11 @@ export const BaseInfo = () => {
       form={form}
     >
       <div className={classNames('vd-base-info__avatar', s.avatar)}>
-        <Avatar size={50} icon={<UserOutlined />} src={user?.icon || session?.user.icon} />
+        <a href="https://en.gravatar.com/" target="_blank">
+          <Tooltip title="基于 Gravatar">
+            <Avatar size={50} icon={<UserOutlined />} src={user?.icon || session?.user.icon} />
+          </Tooltip>
+        </a>
       </div>
       <Form.Item label="用户名" name="userName" rules={[{ required: true, message: '请输入用户名!' }]}>
         <Input placeholder="请输入用户名" />

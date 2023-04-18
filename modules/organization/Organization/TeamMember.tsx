@@ -105,6 +105,10 @@ export const TeamMember = (props: TeamMemberProp) => {
       dataIndex: 'teamMemberName',
       key: 'teamMemberName',
       width: 150,
+      // TODO: 显示邮箱
+      // render(_: any, record: TeamMemberItem) {
+      //   return `${record.teamMemberName}(${record.accountNo})`;
+      // },
     },
     {
       title: '角色',
