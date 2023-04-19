@@ -1,4 +1,4 @@
-import { DesignerHeader } from '@/lib/components/DesignerLayout';
+import { DesignerHeader } from '@/lib/designer';
 import { IUser, VersionStatus } from '@/lib/core';
 import { observer } from 'mobx-react';
 import { useMemo } from 'react';

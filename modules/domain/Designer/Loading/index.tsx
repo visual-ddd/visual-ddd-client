@@ -1,4 +1,4 @@
-import { DesignerLoading } from '@/lib/components/DesignerLayout';
+import { DesignerLoading } from '@/lib/designer';
 import { observer } from 'mobx-react';
 
 import { useDomainDesignerContext } from '../Context';

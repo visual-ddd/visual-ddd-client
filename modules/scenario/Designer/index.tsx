@@ -3,7 +3,13 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { message } from 'antd';
 import { tryDispose } from '@/lib/utils';
 import { VersionStatus } from '@/lib/core';
-import { DesignerHeader, DesignerLayout, DesignerLoading, DesignerTabLabel } from '@/lib/components/DesignerLayout';
+import {
+  DesignerContextProvider,
+  DesignerHeader,
+  DesignerLayout,
+  DesignerLoading,
+  DesignerTabLabel,
+} from '@/lib/designer';
 import { OfflineTip } from '@/lib/components/OfflineTip';
 import { NoopArray } from '@wakeapp/utils';
 import { CompletionContextProvider } from '@/lib/components/Completion';
@@ -16,7 +22,6 @@ import { usePreventUnload } from '@/lib/hooks';
 import { ScenarioDesignerTabs, ScenarioDesignerTabsMap, ScenarioDesignerModel } from './model';
 import { ScenarioEditor } from '../scenario-design';
 import { DomainEditor } from '../service-design';
-import { DesignerContextProvider } from '@/lib/designer';
 export interface ScenarioDescription {
   id: string | number;
 

@@ -57,6 +57,22 @@
   color: var(--vd-color-gray-600);
 }
 
-.collaborators {
-  margin-right: -7px;
+.collab {
+  position: relative;
+  display: flex;
+
+  .collaborators {
+    margin-right: -7px;
+  }
+}
+
+.save {
+  display: flex;
+  align-items: center;
+
+  .history {
+    font-size: 16px;
+    color: gray;
+    margin-right: var(--vd-spacing-sm);
+  }
 }

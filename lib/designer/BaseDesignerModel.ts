@@ -4,7 +4,7 @@ import { message } from 'antd';
 import Router from 'next/router';
 import { derive, effect, makeAutoBindThis, mutation } from '@/lib/store';
 import { IDisposable } from '@/lib/utils';
-import { booleanPredicate } from '@wakeapp/utils';
+import { booleanPredicate, debounce } from '@wakeapp/utils';
 import unionBy from 'lodash/unionBy';
 
 import { DesignerKeyboardBinding } from './DesignerKeyboardBinding';
@@ -160,6 +160,10 @@ export abstract class BaseDesignerModel<
 
     this.ydoc = new YDoc();
 
+    this.ydoc.on('update', update => {
+      this.handleDocUpdate();
+    });
+
     this.keyboardBinding = new DesignerKeyboardBinding({ model: this });
     this.awareness = new DesignerAwareness({ doc: this.ydoc });
     this.historyManager = new HistoryManager({ scope: `${name}-${id}` });
@@ -224,8 +228,8 @@ export abstract class BaseDesignerModel<
 
       if (update.length) {
         // 获取到的是全量的远程数据
-        this.historyManager.updateRemote(update);
         applyUpdate(this.ydoc, update);
+        this.updateRemote();
       }
 
       // 加载本地数据
@@ -424,6 +428,16 @@ export abstract class BaseDesignerModel<
     this.collaborationStatus.status = CollaborationStatus.Error;
     this.collaborationStatus.description = err.message;
   }
+
+  protected updateRemote() {
+    const update = encodeStateAsUpdate(this.ydoc);
+    this.historyManager.updateRemote(update);
+  }
+
+  protected handleDocUpdate = debounce(() => {
+    const update = encodeStateAsUpdate(this.ydoc);
+    this.historyManager.updateLocal(update);
+  }, 1000);
 
   protected addHistory() {
     const update = encodeStateAsUpdate(this.ydoc);

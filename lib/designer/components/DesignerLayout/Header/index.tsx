@@ -1,9 +1,10 @@
 import { VersionBadge } from '@/lib/components/VersionBadge';
 import { IUser, VersionStatus } from '@/lib/core';
-import { Avatar, Button, Tooltip } from 'antd';
+import { Avatar, Button, Divider, Space, Tooltip } from 'antd';
 import { observer } from 'mobx-react';
 import { useRouter } from 'next/router';
-import type { CollaborationDescription } from '@/lib/designer';
+import { CollaborationDescription, HistoryViewModal } from '@/lib/designer';
+import { HistoryOutlined } from '@ant-design/icons';
 
 import s from './index.module.scss';
 import { CollabStatus } from './CollabStatus';
@@ -85,35 +86,51 @@ export const DesignerHeader = observer(function DesignerHeader(props: DesignerHe
       </div>
       <div className={s.center}></div>
       <div className={s.aside}>
-        {right}
+        <Space split={<Divider type="vertical" />} size="small">
+          {right}
 
-        {!readonly && !!collaborators?.length && (
-          <Avatar.Group maxCount={7} className={s.collaborators}>
-            {collaborators.map(i => {
-              return (
-                <Tooltip title={i.name} key={i.id} placement="bottomRight">
-                  <Avatar size="small" src={i.avatar}>
-                    {i.name}
-                  </Avatar>
+          {!readonly && (
+            <div className={s.collab}>
+              {/* 协作状态 */}
+              {!!collaborators?.length && (
+                <Avatar.Group maxCount={7} className={s.collaborators}>
+                  {collaborators.map(i => {
+                    return (
+                      <Tooltip title={i.name} key={i.id} placement="bottomRight">
+                        <Avatar size="small" src={i.avatar}>
+                          {i.name}
+                        </Avatar>
+                      </Tooltip>
+                    );
+                  })}
+                </Avatar.Group>
+              )}
+              {!!collaborationStatus && <CollabStatus status={collaborationStatus} />}
+            </div>
+          )}
+
+          <div className={s.save}>
+            {/* 历史记录 */}
+            {!readonly && (
+              <HistoryViewModal>
+                <HistoryOutlined className={s.history} title="历史记录" />
+              </HistoryViewModal>
+            )}
+
+            {/* 保存按钮 */}
+            {!readonly ? (
+              saveTooltip ? (
+                <Tooltip title={saveTooltip} placement="bottomRight">
+                  {save}
                 </Tooltip>
-              );
-            })}
-          </Avatar.Group>
-        )}
-        {!readonly && !!collaborationStatus && <CollabStatus status={collaborationStatus} />}
-
-        {/* 保存按钮 */}
-        {!readonly ? (
-          saveTooltip ? (
-            <Tooltip title={saveTooltip} placement="bottomRight">
-              {save}
-            </Tooltip>
-          ) : (
-            save
-          )
-        ) : (
-          <Button disabled>只读</Button>
-        )}
+              ) : (
+                save
+              )
+            ) : (
+              <Button disabled>只读</Button>
+            )}
+          </div>
+        </Space>
       </div>
     </div>
   );

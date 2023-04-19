@@ -22,11 +22,18 @@ export interface HistoryItem {
 const KEY_FOR_DATA = 'design-data-';
 const KEY_FOR_LIST = 'design-list-';
 
+// TODO: 长度限制和回收内存
+
 export interface HistoryManagerOptions {
   scope?: string;
 }
 
 const storage = localforage.createInstance({ description: 'designer-history' });
+
+interface ListStorage {
+  list: HistoryItem[];
+  updateTime: Date;
+}
 
 /**
  * 本地历史记录管理
@@ -46,6 +53,13 @@ export class HistoryManager {
    * 本地记录的指针
    */
   local?: HistoryItem;
+
+  /**
+   * 本地和远程是否同步
+   */
+  get isSynced() {
+    return this.local?.hash === this.remote?.hash;
+  }
 
   private scope: string = '';
 
@@ -95,19 +109,32 @@ export class HistoryManager {
   }
 
   private async recoverList() {
-    const list = await storage.getItem<HistoryItem[]>(`${KEY_FOR_LIST}-${this.scope}`);
+    const list = await storage.getItem<ListStorage>(this.keyForList());
 
     if (list) {
-      this.history = list;
+      this.history = list.list;
     }
   }
 
   private saveData = (pointer: string, data: Uint8Array) => {
-    storage.setItem(`${KEY_FOR_DATA}-${pointer}`, data);
+    storage.setItem(this.keyForData(pointer), data);
   };
 
   private saveList() {
-    storage.setItem(`${KEY_FOR_LIST}-${this.scope}`, this.history);
+    const data: ListStorage = {
+      list: this.history,
+      updateTime: new Date(),
+    };
+
+    storage.setItem(this.keyForList(), data);
+  }
+
+  private keyForList() {
+    return `${KEY_FOR_LIST}-${this.scope}`;
+  }
+
+  private keyForData(pointer: string) {
+    return `${KEY_FOR_DATA}-${this.scope}-${pointer}`;
   }
 
   private isExisted = (hash: string) => {

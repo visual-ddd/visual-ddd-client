@@ -4,7 +4,7 @@ import { Button, message, notification } from 'antd';
 import { tryDispose } from '@/lib/utils';
 import { IUser, VersionStatus } from '@/lib/core';
 import { CompletionContextProvider } from '@/lib/components/Completion';
-import { DesignerLayout, DesignerTabLabel } from '@/lib/components/DesignerLayout';
+import { DesignerContextProvider, DesignerLayout, DesignerTabLabel } from '@/lib/designer';
 import { OfflineTip } from '@/lib/components/OfflineTip';
 import {
   UbiquitousLanguageCompletionItem,
@@ -25,7 +25,6 @@ import { MapperEditor } from '../mapper-design';
 import { DomainDesignerHeader } from './Header';
 import { DomainDesignerLoading } from './Loading';
 import { DomainDesignerTabs, DomainDesignerTabsMap, DomainDesignerModel } from './model';
-import { DesignerContextProvider } from '@/lib/designer';
 
 export interface DomainDescription {
   id: string | number;

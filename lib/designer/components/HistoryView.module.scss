@@ -1,0 +1,63 @@
+.root {
+  display: flex;
+  min-height: 50vh;
+  max-height: 80vh;
+  overflow: hidden;
+}
+
+.list {
+  flex-shrink: 0;
+  border-right: 1px solid var(--vd-color-gray-200);
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  .item {
+    display: flex;
+    align-items: center;
+    width: 250px;
+    padding: 8px 6px;
+
+    &:hover {
+      background-color: var(--vd-color-gray-300);
+    }
+
+    .date {
+      flex: 1;
+    }
+
+    .extra {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .hash,
+    .remote,
+    .local {
+      line-height: 1;
+      font-size: 12px;
+      font-family: var(--vd-font-family-mono);
+      border-radius: 4px;
+      padding: 4px;
+    }
+
+    .hash {
+      background-color: var(--vd-color-gray-300);
+      color: var(--vd-color-gray-700);
+    }
+
+    .remote {
+      background-color: var(--vd-color-danger-300);
+      color: var(--vd-color-gray-200);
+    }
+
+    .local {
+      background-color: var(--vd-color-info-200);
+    }
+  }
+}
+
+.body {
+  flex: 1;
+  padding: var(--vd-spacing-base);
+}
