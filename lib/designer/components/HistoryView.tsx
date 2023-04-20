@@ -7,6 +7,9 @@ import { observer } from 'mobx-react';
 import { useDesignerContext } from '../BaseDesignerContext';
 import { HistoryItem } from '../HistoryManager';
 import s from './HistoryView.module.scss';
+import { DiffView } from './DiffView';
+import { VersionSelect } from './VersionSelect';
+import { ArrowRightOutlined } from '@ant-design/icons';
 
 export interface HistoryViewProps {
   onReverse: (item: HistoryItem) => void;
@@ -17,6 +20,8 @@ export const HistoryView = observer(function HistoryView(props: HistoryViewProps
   const designModel = useDesignerContext();
   const history = designModel.historyManager;
   const [selectedHash, setSelectedHash] = useState<string | undefined>();
+  const [compareHash, setCompareHash] = useState<string | undefined>();
+
   const selected = useMemo(() => {
     if (!history.list.length) {
       return undefined;
@@ -42,6 +47,10 @@ export const HistoryView = observer(function HistoryView(props: HistoryViewProps
 
     return getFallback();
   }, [selectedHash, history.list]);
+
+  const compare = useMemo(() => {
+    return history.list.find(i => i.hash === compareHash);
+  }, [compareHash, history.list]);
 
   const handleReverse = () => {
     const item = selected;
@@ -83,6 +92,7 @@ export const HistoryView = observer(function HistoryView(props: HistoryViewProps
   };
 
   const handleSelect = (item: HistoryItem) => {
+    setCompareHash(undefined);
     setSelectedHash(item.hash);
   };
 
@@ -114,7 +124,17 @@ export const HistoryView = observer(function HistoryView(props: HistoryViewProps
         ) : (
           <div className={s.content}>
             <div className={s.actions}>
-              <div className={s.actionLeft}></div>
+              <div className={s.actionLeft}>
+                <VersionSelect value={selected.hash} disabled className={s.versionSelect} />
+                <ArrowRightOutlined className={s.arrow} />
+                <VersionSelect
+                  value={compare?.hash}
+                  ignoreHash={selected.hash}
+                  onChange={v => setCompareHash(v)}
+                  className={s.versionSelect}
+                  allowClear
+                />
+              </div>
               <div className={s.actionRight}>
                 {selected.removable && (
                   <Button danger onClick={handleRemove}>
@@ -128,7 +148,7 @@ export const HistoryView = observer(function HistoryView(props: HistoryViewProps
                 )}
               </div>
             </div>
-            <div className={s.diff}>对比功能正在开发中... 敬请期待</div>
+            <DiffView />
           </div>
         )}
       </div>

@@ -95,6 +95,7 @@ specifiers:
   mermaid: 10.0.2
   mobx: ^6.9.0
   mobx-react: ^7.6.0
+  monaco-editor: ^0.37.1
   mousetrap: ^1.6.5
   next: 13.2.2
   openai: ^3.2.1
@@ -276,6 +277,7 @@ devDependencies:
   husky: 8.0.3
   jest: 29.5.0_@types+node@18.15.11
   jest-environment-jsdom: 29.5.0
+  monaco-editor: 0.37.1
   prettier: 2.8.7
   prettier-config-wk: 0.2.4
   sass: 1.61.0
@@ -8119,6 +8121,11 @@ packages:
     resolution:
       { integrity: sha512-HdKewQEREEJgsWnErClfbFoVebze6rGazxFLU/XUyrII8dORfVszN1V0BMRnQSzcgsNNtkX8DHj3nC6cdWE9YQ== }
     dev: false
+
+  /monaco-editor/0.37.1:
+    resolution:
+      { integrity: sha512-jLXEEYSbqMkT/FuJLBZAVWGuhIb4JNwHE9kPTorAVmsdZ4UzHAfgWxLsVtD7pLRFaOwYPhNG9nUCpmFL1t/dIg== }
+    dev: true
 
   /mousetrap/1.6.5:
     resolution:

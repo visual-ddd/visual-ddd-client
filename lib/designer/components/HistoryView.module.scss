@@ -73,7 +73,7 @@
   flex: 1;
 
   .content {
-    padding: var(--vd-spacing-base);
+    padding: var(--vd-spacing-sm) var(--vd-spacing-base);
 
     .actions {
       display: flex;
@@ -81,6 +81,16 @@
 
       .actionLeft {
         flex: 1;
+        display: flex;
+        gap: var(--vd-spacing-xs);
+
+        .versionSelect {
+          width: 180px;
+        }
+      }
+
+      .arrow {
+        color: var(--vd-color-gray-500);
       }
 
       .actionRight {
