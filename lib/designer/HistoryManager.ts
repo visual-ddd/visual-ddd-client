@@ -1,6 +1,9 @@
 import localforage from 'localforage';
 import { Doc as YDoc, encodeStateAsUpdate } from 'yjs';
 import { getContentDigest } from '@/lib/yjs-reverse';
+import { derive, makeAutoBindThis } from '@/lib/store';
+import { makeObservable, observable, runInAction, toJS } from 'mobx';
+import { formatDate } from '@wakeapp/utils';
 
 export interface HistoryItem {
   /**
@@ -18,6 +21,32 @@ export interface HistoryItem {
    * 标记
    */
   note?: string;
+}
+
+export interface ExtendedHistoryItem extends HistoryItem {
+  /**
+   * 标题
+   */
+  title: string;
+
+  /**
+   * 是否支持删除
+   */
+  removable: boolean;
+  /**
+   * 是否支持恢复
+   */
+  recoverable: boolean;
+
+  /**
+   * 当前状态标记
+   */
+  local: boolean;
+
+  /**
+   * 远程状态标记
+   */
+  remote: boolean;
 }
 
 const KEY_FOR_DATA = 'design-data-';
@@ -43,23 +72,88 @@ export class HistoryManager {
   /**
    * 历史记录
    */
-  history: HistoryItem[] = [];
+  @observable
+  protected history: HistoryItem[] = [];
 
   /**
    * 远程记录的指针
    */
-  remote?: HistoryItem;
+  @observable.ref
+  protected remote?: HistoryItem;
 
   /**
    * 本地记录的指针
    */
-  local?: HistoryItem;
+  @observable.ref
+  protected local?: HistoryItem;
 
   /**
    * 本地和远程是否同步
    */
+  @derive
   get isSynced() {
     return this.local?.hash === this.remote?.hash;
+  }
+
+  /**
+   * 确定当前状态是否已存在, 用于判断是否需要备份本地缓存
+   * @returns
+   */
+  @derive
+  get isLocalInList() {
+    return !!(this.local && (this.isSynced || this.isExisted(this.local.hash)));
+  }
+
+  /**
+   * 历史记录列表
+   */
+  @derive
+  get list(): ExtendedHistoryItem[] {
+    const histories: ExtendedHistoryItem[] = [
+      ...this.history.map(i => ({
+        ...i,
+        title: formatDate(i.createDate, 'MM/DD HH:mm'),
+        local: false,
+        remote: false,
+        removable: true,
+        recoverable: true,
+      })),
+    ];
+
+    if (this.remote) {
+      const item = histories.find(i => i.hash === this.remote!.hash);
+      if (item) {
+        item.remote = true;
+      } else {
+        histories.unshift({
+          ...this.remote,
+          title: '线上',
+          local: false,
+          remote: true,
+          recoverable: true,
+          removable: false,
+        });
+      }
+    }
+
+    if (this.local) {
+      const item = histories.find(i => i.hash === this.local!.hash);
+      if (item) {
+        item.local = true;
+        item.recoverable = false;
+      } else {
+        histories.unshift({
+          ...this.local,
+          title: '当前',
+          local: true,
+          remote: false,
+          recoverable: false,
+          removable: false,
+        });
+      }
+    }
+
+    return histories;
   }
 
   private scope: string = '';
@@ -71,15 +165,9 @@ export class HistoryManager {
 
   constructor(options: HistoryManagerOptions) {
     this.scope = options.scope || '';
+    makeAutoBindThis(this);
+    makeObservable(this);
     this.recoverList();
-  }
-
-  /**
-   * 确定当前状态是否已存在
-   * @returns
-   */
-  isLocalInList() {
-    return !!(this.local && (this.isSynced || this.isExisted(this.local.hash)));
   }
 
   /**
@@ -102,13 +190,29 @@ export class HistoryManager {
     return snapshot;
   }
 
+  /**
+   * 删除记录
+   * @param hash
+   */
+  removeHistory(hash: string) {
+    const index = this.history.findIndex(i => i.hash === hash);
+    if (index >= 0) {
+      runInAction(() => {
+        this.history.splice(index, 1);
+        this.saveList();
+      });
+    }
+  }
+
   async updateRemote(doc: YDoc) {
     const hash = await this.getHashForDocument(doc);
-    this.remote = {
-      hash,
-      createDate: new Date(),
-      note: '远程',
-    };
+
+    runInAction(() => {
+      this.remote = {
+        hash,
+        createDate: new Date(),
+      };
+    });
 
     if (this.isExisted(hash)) {
       // 历史记录已存在
@@ -123,11 +227,12 @@ export class HistoryManager {
   async updateLocal(doc: YDoc) {
     const hash = await this.getHashForDocument(doc);
 
-    this.local = {
-      hash,
-      createDate: new Date(),
-      note: '本地',
-    };
+    runInAction(() => {
+      this.local = {
+        hash,
+        createDate: new Date(),
+      };
+    });
   }
 
   async unshift(doc: YDoc, note?: string, asRemote?: boolean) {
@@ -145,12 +250,14 @@ export class HistoryManager {
       note,
     };
 
-    this.history.unshift(item);
+    runInAction(() => {
+      this.history.unshift(item);
 
-    if (asRemote) {
-      // 同时更新 remote 指针
-      this.remote = item;
-    }
+      if (asRemote) {
+        // 同时更新 remote 指针
+        this.remote = item;
+      }
+    });
 
     this.snapshotLoaded.set(hash, data);
 
@@ -162,7 +269,9 @@ export class HistoryManager {
     const list = await storage.getItem<ListStorage>(this.keyForList());
 
     if (list) {
-      this.history = list.list;
+      runInAction(() => {
+        this.history = list.list;
+      });
     }
   }
 
@@ -172,7 +281,7 @@ export class HistoryManager {
 
   private saveList() {
     const data: ListStorage = {
-      list: this.history,
+      list: toJS(this.history),
       updateTime: new Date(),
     };
 

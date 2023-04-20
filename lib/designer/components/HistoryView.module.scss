@@ -20,21 +20,11 @@
     width: 280px;
     padding: $padding-hoz $padding-vert;
     position: relative;
+    cursor: pointer;
 
-    &:hover {
+    &:hover,
+    &.selected {
       background-color: var(--vd-color-gray-300);
-
-      .actions {
-        display: flex;
-      }
-    }
-
-    .actions {
-      display: none;
-      position: absolute;
-      right: $padding-vert;
-      top: $padding-hoz;
-      gap: 2px;
     }
 
     .date {
@@ -84,5 +74,20 @@
 
   .content {
     padding: var(--vd-spacing-base);
+
+    .actions {
+      display: flex;
+      align-items: center;
+
+      .actionLeft {
+        flex: 1;
+      }
+
+      .actionRight {
+        display: flex;
+        justify-content: flex-end;
+        gap: var(--vd-spacing-xs);
+      }
+    }
   }
 }

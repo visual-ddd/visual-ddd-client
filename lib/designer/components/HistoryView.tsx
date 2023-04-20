@@ -1,5 +1,8 @@
 import { formatDate } from '@wakeapp/utils';
-import { Alert, Button, Modal, message } from 'antd';
+import { Alert, Empty, Button, Modal, message } from 'antd';
+import { useMemo, useState } from 'react';
+import classNames from 'classnames';
+import { observer } from 'mobx-react';
 
 import { useDesignerContext } from '../BaseDesignerContext';
 import { HistoryItem } from '../HistoryManager';
@@ -9,17 +12,43 @@ export interface HistoryViewProps {
   onReverse: (item: HistoryItem) => void;
 }
 
-export const HistoryView = (props: HistoryViewProps) => {
+export const HistoryView = observer(function HistoryView(props: HistoryViewProps) {
   const { onReverse } = props;
   const designModel = useDesignerContext();
   const history = designModel.historyManager;
-  const remote = history.remote;
-  const local = history.local;
+  const [selectedHash, setSelectedHash] = useState<string | undefined>();
+  const selected = useMemo(() => {
+    if (!history.list.length) {
+      return undefined;
+    }
 
-  const remoteInHistory = remote && history.history.some(i => i.hash === remote?.hash);
-  const localInHistory = local && history.history.some(i => i.hash === local?.hash);
+    const getFallback = () => {
+      const local = history.list.find(i => i.local);
+      if (local) {
+        return local;
+      } else {
+        return history.list[0];
+      }
+    };
 
-  const handleReverse = (item: HistoryItem) => {
+    if (selectedHash == null) {
+      return getFallback();
+    }
+
+    const item = history.list.find(i => i.hash === selectedHash);
+    if (item) {
+      return item;
+    }
+
+    return getFallback();
+  }, [selectedHash, history.list]);
+
+  const handleReverse = () => {
+    const item = selected;
+    if (item == null) {
+      return;
+    }
+
     Modal.confirm({
       title: '确定要回退到该版本吗？',
       onOk: () => {
@@ -34,61 +63,75 @@ export const HistoryView = (props: HistoryViewProps) => {
     });
   };
 
+  const handleRemove = () => {
+    const item = selected;
+    if (item == null) {
+      return;
+    }
+
+    Modal.confirm({
+      title: '确定要删除该版本吗？',
+      onOk: () => {
+        try {
+          history.removeHistory(item.hash);
+          message.success('版本删除成功');
+        } catch (err) {
+          message.success((err as Error).message);
+        }
+      },
+    });
+  };
+
+  const handleSelect = (item: HistoryItem) => {
+    setSelectedHash(item.hash);
+  };
+
   return (
     <div className={s.root}>
       <div className={s.list}>
-        {!localInHistory && local && (
-          <div className={s.item}>
-            <span className={s.date}>当前</span>
-            <div className={s.extra}>
-              {history.isSynced && <span className={s.remote}>线上</span>}
-              <span className={s.hash}>{local.hash.slice(-8)}</span>
-            </div>
-          </div>
-        )}
-        {!remoteInHistory && remote && !history.isSynced && (
-          <div className={s.item}>
-            <span className={s.date}>线上</span>
-            <div className={s.extra}>
-              <span className={s.hash}>{remote.hash.slice(-8)}</span>
-            </div>
-            <div className={s.actions}>
-              <Button onClick={() => handleReverse(remote)} type="primary">
-                回退到该版本
-              </Button>
-            </div>
-          </div>
-        )}
-        {history.history.map(i => {
-          const isRemote = remote && remote.hash === i.hash;
-          const isLocal = local && local.hash === i.hash;
+        {history.list.map(i => {
           return (
-            <div key={i.hash} className={s.item}>
+            <div
+              key={i.hash}
+              className={classNames(s.item, { [s.selected]: selected?.hash === i.hash })}
+              onClick={() => handleSelect(i)}
+            >
               <span className={s.date}>{formatDate(i.createDate, 'MM-DD HH:mm')}</span>
               <div className={s.extra}>
-                {isRemote && <span className={s.remote}>线上</span>}
-                {isLocal && <span className={s.local}>当前</span>}
+                {i.remote && <span className={s.remote}>线上</span>}
+                {i.local && <span className={s.local}>当前</span>}
                 {!!i.note && <span className={s.note}>{i.note}</span>}
                 <span className={s.hash}>{i.hash.slice(-8)}</span>
               </div>
-              {!isLocal && (
-                <div className={s.actions}>
-                  {/* <Button onClick={() => handleReverse(i)} danger>
-                    删除
-                  </Button> */}
-                  <Button onClick={() => handleReverse(i)} type="primary">
-                    回退到该版本
-                  </Button>
-                </div>
-              )}
             </div>
           );
         })}
       </div>
       <div className={s.body}>
-        <Alert banner type="warning" message="当前历史记录保存在客户端本地"></Alert>
-        <div className={s.content}>对比功能正在开发中... 敬请期待</div>
+        <Alert banner type="warning" message="当前历史记录保存在客户端本地, 后续我们将支持远程保存, 敬请期待"></Alert>
+        {selected == null ? (
+          <Empty description="请选择版本"></Empty>
+        ) : (
+          <div className={s.content}>
+            <div className={s.actions}>
+              <div className={s.actionLeft}></div>
+              <div className={s.actionRight}>
+                {selected.removable && (
+                  <Button danger onClick={handleRemove}>
+                    删除
+                  </Button>
+                )}
+                {selected.recoverable && (
+                  <Button type="primary" onClick={handleReverse}>
+                    恢复此版本
+                  </Button>
+                )}
+              </div>
+            </div>
+            <div className={s.diff}>对比功能正在开发中... 敬请期待</div>
+          </div>
+        )}
       </div>
     </div>
   );
-};
+});

@@ -358,7 +358,7 @@ export abstract class BaseDesignerModel<
       throw new Error('快照不存在');
     }
 
-    if (!this.historyManager.isLocalInList()) {
+    if (!this.historyManager.isLocalInList) {
       // 备份本地缓存
       await this.addHistory('本地备份', false);
     }
