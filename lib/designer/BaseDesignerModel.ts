@@ -2,11 +2,12 @@ import { makeObservable, observable } from 'mobx';
 import { applyUpdate, Doc as YDoc, encodeStateAsUpdate, encodeStateVector } from 'yjs';
 import { booleanPredicate, debounce } from '@wakeapp/utils';
 import unionBy from 'lodash/unionBy';
+import memoize from 'lodash/memoize';
 import { message } from 'antd';
 import Router from 'next/router';
 import { derive, effect, makeAutoBindThis, mutation } from '@/lib/store';
 import { IDisposable, IdleTaskExecutor } from '@/lib/utils';
-import { reverseUpdate } from '@/lib/yjs-reverse';
+import { getReadableContent, reverseUpdate } from '@/lib/yjs-reverse';
 
 import { DesignerKeyboardBinding } from './DesignerKeyboardBinding';
 import { IDesignerTab } from './IDesignerTab';
@@ -365,6 +366,18 @@ export abstract class BaseDesignerModel<
 
     reverseUpdate(this.ydoc, snapshot);
   }
+
+  /**
+   * 获取当前文档的快照内容
+   */
+  getContextFromUpdate = memoize(async (hash: string) => {
+    const snapshot = await this.historyManager.getSnapshot(hash);
+    if (snapshot == null) {
+      throw new Error('快照不存在');
+    }
+
+    return getReadableContent(this.ydoc, snapshot);
+  });
 
   @mutation('DESIGNER:SET_ACTIVE_TAB', false)
   setActiveTab(params: { tab: Tab }) {

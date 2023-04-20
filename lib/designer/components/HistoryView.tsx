@@ -3,13 +3,14 @@ import { Alert, Empty, Button, Modal, message } from 'antd';
 import { useMemo, useState } from 'react';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
+import { ArrowRightOutlined } from '@ant-design/icons';
+import { usePromise } from '@wakeapp/hooks';
 
 import { useDesignerContext } from '../BaseDesignerContext';
 import { HistoryItem } from '../HistoryManager';
 import s from './HistoryView.module.scss';
 import { DiffView } from './DiffView';
 import { VersionSelect } from './VersionSelect';
-import { ArrowRightOutlined } from '@ant-design/icons';
 
 export interface HistoryViewProps {
   onReverse: (item: HistoryItem) => void;
@@ -51,6 +52,26 @@ export const HistoryView = observer(function HistoryView(props: HistoryViewProps
   const compare = useMemo(() => {
     return history.list.find(i => i.hash === compareHash);
   }, [compareHash, history.list]);
+
+  const selectedContentPromise = useMemo(() => {
+    if (selected == null) {
+      return '';
+    }
+
+    return designModel.getContextFromUpdate(selected.hash);
+  }, [selected, designModel]);
+
+  const selectedContent = usePromise(selectedContentPromise);
+
+  const compareContentPromise = useMemo(() => {
+    if (compare == null) {
+      return '';
+    }
+
+    return designModel.getContextFromUpdate(compare.hash);
+  }, [compare, designModel]);
+
+  const compareContent = usePromise(compareContentPromise);
 
   const handleReverse = () => {
     const item = selected;
@@ -148,7 +169,7 @@ export const HistoryView = observer(function HistoryView(props: HistoryViewProps
                 )}
               </div>
             </div>
-            <DiffView />
+            <DiffView right={selectedContent.result} left={compareContent.result} />
           </div>
         )}
       </div>

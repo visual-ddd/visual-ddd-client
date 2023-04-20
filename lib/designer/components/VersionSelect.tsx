@@ -7,7 +7,7 @@ export interface VersionSelectProps extends SelectProps {
 }
 
 export const VersionSelect = observer(function VersionSelect(props: VersionSelectProps) {
-  const { ignoreHash } = props;
+  const { ignoreHash, ...other } = props;
   const designModel = useDesignerContext();
   const history = designModel.historyManager;
 
@@ -20,7 +20,7 @@ export const VersionSelect = observer(function VersionSelect(props: VersionSelec
           value: i.hash,
         };
       })}
-      {...props}
+      {...other}
     ></Select>
   );
 });

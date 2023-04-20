@@ -15,20 +15,22 @@ const Editor = (props: Required<DiffViewProps>) => {
   const leftModel = useRef<Monaco.editor.ITextModel>();
   const rightModel = useRef<Monaco.editor.ITextModel>();
 
-  const { element } = useMonaco(() => {
-    const originalModel = (leftModel.current = monaco.editor.createModel(
-      /* set from `originalModel`: */ `hello world`,
-      'text/plain'
-    ));
-    const modifiedModel = (rightModel.current = monaco.editor.createModel(
-      /* set from `modifiedModel`: */ `Hello World!s`,
-      'text/plain'
-    ));
+  const { element, editor } = useMonaco(() => {
+    const originalModel = (leftModel.current = monaco.editor.createModel(left || '', 'json'));
+    const modifiedModel = (rightModel.current = monaco.editor.createModel(right || '', 'json'));
 
     const diffEditor = monaco.editor.createDiffEditor(element.current!, {
-      originalEditable: true,
+      originalEditable: false,
+      readOnly: true,
+      tabIndex: 2,
       automaticLayout: true,
+      renderSideBySide: false,
+      renderValidationDecorations: 'off',
+      lineNumbers: 'off',
+      contextmenu: false,
+      codeLens: false,
     });
+
     diffEditor.setModel({
       original: originalModel,
       modified: modifiedModel,
@@ -38,12 +40,28 @@ const Editor = (props: Required<DiffViewProps>) => {
   });
 
   useEffect(() => {
-    leftModel.current?.setValue(left);
-  }, [left]);
+    if (left != null && editor.current) {
+      const original = monaco.editor.createModel(left, 'json');
+      leftModel.current?.dispose();
+      editor.current?.setModel({
+        ...editor.current.getModel()!,
+        original,
+      });
+      leftModel.current = original;
+    }
+  }, [left, editor]);
 
   useEffect(() => {
-    rightModel.current?.setValue(right);
-  }, [right]);
+    if (right != null && editor.current) {
+      const modified = monaco.editor.createModel(right, 'json');
+      rightModel.current?.dispose();
+      editor.current?.setModel({
+        ...editor.current.getModel()!,
+        modified,
+      });
+      rightModel.current = modified;
+    }
+  }, [right, editor]);
 
   return <div ref={element} className={s.editor}></div>;
 };
@@ -53,7 +71,7 @@ export const DiffView = (props: DiffViewProps) => {
 
   return (
     <div className={s.root}>
-      {left == null || right == null ? (
+      {!left || !right ? (
         <Empty className={s.empty} description="请选择两个版本进行对比"></Empty>
       ) : (
         <Editor left={left} right={right} />

@@ -2,7 +2,43 @@
  * @jest-environment node
  */
 import { Doc, applyUpdate, Array, encodeStateAsUpdate } from 'yjs';
-import { getContentDigest, reverseUpdate, collectMetadata, YjsShareType, isReverseOrigin } from './index';
+import {
+  getContentDigest,
+  reverseUpdate,
+  collectMetadata,
+  YjsShareType,
+  isReverseOrigin,
+  getReadableContent,
+} from './index';
+
+test('getReadableContent', () => {
+  const doc = new Doc();
+  const array = doc.getArray('array');
+  const text = doc.getText('text');
+  const map = doc.getMap('map');
+
+  array.push([1, 2, 3]);
+  text.insert(0, 'hello world');
+  map.set('a', 'a');
+  map.set('b', 1);
+  map.set('c', true);
+  map.set('d', []);
+  map.set('e', { 1: 2 });
+  map.set('_ignoreMe', 1);
+
+  const update = encodeStateAsUpdate(doc);
+  expect(JSON.parse(getReadableContent(doc, update))).toEqual({
+    array: [1, 2, 3],
+    text: 'hello world',
+    map: {
+      a: 'a',
+      b: 1,
+      c: true,
+      d: [],
+      e: { '1': 2 },
+    },
+  });
+});
 
 test('getSnapshotDigest', async () => {
   const doc = new Doc();

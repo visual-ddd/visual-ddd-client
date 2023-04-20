@@ -232,6 +232,7 @@ export class HistoryManager {
         hash,
         createDate: new Date(),
       };
+      this.snapshotLoaded.set(hash, encodeStateAsUpdate(doc));
     });
   }
 

@@ -1,7 +1,7 @@
 function loadScript() {
   return new Promise<void>((resolve, reject) => {
     const script = document.createElement('script');
-    script.src = 'monaco/min/vs/loader.js';
+    script.src = '/monaco/min/vs/loader.js';
 
     script.onload = () => {
       resolve();
@@ -11,6 +11,8 @@ function loadScript() {
       console.error(evt);
       reject('加载 monaco 失败');
     };
+
+    window.document.head.appendChild(script);
   });
 }
 /**
@@ -25,7 +27,7 @@ export async function loadMonaco() {
 
   // @ts-expect-error
   window.require.config({
-    paths: { vs: 'monaco/min/vs' },
+    paths: { vs: '/monaco/min/vs' },
   });
 
   // @ts-expect-error

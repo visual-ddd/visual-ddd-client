@@ -69,6 +69,55 @@ export function createSnapshotDocument(snapshotUpdate: Uint8Array) {
   return snapshotDocument;
 }
 
+function initializeDocument(doc: Doc, metadata: ShareTypeMetaData) {
+  for (const key in metadata) {
+    const type = metadata[key];
+
+    switch (type) {
+      case YjsShareType.Map:
+        doc.getMap(key);
+        break;
+      case YjsShareType.Array:
+        doc.getArray(key);
+        break;
+      case YjsShareType.Text:
+        doc.getText(key);
+        break;
+      case YjsShareType.XmlFragment:
+        doc.getXmlFragment(key);
+        break;
+      default:
+        throw new Error('Unknown YjsShareType');
+    }
+  }
+}
+
+/**
+ * 获取可读的文档内容
+ * @param doc
+ * @param update
+ */
+export function getReadableContent(doc: Doc, update: Uint8Array): string {
+  const metadata = collectMetadata(doc);
+
+  const snapshotDocument = createSnapshotDocument(update);
+  initializeDocument(snapshotDocument, metadata);
+
+  const json = snapshotDocument.toJSON();
+
+  return JSON.stringify(
+    json,
+    (key, value) => {
+      if (key.startsWith('_')) {
+        return undefined;
+      }
+
+      return value;
+    },
+    2
+  );
+}
+
 export const REVERSE_ORIGIN = 'SNAPSHOT_REVERSE';
 
 /**
