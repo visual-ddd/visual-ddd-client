@@ -3,6 +3,7 @@ import { Map as YMap, Doc as YDoc, YEvent, Transaction, AbstractType, UndoManage
 import { observable, makeObservable } from 'mobx';
 import { getPaths, IDisposable } from '@/lib/utils';
 import { Disposer } from '@wakeapp/utils';
+import { isReverseOrigin } from '@/lib/yjs-reverse';
 
 import { BaseEditorStore } from './BaseEditorStore';
 import { BaseNode } from './BaseNode';
@@ -436,8 +437,8 @@ export class BaseEditorDatasource implements IDisposable {
     // 监听
     const listener = (evts: YEvent<any>[], transact: Transaction) => {
       console.log('datasource change', evts);
-      // 本地触发, 并且不是 UndoManager 触发的, 跳过
-      if (transact.local && transact.origin !== this.undoManager) {
+      // 本地触发, 并且不是 UndoManager 和 reverse 操作触发的, 跳过
+      if (transact.local && transact.origin !== this.undoManager && !isReverseOrigin(transact.origin)) {
         return;
       }
 

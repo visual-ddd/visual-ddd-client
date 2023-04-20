@@ -10,6 +10,6 @@ export function toHex(data: Uint8Array) {
  * @returns
  */
 export async function createShaHash(data: Uint8Array) {
-  const digest = await globalThis.crypto.subtle.digest('SHA-256', data);
+  const digest = await crypto.subtle.digest('SHA-256', data);
   return toHex(new Uint8Array(digest));
 }

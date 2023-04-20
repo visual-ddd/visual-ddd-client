@@ -11,18 +11,35 @@
   overflow-x: hidden;
   overflow-y: auto;
 
+  $padding-hoz: 8px;
+  $padding-vert: 6px;
+
   .item {
     display: flex;
     align-items: center;
-    width: 250px;
-    padding: 8px 6px;
+    width: 280px;
+    padding: $padding-hoz $padding-vert;
+    position: relative;
 
     &:hover {
       background-color: var(--vd-color-gray-300);
+
+      .actions {
+        display: flex;
+      }
+    }
+
+    .actions {
+      display: none;
+      position: absolute;
+      right: $padding-vert;
+      top: $padding-hoz;
+      gap: 2px;
     }
 
     .date {
       flex: 1;
+      white-space: nowrap;
     }
 
     .extra {
@@ -33,7 +50,8 @@
 
     .hash,
     .remote,
-    .local {
+    .local,
+    .note {
       line-height: 1;
       font-size: 12px;
       font-family: var(--vd-font-family-mono);
@@ -54,10 +72,17 @@
     .local {
       background-color: var(--vd-color-info-200);
     }
+
+    .note {
+      background-color: var(--vd-color-warning-100);
+    }
   }
 }
 
 .body {
   flex: 1;
-  padding: var(--vd-spacing-base);
+
+  .content {
+    padding: var(--vd-spacing-base);
+  }
 }

@@ -23,7 +23,7 @@ const createMessage = (content: string, summary?: string, token?: number): Messa
 
 describe('calculateContext', () => {
   test('should return empty list, if prompt exceed', async () => {
-    expect(await calculateContext('x'.repeat(4000), [])).toEqual({
+    expect(await calculateContext('x'.repeat(4000), [], { maxContextLength: 8 })).toEqual({
       prompt: expect.anything(),
       messages: [],
       promptToken: 4000,
@@ -38,7 +38,7 @@ describe('calculateContext', () => {
       createMessage('4'.repeat(100), undefined, 95),
       createMessage('5'.repeat(200)),
     ];
-    expect(await calculateContext('x'.repeat(2), message)).toEqual({
+    expect(await calculateContext('x'.repeat(2), message, { maxContextLength: 8 })).toEqual({
       prompt: expect.anything(),
       messages: [message[1], message[2], message[3]],
       promptToken: 2,
@@ -50,7 +50,7 @@ describe('calculateContext', () => {
     const messages = new Array(20).fill(0).map((_, idx) => {
       return createMessage('x');
     });
-    expect(await calculateContext('', messages)).toEqual({
+    expect(await calculateContext('', messages, { maxContextLength: 8 })).toEqual({
       prompt: expect.anything(),
       messages: messages.slice(-8),
       promptToken: 0,
@@ -68,7 +68,7 @@ describe('calculateContext', () => {
       createMessage('6'.repeat(500)),
     ];
 
-    expect(await calculateContext('7'.repeat(500), messages)).toEqual({
+    expect(await calculateContext('7'.repeat(500), messages, { maxContextLength: 8 })).toEqual({
       prompt: expect.anything(),
       messages: messages.slice(-4),
       recommendToSummary: messages[1],

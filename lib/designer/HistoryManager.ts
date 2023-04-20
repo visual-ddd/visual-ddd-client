@@ -1,5 +1,6 @@
-import { createShaHash } from '../utils/hash';
 import localforage from 'localforage';
+import { Doc as YDoc, encodeStateAsUpdate } from 'yjs';
+import { getContentDigest } from '@/lib/yjs-reverse';
 
 export interface HistoryItem {
   /**
@@ -63,23 +64,64 @@ export class HistoryManager {
 
   private scope: string = '';
 
+  /**
+   * 已从 storage 中加载的数据
+   */
+  private snapshotLoaded: Map<string, Uint8Array> = new Map();
+
   constructor(options: HistoryManagerOptions) {
     this.scope = options.scope || '';
     this.recoverList();
   }
 
-  async updateRemote(data: Uint8Array) {
-    const hash = await this.getHashForData(data);
+  /**
+   * 确定当前状态是否已存在
+   * @returns
+   */
+  isLocalInList() {
+    return !!(this.local && (this.isSynced || this.isExisted(this.local.hash)));
+  }
 
+  /**
+   * 获取指定 hash 的镜像
+   * @param hash
+   */
+  async getSnapshot(hash: string): Promise<Uint8Array | null> {
+    const cache = this.snapshotLoaded.get(hash);
+
+    if (cache) {
+      return cache;
+    }
+
+    const snapshot = await storage.getItem<Uint8Array>(this.keyForData(hash));
+
+    if (snapshot) {
+      this.snapshotLoaded.set(hash, snapshot);
+    }
+
+    return snapshot;
+  }
+
+  async updateRemote(doc: YDoc) {
+    const hash = await this.getHashForDocument(doc);
     this.remote = {
       hash,
       createDate: new Date(),
       note: '远程',
     };
+
+    if (this.isExisted(hash)) {
+      // 历史记录已存在
+      return;
+    } else {
+      const data = encodeStateAsUpdate(doc);
+
+      this.snapshotLoaded.set(hash, data);
+    }
   }
 
-  async updateLocal(data: Uint8Array) {
-    const hash = await this.getHashForData(data);
+  async updateLocal(doc: YDoc) {
+    const hash = await this.getHashForDocument(doc);
 
     this.local = {
       hash,
@@ -88,12 +130,14 @@ export class HistoryManager {
     };
   }
 
-  async unshift(data: Uint8Array, note?: string) {
-    const hash = await this.getHashForData(data);
+  async unshift(doc: YDoc, note?: string, asRemote?: boolean) {
+    const hash = await this.getHashForDocument(doc);
 
     if (this.isExisted(hash)) {
       return;
     }
+
+    const data = encodeStateAsUpdate(doc);
 
     const item: HistoryItem = {
       hash,
@@ -102,8 +146,14 @@ export class HistoryManager {
     };
 
     this.history.unshift(item);
-    // 同时更新 remote 指针
-    this.remote = item;
+
+    if (asRemote) {
+      // 同时更新 remote 指针
+      this.remote = item;
+    }
+
+    this.snapshotLoaded.set(hash, data);
+
     this.saveData(hash, data);
     this.saveList();
   }
@@ -141,7 +191,7 @@ export class HistoryManager {
     return this.history.some(item => item.hash === hash);
   };
 
-  private async getHashForData(data: Uint8Array) {
-    return createShaHash(data);
+  private async getHashForDocument(doc: YDoc) {
+    return getContentDigest(doc);
   }
 }

@@ -1,11 +1,12 @@
 import { makeObservable, observable } from 'mobx';
 import { applyUpdate, Doc as YDoc, encodeStateAsUpdate, encodeStateVector } from 'yjs';
+import { booleanPredicate, debounce } from '@wakeapp/utils';
+import unionBy from 'lodash/unionBy';
 import { message } from 'antd';
 import Router from 'next/router';
 import { derive, effect, makeAutoBindThis, mutation } from '@/lib/store';
-import { IDisposable } from '@/lib/utils';
-import { booleanPredicate, debounce } from '@wakeapp/utils';
-import unionBy from 'lodash/unionBy';
+import { IDisposable, IdleTaskExecutor } from '@/lib/utils';
+import { reverseUpdate } from '@/lib/yjs-reverse';
 
 import { DesignerKeyboardBinding } from './DesignerKeyboardBinding';
 import { IDesignerTab } from './IDesignerTab';
@@ -14,6 +15,7 @@ import { BaseDesignerAwarenessState, DesignerAwareness } from './DesignerAwarene
 import { createYjsLocalProvider, createYjsProvider, YjsProviderDisposer } from './createYjsProvider';
 import { DesignerAwarenessDelegate } from './DesignerAwarenessDelegate';
 import { HistoryManager } from './HistoryManager';
+import type { HistoryItem } from './HistoryManager';
 
 export interface BaseDesignerModelOptions {
   name: string;
@@ -42,9 +44,11 @@ export interface CollaborationDescription {
  * 设计器模型
  */
 export abstract class BaseDesignerModel<
-  Tab extends string,
-  State extends BaseDesignerAwarenessState = BaseDesignerAwarenessState
-> implements IDisposable, IDesigner
+    Tab extends string,
+    State extends BaseDesignerAwarenessState = BaseDesignerAwarenessState
+  >
+  extends IdleTaskExecutor
+  implements IDisposable, IDesigner
 {
   readonly name: string;
   readonly id: string;
@@ -153,6 +157,7 @@ export abstract class BaseDesignerModel<
   protected abstract getDiff(params: { id: string; vector: Uint8Array }): Promise<ArrayBuffer>;
 
   constructor(options: BaseDesignerModelOptions) {
+    super();
     const { id, name, readonly = false } = options;
     this.name = name;
     this.id = id;
@@ -190,7 +195,10 @@ export abstract class BaseDesignerModel<
   /**
    * 销毁
    */
-  dispose() {
+  override dispose() {
+    super.dispose();
+    this.handleDocUpdate.cancel();
+
     if (this.remoteProvider) {
       this.remoteProvider();
       this.remoteProvider = undefined;
@@ -229,8 +237,9 @@ export abstract class BaseDesignerModel<
       if (update.length) {
         // 获取到的是全量的远程数据
         applyUpdate(this.ydoc, update);
-        this.updateRemote();
       }
+
+      await this.updateRemote();
 
       // 加载本地数据
       if (!this.localProviderSynced && !this.readonly) {
@@ -301,7 +310,7 @@ export abstract class BaseDesignerModel<
         applyUpdate(this.ydoc, remoteUpdate);
       }
 
-      this.addHistory();
+      this.addHistory('', true);
 
       this.setError(undefined);
       message.success('保存成功');
@@ -335,6 +344,26 @@ export abstract class BaseDesignerModel<
     } finally {
       this.setRefreshing(false);
     }
+  }
+
+  /**
+   * 回退到指定版本
+   * @param hash
+   */
+  @effect('DESIGNER:REVERSE')
+  async reverseToSnapshot(item: HistoryItem) {
+    const snapshot = await this.historyManager.getSnapshot(item.hash);
+
+    if (snapshot == null) {
+      throw new Error('快照不存在');
+    }
+
+    if (!this.historyManager.isLocalInList()) {
+      // 备份本地缓存
+      await this.addHistory('本地备份', false);
+    }
+
+    reverseUpdate(this.ydoc, snapshot);
   }
 
   @mutation('DESIGNER:SET_ACTIVE_TAB', false)
@@ -430,17 +459,20 @@ export abstract class BaseDesignerModel<
   }
 
   protected updateRemote() {
-    const update = encodeStateAsUpdate(this.ydoc);
-    this.historyManager.updateRemote(update);
+    return this.historyManager.updateRemote(this.ydoc);
   }
 
-  protected handleDocUpdate = debounce(() => {
-    const update = encodeStateAsUpdate(this.ydoc);
-    this.historyManager.updateLocal(update);
-  }, 1000);
+  protected handleDocUpdate = debounce(
+    () => {
+      this.addIdleTask(() => {
+        this.historyManager.updateLocal(this.ydoc);
+      });
+    },
+    3000,
+    { leading: true }
+  );
 
-  protected addHistory() {
-    const update = encodeStateAsUpdate(this.ydoc);
-    this.historyManager.unshift(update);
+  protected addHistory(note?: string, asRemote?: boolean) {
+    return this.historyManager.unshift(this.ydoc, note, asRemote);
   }
 }

@@ -23,8 +23,8 @@ export const HistoryViewModal = (props: HistoryViewModalProps) => {
 
   return (
     <>
-      <Modal open={visible} onCancel={handleCancel} footer={null} title="历史记录" destroyOnClose width="75%">
-        <HistoryView />
+      <Modal open={visible} onCancel={handleCancel} footer={null} title="历史记录(试验)" destroyOnClose width="75%">
+        <HistoryView onReverse={handleCancel} />
       </Modal>
       {content}
     </>
