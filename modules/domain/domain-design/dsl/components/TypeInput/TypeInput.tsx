@@ -1,16 +1,18 @@
 import { useEditorModel } from '@/lib/editor';
-import { NoopArray } from '@wakeapp/utils';
-import { Cascader, Dropdown, Input } from 'antd';
+import { NoopArray, arrayJoin } from '@wakeapp/utils';
+import { Cascader, CascaderProps, Dropdown, Input } from 'antd';
 import classNames from 'classnames';
 import { action, computed, observable } from 'mobx';
 import { observer, useLocalObservable } from 'mobx-react';
-import { createContext, useContext, useEffect, useMemo } from 'react';
+import { cloneElement, createContext, isValidElement, useContext, useEffect, useMemo } from 'react';
+import sortBy from 'lodash/sortBy';
 
 import { DomainEditorModel, DomainObject, DomainObjectFactory } from '../../../model';
 import { BaseType, BaseTypeInArray, ContainerType, ContainerTypeInArray, NameDSL, TypeDSL, TypeType } from '../../dsl';
 import { createBaseType, createContainerType, createReferenceType } from '../../factory';
 import { stringifyMethodResult, stringifyTypeDSL } from '../../stringify';
 import s from './index.module.scss';
+import { DomainObjectColors } from '../../constants';
 
 export interface TypeInputProps {
   value?: TypeDSL;
@@ -28,9 +30,10 @@ export interface TypeInputProps {
 }
 
 type Node = {
-  label: string;
+  label: React.ReactNode;
   value: string;
-  name?: string;
+  name: string;
+  searchName?: string;
   disabled?: boolean;
   children?: Node[];
 };
@@ -40,15 +43,17 @@ const STATIC_OPTIONS: Node[] = [
     label: '基础类型',
     value: TypeType.Base,
     children: BaseTypeInArray.map(i => {
-      return { label: i, value: i };
+      return { label: i, value: i, name: i };
     }),
+    name: '基础类型',
   },
   {
     label: '集合类型',
     value: TypeType.Container,
     children: ContainerTypeInArray.map(i => {
-      return { label: i, value: i };
+      return { label: i, value: i, name: i };
     }),
+    name: '集合类型',
   },
 ];
 
@@ -78,7 +83,9 @@ export const ReferenceTypeProvider = observer(function ReferenceTypeProvider(pro
         }
       },
       get options(): Node[] {
-        return this.references.map(i => {
+        return sortBy(this.references, i => {
+          return [i.package?.name, i.name];
+        }).map(i => {
           return {
             value: i.id,
             get disabled() {
@@ -86,10 +93,27 @@ export const ReferenceTypeProvider = observer(function ReferenceTypeProvider(pro
               return DomainObjectFactory.isAggregationRoot(i) ? true : undefined;
             },
             get label() {
-              return `${i.objectTypeTitle}-${i.readableTitle}`;
+              return (
+                <div className={s.refLabel}>
+                  {!!i.package && <span className={s.refParent}>{i.package.name} ➡️ </span>}
+                  <span
+                    className={s.refType}
+                    style={{
+                      // @ts-expect-error
+                      '--color': DomainObjectColors[i.shapeName],
+                    }}
+                  >
+                    {i.objectTypeTitle}
+                  </span>
+                  <span className={s.refName}>{i.readableTitle}</span>
+                </div>
+              );
             },
             get name() {
               return i.name;
+            },
+            get searchName() {
+              return i.readableTitle;
             },
           };
         });
@@ -102,6 +126,18 @@ export const ReferenceTypeProvider = observer(function ReferenceTypeProvider(pro
 
   return <CONTEXT.Provider value={store.context}>{children}</CONTEXT.Provider>;
 });
+
+const SEARCH_OPTIONS: CascaderProps['showSearch'] = {
+  filter: (input, options, field) => {
+    const last = options[options.length - 1] as Node;
+
+    if (last.searchName) {
+      return last.searchName.toLowerCase().includes(input.toLowerCase());
+    }
+
+    return last.name.toLowerCase().includes(input.toLowerCase());
+  },
+};
 
 const TypeSelect = observer(function TypeSelect(props: { value?: TypeDSL; onChange?: (value: TypeDSL) => void }) {
   const { value, onChange } = props;
@@ -117,6 +153,7 @@ const TypeSelect = observer(function TypeSelect(props: { value?: TypeDSL; onChan
         label: '引用类型',
         value: TypeType.Reference,
         children: references,
+        name: '引用类型',
       });
     }
 
@@ -161,7 +198,8 @@ const TypeSelect = observer(function TypeSelect(props: { value?: TypeDSL; onChan
       case TypeType.Reference: {
         const list = options.find(i => i.value === TypeType.Reference);
         const item = list!.children!.find(i => i.value === id)!;
-        value = createReferenceType(id, item.name ?? item.label);
+        // 引用类型一定是存在的
+        value = createReferenceType(id, item.name!);
         break;
       }
     }
@@ -175,8 +213,22 @@ const TypeSelect = observer(function TypeSelect(props: { value?: TypeDSL; onChan
       options={options}
       value={finalValue}
       placeholder="选择类型"
+      showSearch={SEARCH_OPTIONS}
       onChange={handleChange as any}
-      expandTrigger="hover"
+      expandTrigger="click"
+      displayRender={(values, opts) => {
+        return (
+          <div className={s.cascaderDisplay}>
+            {opts
+              ? arrayJoin(
+                  opts.map(i => i.label),
+                  <span>/</span>
+                ).map((i, idx) => (isValidElement(i) ? cloneElement(i, { key: idx }) : i))
+              : null}
+          </div>
+        );
+      }}
+      placement="bottomLeft"
       autoFocus
       allowClear={false}
     ></Cascader>

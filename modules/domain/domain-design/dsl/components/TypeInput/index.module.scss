@@ -30,3 +30,43 @@
   font-size: var(--vd-font-size-h6);
   color: var(--vd-color-font-regular);
 }
+
+.cascaderDisplay {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.refLabel {
+  display: flex;
+  gap: 3px;
+  align-items: center;
+
+  .refType {
+    font-size: 12px;
+    background-color: var(--color);
+    border-radius: 3px;
+    padding: 0 2px;
+    color: var(--vd-color-gray-800);
+    line-height: 1.2;
+  }
+
+  .refParent {
+    max-width: 8em;
+    font-style: italic;
+    color: var(--vd-color-gray-700);
+    font-weight: bold;
+    padding-right: 3px;
+  }
+
+  .refParent,
+  .refName {
+    font-size: 13px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .refName {
+    max-width: 12em;
+  }
+}
