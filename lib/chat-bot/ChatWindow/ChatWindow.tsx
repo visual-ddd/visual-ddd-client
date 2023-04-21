@@ -83,7 +83,7 @@ export const ChatWindow = observer(function ChatWindow(props: ChatWindowProps) {
 
   useEventBusListener(windowModel.event, on => {
     on('SHOW', () => {
-      setVisible(true);
+      setVisible(v => !v);
     });
   });
 
