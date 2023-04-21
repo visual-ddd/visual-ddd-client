@@ -37,6 +37,7 @@ const MessageItem = observer(function MessageItem(props: { item: Message }) {
   const extension = item.extension;
   const showExtension = extension && extension !== GLOBAL_EXTENSION_KEY;
   const isLastItem = bot.history[bot.history.length - 1] === item;
+  const extensionDefine = extension ? bot.getExtension(extension) : undefined;
 
   const content = item.pending ? (isCommand ? item.content : item.pending.response.eventSource.result) : item.content;
   const loading = item.pending && !isCommand;
@@ -75,6 +76,8 @@ const MessageItem = observer(function MessageItem(props: { item: Message }) {
       });
   };
 
+  const extensionActions = extensionDefine?.renderAction?.(item);
+
   return (
     <div
       className={classNames(s.item, {
@@ -95,6 +98,7 @@ const MessageItem = observer(function MessageItem(props: { item: Message }) {
         ) : loading ? (
           <LoadingIcon className={s.loading} />
         ) : undefined}
+        {!!extensionActions && <div className={s.extensionActions}>{extensionActions}</div>}
         <div className={s.actions}>
           <CopyIcon className={s.copy} onClick={handleCopy} />
           <MinusCircleFilled className={s.remove} onClick={remove} />

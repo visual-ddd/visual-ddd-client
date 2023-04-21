@@ -131,7 +131,16 @@ const DomainDesigner = observer(function DomainDesigner(props: DomainDesignerPro
     {
       label: DomainDesignerTabsMap[DomainDesignerTabs.Vision],
       key: DomainDesignerTabs.Vision,
-      children: <VisionDesign doc={model.ydoc} field={YJS_FIELD_NAME.VISION} readonly={model.readonly} />,
+      children: (
+        <VisionDesign
+          doc={model.ydoc}
+          field={YJS_FIELD_NAME.VISION}
+          readonly={model.readonly}
+          onActive={() => {
+            model.setActiveTab({ tab: DomainDesignerTabs.Vision });
+          }}
+        />
+      ),
     },
     {
       label: DomainDesignerTabsMap[DomainDesignerTabs.UbiquitousLanguage],

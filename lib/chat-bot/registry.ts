@@ -8,7 +8,7 @@ import { Extension } from './protocol';
 export const registry = new NamedRegistry<Extension>();
 
 export function registerExtension(extension: Extension) {
-  return registry.register(extension.key, extension);
+  return registry.register(extension.key, extension) as () => void;
 }
 
 export function getExtension(key: string) {

@@ -4,23 +4,25 @@
 import { Doc as YDoc } from 'yjs';
 import classNames from 'classnames';
 import Image from 'next/image';
-import { Form, Input, Select } from 'antd';
+import { Form, Input, Select, message } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 
 import s from './VisionDesign.module.scss';
 import ExampleOu from './example-ou.png';
 import { useForceUpdate } from '@wakeapp/hooks';
+import { useVisionBot } from './useVisionBot';
 
 export interface VisionDesignProps {
   doc: YDoc;
   field: string;
   readonly?: boolean;
+  onActive: () => void;
 }
 
 const EXAMPLES = [{ label: '在线请假考勤系统 - 欧创新', img: ExampleOu }];
 
 export const VisionDesign = (props: VisionDesignProps) => {
-  const { doc, field, readonly } = props;
+  const { doc, field, readonly, onActive } = props;
   const [selected, setSelected] = useState(0);
   const update = useForceUpdate();
   const text = useMemo(() => {
@@ -43,6 +45,15 @@ export const VisionDesign = (props: VisionDesignProps) => {
 
     return () => text.unobserve(listener);
   }, [text]);
+
+  useVisionBot({
+    enabled: !readonly,
+    insert: v => {
+      onActive();
+      handleChange(v);
+      message.success('已更新愿景');
+    },
+  });
 
   return (
     <div className={classNames('vd-vision', s.root)}>

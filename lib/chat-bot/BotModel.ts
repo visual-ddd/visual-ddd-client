@@ -153,6 +153,13 @@ export class BotModel implements IDisposable, IBot, IDestroyable {
   }
 
   /**
+   * 获取插件
+   */
+  getExtension(key: string): Extension | undefined {
+    return this.availableExtensions.find(i => i.key === key);
+  }
+
+  /**
    * 提交 prompt
    */
   @effect('COMMIT')

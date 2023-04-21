@@ -103,3 +103,10 @@
     padding: 0.25em;
   }
 }
+
+.extensionActions {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  padding-top: var(--vd-spacing-xs);
+}

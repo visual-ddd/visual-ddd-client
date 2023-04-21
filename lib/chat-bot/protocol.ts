@@ -194,4 +194,10 @@ export interface Extension<T = any> {
    * 响应消息发送
    */
   onSend(params: SendParams): ExtensionResponse;
+
+  /**
+   * 支持在指令消息中自定义渲染内容
+   * @returns
+   */
+  renderAction?: (message: Message) => React.ReactNode;
 }
