@@ -10,6 +10,7 @@ import { BaseEditorModel } from './BaseEditorModel';
 import { BaseEditorStore } from './BaseEditorStore';
 import { BaseNode } from './BaseNode';
 import { FormModel, FormRules } from './FormModel';
+import { IValidateStatus } from '@/lib/core';
 
 const DEFAULT_RULES: FormRules = {
   fields: {},
@@ -18,7 +19,7 @@ const DEFAULT_RULES: FormRules = {
 /**
  * 表单验证状态
  */
-export class BaseEditorFormStore {
+export class BaseEditorFormStore implements IValidateStatus {
   private event: BaseEditorEvent;
   private store: BaseEditorStore;
   private editorModel: BaseEditorModel;
@@ -59,6 +60,16 @@ export class BaseEditorFormStore {
     }
 
     return false;
+  }
+
+  @derive
+  get hasException() {
+    return this.hasIssue && (this.hasError || this.hasWarning);
+  }
+
+  @derive
+  get hasTip() {
+    return this.hasIssue && !this.hasException;
   }
 
   constructor(inject: { event: BaseEditorEvent; store: BaseEditorStore; editorModel: BaseEditorModel }) {

@@ -1,4 +1,4 @@
-import { CloseCircleOutlined, WarningOutlined } from '@ant-design/icons';
+import { BulbFilled, CloseCircleOutlined, WarningOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
 
@@ -43,6 +43,14 @@ export const EditorFormIssues = observer(function EditorFormIssues(props: Editor
           return (
             <li key={idx}>
               <WarningOutlined className="u-warning" />
+              {i}
+            </li>
+          );
+        })}
+        {item.tips.map((i, idx) => {
+          return (
+            <li key={idx}>
+              <BulbFilled className="u-warning" />
               {i}
             </li>
           );

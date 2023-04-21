@@ -1,5 +1,5 @@
 import { ReactDecorator } from '@/lib/g6-binding';
-import { ExclamationCircleFilled } from '@ant-design/icons';
+import { BulbFilled, ExclamationCircleFilled } from '@ant-design/icons';
 import { Popover } from 'antd';
 import classNames from 'classnames';
 import { Observer } from 'mobx-react';
@@ -8,6 +8,11 @@ import { useShapeModel } from '../hooks';
 
 import s from './FormStatus.module.scss';
 
+/**
+ * 展示节点告警信息
+ * @param Input
+ * @returns
+ */
 export const FormStatus: ReactDecorator = Input => {
   // eslint-disable-next-line react/display-name
   return props => {
@@ -31,11 +36,11 @@ export const FormStatus: ReactDecorator = Input => {
                       <EditorFormIssues formModel={formModel} issues={formModel.errorInArray}></EditorFormIssues>
                     </div>
                   }
-                  title="告警"
+                  title="事件"
                   destroyTooltipOnHide
                   trigger="hover"
                 >
-                  <ExclamationCircleFilled />
+                  {formModel.hasException ? <ExclamationCircleFilled /> : <BulbFilled />}
                 </Popover>
               </div>
             );

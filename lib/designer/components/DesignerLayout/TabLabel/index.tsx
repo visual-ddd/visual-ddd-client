@@ -2,16 +2,13 @@ import { ExclamationCircleFilled } from '@ant-design/icons';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
 import React from 'react';
+import { IValidateStatus } from '@/lib/core';
 
 import s from './index.module.scss';
 
 export interface DesignerTabLabelProps {
   children: React.ReactNode;
-  model: {
-    hasIssue: boolean;
-    hasError: boolean;
-    hasWarning: boolean;
-  };
+  model: IValidateStatus;
 }
 
 export const DesignerTabLabel = observer(function DesignerTabLabel(props: DesignerTabLabelProps) {
@@ -23,7 +20,7 @@ export const DesignerTabLabel = observer(function DesignerTabLabel(props: Design
         warning: model.hasWarning,
       })}
     >
-      {children} {model.hasIssue && <ExclamationCircleFilled />}
+      {children} {model.hasException && <ExclamationCircleFilled />}
     </span>
   );
 });

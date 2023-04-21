@@ -15,10 +15,10 @@ export const EditorProblems = observer(function EditorProblems() {
   const node = viewStore.focusingNode;
   const propertyNavigate = usePropertyLocationNavigate();
 
-  // 全局告警
+  // 全局事件
   if (node == null) {
     if (!formStore.hasIssue) {
-      return <SelectNodePlease description="暂无告警" />;
+      return <SelectNodePlease description="暂无事件" />;
     }
 
     return (
@@ -47,11 +47,11 @@ export const EditorProblems = observer(function EditorProblems() {
     );
   }
 
-  // 节点告警
+  // 节点事件
   const formModel = formStore.getFormModel(node)!;
 
   if (!formModel.hasIssue) {
-    return <SelectNodePlease description="暂无告警" />;
+    return <SelectNodePlease description="暂无事件" />;
   }
 
   return (

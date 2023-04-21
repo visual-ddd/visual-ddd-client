@@ -21,12 +21,14 @@ test('StatusTree', () => {
     value: '',
     errors: [],
     warnings: [],
+    tips: [],
   };
   const a_b = {
     path: 'a.b',
     value: '',
     errors: [],
     warnings: [],
+    tips: [],
   };
 
   tree.addStatus('a.b.c', a_b_c);

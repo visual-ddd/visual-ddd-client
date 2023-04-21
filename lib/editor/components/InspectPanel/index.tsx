@@ -1,4 +1,4 @@
-import { ExclamationCircleFilled } from '@ant-design/icons';
+import { BulbFilled, ExclamationCircleFilled } from '@ant-design/icons';
 import { Tabs, Tooltip } from 'antd';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
@@ -20,6 +20,7 @@ export const EditorInspectPanel = observer(function EditorInspectPanel() {
   const node = viewStore.focusingNode;
   const formModel = node && formStore.getFormModel(node);
   const hasIssue = formModel ? formModel.hasIssue : formStore.hasIssue;
+  const hasException = hasIssue && (formModel ? formModel.hasException : formStore.hasException);
   const hasError = hasIssue && (formModel ? formModel.hasError : formStore.hasError);
 
   const getCommandDesc = useCanvasModelCommandDescription();
@@ -62,9 +63,11 @@ export const EditorInspectPanel = observer(function EditorInspectPanel() {
           label: (
             <Tooltip title={getCommandDesc('showProblems').tooltip} placement="bottomRight" mouseEnterDelay={1}>
               <span>
-                告警
-                {!!hasIssue && (
+                事件
+                {!!hasException ? (
                   <ExclamationCircleFilled className={hasError ? 'u-danger' : 'u-warning'} style={{ marginLeft: 4 }} />
+                ) : (
+                  <BulbFilled className="u-warning" />
                 )}
               </span>
             </Tooltip>

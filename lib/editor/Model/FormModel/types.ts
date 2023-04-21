@@ -2,9 +2,24 @@ import { InternalRuleItem, RuleItem } from 'async-validator';
 import { BaseEditorModel } from '../BaseEditorModel';
 import { FormModel } from './FormModel';
 
+/**
+ * 表单验证告警级别
+ */
 export enum FormRuleReportType {
+  /**
+   * 错误，会阻止提交
+   */
   Error = 'error',
+
+  /**
+   * 警告
+   */
   Warning = 'warning',
+
+  /**
+   * 使用提示
+   */
+  Tip = 'tip',
 }
 
 export type FormValidatorContext = {
@@ -82,6 +97,11 @@ export interface FormItemValidateStatus {
    * 警告信息
    */
   warnings: string[];
+
+  /**
+   * 提示信息
+   */
+  tips: string[];
 }
 
 /**

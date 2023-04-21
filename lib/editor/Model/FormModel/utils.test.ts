@@ -95,6 +95,7 @@ test('ruleToValidator', () => {
   expect(ruleToValidator('p', { required: true })(undefined)).resolves.toEqual({
     errors: ['p is required'],
     warnings: [],
+    tips: [],
     path: 'p',
     value: undefined,
   });
@@ -103,6 +104,25 @@ test('ruleToValidator', () => {
     errors: ['p is not a string'],
     path: 'p',
     value: 1,
+    warnings: [],
+    tips: [],
+  });
+
+  // warning
+  expect(ruleToValidator('p', { required: true, reportType: FormRuleReportType.Warning })(undefined)).resolves.toEqual({
+    errors: [],
+    path: 'p',
+    value: undefined,
+    warnings: ['p is required'],
+    tips: [],
+  });
+
+  // tip
+  expect(ruleToValidator('p', { required: true, reportType: FormRuleReportType.Tip })(undefined)).resolves.toEqual({
+    errors: [],
+    path: 'p',
+    value: undefined,
+    tips: ['p is required'],
     warnings: [],
   });
 });
@@ -285,6 +305,9 @@ test('rulesToValidator', async () => {
         $self: { type: 'object' },
         '*': { $self: { type: 'string' } },
       },
+      d: {
+        $self: { required: true, reportType: FormRuleReportType.Tip },
+      },
     },
   });
 
@@ -295,25 +318,36 @@ test('rulesToValidator', async () => {
       errors: ['b is required'],
       path: 'b',
       value: undefined,
+      tips: [],
       warnings: [],
     },
     {
       errors: ['c is not an object'],
       path: 'c',
       value: [1],
+      tips: [],
       warnings: [],
     },
     {
       errors: ['c.0 is not a string'],
       path: 'c.0',
       value: 1,
+      tips: [],
       warnings: [],
     },
     {
       errors: [],
       path: 'a',
       value: undefined,
+      tips: [],
       warnings: ['a is required'],
+    },
+    {
+      errors: [],
+      path: 'd',
+      tips: ['d is required'],
+      value: undefined,
+      warnings: [],
     },
   ]);
 });

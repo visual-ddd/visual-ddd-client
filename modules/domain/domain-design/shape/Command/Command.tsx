@@ -147,7 +147,7 @@ defineShape({
                     // 检查命令的属性是否在聚合根中
                     checkCommandPropertyExistedInAggregationRoot(value, context);
                   },
-                  reportType: FormRuleReportType.Warning,
+                  reportType: FormRuleReportType.Tip,
                 },
                 {
                   async validator(value, context) {

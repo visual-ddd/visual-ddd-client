@@ -8,6 +8,23 @@ export type DisposerFunction = () => void;
  */
 export type NameCase = 'CamelCase' | 'camelCase' | 'SNAKE_CASE' | 'snake_case';
 
+export interface IValidateStatus {
+  /**
+   * 是否有问题(错误、警告、提示等等)
+   */
+  hasIssue: boolean;
+
+  /**
+   * 是否有异常情况(错误，警告)
+   */
+  hasException: boolean;
+
+  hasError: boolean;
+  hasWarning: boolean;
+
+  hasTip: boolean;
+}
+
 export enum VersionStatus {
   UNPUBLISHED = 1,
   PUBLISHED = 2,

@@ -20,13 +20,14 @@ import { BaseEditorStore } from '../BaseEditorStore';
 import { BaseEditorModel } from '../BaseEditorModel';
 import { ROOT_FIELD } from './constants';
 import { StatusTree } from './StatusTree';
+import { IValidateStatus } from '@/lib/core';
 
 /**
  * 表单验证模型
  * TODO: 验证上下文
  * TODO: 验证性能优化
  */
-export class FormModel implements IValidator {
+export class FormModel implements IValidator, IValidateStatus {
   readonly node: BaseNode;
 
   private rules: FormRules;
@@ -89,17 +90,21 @@ export class FormModel implements IValidator {
       return null;
     }
 
+    let hasWarning = false;
+
     for (const i of this.errorMap.values()) {
       if (i.errors.length) {
         return FormRuleReportType.Error;
+      } else if (i.warnings.length) {
+        hasWarning = true;
       }
     }
 
-    return FormRuleReportType.Warning;
+    return hasWarning ? FormRuleReportType.Warning : FormRuleReportType.Tip;
   }
 
   /**
-   * 当前节点是否包含问题，不管是错误还是警告
+   * 当前节点是否包含事件，不管是错误还是警告、提示
    */
   @derive
   get hasIssue() {
@@ -120,6 +125,22 @@ export class FormModel implements IValidator {
   @derive
   get hasWarning() {
     return this.errorType === FormRuleReportType.Warning;
+  }
+
+  /**
+   * 当前节点是否有异常
+   */
+  @derive
+  get hasException() {
+    return this.hasIssue && (this.hasError || this.hasWarning);
+  }
+
+  /**
+   * 当前节点是否包含提示
+   */
+  @derive
+  get hasTip() {
+    return this.errorType === FormRuleReportType.Tip;
   }
 
   constructor(inject: {

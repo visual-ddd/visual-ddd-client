@@ -1,8 +1,10 @@
-import { ExclamationCircleFilled, QuestionCircleFilled } from '@ant-design/icons';
+import { BulbFilled, ExclamationCircleFilled, QuestionCircleFilled } from '@ant-design/icons';
 import { Popover, Tooltip } from 'antd';
 import classNames from 'classnames';
-import { observer, useLocalObservable } from 'mobx-react';
-import { ReactNode, useEffect } from 'react';
+import { action, computed, makeObservable, observable } from 'mobx';
+import { observer } from 'mobx-react';
+import { ReactNode, useEffect, useMemo } from 'react';
+import { IValidateStatus } from '@/lib/core';
 
 import { FormModel } from '../../Model';
 import { useEditorFormContext } from './FormContext';
@@ -30,49 +32,95 @@ export interface EditorFormTooltipProps {
   style?: React.CSSProperties;
 }
 
+class LocalStore implements IValidateStatus {
+  @observable
+  aggregated?: boolean;
+
+  @observable
+  path?: string;
+
+  @observable
+  formModel?: FormModel;
+
+  @action
+  setPath(path?: string) {
+    this.path = path;
+  }
+
+  @action
+  setFormModel(model?: FormModel) {
+    this.formModel = model;
+  }
+
+  @action
+  setAggregated(aggregated?: boolean) {
+    this.aggregated = aggregated;
+  }
+
+  constructor() {
+    makeObservable(this);
+  }
+
+  @computed
+  get status() {
+    return this.path && this.formModel
+      ? this.aggregated
+        ? this.formModel.getAggregatedValidateStatus(this.path)
+        : this.formModel.getValidateStatus(this.path)
+      : undefined;
+  }
+
+  @computed
+  get hasIssue() {
+    return !!(Array.isArray(this.status) ? this.status.length : this.status);
+  }
+
+  @computed
+  get hasError() {
+    return !!(
+      this.hasIssue &&
+      (Array.isArray(this.status)
+        ? this.status.length && this.status.some(s => s.errors.length)
+        : this.status?.errors.length)
+    );
+  }
+
+  @computed
+  get hasWarning() {
+    return !!(
+      this.hasIssue &&
+      !this.hasError &&
+      (Array.isArray(this.status)
+        ? this.status.length && this.status.some(s => s.warnings.length)
+        : this.status?.warnings.length)
+    );
+  }
+
+  @computed
+  get hasException() {
+    return this.hasIssue && (this.hasError || this.hasWarning);
+  }
+
+  @computed
+  get hasTip() {
+    return this.hasIssue && !this.hasException;
+  }
+}
+
 export const EditorFormTooltip = observer(function EditFormTooltip(props: EditorFormTooltipProps) {
   const { tooltip, path, aggregated = false, className, style } = props;
   const { formModel } = useEditorFormContext()!;
-  const store = useLocalObservable(() => {
-    return {
-      path,
-      formModel: formModel as FormModel | undefined,
-      setPath(path?: string) {
-        this.path = path;
-      },
-      setFormModel(model?: FormModel) {
-        this.formModel = model;
-      },
-      get status() {
-        return this.path && this.formModel
-          ? aggregated
-            ? this.formModel.getAggregatedValidateStatus(this.path)
-            : this.formModel.getValidateStatus(this.path)
-          : undefined;
-      },
-      get hasIssue() {
-        return Array.isArray(this.status) ? this.status.length : this.status;
-      },
-      get hasError() {
-        return (
-          this.hasIssue &&
-          (Array.isArray(this.status)
-            ? this.status.length && this.status.some(s => s.errors.length)
-            : this.status?.errors.length)
-        );
-      },
-      get hasWarning() {
-        return this.hasIssue && !this.hasError;
-      },
-    };
-  });
+  const store = useMemo(() => {
+    return new LocalStore();
+  }, []);
 
   const hasTooltipOrIssue = tooltip || store.hasIssue;
 
   useEffect(() => {
     store.setFormModel(formModel);
     store.setPath(path);
-  }, [store, path, formModel]);
+    store.setAggregated(aggregated);
+  }, [store, path, formModel, aggregated]);
 
   if (!hasTooltipOrIssue) {
     return null;
@@ -86,6 +134,7 @@ export const EditorFormTooltip = observer(function EditFormTooltip(props: Editor
         {
           error: store.hasError,
           warning: store.hasWarning,
+          tip: store.hasTip,
         },
         s.root
       )}
@@ -101,9 +150,9 @@ export const EditorFormTooltip = observer(function EditFormTooltip(props: Editor
               <EditorFormIssues formModel={formModel} issues={store.status!} />
             </div>
           }
-          title="告警"
+          title="事件"
         >
-          <ExclamationCircleFilled />
+          {store.hasException ? <ExclamationCircleFilled /> : <BulbFilled />}
         </Popover>
       ) : tooltip ? (
         <Tooltip title={tooltip}>

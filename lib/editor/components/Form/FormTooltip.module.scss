@@ -13,7 +13,8 @@
     }
   }
 
-  &:global(.warning) {
+  &:global(.warning),
+  &:global(.tip) {
     color: var(--vd-color-warning-300);
 
     &:hover {

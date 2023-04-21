@@ -1,6 +1,7 @@
 import { Map as YMap, Doc as YDoc } from 'yjs';
 import { IDisposable, tryDispose } from '@/lib/utils';
 import { Noop, NoopArray } from '@wakeapp/utils';
+import { IValidateStatus } from '@/lib/core';
 
 import { BaseEditorStore } from './BaseEditorStore';
 import { BaseEditorCommandHandler } from './BaseEditorCommandHandler';
@@ -72,7 +73,7 @@ const DEFAULT_AWARENESS_REGISTRY: BaseEditorAwarenessRegistry = {
  * 编辑器模型入口
  * TODO: 销毁
  */
-export class BaseEditorModel implements IDisposable {
+export class BaseEditorModel implements IDisposable, IValidateStatus {
   readonly readonly: boolean;
   readonly whitelist: string[];
   readonly shapeList: string[];
@@ -140,12 +141,20 @@ export class BaseEditorModel implements IDisposable {
     return this.formStore.hasIssue;
   }
 
+  get hasException() {
+    return this.formStore.hasException;
+  }
+
   get hasError() {
     return this.formStore.hasError;
   }
 
   get hasWarning() {
     return this.formStore.hasWarning;
+  }
+
+  get hasTip() {
+    return this.formStore.hasTip;
   }
 
   constructor(options: BaseEditorModelOptions) {

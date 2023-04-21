@@ -278,9 +278,10 @@ export const rulesToAsyncValidatorSchema = (rules: FormRules): Schema => {
  * @returns
  */
 export const rulesToValidator = (rules: FormRules) => {
-  // 按照 warning 和 errors 拆分为两个 rules，方便后面独立验证
+  // 按照 warning 和 errors、tips 拆分为各自的 rules，方便后面独立验证
   const errorRules = cloneDeep(rules);
   const warningRules = cloneDeep(rules);
+  const tipRules = cloneDeep(rules);
 
   const walkAndFilterRules = (rules: FormRules, filter: (rule: FormRuleItem) => boolean) => {
     if (rules['*']) {
@@ -330,20 +331,23 @@ export const rulesToValidator = (rules: FormRules) => {
     }
   };
 
-  walkAndFilterRules(errorRules, i => i.reportType !== FormRuleReportType.Warning);
+  walkAndFilterRules(errorRules, i => i.reportType === FormRuleReportType.Error || i.reportType == null);
   walkAndFilterRules(warningRules, i => i.reportType === FormRuleReportType.Warning);
+  walkAndFilterRules(tipRules, i => i.reportType === FormRuleReportType.Tip);
 
   const errorSchema = rulesToAsyncValidatorSchema(errorRules);
   const warningSchema = rulesToAsyncValidatorSchema(warningRules);
+  const tipSchema = rulesToAsyncValidatorSchema(tipRules);
 
   return async (value: any, options?: ValidateOption): Promise<Map<string, FormItemValidateStatus> | null> => {
     const validateOptions = { ...VALIDATE_OPTIONS, ...options };
-    const [error, warnings] = await Promise.all([
+    const [error, warnings, tips] = await Promise.all([
       catchPromise<RawAsyncValidateError>(errorSchema.validate(value, validateOptions)),
       catchPromise<RawAsyncValidateError>(warningSchema.validate(value, validateOptions)),
+      catchPromise<RawAsyncValidateError>(tipSchema.validate(value, validateOptions)),
     ]);
 
-    if (error || warnings) {
+    if (error || warnings || tips) {
       const map: Map<string, FormItemValidateStatus> = new Map<string, FormItemValidateStatus>();
       const getStatus = (path: string, value: any) => {
         if (map.has(path)) {
@@ -355,6 +359,7 @@ export const rulesToValidator = (rules: FormRules) => {
           value,
           errors: [],
           warnings: [],
+          tips: [],
         };
 
         map.set(path, status);
@@ -362,11 +367,11 @@ export const rulesToValidator = (rules: FormRules) => {
         return status;
       };
 
-      const walkFields = (fields: RawAsyncValidateError['fields'], type: 'error' | 'warning') => {
+      const walkFields = (fields: RawAsyncValidateError['fields'], type: 'error' | 'warning' | 'tip') => {
         for (const path in fields) {
           for (const field of fields[path]) {
             const status = getStatus(path, field.fieldValue);
-            const list = type === 'error' ? status.errors : status.warnings;
+            const list = type === 'error' ? status.errors : type === 'warning' ? status.warnings : status.tips;
             if (!list.includes(field.message!)) {
               list.push(field.message!);
             }
@@ -380,6 +385,10 @@ export const rulesToValidator = (rules: FormRules) => {
 
       if (warnings) {
         walkFields(warnings.fields, 'warning');
+      }
+
+      if (tips) {
+        walkFields(tips.fields, 'tip');
       }
 
       return map;
@@ -410,10 +419,16 @@ const formRuleErrorsToFormItemValidateStatus = (
     value,
     errors: [],
     warnings: [],
+    tips: [],
   };
 
   for (const error of errors) {
-    const list = error.rule.reportType === FormRuleReportType.Warning ? status.warnings : status.errors;
+    const list =
+      error.rule.reportType === FormRuleReportType.Warning
+        ? status.warnings
+        : error.rule.reportType === FormRuleReportType.Tip
+        ? status.tips
+        : status.errors;
     for (const item of error.message) {
       if (!list.includes(item)) {
         list.push(item);
