@@ -66,9 +66,9 @@ export const EditorInspectPanel = observer(function EditorInspectPanel() {
                 事件
                 {!!hasException ? (
                   <ExclamationCircleFilled className={hasError ? 'u-danger' : 'u-warning'} style={{ marginLeft: 4 }} />
-                ) : (
+                ) : hasIssue ? (
                   <BulbFilled className="u-warning" />
-                )}
+                ) : null}
               </span>
             </Tooltip>
           ),

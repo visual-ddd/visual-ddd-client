@@ -67,6 +67,26 @@ export function checkSourceObject(context: FormValidatorContext) {
   }
 }
 
+export function checkSourceObjectMatch(context: FormValidatorContext) {
+  const mapper = getMapperFromValidatorContext(context);
+
+  if (!mapper || !mapper.sourceObject || !mapper.targetObject) {
+    return;
+  }
+
+  // 未映射的字段
+  const fields: string[] = [];
+  for (const item of mapper.sourceFields) {
+    if (!mapper.mappers.some(i => i.source === item.uuid)) {
+      fields.push(item.name);
+    }
+  }
+
+  if (fields.length > 0) {
+    throw new Error(`请注意, 源对象这些字段未映射: ${fields.join(', ')}`);
+  }
+}
+
 export function checkTargetObject(context: FormValidatorContext) {
   const mapper = getMapperFromValidatorContext(context);
 
@@ -164,4 +184,24 @@ export function checkTargetField(value: string | undefined, context: FormValidat
   }
 
   checkFieldCompatible(context);
+}
+
+export function checkTargetObjectMatch(context: FormValidatorContext) {
+  const mapper = getMapperFromValidatorContext(context);
+
+  if (!mapper || !mapper.sourceObject || !mapper.targetObject) {
+    return;
+  }
+
+  // 未映射的字段
+  const fields: string[] = [];
+  for (const item of mapper.targetFields) {
+    if (!mapper.mappers.some(i => i.target === item.uuid)) {
+      fields.push(item.name);
+    }
+  }
+
+  if (fields.length > 0) {
+    throw new Error(`请注意, 目标对象中这些字段未被映射: ${fields.join(', ')}`);
+  }
 }

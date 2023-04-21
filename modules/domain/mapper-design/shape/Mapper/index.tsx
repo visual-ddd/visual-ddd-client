@@ -1,4 +1,4 @@
-import { defineShape, ShapeComponentProps, useShapeModel } from '@/lib/editor';
+import { defineShape, FormRuleReportType, ShapeComponentProps, useShapeModel } from '@/lib/editor';
 import { ReactComponentBinding, ReactComponentProps, registerReactComponent } from '@/lib/g6-binding';
 
 import { createObjectMapperDSL, MapperObjectDSL, MapperObjectName } from '../../dsl';
@@ -10,8 +10,10 @@ import {
   checkMapperNameConflict,
   checkSourceField,
   checkSourceObject,
+  checkSourceObjectMatch,
   checkTargetField,
   checkTargetObject,
+  checkTargetObjectMatch,
 } from './validator';
 
 const MapperReactShapeComponent = (props: ReactComponentProps) => {
@@ -62,6 +64,13 @@ defineShape({
               checkSourceObject(context);
             },
           },
+          {
+            reportType: FormRuleReportType.Tip,
+            // 提示是否有未匹配的字段
+            async validator(value, context) {
+              checkSourceObjectMatch(context);
+            },
+          },
         ],
       },
       target: {
@@ -71,6 +80,13 @@ defineShape({
             // 验证对象是否存在
             async validator(value, context) {
               checkTargetObject(context);
+            },
+          },
+          {
+            reportType: FormRuleReportType.Tip,
+            // 提示是否有未匹配的字段
+            async validator(value, context) {
+              checkTargetObjectMatch(context);
             },
           },
         ],
