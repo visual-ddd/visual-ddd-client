@@ -3,9 +3,9 @@ import { NoopArray } from '@wakeapp/utils';
 import { computed, makeObservable } from 'mobx';
 import { v4 } from 'uuid';
 
-import { UntitledInCamelCase } from '../../domain-design/dsl/constants';
+import { UntitledInCamelCase, UntitledInUpperCamelCase } from '../../domain-design/dsl/constants';
 
-import { FieldMapperDSL, isCompatible, MapperObjectDSL } from '../dsl';
+import { FieldMapperDSL, isCompatible, MapperObjectDSL, createMapperName, createMapperTitle } from '../dsl';
 import { autoMapper } from './auto-mapper';
 import { IFieldMapper } from './IFieldMapper';
 import { MapperStore } from './MapperStore';
@@ -164,6 +164,24 @@ export class Mapper {
     if (list.length) {
       const newMapper = this.dsl.mappers.concat(list);
       this.commandHandler.updateNodeProperty({ node: this.node, path: 'mappers', value: newMapper });
+    }
+
+    // 生成名称
+    if (!this.dsl.name || this.dsl.name === UntitledInUpperCamelCase) {
+      this.commandHandler.updateNodeProperty({
+        node: this.node,
+        path: 'name',
+        value: createMapperName(this.sourceObject, this.targetObject),
+      });
+    }
+
+    // 生成标题
+    if (!this.dsl.title) {
+      this.commandHandler.updateNodeProperty({
+        node: this.node,
+        path: 'title',
+        value: createMapperTitle(this.sourceObject, this.targetObject),
+      });
     }
   }
 }

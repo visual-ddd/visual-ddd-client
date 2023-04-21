@@ -450,7 +450,7 @@ export abstract class BaseDesignerModel<
   @mutation('DESIGNER:COLLAB_CONNECTED', false)
   protected onCollabConnected() {
     this.collaborationStatus.status = CollaborationStatus.Connected;
-    this.collaborationStatus.description = '已连接, 信号良好';
+    this.collaborationStatus.description = '信号良好';
   }
 
   /**
