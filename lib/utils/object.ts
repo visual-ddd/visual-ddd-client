@@ -2,6 +2,9 @@ import memoize from 'lodash/memoize';
 import toPath from 'lodash/toPath';
 import { get } from '@wakeapp/utils';
 
+/**
+ * 获取父路径
+ */
 export const getParentPath = memoize((path: string) => {
   return getPaths(path).slice(0, -1).join('.');
 });

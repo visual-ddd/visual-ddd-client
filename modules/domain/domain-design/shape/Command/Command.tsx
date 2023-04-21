@@ -15,6 +15,8 @@ import {
   checkAggregationRootReference,
   checkDomainObjectNameConflict,
   checkCommandCategoryConflict,
+  checkCommandPropertyExistedInAggregationRoot,
+  checkCommandPropertyCompatibleWithAggregationRoot,
 } from '../../dsl';
 import { createCopyAsMenu } from '@/modules/domain/transform';
 
@@ -136,7 +138,21 @@ defineShape({
                 { required: true, message: '属性名不能为空' },
                 {
                   async validator(value, context) {
+                    // 检查名称冲突
                     checkPropertyName(value, 'properties', context);
+                  },
+                },
+                {
+                  async validator(value, context) {
+                    // 检查命令的属性是否在聚合根中
+                    checkCommandPropertyExistedInAggregationRoot(value, context);
+                  },
+                  reportType: FormRuleReportType.Warning,
+                },
+                {
+                  async validator(value, context) {
+                    // 检查命令的属性是否和聚合根兼容
+                    checkCommandPropertyCompatibleWithAggregationRoot(value, context);
                   },
                 },
               ],

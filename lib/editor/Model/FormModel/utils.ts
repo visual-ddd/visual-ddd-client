@@ -1,7 +1,7 @@
 import Schema, { ValidateError, ValidateOption, Rules, RuleItem } from 'async-validator';
 import toPath from 'lodash/toPath';
 import memoize from 'lodash/memoize';
-import { booleanPredicate, cloneDeep, NoopArray } from '@wakeapp/utils';
+import { booleanPredicate, cloneDeep, NoopArray, pick } from '@wakeapp/utils';
 import { catchPromise } from '@/lib/utils';
 
 import {
@@ -283,15 +283,6 @@ export const rulesToValidator = (rules: FormRules) => {
   const warningRules = cloneDeep(rules);
 
   const walkAndFilterRules = (rules: FormRules, filter: (rule: FormRuleItem) => boolean) => {
-    if (rules.$self) {
-      const list = normalizeRule(rules.$self).filter(filter);
-      rules.$self = list;
-
-      if (!list.length) {
-        delete rules.$self;
-      }
-    }
-
     if (rules['*']) {
       walkAndFilterRules(rules['*'], filter);
 
@@ -313,6 +304,28 @@ export const rulesToValidator = (rules: FormRules) => {
 
       if (!Object.keys(rules.fields).length) {
         delete rules.fields;
+      }
+    }
+
+    if (rules.$self) {
+      const normalizedList = normalizeRule(rules.$self);
+      const list = normalizedList.filter(filter);
+      rules.$self = list;
+
+      if (!list.length) {
+        if (rules['*'] || rules.fields) {
+          // 下级是数组或者对象，需要保留结构声明
+          const baseTypeRule = normalizedList.find(i => i.type === 'object' || i.type === 'array');
+          if (baseTypeRule) {
+            rules.$self = [pick(baseTypeRule, 'type')];
+          } else {
+            // 直接清空, 后面 rulesToAsyncValidatorSchema 会抛出异常
+            delete rules.$self;
+          }
+        } else {
+          // 没有下级，直接清空
+          delete rules.$self;
+        }
       }
     }
   };

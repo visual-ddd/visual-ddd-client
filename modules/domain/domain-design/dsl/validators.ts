@@ -1,5 +1,5 @@
 import type { FormValidatorContext } from '@/lib/editor';
-import { getPaths } from '@/lib/utils';
+import { getParentPath, getPaths } from '@/lib/utils';
 import { get } from '@wakeapp/utils';
 
 import {
@@ -10,6 +10,8 @@ import {
   IDomainObjectUnderAggregation,
 } from '../model';
 import { NameDSL } from './dsl';
+import { isTypeDSLEqual } from './helper';
+import { stringifyTypeDSL } from './stringify';
 
 /**
  * 从验证上下文中获取 DomainObjectStore
@@ -204,6 +206,77 @@ export function checkPropertyName(value: string, path: string, context: FormVali
 
     if (count > 1) {
       throw new Error(`名称 ${value} 已重复`);
+    }
+  }
+}
+
+function getAggregationRootFromByCommand(context: FormValidatorContext) {
+  const command = getDomainObjectFromValidatorContext(context) as DomainObjectCommand;
+
+  if (!command || !command.package) {
+    // 未关联聚合根
+    return;
+  }
+
+  const roots = command.package.aggregationRoots;
+
+  if (roots.length !== 1) {
+    return;
+  }
+
+  return roots[0];
+}
+
+/**
+ * 检查命令的属性是否存在于聚合根中
+ * @param value
+ * @param context
+ * @returns
+ */
+export function checkCommandPropertyExistedInAggregationRoot(value: string, context: FormValidatorContext) {
+  if (!value) {
+    return;
+  }
+
+  const root = getAggregationRootFromByCommand(context);
+
+  if (root != null) {
+    const property = root.dsl.properties.find(i => i.name === value);
+    if (!property) {
+      throw new Error(`聚合根中不存在该字段(${value})，如果是预期行为，请忽略该警告`);
+    }
+  }
+}
+
+/**
+ * 检查命名的属性是否与聚合根的属性兼容
+ * @param value
+ * @param context
+ * @returns
+ */
+export function checkCommandPropertyCompatibleWithAggregationRoot(value: string, context: FormValidatorContext) {
+  if (!value) {
+    return;
+  }
+
+  const root = getAggregationRootFromByCommand(context);
+  const store = getDomainObjectStoreFromFormValidatorContext(context);
+  const field = context.rawRule.fullField;
+
+  if (!field) {
+    return;
+  }
+
+  const currentProperty = context.model.getProperty(getParentPath(field));
+
+  if (root != null) {
+    const rootProperty = root.dsl.properties.find(i => i.name === value);
+    if (rootProperty && currentProperty && !isTypeDSLEqual(rootProperty.type, currentProperty.type)) {
+      throw new Error(
+        `聚合根中的字段(${value}: ${stringifyTypeDSL(rootProperty.type, (id: string, name) => {
+          return store.getObjectById(id)?.name || name || id;
+        })})类型与当前字段类型不一致`
+      );
     }
   }
 }
