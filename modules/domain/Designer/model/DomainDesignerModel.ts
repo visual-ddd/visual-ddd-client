@@ -82,6 +82,9 @@ export class DomainDesignerModel
     const dataObjectDatabase = doc.getMap(YJS_FIELD_NAME.DATA_OBJECT);
     const mapperDatabase = doc.getMap(YJS_FIELD_NAME.MAPPER);
     const ubiquitousLanguageDatabase = doc.getArray<any>(YJS_FIELD_NAME.UBIQUITOUS_LANGUAGE);
+    // 其他模块, 需要 get 确定最终的结构
+    doc.getXmlFragment(YJS_FIELD_NAME.PRODUCT);
+    doc.getText(YJS_FIELD_NAME.VISION);
 
     this.domainEditorModel = createDomainEditorModel({
       datasource: domainDatabase,
