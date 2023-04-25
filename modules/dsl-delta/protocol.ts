@@ -4,6 +4,9 @@
 import type { BusinessDomainDSL, NameDSL } from '@/modules/domain/api/dsl/interface';
 import type { ScenarioDSL } from '@/modules/scenario/api/dsl/interface';
 
+export type * from '@/modules/domain/api/dsl/interface';
+export type * from '@/modules/scenario/api/dsl/interface';
+
 export interface WithVersion {
   /**
    * 版本号
@@ -41,24 +44,14 @@ export interface ApplicationDSL extends NameDSL, WithVersion {
  */
 export namespace Delta {
   /**
-   * 值类型
-   */
-  export enum ValueType {
-    /**
-     * 对象类型
-     */
-    Object,
-
-    /**
-     * 原子类型
-     */
-    Atom,
-  }
-
-  /**
    * 对象标记类型
    */
-  export enum ObjectOP {
+  export enum OP {
+    /**
+     * 无任何操作
+     */
+    OP_NONE = 0,
+
     /**
      * 标记节点及其子节点为新增
      */
@@ -68,55 +61,36 @@ export namespace Delta {
      * 标记移除
      */
     OP_DELETE = 1 << 1,
+
+    /**
+     * 标记变动。
+     */
+    OP_UPDATE = 1 << 2,
+
+    // 扩展标记
     /**
      * 对于位移的对象，比如从一个容器移动到另一个容器，会被标记为 Move
      * 目前仅在业务域的领域建模中可能存在这种情况
      */
-    OP_MOVE = 1 << 2,
-
-    /**
-     * 标记更新。
-     * - 和 Dirty 的区别是 update 是节点本身发生了变更，而 dirty 是子节点发生了变更
-     * - update 表示原子属性发生了变更
-     */
-    OP_UPDATE = 1 << 3,
-
-    /**
-     * 对于引用类型，如果子级发生的变更, 会被标记为 Dirty, 生成器可以自行决定是否需要往下处理
-     */
-    OP_DIRTY = 1 << 4,
-  }
-
-  /**
-   * 属性标记
-   */
-  export enum PropertyOP {
-    OP_DIRTY = 'dirty',
-    OP_NEW = 'new',
-    OP_DELETE = 'delete',
-    OP_UPDATE = 'update',
-  }
-
-  export interface PropertyDirty {
-    type: PropertyOP.OP_DIRTY;
-    key: string;
+    OP_MOVE = 1 << 3,
   }
 
   export interface PropertyUpdate {
-    type: PropertyOP.OP_UPDATE;
+    type: OP.OP_UPDATE;
     /**
      * 变更的属性
      */
     key: string;
 
     /**
-     * 旧的值
+     * 旧的值, 只有原始值会携带 oldValue
+     * 如果是引用类型，这里为空
      */
-    oldValue: any;
+    oldValue?: any;
   }
 
   export interface PropertyNew {
-    type: PropertyOP.OP_NEW;
+    type: OP.OP_NEW;
     key: string;
   }
 
@@ -124,16 +98,23 @@ export namespace Delta {
    * 属性删除
    */
   export interface PropertyDelete {
-    type: PropertyOP.OP_DELETE;
+    type: OP.OP_DELETE;
     key: string;
+
+    /**
+     * 被删除的值或对象
+     */
     value: any;
   }
 
-  export type PropertyDelta = PropertyDirty | PropertyUpdate | PropertyNew | PropertyDelete;
+  export type PropertyDelta = PropertyUpdate | PropertyNew | PropertyDelete;
 
+  /**
+   * 对象变更标记
+   */
   export interface Delta {
     /**
-     * ObjectOP 位
+     * OP 位
      */
     op: number;
 
@@ -143,3 +124,37 @@ export namespace Delta {
     deltas: PropertyDelta[];
   }
 }
+
+// 注入 delta 标记到 NameDSL
+declare module '@/modules/domain/api/dsl/interface' {
+  export interface NameDSL {
+    /**
+     * Delta 标记
+     */
+    __delta?: Delta.Delta;
+  }
+}
+
+/**
+ * 值类型
+ */
+export enum ValueType {
+  /**
+   * 原子类型
+   */
+  Atom,
+
+  /**
+   * 不处理
+   */
+  Never,
+}
+
+/**
+ * 对象结构定义
+ */
+export type ObjectMeta<T> = T extends {}
+  ? {
+      [K in keyof T]: ValueType | ObjectMeta<T[K]> | [ObjectMeta<T[K]>];
+    }
+  : ValueType;
