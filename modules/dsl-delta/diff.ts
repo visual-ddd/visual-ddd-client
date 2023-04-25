@@ -59,8 +59,11 @@ export function getObjectId(a: any) {
 export function injectDelta(obj: object, delta: Delta.Delta) {
   Object.defineProperty(obj, '__delta', {
     value: delta,
-    enumerable: false,
+    enumerable: true,
+    configurable: false,
   });
+
+  return obj;
 }
 
 /**
@@ -72,15 +75,16 @@ export function injectDelta(obj: object, delta: Delta.Delta) {
 export function objectArrayDiff(
   income: any,
   old: any,
-  objectMeta: ObjectMeta<unknown>
+  objectMeta: ObjectMeta<any>
 ): { result: any[]; delta: Delta.Delta } {
   income = toArray(income) as any[];
-  old = (toArray(old) as any[]).slice(0);
+  old = toArray(old) as any[];
   const result: any[] = [];
 
   let updated = false;
 
-  for (const item of income) {
+  for (let i = 0; i < income.length; i++) {
+    const item = income[i];
     const compareIdx = old.findIndex((i: any) => objectEqual(i, item));
 
     if (compareIdx === -1) {
@@ -93,19 +97,24 @@ export function objectArrayDiff(
       );
       updated = true;
     } else {
-      const [toCompare] = old.splice(compareIdx, 1);
+      const [toCompare] = old.splice(compareIdx, 1, null);
       const delta = objectDiff(item, toCompare, objectMeta);
 
-      if (delta) {
+      if (delta && delta.op !== Delta.OP.OP_NONE) {
         result.push(injectDelta(item, delta));
         updated = true;
       } else {
+        if (compareIdx !== i) {
+          // 顺序变化
+          updated = true;
+        }
         result.push(item);
       }
     }
   }
 
   // 剩下的就是被删除的
+  old = old.filter(Boolean);
   if (old.length > 0) {
     updated = true;
     for (const item of old) {

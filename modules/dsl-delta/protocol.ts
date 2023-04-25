@@ -4,8 +4,8 @@
 import type { BusinessDomainDSL, NameDSL } from '@/modules/domain/api/dsl/interface';
 import type { ScenarioDSL } from '@/modules/scenario/api/dsl/interface';
 
-export type * from '@/modules/domain/api/dsl/interface';
-export type * from '@/modules/scenario/api/dsl/interface';
+export * from '@/modules/domain/api/dsl/interface';
+export * from '@/modules/scenario/api/dsl/interface';
 
 export interface WithVersion {
   /**
