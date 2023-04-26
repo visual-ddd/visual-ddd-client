@@ -190,6 +190,7 @@ test('transformMethods', () => {
       meta: undefined,
       name: 'foo',
       signature: {
+        uuid: '0',
         description: undefined,
         parameters: [],
         return: {
@@ -197,11 +198,11 @@ test('transformMethods', () => {
         },
       },
       title: undefined,
-      uuid: '0',
+      uuid: '0-method',
     },
   ]);
 
-  expect(
+  expect(() => {
     transformMethods(
       [
         {
@@ -217,43 +218,45 @@ test('transformMethods', () => {
         },
       ],
       getRef
-    )
-  ).toEqual([
-    {
-      abstract: undefined,
-      access: undefined,
-      description: undefined,
-      meta: undefined,
-      name: 'foo',
-      signature: [
-        {
-          description: undefined,
-          parameters: [],
-          return: {
-            type: 'void',
-          },
-        },
-        {
-          description: undefined,
-          parameters: [
-            {
-              description: undefined,
-              meta: undefined,
-              name: 'a',
-              title: undefined,
-              type: 'Boolean',
-              uuid: '2-1',
-            },
-          ],
-          return: {
-            type: 'Char',
-          },
-        },
-      ],
-      title: undefined,
-      uuid: '0',
-    },
-  ]);
+    );
+  }).toThrowError();
+
+  //   .toEqual([
+  //   {
+  //     abstract: undefined,
+  //     access: undefined,
+  //     description: undefined,
+  //     meta: undefined,
+  //     name: 'foo',
+  //     signature: [
+  //       {
+  //         description: undefined,
+  //         parameters: [],
+  //         return: {
+  //           type: 'void',
+  //         },
+  //       },
+  //       {
+  //         description: undefined,
+  //         parameters: [
+  //           {
+  //             description: undefined,
+  //             meta: undefined,
+  //             name: 'a',
+  //             title: undefined,
+  //             type: 'Boolean',
+  //             uuid: '2-1',
+  //           },
+  //         ],
+  //         return: {
+  //           type: 'Char',
+  //         },
+  //       },
+  //     ],
+  //     title: undefined,
+  //     uuid: '0',
+  //   },
+  // ]);
 });
 
 test('transformEnum', () => {

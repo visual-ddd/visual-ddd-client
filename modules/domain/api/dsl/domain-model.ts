@@ -109,6 +109,7 @@ export function transformMethods(
     const define = map[name];
 
     const signature: DSL.MethodDefineDSL = {
+      uuid,
       description,
       parameters: parameters.map(p => transformParameter(p, getReference)),
       return: {
@@ -117,11 +118,12 @@ export function transformMethods(
     };
 
     if (define) {
-      define.signature = Array.isArray(define.signature) ? define.signature : [define.signature];
-      define.signature.push(signature);
+      throw new Error('方法不能重复定义');
+      // define.signature = Array.isArray(define.signature) ? define.signature : [define.signature];
+      // define.signature.push(signature);
     } else {
       map[name] = {
-        uuid,
+        uuid: `${uuid}-method`,
         title,
         name,
         description,

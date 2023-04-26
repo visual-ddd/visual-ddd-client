@@ -122,9 +122,10 @@ exports[`领域模型 DSL 转换集成测试 1`] = `
                 "return": {
                   "type": "void",
                 },
+                "uuid": "3b5ce6af-a875-4e94-b687-425f282ea21d",
               },
               "title": "",
-              "uuid": "3b5ce6af-a875-4e94-b687-425f282ea21d",
+              "uuid": "3b5ce6af-a875-4e94-b687-425f282ea21d-method",
             },
           ],
           "name": "MyEntity",

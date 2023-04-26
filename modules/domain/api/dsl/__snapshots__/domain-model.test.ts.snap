@@ -104,9 +104,10 @@ exports[`Container 1`] = `
                 "return": {
                   "type": "void",
                 },
+                "uuid": "53afcda5-ad8e-45a0-887b-1a23620f2235",
               },
               "title": "",
-              "uuid": "53afcda5-ad8e-45a0-887b-1a23620f2235",
+              "uuid": "53afcda5-ad8e-45a0-887b-1a23620f2235-method",
             },
           ],
           "name": "Untitled2",
@@ -163,9 +164,10 @@ exports[`Container 1`] = `
               "return": {
                 "type": "void",
               },
+              "uuid": "f1559572-9a47-43a7-8df7-c2a690c1e57b",
             },
             "title": "",
-            "uuid": "f1559572-9a47-43a7-8df7-c2a690c1e57b",
+            "uuid": "f1559572-9a47-43a7-8df7-c2a690c1e57b-method",
           },
         ],
         "name": "Untitled",
@@ -771,9 +773,10 @@ exports[`real data 1`] = `
               "return": {
                 "type": "void",
               },
+              "uuid": "1be32e15-1133-4ede-9655-a04fdce42c24",
             },
             "title": "验证密码是否正确",
-            "uuid": "1be32e15-1133-4ede-9655-a04fdce42c24",
+            "uuid": "1be32e15-1133-4ede-9655-a04fdce42c24-method",
           },
           {
             "abstract": true,
@@ -797,9 +800,10 @@ exports[`real data 1`] = `
               "return": {
                 "type": "void",
               },
+              "uuid": "11e12ff2-ed73-4342-a3a4-ce4b741701db",
             },
             "title": "验证重置密码唯一标识是否正确",
-            "uuid": "11e12ff2-ed73-4342-a3a4-ce4b741701db",
+            "uuid": "11e12ff2-ed73-4342-a3a4-ce4b741701db-method",
           },
         ],
         "name": "Account",

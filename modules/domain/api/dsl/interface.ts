@@ -113,7 +113,7 @@ export interface ReturnDSL {
   type: TypeDSL;
 }
 
-export interface MethodDefineDSL {
+export interface MethodDefineDSL extends IDDSL {
   description?: string;
 
   parameters: ParameterDSL[];
@@ -136,8 +136,9 @@ export interface MethodDSL extends NameDSL {
 
   /**
    * 方法签名
+   * NOTE: Java 生成器目前只支持一个签名，即没有处理重载的情况, 暂时移除
    */
-  signature: MethodDefineDSL | MethodDefineDSL[];
+  signature: MethodDefineDSL;
 }
 
 /**
