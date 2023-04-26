@@ -5,7 +5,7 @@ import { v4 } from 'uuid';
 
 import { BotSession } from './BotSession';
 import { BotSessionStoreEvent } from './BotSessionStoreEvent';
-import { DEFAULT_NAME, DEFAULT_SESSION_PROMPT, DEFAULT_SESSION_ID } from './constants';
+import { DEFAULT_NAME, DEFAULT_SESSION_PROMPT, DEFAULT_SESSION_ID, DEFAULT_SESSION_REMOVABLE } from './constants';
 import type { Prompt } from './types';
 
 const KEY = 'chat-bot-sessions';
@@ -106,7 +106,7 @@ export class BotSessionStore implements IDisposable {
 
       const [removed] = this.sessions.splice(idx, 1);
 
-      if (this.active === id) {
+      if (this.active === id && this.sessions.length) {
         this.activeSession(this.sessions[0].uuid);
       }
 
@@ -132,7 +132,7 @@ export class BotSessionStore implements IDisposable {
 
   private initial() {
     const sessionIds = this.load();
-    if (sessionIds) {
+    if (sessionIds?.length) {
       this.sessions = sessionIds.map(id => new BotSession({ uuid: id }));
     } else {
       // 初始化
@@ -141,8 +141,8 @@ export class BotSessionStore implements IDisposable {
           uuid: DEFAULT_SESSION_ID,
           name: DEFAULT_NAME,
           system: DEFAULT_SESSION_PROMPT,
-          // 默认会话不支持删除
-          removable: false,
+          // 通常默认会话不支持删除
+          removable: DEFAULT_SESSION_REMOVABLE,
         }),
       ];
       this.save();
