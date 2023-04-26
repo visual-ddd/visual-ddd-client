@@ -82,7 +82,7 @@ export const ChatPage = observer(function ChatPage(props: ChatPageProps) {
           <Content onToggleSidebar={pageModel.toggleSidebarFolded} />
         </SplitBox>
       </div>
-      <Tour steps={steps} open={showTour} onClose={() => setShowTour(false)} mask={false} type="primary" />
+      <Tour steps={steps} open={showTour} onClose={() => setShowTour(false)} type="primary" />
     </BotSessionStoreProvider>
   );
 });
