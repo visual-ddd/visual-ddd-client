@@ -5,8 +5,16 @@ import { toArray } from '@/lib/utils';
 import { ObjectMeta, Delta, ValueType } from './protocol';
 import { NoopArray } from '@wakeapp/utils';
 
-export function addObjectOp(value: number, OP: Delta.OP) {
+export function markOP(value: number, OP: Delta.OP) {
   return value | OP;
+}
+
+export function isOPMarked(value: number | undefined, OP: Delta.OP) {
+  if (value == null) {
+    return false;
+  }
+
+  return (value & OP) === OP;
 }
 
 /**

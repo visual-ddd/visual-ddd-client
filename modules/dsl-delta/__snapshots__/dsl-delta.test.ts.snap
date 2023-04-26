@@ -1,0 +1,316 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`simple 1`] = `
+{
+  "businessDomains": [
+    {
+      "__delta": {
+        "deltas": [
+          {
+            "key": "domainModel",
+            "type": 4,
+          },
+        ],
+        "op": 4,
+      },
+      "dataModel": {
+        "dataObjects": [],
+        "references": [],
+      },
+      "domainModel": {
+        "__delta": {
+          "deltas": [
+            {
+              "key": "aggregates",
+              "type": 4,
+            },
+          ],
+          "op": 4,
+        },
+        "aggregates": [
+          {
+            "__delta": {
+              "deltas": [
+                {
+                  "key": "root",
+                  "type": 4,
+                },
+                {
+                  "key": "entities",
+                  "type": 4,
+                },
+              ],
+              "op": 4,
+            },
+            "commands": [
+              {
+                "category": "create",
+                "description": "",
+                "event": {
+                  "name": "UserCreateEvent",
+                  "properties": [
+                    {
+                      "access": "public",
+                      "description": "",
+                      "meta": {},
+                      "name": "id",
+                      "title": "用户 ID",
+                      "type": "Long",
+                      "uuid": "1537b249-0aba-4177-8b76-93b1b4a7b535",
+                    },
+                  ],
+                  "uuid": "c89fb0b5-7604-4863-a754-af5a36d6e80f",
+                },
+                "eventSendable": false,
+                "meta": {},
+                "name": "UserCreate",
+                "properties": [
+                  {
+                    "access": "public",
+                    "description": "",
+                    "meta": {},
+                    "name": "name",
+                    "title": "名称",
+                    "type": "String",
+                    "uuid": "1a925506-00f7-4aef-bcce-836215911c00",
+                  },
+                ],
+                "repository": "create",
+                "return": {
+                  "type": "void",
+                },
+                "rules": [],
+                "source": [
+                  {
+                    "type": "http",
+                  },
+                  {
+                    "type": "rpc",
+                  },
+                ],
+                "title": "新增用户",
+                "uuid": "c89fb0b5-7604-4863-a754-af5a36d6e80f",
+              },
+              {
+                "category": "modify",
+                "description": "",
+                "event": {
+                  "name": "UserModifyEvent",
+                  "properties": [],
+                  "uuid": "e07d602b-b97a-492c-a46e-8798ff3bf8d0",
+                },
+                "eventSendable": false,
+                "meta": {},
+                "name": "UserModify",
+                "properties": [
+                  {
+                    "access": "public",
+                    "description": "",
+                    "meta": {},
+                    "name": "id",
+                    "title": "用户 ID",
+                    "type": "Long",
+                    "uuid": "30c6d04a-8ea0-466f-ab4e-d55d9e59d5d7",
+                  },
+                  {
+                    "access": "public",
+                    "description": "",
+                    "meta": {},
+                    "name": "name",
+                    "title": "名称",
+                    "type": "String",
+                    "uuid": "39881d97-37e2-4f33-9220-24827e585aee",
+                  },
+                ],
+                "repository": "modify",
+                "return": {
+                  "type": "void",
+                },
+                "rules": [],
+                "source": [
+                  {
+                    "type": "http",
+                  },
+                  {
+                    "type": "rpc",
+                  },
+                ],
+                "title": "编辑用户",
+                "uuid": "e07d602b-b97a-492c-a46e-8798ff3bf8d0",
+              },
+              {
+                "category": "remove",
+                "description": "",
+                "event": {
+                  "name": "UserRemoveEvent",
+                  "properties": [],
+                  "uuid": "a69ea6f4-cc38-4597-b47e-51bf8081f5ea",
+                },
+                "eventSendable": false,
+                "meta": {},
+                "name": "UserRemove",
+                "properties": [
+                  {
+                    "access": "public",
+                    "description": "",
+                    "meta": {},
+                    "name": "id",
+                    "title": "用户 ID",
+                    "type": "Long",
+                    "uuid": "25106aaf-6596-44bd-81f5-053a33f5d440",
+                  },
+                ],
+                "repository": "remove",
+                "return": {
+                  "type": "void",
+                },
+                "rules": [],
+                "source": [
+                  {
+                    "type": "http",
+                  },
+                  {
+                    "type": "rpc",
+                  },
+                ],
+                "title": "删除用户",
+                "uuid": "a69ea6f4-cc38-4597-b47e-51bf8081f5ea",
+              },
+            ],
+            "entities": [
+              {
+                "__delta": {
+                  "deltas": [],
+                  "op": 1,
+                },
+                "id": {
+                  "access": "public",
+                  "description": "",
+                  "meta": {},
+                  "name": "id",
+                  "title": "用户 ID",
+                  "type": "Long",
+                  "uuid": "d5ac8416-5fe0-4407-b7d9-c22f207ab3bb",
+                },
+                "meta": {},
+                "methods": [],
+                "name": "Order",
+                "properties": [
+                  {
+                    "access": "public",
+                    "description": "",
+                    "meta": {},
+                    "name": "orderId",
+                    "title": "订单名称",
+                    "type": "String",
+                    "uuid": "a59edff9-b80b-43a2-b65d-f1a359acee6c",
+                  },
+                  {
+                    "access": "public",
+                    "description": "",
+                    "meta": {},
+                    "name": "userId",
+                    "title": "关联用户",
+                    "type": "Long",
+                    "uuid": "6159b563-a6f2-478f-864a-828bca126793",
+                  },
+                ],
+                "title": "订单",
+                "uuid": "copy-407908de-4cdc-4076-9ec7-958295d9b3e8",
+              },
+            ],
+            "enums": [],
+            "meta": {},
+            "name": "User",
+            "root": {
+              "__delta": {
+                "deltas": [
+                  {
+                    "key": "properties",
+                    "type": 4,
+                  },
+                ],
+                "op": 4,
+              },
+              "id": {
+                "access": "public",
+                "description": "",
+                "meta": {},
+                "name": "id",
+                "title": "用户 ID",
+                "type": "Long",
+                "uuid": "d5ac8416-5fe0-4407-b7d9-c22f207ab3bb",
+              },
+              "meta": {},
+              "methods": [],
+              "name": "User",
+              "properties": [
+                {
+                  "access": "public",
+                  "description": "",
+                  "meta": {},
+                  "name": "name",
+                  "title": "名称",
+                  "type": "String",
+                  "uuid": "9ee1c90d-ac17-45be-897a-5757d1b5f9d7",
+                },
+                {
+                  "__delta": {
+                    "deltas": [],
+                    "op": 1,
+                  },
+                  "access": "public",
+                  "description": "",
+                  "meta": {},
+                  "name": "age",
+                  "title": "未命名",
+                  "type": "Integer",
+                  "uuid": "5741d468-0056-4850-a11c-ba9d9c03b8e6",
+                },
+              ],
+              "title": "用户",
+              "uuid": "6c75e505-03d9-40aa-9961-bc5e37473da1",
+            },
+            "title": "用户",
+            "uuid": "51d6a0f1-cfef-4723-9aae-2bed0ecf0e9d",
+            "valueObjects": [],
+          },
+        ],
+      },
+      "name": "simple",
+      "objectMapper": {
+        "mappers": [],
+      },
+      "queryModel": {
+        "dtos": [],
+        "queries": [],
+      },
+      "ubiquitousLanguage": [
+        {
+          "conception": "资源",
+          "definition": "BD进行销售活动的对象",
+          "englishName": "Resource",
+          "example": "",
+          "restraint": "",
+          "uuid": "bf0b0ce7-6028-41d8-89d6-d096485f3f7d",
+        },
+        {
+          "conception": "公海",
+          "definition": "业务目标限定的模拟资源全集",
+          "englishName": "PublicSea",
+          "example": "业务目标是团购买单合作，限定POI为到餐全国和综合58同城的",
+          "restraint": "与业务目标对应，比如交易公海是为了做交易，推广公海是为了推广",
+          "uuid": "c9bae1d0-d028-418e-98f6-6a3990eec09a",
+        },
+      ],
+      "uuid": "simple",
+      "version": "0.1.0",
+      "vision": "",
+    },
+  ],
+  "businessScenarios": [],
+  "name": "应用",
+  "uuid": "application",
+  "version": "1.0.0",
+}
+`;
