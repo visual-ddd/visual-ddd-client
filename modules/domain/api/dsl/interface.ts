@@ -233,10 +233,10 @@ export type SourceDSL =
     };
 
 // 绑定的仓储能力
-type Repository = 'create' | 'modify' | 'remove';
+export type Repository = 'create' | 'modify' | 'remove';
 
 // 领域事件
-type DomainEvent = NameDSL & {
+export type DomainEvent = NameDSL & {
   // 属性
   properties: PropertyDSL[];
 };
