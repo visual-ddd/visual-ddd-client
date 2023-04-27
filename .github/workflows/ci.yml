@@ -1,0 +1,29 @@
+name: ci
+on:
+  push:
+    branches:
+      - main
+      - chat
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set node version to 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: 19
+      - run: npm i -g @wakeadmin/docker-build
+      - name: build docker
+        env:
+          DOCKER_SERVER: ${{secrets.DOCKER_SERVER}}
+          DOCKER_USER: ${{secrets.DOCKER_USER}}
+          DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+          SENTRY_DSN: ${{secrets.SENTRY_DSN}}
+          SENTRY_AUTH_TOKEN: ${{secrets.SENTRY_AUTH_TOKEN}}
+          SENTRY_ORG: ${{secrets.SENTRY_ORG}}
+          SENTRY_PROJECT: ${{secrets.SENTRY_PROJECT}}
+          PRODUCTION_SOURCE_MAP: ${{secrets.PRODUCTION_SOURCE_MAP}}
+          BD_ANALYZE_KEY: ${{secrets.BD_ANALYZE_KEY}}
+        run: bash ./scripts/build.sh
