@@ -221,7 +221,7 @@ const TypeSelect = observer(function TypeSelect(props: { value?: TypeDSL; onChan
           <div className={s.cascaderDisplay}>
             {opts
               ? arrayJoin(
-                  opts.map(i => i.label),
+                  opts.filter(Boolean).map(i => i.label),
                   <span>/</span>
                 ).map((i, idx) => (isValidElement(i) ? cloneElement(i, { key: idx }) : i))
               : null}
