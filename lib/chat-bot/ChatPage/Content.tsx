@@ -1,7 +1,9 @@
 import { observer } from 'mobx-react';
+import { Slider } from 'antd';
+import { useState } from 'react';
 import Image from 'next/image';
 import { usePrompt } from '@/lib/components/Prompt';
-import { EditOutlined } from '@ant-design/icons';
+import { EditOutlined, MoreOutlined, SettingOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
 
 import s from './Content.module.scss';
@@ -12,6 +14,7 @@ import { History } from '../ChatWindow/History';
 import { Prompt } from '../ChatWindow/Prompt';
 import { SidebarIcon } from './SidebarIcon';
 import robot from './robot.png';
+import { MAX_CONTEXT_MESSAGE, TEMPERATURE } from '../constants';
 
 export interface ContentProps {
   onToggleSidebar?: () => void;
@@ -61,6 +64,7 @@ export const Content = observer(function Content(props: ContentProps) {
   const { onToggleSidebar } = props;
   const store = useBotSessionStoreContext();
   const [showPrompt, promptHolder] = usePrompt();
+  const [showSetting, setShowSetting] = useState(false);
 
   const handleEditSystem = async () => {
     const system = await showPrompt({
@@ -75,50 +79,101 @@ export const Content = observer(function Content(props: ContentProps) {
     }
   };
 
+  const handleToggleShowSetting = () => {
+    setShowSetting(i => !i);
+  };
+
+  const handleClear = () => {
+    store.currentActiveSession?.model?.clearHistory();
+  };
+
   return (
-    <div className={s.root}>
-      {store.sessions.length === 0 ? (
-        <div className={s.empty}>
-          <Image className={s.robot} src={robot} alt="nothing here" />
-          <div className={s.desc}>
-            当前没有任何会话， 点击
-            <a
-              className="u-link"
-              onClick={() => {
-                store.addSession();
+    <div className={s.container}>
+      <div className={s.root}>
+        {store.sessions.length === 0 ? (
+          <div className={s.empty}>
+            <Image className={s.robot} src={robot} alt="nothing here" />
+            <div className={s.desc}>
+              当前没有任何会话， 点击
+              <a
+                className="u-link"
+                onClick={() => {
+                  store.addSession();
+                }}
+              >
+                创建会话
+              </a>
+              , 或者 ‘探索’ 更多使用场景吧!
+            </div>
+          </div>
+        ) : (
+          <>
+            <header className={s.header}>
+              <SidebarIcon className={s.fold} onClick={onToggleSidebar} id="chat-page-sidebar-folder" />
+              <aside className={s.headerBody}>
+                <div className={s.title}>{store.currentActiveSession?.name}</div>
+                <div className={classNames(s.system, 'u-line-clamp-4')} id="chat-page-change-system">
+                  {store.currentActiveSession?.system || '随便聊聊'}
+                  <span className={classNames('u-link', s.editSystem)} onClick={handleEditSystem}>
+                    <EditOutlined /> 修改主题
+                  </span>
+                </div>
+              </aside>
+              <MoreOutlined className={s.options} onClick={handleToggleShowSetting} title="会话设置" />
+            </header>
+            {promptHolder}
+            <main className={s.sessions}>
+              {store.sessions.map(i => {
+                if (!i.model) {
+                  return null;
+                }
+
+                return <Item key={i.uuid} item={i} active={i.uuid === store.active} />;
+              })}
+            </main>
+          </>
+        )}
+      </div>
+      <div className={classNames(s.setting, { visible: showSetting && store.currentActiveSession })}>
+        <div className={s.settingBody}>
+          <header className={s.settingHeader}>
+            <SettingOutlined />
+            会话设置
+          </header>
+          <div className={classNames(s.settingItem, 'u-pointer')} onClick={handleEditSystem}>
+            修改主题
+          </div>
+          <div className={s.settingItem}>
+            <label>温度</label>
+            <Slider
+              value={store.currentActiveSession?.temperature ?? TEMPERATURE}
+              onChange={v => {
+                store.currentActiveSession?.setTemperature(v);
               }}
-            >
-              创建会话
-            </a>
-            , 或者 ‘探索’ 更多使用场景吧!
+              min={0}
+              max={2}
+              step={0.1}
+            ></Slider>
+          </div>
+
+          <div className={s.settingItem}>
+            <label>上下文消息数</label>
+            <Slider
+              min={1}
+              max={50}
+              step={1}
+              value={store.currentActiveSession?.maxContextLength ?? MAX_CONTEXT_MESSAGE}
+              onChange={v => {
+                store.currentActiveSession?.setMaxContextLength(v);
+              }}
+            ></Slider>
+          </div>
+
+          <div className={classNames(s.settingItem, 'u-pointer', 'danger')} onClick={handleClear}>
+            清空会话
           </div>
         </div>
-      ) : (
-        <>
-          <header className={s.header}>
-            <SidebarIcon className={s.fold} onClick={onToggleSidebar} id="chat-page-sidebar-folder" />
-            <aside className={s.headerBody}>
-              <div className={s.title}>{store.currentActiveSession?.name}</div>
-              <div className={classNames(s.system, 'u-line-clamp-4')} id="chat-page-change-system">
-                {store.currentActiveSession?.system || '随便聊聊'}
-                <span className={classNames('u-link', s.editSystem)} onClick={handleEditSystem}>
-                  <EditOutlined /> 修改主题
-                </span>
-              </div>
-            </aside>
-          </header>
-          {promptHolder}
-          <main className={s.sessions}>
-            {store.sessions.map(i => {
-              if (!i.model) {
-                return null;
-              }
-
-              return <Item key={i.uuid} item={i} active={i.uuid === store.active} />;
-            })}
-          </main>
-        </>
-      )}
+      </div>
     </div>
   );
 });

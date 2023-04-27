@@ -9,9 +9,14 @@ export const MAX_TOKEN = 4096;
 export const MAX_HISTORY_LENGTH = 200;
 
 /**
- * 最大上下文消息数
+ * 默认最大上下文消息数
  */
 export const MAX_CONTEXT_MESSAGE = 10;
+
+/**
+ * 默认温度
+ */
+export const TEMPERATURE = 0.7;
 
 /**
  * 最大上下文 token 数, 包含用户输入

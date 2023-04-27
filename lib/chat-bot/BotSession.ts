@@ -61,12 +61,14 @@ export class BotSession implements IDisposable, IDestroyable {
   /**
    * 模型温度, 默认为 0.7
    */
-  protected temperature?: number;
+  @observable
+  temperature?: number;
 
   /**
    * 最大上下文消息数
    */
-  protected maxContextLength?: number;
+  @observable
+  maxContextLength?: number;
 
   /**
    * 持久化
@@ -145,6 +147,26 @@ export class BotSession implements IDisposable, IDestroyable {
   @mutation('SAVE_SYSTEM_PROMPT', false)
   setSystem(system: string) {
     this.system = system;
+    this.save();
+  }
+
+  /**
+   * 设置温度
+   * @param temperature
+   */
+  @mutation('SAVE_TEMPERATURE', false)
+  setTemperature(temperature: number) {
+    this.temperature = temperature;
+    this.save();
+  }
+
+  /**
+   * 设置最大消息数
+   * @param maxContextLength
+   */
+  @mutation('SAVE_MAX_CONTEXT_LENGTH', false)
+  setMaxContextLength(maxContextLength: number) {
+    this.maxContextLength = maxContextLength;
     this.save();
   }
 
