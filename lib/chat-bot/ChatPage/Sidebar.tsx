@@ -2,7 +2,7 @@ import { observer } from 'mobx-react';
 import { EditOutlined, MinusCircleFilled, PlusOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
 import { useRef, useState } from 'react';
-import { message } from 'antd';
+import { Popconfirm, message } from 'antd';
 import Link from 'next/link';
 
 import { useBotSessionStoreContext } from '../BotSessionStoreContext';
@@ -21,9 +21,9 @@ const Item = observer(function Item(props: { item: BotSession; active: boolean }
   const [editing, setEditing] = useState(false);
   const elementRef = useRef<HTMLDivElement>(null);
 
-  const handleRemove = (evt: React.MouseEvent) => {
-    evt.preventDefault();
-    evt.stopPropagation();
+  const handleRemove = (evt?: React.MouseEvent) => {
+    evt?.preventDefault();
+    evt?.stopPropagation();
 
     store.removeSession(item.uuid);
   };
@@ -100,7 +100,11 @@ const Item = observer(function Item(props: { item: BotSession; active: boolean }
         onClick={handleClick}
       ></span>
       {!!item.removable && <EditOutlined className={s.removeSession} onClick={handleDoubleClick} />}
-      {!!item.removable && <MinusCircleFilled className={s.removeSession} onClick={handleRemove} />}
+      {!!item.removable && (
+        <Popconfirm title="确认删除？" onConfirm={handleRemove} placement="right">
+          <MinusCircleFilled className={s.removeSession} />
+        </Popconfirm>
+      )}
     </div>
   );
 });
