@@ -87,6 +87,9 @@ export const Content = observer(function Content(props: ContentProps) {
     store.currentActiveSession?.model?.clearHistory();
   };
 
+  const temperature = store.currentActiveSession?.temperature ?? TEMPERATURE;
+  const maxContextLength = store.currentActiveSession?.maxContextLength ?? MAX_CONTEXT_MESSAGE;
+
   return (
     <div className={s.container}>
       <div className={s.root}>
@@ -144,9 +147,9 @@ export const Content = observer(function Content(props: ContentProps) {
             修改主题
           </div>
           <div className={s.settingItem}>
-            <label>温度</label>
+            <label>温度: {temperature}</label>
             <Slider
-              value={store.currentActiveSession?.temperature ?? TEMPERATURE}
+              value={temperature}
               onChange={v => {
                 store.currentActiveSession?.setTemperature(v);
               }}
@@ -157,12 +160,12 @@ export const Content = observer(function Content(props: ContentProps) {
           </div>
 
           <div className={s.settingItem}>
-            <label>上下文消息数</label>
+            <label>上下文消息数: {maxContextLength}</label>
             <Slider
               min={1}
               max={50}
               step={1}
-              value={store.currentActiveSession?.maxContextLength ?? MAX_CONTEXT_MESSAGE}
+              value={maxContextLength}
               onChange={v => {
                 store.currentActiveSession?.setMaxContextLength(v);
               }}
