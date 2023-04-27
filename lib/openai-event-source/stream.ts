@@ -18,7 +18,7 @@ export interface EventStreamOptions {
   onMessage: (message: MessageEvent) => void;
 }
 
-function isAbort(err: any) {
+export function isAbort(err: any) {
   if (err instanceof DOMException && err.name === 'AbortError') {
     return true;
   }
@@ -141,9 +141,9 @@ export class EventStream implements IDisposable {
         }
       });
     } catch (err) {
-      if (isAbort(err)) {
-        return;
-      }
+      // if (isAbort(err)) {
+      //   return;
+      // }
 
       throw err;
     } finally {

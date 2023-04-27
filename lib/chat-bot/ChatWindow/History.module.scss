@@ -9,13 +9,13 @@
 .item {
   display: flex;
   width: 100%;
-  padding: 0 var(--vd-spacing-base) 18px;
+  padding: 0 var(--vd-spacing-base) 24px;
   position: relative;
   align-items: flex-end;
 
   .content {
     position: relative;
-    max-width: 90%;
+    max-width: 85%;
     padding: var(--vd-spacing-xs) var(--vd-spacing-sm);
     border-radius: 10px;
   }
@@ -35,6 +35,10 @@
     }
   }
 
+  &:global(.loading) {
+    opacity: 0.94;
+  }
+
   // .extension {
   //   color: var(--vd-color-link);
   //   margin-right: 0.5em;
@@ -52,17 +56,26 @@
 
   .actions {
     position: absolute;
-    right: 0;
-    bottom: -16px;
+    left: 0;
+    bottom: -23px;
     // transform: translateY(-50%);
     display: none;
-    gap: 4px;
-    font-size: 12px;
-    color: var(--vd-color-gray-500);
+    gap: 3px;
+    color: var(--vd-color-gray-600);
 
     & > * {
       opacity: 0.7;
       cursor: pointer;
+      background-color: var(--vd-color-gray-300);
+      border-radius: 4px;
+      padding: 2px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      font-size: 14px;
     }
 
     & > *:hover {
@@ -70,15 +83,34 @@
     }
 
     .remove {
-      color: var(--vd-color-danger-200);
+      // color: var(--vd-color-danger-200);
     }
 
     .copy {
     }
   }
 
-  &:hover .actions {
+  &:hover .actions,
+  &:global(.loading) .actions {
     display: flex;
+  }
+
+  .stop {
+    cursor: pointer;
+    color: var(--vd-color-gray-700);
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    margin-top: 4px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    background-color: var(--vd-color-gray-50);
+
+    .stopIcon {
+      color: var(--vd-color-danger-200);
+    }
   }
 }
 

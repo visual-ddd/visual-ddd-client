@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { message } from 'antd';
+import { Tooltip, message } from 'antd';
 import { Markdown } from '@/lib/components/Markdown';
 import { useEventBusListener } from '@/lib/hooks';
 import { Loading, LoadingIcon } from '@/lib/openai-event-source';
@@ -14,6 +14,7 @@ import { useBotContext } from '../BotContext';
 
 import s from './History.module.scss';
 import { CopyIcon } from './CopyIcon';
+import { StopIcon } from './StopIcon';
 
 export interface HistoryProps {
   className?: string;
@@ -76,6 +77,13 @@ const MessageItem = observer(function MessageItem(props: { item: Message }) {
       });
   };
 
+  /**
+   * 停止生成
+   */
+  const handleStop = () => {
+    bot.stop(item.uuid);
+  };
+
   const extensionActions = extensionDefine?.renderAction?.(item);
 
   return (
@@ -83,6 +91,7 @@ const MessageItem = observer(function MessageItem(props: { item: Message }) {
       className={classNames(s.item, {
         request: item.role === Role.User,
         response: item.role !== Role.User,
+        loading: item.pending,
       })}
       data-uuid={item.uuid}
       ref={elRef}
@@ -100,8 +109,20 @@ const MessageItem = observer(function MessageItem(props: { item: Message }) {
         ) : undefined}
         {!!extensionActions && <div className={s.extensionActions}>{extensionActions}</div>}
         <div className={s.actions}>
-          <CopyIcon className={s.copy} onClick={handleCopy} />
-          <MinusCircleFilled className={s.remove} onClick={remove} />
+          {item.pending && (
+            <Tooltip title="停止" placement="bottom" mouseEnterDelay={0.4}>
+              <StopIcon className={s.stopIcon} onClick={handleStop} />
+            </Tooltip>
+          )}
+          {!item.pending && (
+            <Tooltip title="复制" placement="bottom" mouseEnterDelay={0.4}>
+              <CopyIcon className={s.copy} onClick={handleCopy} />
+            </Tooltip>
+          )}
+
+          <Tooltip title="删除" placement="bottom" mouseEnterDelay={0.4}>
+            <MinusCircleFilled className={s.remove} onClick={remove} />
+          </Tooltip>
         </div>
       </div>
     </div>

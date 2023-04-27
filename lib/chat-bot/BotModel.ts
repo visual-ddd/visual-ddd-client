@@ -4,7 +4,7 @@ import { v4 } from 'uuid';
 import { Disposer, NoopArray } from '@wakeapp/utils';
 import { IDestroyable, IDisposable, TimeoutError, tryDispose } from '@/lib/utils';
 import { command, derive, effect, makeAutoBindThis, mutation } from '@/lib/store';
-import type { OpenAIEventSourceModel } from '@/lib/openai-event-source';
+import { OpenAIEventSourceModel, isAbort } from '@/lib/openai-event-source';
 import findLastIndex from 'lodash/findLastIndex';
 
 import { ChatContext, ExtensionType, GLOBAL_EXTENSION_KEY, IBot, Role } from './protocol';
@@ -236,6 +236,14 @@ export class BotModel implements IDisposable, IBot, IDestroyable {
       } catch (err) {
         console.error(`[BotModel] commit error: `, err);
 
+        if (isAbort(err)) {
+          if (extension.type === ExtensionType.Message) {
+            this.updateMessageContent(responseMessageId, response.eventSource.result);
+          }
+
+          return;
+        }
+
         // 回复错误信息
         const errorMessage = `❌ 抱歉，出现了错误: ${
           TimeoutError.isTimeoutError(err) ? '请求超时' : (err as Error).message
@@ -243,7 +251,11 @@ export class BotModel implements IDisposable, IBot, IDestroyable {
         this.captureException(err as Error, resMsg, response.eventSource);
 
         if (extension.type === ExtensionType.Message) {
-          this.updateMessageContent(responseMessageId, errorMessage);
+          // 追加错误信息
+          this.updateMessageContent(
+            responseMessageId,
+            response.eventSource.result ? response.eventSource.result + '\n' + errorMessage : errorMessage
+          );
         } else {
           this.responseMessage(errorMessage, extension);
         }
@@ -256,6 +268,11 @@ export class BotModel implements IDisposable, IBot, IDestroyable {
       captureException(err);
       this.responseMessage(`抱歉，出现了错误：${(err as Error).message}`);
     }
+  }
+
+  @effect('STOP')
+  async stop(id: string) {
+    this.resetMessagePending(id);
   }
 
   @mutation('REMOVE_MESSAGE', false)
