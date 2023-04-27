@@ -1,3 +1,4 @@
+import { useDeviceCheck } from '@/modules/session';
 import { useVerifyPermission } from './useVerifyPermission';
 
 /**
@@ -6,6 +7,7 @@ import { useVerifyPermission } from './useVerifyPermission';
  */
 export const VerifyPermission = () => {
   useVerifyPermission();
+  useDeviceCheck();
 
   return null;
 };

@@ -31,7 +31,7 @@ export function removeStateByRequest(req: NextApiRequest) {
  * 多设备限制
  */
 export const deviceCheck = allowMethod(
-  'GET',
+  'POST',
   withIronSessionApiRoute(async (req, res) => {
     const accountNo = req.session.content?.accountNo;
 
@@ -42,7 +42,7 @@ export const deviceCheck = allowMethod(
 
       if (isExceed(accountNo)) {
         console.log(`检测到多设备登录: ${accountNo} ${ip}, ${JSON.stringify(getState(accountNo))}`);
-        res.status(403).json(createFailResponse(403, '检测到多设备登录'));
+        res.status(200).json(createFailResponse(403, '检测到多设备登录'));
         return;
       }
     }

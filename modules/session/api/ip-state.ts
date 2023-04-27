@@ -23,19 +23,24 @@ export function updateState(id: string, ip: string) {
   if (state == null) {
     states.set(id, [[ip, now]]);
   } else {
+    // 删除掉过期的 ip
+    for (const i of state.slice(0)) {
+      if (now - i[1] > TTL) {
+        state.splice(state.indexOf(i), 1);
+      }
+    }
+
+    // 如果超过最大长度，不再添加, 避免溢出
+    if (state.length > MAX_LENGTH) {
+      return;
+    }
+
     const index = state.findIndex(([i]) => i === ip);
 
     if (index !== -1) {
       state[index][1] = now;
     } else {
       state.push([ip, now]);
-    }
-
-    // 删除掉过期的 ip
-    for (const i of state.slice(0)) {
-      if (now - i[1] > TTL) {
-        state.splice(state.indexOf(i), 1);
-      }
     }
   }
 }
