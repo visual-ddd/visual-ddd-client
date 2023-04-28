@@ -17,7 +17,7 @@ cd $WORKSPACE/$REPONAME_0
 env
 node -v
 
-npm i -g @wakeadmin/docker-build
+cd ./scripts && npm i && cd -
 
 # 构建镜像
 node ./scripts/docker-build-in-zadig.js

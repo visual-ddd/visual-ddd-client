@@ -20,7 +20,8 @@ fi
 env
 node -v
 
-npm i -g @wakeadmin/docker-build
+
+cd ./scripts && npm i && cd -
 
 # 构建镜像
 node ./scripts/docker-build.js
