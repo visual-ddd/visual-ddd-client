@@ -10,6 +10,14 @@ import type { Prompt } from './types';
 
 const KEY = 'chat-bot-sessions';
 
+export interface BotSessionStoreOption {
+  /**
+   * 当不存在会话时是否创建默认会话
+   * 默认 false
+   */
+  createDefaultSession?: boolean;
+}
+
 /**
  * 聊天多会话支持
  */
@@ -33,7 +41,10 @@ export class BotSessionStore implements IDisposable {
     return this.sessions.find(i => i.uuid === this.active);
   }
 
-  constructor() {
+  private options?: BotSessionStoreOption;
+
+  constructor(options: BotSessionStoreOption) {
+    this.options = options;
     this.initial();
 
     makeObservable(this);
@@ -134,7 +145,7 @@ export class BotSessionStore implements IDisposable {
     const sessionIds = this.load();
     if (sessionIds?.length) {
       this.sessions = sessionIds.map(id => new BotSession({ uuid: id }));
-    } else {
+    } else if (this.options?.createDefaultSession) {
       // 初始化
       this.sessions = [
         new BotSession({
@@ -148,8 +159,14 @@ export class BotSessionStore implements IDisposable {
       this.save();
     }
 
-    // 激活任何会话
-    this.activeSession(DEFAULT_SESSION_ID);
+    // 激活会话
+    if (this.sessions.length) {
+      if (this.sessions.some(i => i.uuid === DEFAULT_SESSION_ID)) {
+        this.activeSession(DEFAULT_SESSION_ID);
+      } else {
+        this.activeSession(this.sessions[0].uuid);
+      }
+    }
   }
 
   private load(): string[] | null {

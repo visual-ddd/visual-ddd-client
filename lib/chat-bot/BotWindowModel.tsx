@@ -38,7 +38,9 @@ export class BotWindowModel implements IDisposable {
       event: this.event,
       onLoad: data => this.load(data),
     });
-    this.store = new BotSessionStore();
+    this.store = new BotSessionStore({
+      createDefaultSession: true,
+    });
 
     makeObservable(this);
     makeAutoBindThis(this);

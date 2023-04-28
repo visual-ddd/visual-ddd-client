@@ -43,7 +43,9 @@ export class BotPageModel implements IDisposable {
       event: this.event,
       onLoad: data => this.load(data),
     });
-    this.store = new BotSessionStore();
+    this.store = new BotSessionStore({
+      createDefaultSession: false,
+    });
     this.initial();
 
     makeObservable(this);
