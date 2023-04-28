@@ -38,9 +38,15 @@ export interface ChatOptions {
   stop?: string | string[];
 
   /**
+   * 是否使用流, 默认 true
+   */
+  stream?: boolean;
+
+  /**
    * 代理的响应对象
    */
   pipe: NextApiResponse;
+
   /**
    * 代理的请求对象
    */

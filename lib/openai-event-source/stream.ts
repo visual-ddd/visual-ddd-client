@@ -1,6 +1,7 @@
-import { createParser } from 'eventsource-parser';
-import { IDisposable } from '@/lib/utils';
+import { IDisposable, isAbort } from '@/lib/utils';
 import { extraRestErrorMessage } from '@/modules/backend-client';
+
+export { isAbort };
 
 export interface EventStreamOptions {
   url: string | URL;
@@ -15,14 +16,18 @@ export interface EventStreamOptions {
    */
   method?: 'GET' | 'POST';
 
-  onMessage: (message: MessageEvent) => void;
-}
+  /**
+   * 接受消息
+   * @param message
+   * @returns
+   */
+  onMessage: (message: string) => void;
 
-export function isAbort(err: any) {
-  if (err instanceof DOMException && err.name === 'AbortError') {
-    return true;
-  }
-  return false;
+  /**
+   * 结束
+   * @returns
+   */
+  onDone: () => void;
 }
 
 /**
@@ -109,28 +114,17 @@ export class EventStream implements IDisposable {
           reject(reason);
         };
 
-        const parser = createParser(evt => {
-          if (stop) {
-            return;
-          }
-
-          if (evt.type === 'event') {
-            try {
-              this.options.onMessage(evt as any);
-            } catch (err) {
-              fail(err);
-            }
-          }
-        });
-
         try {
           const reader = res.body!.getReader();
           while (!stop) {
             const { done, value } = await reader.read();
 
-            parser.feed(decoder.decode(value));
+            const data = decoder.decode(value);
+
+            this.options.onMessage(data);
 
             if (done) {
+              this.options.onDone();
               break;
             }
           }
@@ -141,6 +135,7 @@ export class EventStream implements IDisposable {
         }
       });
     } catch (err) {
+      // 取消操作, 让上层来处理
       // if (isAbort(err)) {
       //   return;
       // }

@@ -3,33 +3,6 @@ import { makeAutoBindThis } from '@/lib/store';
 import { IDisposable, TimeoutController, tryDispose } from '@/lib/utils';
 import { EventStream, EventStreamOptions } from './stream';
 
-interface Usage {
-  prompt_tokens: number;
-  completion_tokens: number;
-  total_tokens: number;
-}
-
-interface Message {
-  role: string;
-  content?: string;
-}
-
-interface Choice {
-  delta: Message;
-  finish_reason: string;
-  index: number;
-}
-
-interface ChatCompletion {
-  id: string;
-  object: string;
-  created: number;
-  model: string;
-  usage: Usage;
-  choices: Choice[];
-}
-
-const DONE = '[DONE]';
 const TIMEOUT = 60 * 1000;
 
 export interface OpenAIEventSourceModelOptions<Result = any> {
@@ -103,6 +76,14 @@ export class OpenAIEventSourceModel<Result = any> implements IDisposable {
           const source = (this.eventStream = new EventStream({
             ...options,
             url,
+            onDone: () => {
+              if (this.disposed) {
+                return;
+              }
+
+              resolve(this.handleDone());
+            },
+
             onMessage: event => {
               if (this.disposed) {
                 return;
@@ -110,16 +91,8 @@ export class OpenAIEventSourceModel<Result = any> implements IDisposable {
 
               timeoutController.refresh();
 
-              const data = event.data as string;
-
-              if (data === DONE) {
-                resolve(this.handleDone());
-              } else {
-                // FIXME: 这里耦合了 chat 接口协议
-                const payload = JSON.parse(data) as ChatCompletion;
-                const result = this.result + payload.choices.map(choice => choice.delta.content ?? '').join('');
-                this.setResult(result);
-              }
+              const result = this.result + event;
+              this.setResult(result);
             },
           }));
 

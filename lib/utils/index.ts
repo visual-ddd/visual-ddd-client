@@ -14,6 +14,7 @@ export * from './TimeoutController';
 export * from './IDestroyable';
 export * from './hash';
 export * from './IdleTaskExecutor';
+export * from './abort';
 
 export function makeSet(contentSplitByComma: string) {
   return new Set<string>(contentSplitByComma.split(',').map(i => i.trim()));

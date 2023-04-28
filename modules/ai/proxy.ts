@@ -1,24 +1,33 @@
-import http from 'http';
-import https from 'https';
 import { captureException } from '@sentry/nextjs';
+import { ParsedEvent, ReconnectInterval, createParser } from 'eventsource-parser';
+import { isAbort } from '@/lib/utils';
 
 import { createFailResponse } from '../backend-node';
 
 import { OPENAI_API_KEY, OPENAI_BASE_PATH } from './config';
 import { countToken, normalizeModel } from './encoding';
 import { ChatModel, DEFAULT_MAX_TOKEN, MAX_TOKENS, ChatOptions, CHAT_API_ENDPOINT, ErrorResponse } from './constants';
+import { ChatCompletion, ChatCompletionInStream } from './types';
 
-function getAgent(url: URL) {
-  if (url.protocol === 'https:') {
-    return https;
-  }
+const DONE = '[DONE]';
 
-  return http;
+export function getResponseContentInStream(response: ChatCompletionInStream) {
+  const { choices } = response;
+
+  return choices.map(choice => choice.delta.content ?? '').join('');
+}
+
+export function getResponseContent(response: ChatCompletion) {
+  const { choices } = response;
+
+  return choices.map(choice => choice.message.content ?? '').join('');
 }
 
 /**
- * openai 接口代理
+ * openai chat 接口代理
  * 注意：被代理的 API 需要开启以下配置
+ *
+ * TODO: 统计 token 数量
  *
  * export const config = {
  *   api: {
@@ -26,7 +35,7 @@ function getAgent(url: URL) {
  *   },
  * }
  */
-export function chat(options: ChatOptions) {
+export async function chat(options: ChatOptions) {
   let { model = ChatModel.GPT3_5_TURBO_0301, source, pipe, ...other } = options;
 
   model = normalizeModel(model);
@@ -53,85 +62,98 @@ export function chat(options: ChatOptions) {
   const url = new URL(basePath);
   url.pathname += CHAT_API_ENDPOINT;
 
-  const request = getAgent(url).request(url, {
-    rejectUnauthorized: false,
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Content-Length': Buffer.byteLength(data),
-      Authorization: `Bearer ${OPENAI_API_KEY}`,
-      Host: url.host,
-    },
-  });
+  try {
+    const abortController = new AbortController();
 
-  request.on('response', response => {
-    if (response.statusCode === 200 && response.headers['content-type'] === 'text/event-stream') {
-      // 正常响应
-      // header
-      for (const headerName of Object.keys(response.headers)) {
-        // 过滤掉一些不需要的 header
-        if (headerName.startsWith('openai-') || headerName === 'server' || headerName.startsWith('x-')) {
-          continue;
-        }
+    source.on('error', e => {
+      if (e.message === 'aborted') {
+        // 取消
+        abortController.abort();
+      } else {
+        console.error(`ai source request failed:`, e);
+      }
+    });
 
-        const header = response.headers[headerName];
-        if (header) {
-          pipe.setHeader(headerName, header);
-        }
+    const response = await fetch(url, {
+      method: 'POST',
+      body: data,
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': String(Buffer.byteLength(data)),
+        Authorization: `Bearer ${OPENAI_API_KEY}`,
+        Host: url.host,
+      },
+      signal: abortController.signal,
+    });
+
+    if (!response.ok) {
+      if (response.headers.get('content-type')?.startsWith('application/json')) {
+        // openai 返回错误信息
+        const result = (await response.json()) as ErrorResponse;
+        pipe.statusCode = response.status || 400;
+        pipe.json(createFailResponse(result.error.code ?? 400, result.error.message));
+        return;
       }
 
-      pipe.setHeader('Transfer-Encoding', 'chunked');
-
-      pipe.writeHead(response.statusCode || 200);
-
-      response.on('data', () => {
-        // 这个方法实际上不属于 ServerResponse, 而是 compression 库的，
-        // 执行这个方法是为了快速将结果响应到客户端
-        // @ts-expect-error
-        pipe.flush();
-      });
-
-      response.pipe(pipe);
-    } else if (response.headers['content-type']?.startsWith('application/json')) {
-      // 如果 openai 返回了错误, 通常是 json 格式
-      // 读取 json
-      let chunks = '';
-
-      response.on('data', chunk => {
-        chunks += chunk;
-      });
-
-      response.on('end', () => {
-        const result = JSON.parse(chunks) as ErrorResponse;
-
-        pipe.statusCode = response.statusCode! || 400;
-
-        pipe.json(createFailResponse(result.error.code ?? 400, result.error.message));
-      });
-    } else {
+      // 响应失败
       // 未知错误
       pipe.statusCode = 500;
       pipe.json(
-        createFailResponse(500, `接收到未知的响应: ${response.statusCode} ${response.headers['content-type']}`)
+        createFailResponse(500, `接收到未知的响应: ${response.status} ${response.headers.get('content-type')}`)
       );
-    }
-  });
+      return;
+    } else if (content.stream && response.headers.get('content-type')?.includes('event-stream')) {
+      // 正常响应
+      const decoder = new TextDecoder();
+      const parser = createParser((evt: ParsedEvent | ReconnectInterval) => {
+        if (pipe.closed || pipe.destroyed) {
+          return;
+        }
 
-  request.on('error', e => {
-    pipe.status(500);
-    pipe.json(createFailResponse(500, e.message));
-    console.error(`ai proxy request failed:`, e);
-  });
+        if (evt.type === 'event') {
+          const d = evt.data;
+          if (d === DONE) {
+            // 完成
+            pipe.end();
+          } else {
+            const payload = JSON.parse(d) as ChatCompletionInStream;
+            const result = getResponseContentInStream(payload);
+            pipe.write(Buffer.from(result));
+            // 这个方法实际上不属于 ServerResponse, 而是 compression 库的，
+            // 执行这个方法是为了快速将结果响应到客户端
+            // @ts-expect-error
+            pipe.flush();
+          }
+        }
+      });
 
-  source.on('error', e => {
-    if (e.message === 'aborted') {
-      // 取消
-      request.destroy();
+      pipe.statusCode = 200;
+      pipe.setHeader('Content-Type', 'text/plain');
+
+      for await (const chunk of response.body as any) {
+        parser.feed(decoder.decode(chunk, { stream: true }));
+      }
+    } else if (response.headers.get('content-type')?.startsWith('application/json')) {
+      // 普通响应方式
+      pipe.statusCode = 200;
+      pipe.setHeader('Content-Type', 'text/plain');
+      const payload = (await response.json()) as ChatCompletion;
+      const result = getResponseContent(payload);
+      pipe.write(Buffer.from(result));
+      pipe.end();
     } else {
-      console.error(`ai source request failed:`, e);
+      throw new Error(`未知响应类型: ${response.headers.get('content-type')}`);
     }
-  });
-
-  request.write(data);
-  request.end();
+  } catch (err) {
+    if (isAbort(err)) {
+      // 取消
+      pipe.statusCode = 400;
+      pipe.json(createFailResponse(400, '请求已取消'));
+    } else {
+      pipe.statusCode = 500;
+      pipe.json(createFailResponse(500, `请求异常: ${(err as Error).message}`));
+      console.error(err);
+      captureException(err);
+    }
+  }
 }

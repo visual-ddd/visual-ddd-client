@@ -1,4 +1,5 @@
-# 文档地址
+# 文档地址 https://docs.docker.com/compose/
+# 启动 ocker compose up -d
 version: '3.9'
 services:
   # 客户端
