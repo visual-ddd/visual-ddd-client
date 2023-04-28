@@ -40,3 +40,4 @@ next-env.d.ts
 
 # Sentry
 next.config.original.js
+.api-config-sample.json

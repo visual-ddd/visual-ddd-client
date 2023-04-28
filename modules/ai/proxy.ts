@@ -4,10 +4,10 @@ import { isAbort } from '@/lib/utils';
 
 import { createFailResponse } from '../backend-node';
 
-import { OPENAI_API_KEY, OPENAI_BASE_PATH } from './config';
 import { countToken, normalizeModel } from './encoding';
-import { ChatModel, DEFAULT_MAX_TOKEN, MAX_TOKENS, ChatOptions, CHAT_API_ENDPOINT, ErrorResponse } from './constants';
+import { ChatModel, DEFAULT_MAX_TOKEN, MAX_TOKENS, ChatOptions, ErrorResponse } from './constants';
 import { ChatCompletion, ChatCompletionInStream } from './types';
+import { getChatCompletionSupport } from './platform';
 
 const DONE = '[DONE]';
 
@@ -50,17 +50,29 @@ export async function chat(options: ChatOptions) {
     return;
   }
 
+  const support = getChatCompletionSupport();
+
   const content = {
     stream: true,
     model,
+    user: support.user,
     // max_tokens: maxToken - token,
     ...other,
   };
 
   const data = JSON.stringify(content);
-  const basePath = OPENAI_BASE_PATH || 'https://api.openai.com/v1';
+  const basePath = support.basePath;
   const url = new URL(basePath);
-  url.pathname += CHAT_API_ENDPOINT;
+  url.pathname += support.endpoint;
+  const query = support.query;
+  const headers = new Headers(support.headers);
+
+  // 查询字符串
+  if (query) {
+    for (const q in query) {
+      url.searchParams.set(q, query[q]);
+    }
+  }
 
   try {
     const abortController = new AbortController();
@@ -74,15 +86,14 @@ export async function chat(options: ChatOptions) {
       }
     });
 
+    headers.set('Content-Type', 'application/json');
+    headers.set('Content-Length', String(Buffer.byteLength(data)));
+    headers.set('Host', url.host);
+
     const response = await fetch(url, {
       method: 'POST',
       body: data,
-      headers: {
-        'Content-Type': 'application/json',
-        'Content-Length': String(Buffer.byteLength(data)),
-        Authorization: `Bearer ${OPENAI_API_KEY}`,
-        Host: url.host,
-      },
+      headers,
       signal: abortController.signal,
     });
 
@@ -131,8 +142,12 @@ export async function chat(options: ChatOptions) {
       pipe.setHeader('Content-Type', 'text/plain');
 
       for await (const chunk of response.body as any) {
-        parser.feed(decoder.decode(chunk, { stream: true }));
+        const txt = decoder.decode(chunk, { stream: true });
+        parser.feed(txt);
       }
+
+      // FIXME: 修复 azure 无法终止问题
+      parser.feed('\n');
     } else if (response.headers.get('content-type')?.startsWith('application/json')) {
       // 普通响应方式
       pipe.statusCode = 200;

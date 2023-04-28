@@ -3,7 +3,7 @@ import { createFailResponse, createSuccessResponse } from '@/modules/backend-nod
 import { NextApiHandler } from 'next';
 import { CreateImageRequestSizeEnum } from 'openai';
 import { withSessionApiRoute } from '@/modules/session/api-helper';
-import { openai } from '../openai';
+import { getOpenAIInstance } from '../openai';
 
 const DEFAULT_SIZE: CreateImageRequestSizeEnum = CreateImageRequestSizeEnum._256x256;
 
@@ -62,7 +62,7 @@ export const dallE: NextApiHandler = allowMethod(
     const size = getSize(prompt);
     prompt = trimSize(prompt);
 
-    const response = await openai.createImage({
+    const response = await getOpenAIInstance().createImage({
       prompt,
       n: 1,
       size,

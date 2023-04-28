@@ -5,7 +5,8 @@ import { PineconeStore } from 'langchain/vectorstores';
 import { OpenAIEmbeddings } from 'langchain/embeddings';
 import { NextApiHandler } from 'next';
 
-import { OPENAI_API_KEY, OPENAI_BASE_PATH, PINECONE_API_KEY, PINECONE_ENVIRONMENT, PINECONE_INDEX } from '../config';
+import { PINECONE_API_KEY, PINECONE_ENVIRONMENT, PINECONE_INDEX } from '../config';
+import { getOpenAISupport } from '../platform';
 
 import { chat } from '../proxy';
 
@@ -27,12 +28,13 @@ async function querySimilar(text: string) {
     environment: PINECONE_ENVIRONMENT,
   });
   const pineconeIndex = client.Index(PINECONE_INDEX);
+  const support = getOpenAISupport();
   const embedding = new OpenAIEmbeddings(
     {
-      openAIApiKey: OPENAI_API_KEY,
+      openAIApiKey: support.key,
     },
     {
-      basePath: OPENAI_BASE_PATH,
+      basePath: support.basePath,
     }
   );
   pineconeStore = await PineconeStore.fromExistingIndex(embedding, { pineconeIndex });

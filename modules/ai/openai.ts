@@ -1,9 +1,15 @@
 import { Configuration, OpenAIApi } from 'openai';
-import { OPENAI_API_KEY, OPENAI_BASE_PATH } from './config';
+import { getOpenAISupport } from './platform';
 
-const configuration = new Configuration({
-  apiKey: OPENAI_API_KEY,
-  basePath: OPENAI_BASE_PATH,
-});
+export function getOpenAIInstance() {
+  const support = getOpenAISupport();
 
-export const openai = new OpenAIApi(configuration);
+  const configuration = new Configuration({
+    apiKey: support.key,
+    basePath: support.basePath,
+  });
+
+  const openai = new OpenAIApi(configuration);
+
+  return openai;
+}
