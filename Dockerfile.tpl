@@ -1,22 +1,3 @@
-FROM node:19-alpine AS base
-
-# 0. 构建依赖, 为什么要分开一步构建依赖呢，这是为了利用 Docker 的构建缓存
-FROM base AS deps
-RUN apk add --no-cache libc6-compat
-WORKDIR /app
-COPY package.json .npmrc pnpm-lock.yaml* ./
-RUN npm i -g pnpm@7 && pnpm install 
-
-
-# 1. 第一步构建编译
-FROM base AS builder
-WORKDIR /app
-
-# COPY 依赖
-COPY --from=deps /app/node_modules /app/node_modules
-# COPY 源代码
-COPY . .
-
 <%
 const ENV = {}
 if (typeof PRODUCTION_SOURCE_MAP !== 'undefined') {
@@ -43,9 +24,28 @@ if (typeof BD_ANALYZE_KEY !== 'undefined') {
 	ENV.BD_ANALYZE_KEY = BD_ANALYZE_KEY
 }
 
-const ENVInString = Object.keys(ENV).map(k => `ENV ${k} ${ENV[k]}`).join('\n')
+const ENVInString = Object.keys(ENV).filter(k => ENV[k]).map(k => `ENV ${k} ${ENV[k]}`).join('\n')
 
 %>
+
+FROM node:19-alpine AS base
+
+# 0. 构建依赖, 为什么要分开一步构建依赖呢，这是为了利用 Docker 的构建缓存
+FROM base AS deps
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+COPY package.json .npmrc pnpm-lock.yaml* ./
+RUN npm i -g pnpm@7 && pnpm install 
+
+
+# 1. 第一步构建编译
+FROM base AS builder
+WORKDIR /app
+
+# COPY 依赖
+COPY --from=deps /app/node_modules /app/node_modules
+# COPY 源代码
+COPY . .
 
 <%= ENVInString %>
 
@@ -55,7 +55,7 @@ RUN env && ls -a && npm run build
 
 
 
-# 2. 第二部，运行
+# 2. 第二步，运行
 FROM base AS runner
 
 ENV NODE_ENV production
