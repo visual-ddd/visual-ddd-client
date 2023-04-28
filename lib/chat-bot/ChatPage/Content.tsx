@@ -26,8 +26,9 @@ const Item = observer(function Item(props: { item: BotSession; active: boolean }
   return (
     <BotProvider bot={item.model!}>
       <div className={classNames(s.session, { active })}>
-        <div className={s.history}>
+        <div className={s.historyWrapper}>
           <History
+            className={s.history}
             intro={
               <>
                 <p>

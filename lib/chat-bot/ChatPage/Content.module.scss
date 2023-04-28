@@ -4,6 +4,7 @@
 }
 
 .root {
+  position: relative;
   background-color: white;
   height: 100%;
   flex: 1;
@@ -78,12 +79,19 @@
 }
 
 .header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
   display: flex;
   padding: var(--vd-spacing-xs) var(--vd-spacing-sm);
   flex-shrink: 0;
   gap: var(--vd-spacing-sm);
   align-items: center;
   border-bottom: 1px solid var(--vd-color-gray-300);
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: saturate(180%) blur(15px);
 
   .headerBody {
     flex: 1;
@@ -164,11 +172,15 @@
   }
 }
 
-.history {
+.historyWrapper {
   flex: 1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+
+  .history {
+    padding-top: 65px;
+  }
 }
 
 .prompt {
