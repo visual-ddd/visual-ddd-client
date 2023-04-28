@@ -45,7 +45,7 @@ export const ChatPage = observer(function ChatPage(props: ChatPageProps) {
     return new BotPageModel();
   }, []);
   const responsive = useResponsive();
-  const hideSidebar = !responsive.sm || pageModel.sidebarFolded;
+  const hideSidebar = !responsive.sm || (pageModel.store.sessions.length ? pageModel.sidebarFolded : false);
 
   useEffect(() => {
     return () => {
