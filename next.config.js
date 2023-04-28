@@ -11,6 +11,7 @@ const snapshot = `${now.getFullYear()}${now.getMonth() + 1}${now.getDate()}`;
 
 const ENABLE_SENTRY_CLI =
   process.env.NODE_ENV === 'production' &&
+  process.env.SENTRY_DSN &&
   process.env.SENTRY_AUTH_TOKEN &&
   process.env.SENTRY_ORG &&
   process.env.SENTRY_PROJECT;
@@ -30,6 +31,8 @@ const nextConfig = {
   },
   env: {
     VERSION,
+    SENTRY_DSN: process.env.SENTRY_DSN,
+    BD_ANALYZE_KEY: process.env.BD_ANALYZE_KEY,
   },
   eslint: {
     // Warning: This allows production builds to successfully complete even if
