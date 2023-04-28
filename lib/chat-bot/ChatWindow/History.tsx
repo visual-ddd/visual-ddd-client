@@ -115,14 +115,15 @@ const MessageItem = observer(function MessageItem(props: { item: Message }) {
             </Tooltip>
           )}
           {!item.pending && (
-            <Tooltip title="复制" placement="bottom" mouseEnterDelay={0.4}>
-              <CopyIcon className={s.copy} onClick={handleCopy} />
-            </Tooltip>
+            <>
+              <Tooltip title="复制" placement="bottom" mouseEnterDelay={0.4}>
+                <CopyIcon className={s.copy} onClick={handleCopy} />
+              </Tooltip>
+              <Tooltip title="删除" placement="bottom" mouseEnterDelay={0.4}>
+                <MinusCircleFilled className={s.remove} onClick={remove} />
+              </Tooltip>
+            </>
           )}
-
-          <Tooltip title="删除" placement="bottom" mouseEnterDelay={0.4}>
-            <MinusCircleFilled className={s.remove} onClick={remove} />
-          </Tooltip>
         </div>
       </div>
     </div>
