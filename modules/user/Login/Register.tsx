@@ -19,11 +19,16 @@ interface RegisterPayload {
   passwordConfirm: string;
 }
 
+export interface RegisterProps {
+  warning?: string;
+}
+
 /**
  * 注册
  * @returns
  */
-export function Register() {
+export function Register(props: RegisterProps) {
+  const { warning } = props;
   const router = useRouter();
   const [form] = Form.useForm<RegisterPayload>();
   const [codeSending, setCodeSending] = useState(false);
@@ -73,6 +78,7 @@ export function Register() {
         layout="vertical"
         size="middle"
         requiredMark={false}
+        disabled={!!warning}
       >
         <Layout.H1>欢迎注册使用 Visual DDD</Layout.H1>
         <Form.Item name="userName" label="昵称" rules={[{ required: true, message: '请输入昵称' }]}>
@@ -100,7 +106,7 @@ export function Register() {
             className={s.codeBtn}
             onClick={handleGetCode}
             loading={codeSending}
-            disabled={codeWaiting}
+            disabled={codeWaiting ? true : undefined}
           >
             {codeWaiting ? `${count} 秒` : '验证码'}
           </Button>
@@ -130,7 +136,7 @@ export function Register() {
 
         <Space className="u-fw u-mt-sm" direction="vertical">
           <Button type="primary" htmlType="submit" className={s.submit} block loading={saving}>
-            注册
+            {warning || '注册'}
           </Button>
           <Link href="/login">
             <Button type="link" block>
