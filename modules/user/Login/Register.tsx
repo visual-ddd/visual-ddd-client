@@ -40,7 +40,7 @@ export function Register(props: RegisterProps) {
   const handleRegister = async (values: any) => {
     try {
       setSaving(true);
-      await request.requestByPost('/wd/visual/web/account/account-register', values);
+      await request.requestByPost('/api/register', values);
       message.success('注册成功');
       router.replace('/login');
     } catch (err) {
