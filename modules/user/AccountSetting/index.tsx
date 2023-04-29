@@ -41,6 +41,7 @@ export const AccountSetting = forwardRef<AccountSettingRef, AccountSettingProps>
       footer={null}
       width={700}
       onCancel={handleCancel}
+      centered
       title="账户信息"
       destroyOnClose
       className={classNames('vd-account-setting', s.root)}

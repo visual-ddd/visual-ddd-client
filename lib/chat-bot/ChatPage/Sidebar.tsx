@@ -3,7 +3,6 @@ import { EditOutlined, MinusCircleFilled, PlusOutlined } from '@ant-design/icons
 import classNames from 'classnames';
 import { useRef, useState } from 'react';
 import { Popconfirm, message } from 'antd';
-import Link from 'next/link';
 
 import { useBotSessionStoreContext } from '../BotSessionStoreContext';
 import type { BotSession } from '../BotSession';
@@ -13,7 +12,9 @@ import { PromptLibraryModal } from '../PromptLibrary';
 import s from './Sidebar.module.scss';
 import { ExploreIcon } from './ExploreIcon';
 
-export interface SidebarProps {}
+export interface SidebarProps {
+  footer?: React.ReactNode;
+}
 
 const Item = observer(function Item(props: { item: BotSession; active: boolean }) {
   const { item, active } = props;
@@ -110,6 +111,7 @@ const Item = observer(function Item(props: { item: BotSession; active: boolean }
 });
 
 export const Sidebar = observer(function Sidebar(props: SidebarProps) {
+  const { footer } = props;
   const store = useBotSessionStoreContext();
 
   const handleAddSession = () => {
@@ -139,11 +141,7 @@ export const Sidebar = observer(function Sidebar(props: SidebarProps) {
           return <Item item={i} key={i.uuid} active={i.uuid === store.active} />;
         })}
       </div>
-      <div className={s.footer}>
-        <Link href="/" className={s.logo}>
-          <img src="/logo.svg" alt="logo" />
-        </Link>
-      </div>
+      <div className={s.footer}>{footer}</div>
     </div>
   );
 });

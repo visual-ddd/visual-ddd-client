@@ -78,7 +78,7 @@ export const User = observer(function User(props: UserProps) {
       },
       {
         key: 'user-setting',
-        label: '账号设置',
+        label: '账号信息',
         onClick: () => {
           accountSetting.current?.open();
         },
