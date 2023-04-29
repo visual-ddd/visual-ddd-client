@@ -1,6 +1,16 @@
 .root {
+  :global(.ant-modal-header) {
+    margin-bottom: 16px;
+  }
+
   :global(.ant-modal-body) {
-    height: 300px;
+    height: 70vh;
+  }
+
+  :global(.ant-tabs-tab) {
+    justify-content: flex-end;
+    margin-top: 0;
+    padding: 2px 16px !important;
   }
 }
 

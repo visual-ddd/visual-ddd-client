@@ -1,0 +1,17 @@
+.root {
+  h3 {
+    font-size: 14px;
+  }
+
+  .list {
+    margin-top: 2em;
+  }
+
+  .table :global(.ant-pro-card-body) {
+    padding: 0;
+  }
+
+  .input {
+    width: 300px;
+  }
+}
