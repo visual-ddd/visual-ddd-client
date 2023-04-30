@@ -1,31 +1,52 @@
 import { ProColumns, ProTable } from '@ant-design/pro-components';
 import { Alert, Button, Input, Space, message } from 'antd';
-import { useRequestByGet } from '@/modules/backend-client';
+import { request, useRequestByGet } from '@/modules/backend-client';
 import s from './Invites.module.scss';
+
+enum InviteStatus {
+  /**
+   * 已注册
+   */
+  REGISTERED = 0,
+  /**
+   * 已奖励
+   */
+  AWARDED = 1,
+}
 
 /**
  * 邀请记录
  */
 interface InviteRecord {
-  id: string;
-  user: string;
-  createDate: string;
-  status: string;
-  money?: string;
+  id: number;
+  invitationStatus: InviteStatus;
+  // 被邀请人
+  invitee: number;
+  inviteeName: string;
+  inviter: number;
+  inviterName: string;
+  createTime: string;
+  description: string;
 }
 
 const columns: ProColumns<InviteRecord>[] = [
   {
     title: '用户',
+    dataIndex: 'inviteeName',
   },
   {
     title: '邀请时间',
+    dataIndex: 'createTime',
   },
   {
     title: '状态',
+    render(_, record) {
+      return record.invitationStatus === InviteStatus.REGISTERED ? '已注册' : '已完成';
+    },
   },
   {
-    title: '奖励金额',
+    title: '备注',
+    dataIndex: 'description',
   },
 ];
 
@@ -67,11 +88,24 @@ export const Invites = () => {
           options={false}
           search={false}
           size="small"
-          request={async () => {
+          rowKey="id"
+          request={async ({ current = 1, pageSize = 20, ...payload }) => {
+            const params = {
+              ...payload,
+              pageNo: current,
+              pageSize,
+            };
+            const { data, totalCount } = await request.requestByPagination<InviteRecord>(
+              '/wd/visual/web/invitation-code/invitation-record-page-query',
+              params,
+              {
+                method: 'GET',
+              }
+            );
             return {
               success: true,
-              total: 0,
-              data: [],
+              total: totalCount,
+              data,
             };
           }}
         ></ProTable>

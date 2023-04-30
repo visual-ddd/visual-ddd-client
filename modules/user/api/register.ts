@@ -30,7 +30,7 @@ export const register = allowMethod(
     if (code) {
       try {
         const data = await parseInviteCode(code);
-        dataPassthrough.inviteAccountNo = data;
+        dataPassthrough.inviter = data.id;
       } catch (err) {
         console.error(err);
         if (requiredInvitation) {
