@@ -1,7 +1,11 @@
+import { ISerializable } from '@/lib/utils';
+
+export type Data = number[];
+
 /**
  * 按请求量限额
  */
-export class CountWindowLimit {
+export class CountWindowLimit implements ISerializable<Data> {
   private queue: number[] = [];
 
   get count() {
@@ -9,6 +13,14 @@ export class CountWindowLimit {
   }
 
   constructor(private limit: number, private timeout: number) {}
+
+  fromJSON(data: Data) {
+    this.queue = data;
+  }
+
+  toJSON(): Data {
+    return this.queue.slice(0);
+  }
 
   request() {
     this.clearTimeout();

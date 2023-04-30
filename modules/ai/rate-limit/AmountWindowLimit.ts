@@ -1,7 +1,9 @@
+import { ISerializable } from '@/lib/utils';
+
 /**
  * 按数量限额
  */
-export class AmountWindowLimit {
+export class AmountWindowLimit implements ISerializable<[number, number][]> {
   private queue: [number, number][] = [];
 
   get remain() {
@@ -9,6 +11,14 @@ export class AmountWindowLimit {
   }
 
   constructor(private limit: number, private timeout: number) {}
+
+  fromJSON(data: [number, number][]): void {
+    this.queue = data;
+  }
+
+  toJSON(): [number, number][] {
+    return this.queue.slice(0);
+  }
 
   request(amount: number) {
     this.clearTimeout();

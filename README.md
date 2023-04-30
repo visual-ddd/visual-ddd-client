@@ -58,6 +58,15 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 BACKEND=http://172.26.57.49:8080 pnpm dev
 ```
 
+# 内存使用
+
+目前服务器端有以下内容使用了内存缓存：
+
+- 画布数据缓存, 基于 lru。后面如果服务器需要弹性伸缩需要放到 redis
+- dall-e 限制
+- ip 限制
+- 模型限额
+
 # 部署配置
 
 运行时环境变量
