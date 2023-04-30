@@ -1,0 +1,51 @@
+import { CacheContainer } from './CacheContainer';
+import { ICacheStorage } from './CacheStorage';
+import { CountLimit } from './CountLimit';
+import { IRateLimit } from './RateLimit';
+
+const COUNT_LIMIT = 30;
+const TIMEOUT = Infinity;
+
+/**
+ * 免费用户请求限额
+ * 永久 30 次
+ */
+export class FreeAccountRateLimit extends CacheContainer<CountLimit> implements IRateLimit {
+  constructor(private storage: ICacheStorage<object>) {
+    super({
+      // TODO: 环境变量配置
+      max: 200,
+      ttl: TIMEOUT, // 1 分钟
+      saveOnUpdate: (k, v) => {
+        return v.count <= COUNT_LIMIT;
+      },
+    });
+  }
+
+  /**
+   * 是否允许调用
+   * @param id
+   * @param token
+   * @returns
+   */
+  async allow(id: string, count: number) {
+    const limit = await this.request(id);
+
+    return limit.request(count);
+  }
+
+  protected async fetch(key: string): Promise<CountLimit> {
+    const limit = new CountLimit(COUNT_LIMIT, TIMEOUT);
+    const value = await this.storage.get(key);
+
+    if (value) {
+      limit.fromJSON(value as any);
+    }
+
+    return limit;
+  }
+
+  protected save(key: string, value: CountLimit, expired: number): void {
+    this.storage.set(key, value.toJSON(), expired);
+  }
+}

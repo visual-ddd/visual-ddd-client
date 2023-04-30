@@ -45,6 +45,14 @@ describe('CountLimit', () => {
     expect(countLimit.count).toBe(1);
   });
 
+  it('forever', () => {
+    const c = new CountLimit(3, Infinity);
+    expect(c.request()).toBe(true);
+    expect(c.request()).toBe(true);
+    expect(c.request()).toBe(true);
+    expect(c.request()).toBe(false);
+  });
+
   afterEach(() => {
     jest.clearAllTimers();
   });

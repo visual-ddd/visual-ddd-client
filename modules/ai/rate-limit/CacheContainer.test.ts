@@ -115,4 +115,16 @@ describe('CacheContainer', () => {
     expect(c.getRemainTTL('2')).toBe(500);
     expect(cache.get('2')).toEqual(['2', Date.now() + 500]);
   });
+
+  test('永久', async () => {
+    const c = new MyCache({ ttl: Infinity, max: 1, saveOnUpdate: true, saveDebounce: 1 });
+    const t1 = await c.request('1');
+    t1.value = '2';
+
+    expect(c.getRemainTTL('1')).toBe(Infinity);
+
+    jest.advanceTimersByTime(100);
+
+    expect(cache.get('1')).toEqual(['2', Infinity]);
+  });
 });

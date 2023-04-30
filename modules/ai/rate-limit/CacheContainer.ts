@@ -44,7 +44,7 @@ export abstract class CacheContainer<T extends ISerializable<any>> {
 
     this.cache = new LRUCache({
       max: options.max,
-      ttl: options.ttl,
+      ttl: Number.isFinite(options.ttl) ? options.ttl : undefined,
 
       // 获取操作也会更新缓存的存活时间
       updateAgeOnGet: true,
