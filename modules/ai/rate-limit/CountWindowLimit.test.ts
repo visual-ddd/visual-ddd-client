@@ -10,12 +10,15 @@ describe('CountLimit', () => {
   it('should return true when requests are within limit', () => {
     const result1 = countLimit.request();
     expect(result1).toBe(true);
+    expect(countLimit.remain).toBe(4);
 
     const result2 = countLimit.request();
     expect(result2).toBe(true);
+    expect(countLimit.remain).toBe(3);
 
     const result3 = countLimit.request();
     expect(result3).toBe(true);
+    expect(countLimit.remain).toBe(2);
   });
 
   it('should return false when requests exceed limit', () => {
@@ -25,9 +28,11 @@ describe('CountLimit', () => {
 
     const result = countLimit.request();
     expect(result).toBe(false);
+    expect(countLimit.remain).toBe(0);
 
     const result2 = countLimit.request();
     expect(result2).toBe(false);
+    expect(countLimit.remain).toBe(0);
   });
 
   it('should remove expired requests', () => {

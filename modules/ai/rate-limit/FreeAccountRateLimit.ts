@@ -1,7 +1,7 @@
 import { CacheContainer } from './CacheContainer';
-import { ICacheStorage } from './CacheStorage';
+import { ICacheStorage } from './ICacheStorage';
 import { CountLimit } from './CountLimit';
-import { IRateLimit } from './RateLimit';
+import { IRateLimit } from './IRateLimit';
 
 const COUNT_LIMIT = 30;
 const TIMEOUT = Infinity;
@@ -28,10 +28,18 @@ export class FreeAccountRateLimit extends CacheContainer<CountLimit> implements 
    * @param token
    * @returns
    */
-  async allow(id: string, count: number) {
+  async requestUsage(id: string, count: number) {
     const limit = await this.request(id);
 
     return limit.request(count);
+  }
+
+  async remainUsage(id: string) {
+    const limit = await this.request(id);
+
+    return {
+      count: limit.remain,
+    };
   }
 
   protected async fetch(key: string): Promise<CountLimit> {

@@ -1,4 +1,4 @@
-import { CacheStorageInMemory } from './CacheStorage';
+import { CacheStorageInMemory } from './CacheStorageInMemory';
 
 describe('CacheStorageInMemory', () => {
   let cacheStorage: CacheStorageInMemory<string>;

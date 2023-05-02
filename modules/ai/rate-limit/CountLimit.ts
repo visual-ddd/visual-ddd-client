@@ -10,6 +10,14 @@ export class CountLimit implements ISerializable<Data> {
 
   count: number = 0;
 
+  /**
+   * 剩余
+   */
+  get remain(): number {
+    this.update();
+    return Math.max(this.limit - this.count, 0);
+  }
+
   constructor(private limit: number, private timeout: number) {}
 
   fromJSON(data: Data): void {
@@ -25,15 +33,18 @@ export class CountLimit implements ISerializable<Data> {
   }
 
   request(amount: number = 1) {
+    this.update();
+    this.count += amount;
+
+    return this.count <= this.limit;
+  }
+
+  private update() {
     const now = Date.now();
     if (now - this.lastUpdated >= this.timeout) {
       // 超时
       this.count = 0;
       this.lastUpdated = now;
     }
-
-    this.count += amount;
-
-    return this.count <= this.limit;
   }
 }

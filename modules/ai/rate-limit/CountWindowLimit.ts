@@ -12,6 +12,12 @@ export class CountWindowLimit implements ISerializable<Data> {
     return this.queue.length;
   }
 
+  get remain() {
+    this.clearTimeout();
+
+    return this.limit - this.count;
+  }
+
   constructor(private limit: number, private timeout: number) {}
 
   fromJSON(data: Data) {

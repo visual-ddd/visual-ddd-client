@@ -17,6 +17,13 @@ export class GPT35Limit implements ISerializable<Data> {
   // 40k token per minute
   private amountLimit = new AmountWindowLimit(40 * 1000, 1000 * 60);
 
+  get remain() {
+    return {
+      count: this.countLimit.remain,
+      amount: this.amountLimit.remain,
+    };
+  }
+
   request(token: number) {
     return this.countLimit.request() && this.amountLimit.request(token);
   }

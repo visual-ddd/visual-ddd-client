@@ -71,16 +71,17 @@ BACKEND=http://172.26.57.49:8080 pnpm dev
 
 运行时环境变量
 
-| 名称                 | 说明                                                 |
-| -------------------- | ---------------------------------------------------- |
-| BACKEND              | 后端服务地址, 例如 http://172.26.57.49:8080          |
-| SESSION_SECRET       | 会话加密密钥                                         |
-| PASS_THROUGH_SESSION | 登录时是否透传后端的会话信息， 默认 false            |
-| AI_CONFIGURATION     | OPENAI 配置，配置项见 ./modules/ai/platform/index.ts |
-| PINECONE_API_KEY     |                                                      |
-| PINECONE_ENVIRONMENT |                                                      |
-| PINECONE_INDEX       |                                                      |
-| REQUIRE_INVITATION   | 是否需要邀请码注册                                   |
+| 名称                 | 说明                                                                                |
+| -------------------- | ----------------------------------------------------------------------------------- |
+| BACKEND              | 后端服务地址, 例如 http://172.26.57.49:8080                                         |
+| SESSION_SECRET       | 会话加密密钥                                                                        |
+| PASS_THROUGH_SESSION | 登录时是否透传后端的会话信息， 默认 false                                           |
+| AI_CONFIGURATION     | OPENAI 配置，配置项见 ./modules/ai/platform/index.ts                                |
+| PINECONE_API_KEY     |                                                                                     |
+| PINECONE_ENVIRONMENT |                                                                                     |
+| PINECONE_INDEX       |                                                                                     |
+| REQUIRE_INVITATION   | 是否需要邀请码注册, 默认 false                                                      |
+| REDIS                | Redis 链接协议, 例如 `redis[s]://[[username][:password]@][host][:port][/db-number]` |
 
 # 构建时环境变量
 

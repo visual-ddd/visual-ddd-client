@@ -107,6 +107,7 @@
     "react-is": "^18.2.0",
     "react-markdown": "^8.0.6",
     "react-sortable-hoc": "^2.0.0",
+    "redis": "^4.6.6",
     "reflect-metadata": "^0.1.13",
     "rehype-katex": "^6.0.2",
     "rehype-prism-plus": "^1.5.1",

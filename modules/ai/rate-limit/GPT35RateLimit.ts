@@ -1,7 +1,7 @@
 import { CacheContainer } from './CacheContainer';
-import { ICacheStorage } from './CacheStorage';
+import { ICacheStorage } from './ICacheStorage';
 import { GPT35Limit } from './GPT35Limit';
-import { IRateLimit } from './RateLimit';
+import { IRateLimit } from './IRateLimit';
 
 /**
  * GPT 3.5 速率限制
@@ -21,10 +21,21 @@ export class GTP35RateLimit extends CacheContainer<GPT35Limit> implements IRateL
    * @param token
    * @returns
    */
-  async allow(id: string, token: number) {
+  async requestUsage(id: string, token: number) {
     const limit = await this.request(id);
 
     return limit.request(token);
+  }
+
+  /**
+   * 剩余配额
+   * @param id
+   * @returns
+   */
+  async remainUsage(id: string) {
+    const limit = await this.request(id);
+
+    return limit.remain;
   }
 
   protected async fetch(key: string): Promise<GPT35Limit> {
