@@ -16,6 +16,7 @@ export * from './hash';
 export * from './IdleTaskExecutor';
 export * from './abort';
 export * from './ISerializable';
+export * from './price';
 
 export function makeSet(contentSplitByComma: string) {
   return new Set<string>(contentSplitByComma.split(',').map(i => i.trim()));

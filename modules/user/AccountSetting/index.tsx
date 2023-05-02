@@ -1,11 +1,13 @@
-import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import { Modal, Tabs } from 'antd';
+import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 
+import classNames from 'classnames';
+import { Wallet } from '../Wallet/Wallet';
 import { BaseInfo } from './BaseInfo';
+import { Invites } from './Invites';
 import { ResetPassword } from './ResetPassword';
 import s from './index.module.scss';
-import classNames from 'classnames';
-import { Invites } from './Invites';
+// import { Plan } from '@/modules/plan/Plan';
 
 export interface AccountSettingProps {}
 
@@ -39,7 +41,7 @@ export const AccountSetting = forwardRef<AccountSettingRef, AccountSettingProps>
     <Modal
       open={visible}
       footer={null}
-      width={700}
+      width={900}
       onCancel={handleCancel}
       centered
       title="账户信息"
@@ -62,6 +64,16 @@ export const AccountSetting = forwardRef<AccountSettingRef, AccountSettingProps>
             key: 'invites',
             children: <Invites />,
           },
+          {
+            label: '我的钱包',
+            key: 'balance',
+            children: <Wallet />,
+          },
+          // {
+          //   label: '订阅信息',
+          //   key: 'plan',
+          //   children: <Plan />
+          // },
           {
             label: `重置密码`,
             key: 'reset',

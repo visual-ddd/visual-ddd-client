@@ -7,6 +7,8 @@ import { useLayoutTitle } from '@/modules/Layout';
 import { UserDetail } from '../types';
 import { CreateUser, useCreateUser } from './Create';
 import { UpdateUser, useUpdateUser } from './Update';
+import { useSession } from '@/modules/session';
+import { ReChargeModal, useReChargeModalRef } from '@/modules/user/Wallet/ReCharge';
 
 export * from './UserSelect';
 
@@ -14,7 +16,9 @@ export function User() {
   const actionRef = useRef<ActionType>();
   const createRef = useCreateUser();
   const updateRef = useUpdateUser();
+  const rechargeModalRef = useReChargeModalRef();
 
+  const { session } = useSession();
   useLayoutTitle('用户管理');
 
   const handleRefresh = () => {
@@ -75,6 +79,11 @@ export function User() {
         <Button type="link" key="editTable" onClick={() => updateRef.current?.open(record)}>
           编辑
         </Button>,
+        session?.user.isAdmin && (
+          <Button type="link" key="charger" onClick={() => rechargeModalRef.current?.open(record.id)}>
+            充值
+          </Button>
+        ),
       ],
     },
   ];
@@ -115,6 +124,7 @@ export function User() {
 
       <CreateUser ref={createRef} onFinish={handleRefresh} />
       <UpdateUser ref={updateRef} onFinish={handleRefresh} />
+      <ReChargeModal ref={rechargeModalRef}></ReChargeModal>
     </>
   );
 }

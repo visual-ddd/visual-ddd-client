@@ -20,6 +20,8 @@ export interface VDUser {
    * 图标
    */
   icon?: string;
+
+  isAdmin: boolean;
 }
 
 export enum VDSessionEntry {
