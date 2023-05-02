@@ -10,3 +10,4 @@ export * from './data-object';
 export * from './flow-builder';
 export * from './dall-e';
 export * from './vision';
+export * from './free-usage';

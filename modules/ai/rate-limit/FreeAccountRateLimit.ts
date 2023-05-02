@@ -34,6 +34,15 @@ export class FreeAccountRateLimit extends CacheContainer<CountLimit> implements 
     return limit.request(count);
   }
 
+  /**
+   * 限制额度
+   */
+  limits() {
+    return {
+      count: COUNT_LIMIT,
+    };
+  }
+
   async remainUsage(id: string) {
     const limit = await this.request(id);
 
