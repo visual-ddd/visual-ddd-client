@@ -15,7 +15,7 @@ export interface BotStorage {
   history: PersistMessage[];
 }
 
-const OMIT_KEYS: (keyof Message)[] = ['pending'];
+const OMIT_KEYS: (keyof Message)[] = ['pending', 'error'];
 
 export class BotPersister implements IDisposable, IDestroyable {
   private uuid: string;

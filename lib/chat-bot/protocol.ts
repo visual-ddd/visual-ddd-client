@@ -58,6 +58,11 @@ export interface Message {
    * 计算出来的 token
    */
   token?: number;
+
+  /**
+   * 错误信息
+   */
+  error?: Error;
 }
 
 export interface ChatContext {

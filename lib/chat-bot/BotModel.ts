@@ -176,6 +176,8 @@ export class BotModel implements IDisposable, IBot, IDestroyable {
       throw new Error('文本长度过长，请裁剪后发送');
     }
 
+    let userMessageId: string;
+
     try {
       const response = extension.onSend({ message, bot: this, currentTarget: extension });
       const responseMessageId = v4();
@@ -184,7 +186,7 @@ export class BotModel implements IDisposable, IBot, IDestroyable {
       if (extension.type === ExtensionType.Message) {
         // 消息回复
         this.addMessage({
-          uuid: v4(),
+          uuid: (userMessageId = v4()),
           role: Role.User,
           content: message,
           timestamp: Date.now(),
@@ -206,7 +208,7 @@ export class BotModel implements IDisposable, IBot, IDestroyable {
       } else {
         // 指令执行
         this.addMessage({
-          uuid: responseMessageId,
+          uuid: (userMessageId = responseMessageId),
           role: Role.User,
           content: message,
           timestamp: Date.now(),
@@ -250,7 +252,15 @@ export class BotModel implements IDisposable, IBot, IDestroyable {
         }`;
         this.captureException(err as Error, resMsg, response.eventSource);
 
-        if (extension.type === ExtensionType.Message) {
+        if (userMessageId) {
+          // 直接设置用户发送的消息
+          this.setMessageError(userMessageId, new Error(errorMessage));
+
+          if (responseMessageId && userMessageId !== responseMessageId) {
+            // 删除回复信息
+            this.removeMessage(responseMessageId);
+          }
+        } else if (extension.type === ExtensionType.Message) {
           // 追加错误信息
           this.updateMessageContent(
             responseMessageId,
@@ -284,6 +294,11 @@ export class BotModel implements IDisposable, IBot, IDestroyable {
       const [message] = this.history.splice(index, 1);
       this.event.emit('MESSAGE_REMOVED', { message });
     }
+  }
+
+  @mutation('SUPPRESS_ERROR', false)
+  suppressError(id: string) {
+    this.setMessageError(id, undefined);
   }
 
   /**
@@ -435,6 +450,18 @@ export class BotModel implements IDisposable, IBot, IDestroyable {
     if (message) {
       message.content = content;
       this.event.emit('MESSAGE_UPDATED', { message });
+    }
+  }
+
+  /**
+   * 设置消息错误信息
+   * @param id
+   * @param error
+   */
+  private setMessageError(id: string, error?: Error) {
+    const message = this.history.find(i => i.uuid === id);
+    if (message) {
+      message.error = error;
     }
   }
 

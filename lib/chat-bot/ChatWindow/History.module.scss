@@ -6,6 +6,8 @@
   padding: var(--vd-spacing-sm) 0;
 }
 
+$item-radius: 10px;
+
 .item {
   display: flex;
   width: 100%;
@@ -17,7 +19,7 @@
     position: relative;
     max-width: 85%;
     padding: var(--vd-spacing-xs) var(--vd-spacing-sm);
-    border-radius: 10px;
+    border-radius: $item-radius;
   }
 
   &:global(.request) {
@@ -141,4 +143,15 @@
   justify-content: flex-end;
   width: 100%;
   padding-top: var(--vd-spacing-xs);
+}
+
+.alert {
+  background-color: var(--vd-color-danger-200);
+  margin-left: -16px;
+  margin-right: -16px;
+  margin-bottom: -8px;
+  margin-top: 16px;
+  padding: var(--vd-spacing-xs);
+  border-bottom-left-radius: $item-radius;
+  border-bottom-right-radius: $item-radius;
 }

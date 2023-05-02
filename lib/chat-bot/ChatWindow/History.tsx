@@ -107,6 +107,14 @@ const MessageItem = observer(function MessageItem(props: { item: Message }) {
         ) : loading ? (
           <LoadingIcon className={s.loading} />
         ) : undefined}
+        {item.error && (
+          <div className={s.alert}>
+            {item.error.message}
+            <a className="u-pointer u-link" onClick={() => bot.suppressError(item.uuid)}>
+              关闭
+            </a>
+          </div>
+        )}
         {!!extensionActions && <div className={s.extensionActions}>{extensionActions}</div>}
         <div className={s.actions}>
           {item.pending && (
