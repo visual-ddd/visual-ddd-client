@@ -8,7 +8,7 @@ import { NextApiHandler } from 'next';
 import { PINECONE_API_KEY, PINECONE_ENVIRONMENT, PINECONE_INDEX } from '../config';
 import { getOpenAISupport } from '../platform';
 
-import { chat } from '../proxy';
+import { chat } from '../chat';
 
 let pineconeStore: PineconeStore;
 

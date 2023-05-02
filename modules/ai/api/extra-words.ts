@@ -1,7 +1,7 @@
 import { allowMethod } from '@/lib/api';
 import { createFailResponse } from '@/modules/backend-node';
 import { NextApiHandler } from 'next';
-import { chat } from '../proxy';
+import { chat } from '../chat';
 
 export const extraWords: NextApiHandler = allowMethod('GET', async (req, res) => {
   const text = req.query.text as string;

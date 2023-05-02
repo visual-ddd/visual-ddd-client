@@ -2,7 +2,7 @@ import { allowMethod } from '@/lib/api';
 import { createFailResponse } from '@/modules/backend-node';
 import { NextApiHandler } from 'next';
 
-import { chat } from '../proxy';
+import { chat } from '../chat';
 
 export const sqlMaster: NextApiHandler = allowMethod('POST', async (req, res) => {
   const { conception, prompt } = req.body as { conception: string; prompt: string };

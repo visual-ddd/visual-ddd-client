@@ -1,7 +1,7 @@
 import { allowMethod } from '@/lib/api';
 import { createFailResponse } from '@/modules/backend-node';
 import { NextApiHandler } from 'next';
-import { chat } from '../proxy';
+import { chat } from '../chat';
 
 export const dataObject: NextApiHandler = allowMethod('POST', async (req, res) => {
   const { text, conception } = req.body as {
