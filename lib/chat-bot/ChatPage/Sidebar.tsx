@@ -127,12 +127,6 @@ export const Sidebar = observer(function Sidebar(props: SidebarProps) {
   return (
     <div className={s.root}>
       <div className={s.sessions}>
-        <PromptLibraryModal onImport={handleAddSessionFromLibrary}>
-          <div className={classNames(s.session, 'u-secondary', 'drawn')}>
-            <ExploreIcon />
-            <div className={s.sessionName}>探索</div>
-          </div>
-        </PromptLibraryModal>
         <div className={s.session} onClick={handleAddSession} id="chat-page-add-session">
           <PlusOutlined className={s.addSession} />
           <div className={s.sessionName}>新增会话</div>
@@ -141,7 +135,15 @@ export const Sidebar = observer(function Sidebar(props: SidebarProps) {
           return <Item item={i} key={i.uuid} active={i.uuid === store.active} />;
         })}
       </div>
-      <div className={s.footer}>{footer}</div>
+      <div className={s.footer}>
+        <PromptLibraryModal onImport={handleAddSessionFromLibrary}>
+          <div className={classNames(s.session, 'u-secondary', s.discovery)}>
+            <ExploreIcon />
+            <div className={s.sessionName}>探索</div>
+          </div>
+        </PromptLibraryModal>
+        {footer}
+      </div>
     </div>
   );
 });

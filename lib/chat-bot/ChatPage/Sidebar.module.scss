@@ -65,7 +65,14 @@
   }
 }
 
+.discovery {
+  margin-bottom: var(--vd-spacing-xs);
+  border: 2px solid var(--vd-color-secondary-200);
+  background-color: var(--vd-color-secondary-50);
+}
+
 .footer {
   flex-shrink: 0;
-  padding-right: var(--vd-spacing-xs);
+  padding-left: 3px;
+  padding-right: 10px;
 }
