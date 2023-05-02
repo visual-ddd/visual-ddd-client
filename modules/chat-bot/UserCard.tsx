@@ -3,7 +3,7 @@ import { Avatar, Dropdown } from 'antd';
 import { useRouter } from 'next/router';
 
 import { useLogout, useSession } from '../session';
-import { useAccountSetting } from '../user/AccountSetting';
+import { useAccountSetting, AccountSetting } from '../user/AccountSetting';
 import s from './UserCard.module.scss';
 import { RocketIcon } from './RocketIcon';
 
@@ -76,6 +76,7 @@ export const UserCard = observer(function UserCard(props: UserCardProps) {
           </div>
         </footer>
       </Dropdown>
+      <AccountSetting ref={accountSetting} />
     </div>
   );
 });
