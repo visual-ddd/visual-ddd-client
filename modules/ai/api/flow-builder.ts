@@ -2,24 +2,27 @@ import { allowMethod } from '@/lib/api';
 import { createFailResponse } from '@/modules/backend-node';
 import { NextApiHandler } from 'next';
 import { chat } from '../chat';
+import { withSessionApiRoute } from '@/modules/session/api-helper';
 
-export const flowBuilder: NextApiHandler = allowMethod('POST', async (req, res) => {
-  const { text } = req.body as {
-    text: string;
-  };
+export const flowBuilder: NextApiHandler = allowMethod(
+  'POST',
+  withSessionApiRoute(async (req, res) => {
+    const { text } = req.body as {
+      text: string;
+    };
 
-  if (text == null) {
-    res.status(400).json(createFailResponse(400, 'text is required'));
-    return;
-  }
+    if (text == null) {
+      res.status(400).json(createFailResponse(400, 'text is required'));
+      return;
+    }
 
-  chat({
-    pipe: res,
-    source: req,
-    messages: [
-      {
-        role: 'system',
-        content: `你是一个擅长绘制流程图的业务专家，现在你需要根据用户输入的内容，转换为流程图绘制指令。
+    chat({
+      pipe: res,
+      source: req,
+      messages: [
+        {
+          role: 'system',
+          content: `你是一个擅长绘制流程图的业务专家，现在你需要根据用户输入的内容，转换为流程图绘制指令。
 
 指令类型如下：
 - Start 开始节点
@@ -57,9 +60,10 @@ Response: """
 
 Input: """${text}"""
 Response: """`,
-      },
-    ],
-    temperature: 1,
-    stop: ['"""', 'INPUT'],
-  });
-});
+        },
+      ],
+      temperature: 1,
+      stop: ['"""', 'INPUT'],
+    });
+  })
+);

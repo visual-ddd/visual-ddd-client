@@ -11,6 +11,7 @@ const TIMEOUT = Infinity;
  * 永久 30 次
  */
 export class FreeAccountRateLimit extends CacheContainer<CountLimit> implements IRateLimit {
+  exceedMessage = `免费用户只能发起 ${COUNT_LIMIT} 次会话，你可以升级到付费套餐，无限制使用。`;
   constructor(private storage: ICacheStorage<object>) {
     super({
       // TODO: 环境变量配置

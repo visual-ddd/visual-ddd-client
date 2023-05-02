@@ -2,25 +2,28 @@ import { allowMethod } from '@/lib/api';
 import { createFailResponse } from '@/modules/backend-node';
 import { NextApiHandler } from 'next';
 import { chat } from '../chat';
+import { withSessionApiRoute } from '@/modules/session/api-helper';
 
 /**
  * 愿景生成
  */
-export const vision: NextApiHandler = allowMethod('POST', async (req, res) => {
-  const text = req.body?.text as string;
+export const vision: NextApiHandler = allowMethod(
+  'POST',
+  withSessionApiRoute(async (req, res) => {
+    const text = req.body?.text as string;
 
-  if (text == null) {
-    res.status(400).json(createFailResponse(400, 'text is required'));
-    return;
-  }
+    if (text == null) {
+      res.status(400).json(createFailResponse(400, 'text is required'));
+      return;
+    }
 
-  chat({
-    source: req,
-    pipe: res,
-    messages: [
-      {
-        role: 'system',
-        content: `产品愿景是对产品顶层价值设计，对产品目标用户、核心价值、差异化竞争点等信息达成一致，避免产品偏离方向。
+    chat({
+      source: req,
+      pipe: res,
+      messages: [
+        {
+          role: 'system',
+          content: `产品愿景是对产品顶层价值设计，对产品目标用户、核心价值、差异化竞争点等信息达成一致，避免产品偏离方向。
 
 -  常见的模板句式：
 """为了{目标用户} 的 {业务}，这个{系统名称}，是一个{系统定义}，它可以{系统核心功能}，而不像{与其他竞品的差异},  我们能{系统优势}"""
@@ -35,9 +38,10 @@ export const vision: NextApiHandler = allowMethod('POST', async (req, res) => {
 
 用户输入: """${text}"""
 你的响应: """`,
-      },
-    ],
-    temperature: 0.7,
-    stop: '"""',
-  });
-});
+        },
+      ],
+      temperature: 0.7,
+      stop: '"""',
+    });
+  })
+);

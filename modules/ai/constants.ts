@@ -62,6 +62,9 @@ export interface ErrorResponse {
   };
 }
 
+/**
+ * ChatGPT 模型
+ */
 export enum ChatModel {
   GPT3_5_TURBO = 'gpt-3.5-turbo',
   GPT3_5_TURBO_0301 = 'gpt-3.5-turbo-0301',
@@ -70,6 +73,15 @@ export enum ChatModel {
   GPT_4_32K = 'gpt-4-32k',
   GPT_4_32K_0314 = 'gpt-4-32k-0314',
 }
+
+/**
+ * 图像模型
+ */
+export enum ImageModel {
+  DALL_E = 'dall-e',
+}
+
+export type AllSupportedModel = ChatModel | ImageModel;
 
 export const DEFAULT_MAX_TOKEN = 4096;
 

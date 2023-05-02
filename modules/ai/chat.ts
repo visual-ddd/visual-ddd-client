@@ -1,6 +1,6 @@
 import { captureException } from '@sentry/nextjs';
 import { ParsedEvent, ReconnectInterval, createParser } from 'eventsource-parser';
-import { isAbort } from '@/lib/utils';
+import { assert, isAbort } from '@/lib/utils';
 
 import { createFailResponse } from '../backend-node';
 
@@ -8,6 +8,7 @@ import { countToken, normalizeModel } from './encoding';
 import { ChatModel, DEFAULT_MAX_TOKEN, MAX_TOKENS, ChatOptions, ErrorResponse } from './constants';
 import { ChatCompletion, ChatCompletionInStream } from './types';
 import { getChatCompletionSupport } from './platform';
+import { checkRequest, RequestControlError } from './request-control';
 
 const DONE = '[DONE]';
 
@@ -37,6 +38,7 @@ export function getResponseContent(response: ChatCompletion) {
  */
 export async function chat(options: ChatOptions) {
   let { model = ChatModel.GPT3_5_TURBO_0301, source, pipe, ...other } = options;
+  assert(source.session.content, '会话信息不存在');
 
   model = normalizeModel(model);
   const token = countToken(options.messages, model);
@@ -50,31 +52,38 @@ export async function chat(options: ChatOptions) {
     return;
   }
 
-  const support = getChatCompletionSupport();
-
-  const content = {
-    stream: true,
-    model,
-    user: support.user,
-    // max_tokens: maxToken - token,
-    ...other,
-  };
-
-  const data = JSON.stringify(content);
-  const basePath = support.basePath;
-  const url = new URL(basePath);
-  url.pathname += support.endpoint;
-  const query = support.query;
-  const headers = new Headers(support.headers);
-
-  // 查询字符串
-  if (query) {
-    for (const q in query) {
-      url.searchParams.set(q, query[q]);
-    }
-  }
-
   try {
+    // 请求控制
+    await checkRequest({
+      account: source.session.content!.accountNo,
+      model,
+      amount: token,
+    });
+
+    const support = getChatCompletionSupport();
+
+    const content = {
+      stream: true,
+      model,
+      user: support.user,
+      // max_tokens: maxToken - token,
+      ...other,
+    };
+
+    const data = JSON.stringify(content);
+    const basePath = support.basePath;
+    const url = new URL(basePath);
+    url.pathname += support.endpoint;
+    const query = support.query;
+    const headers = new Headers(support.headers);
+
+    // 查询字符串
+    if (query) {
+      for (const q in query) {
+        url.searchParams.set(q, query[q]);
+      }
+    }
+
     const abortController = new AbortController();
 
     source.on('error', e => {
@@ -164,6 +173,9 @@ export async function chat(options: ChatOptions) {
       // 取消
       pipe.statusCode = 400;
       pipe.json(createFailResponse(400, '请求已取消'));
+    } else if (RequestControlError.isRequestControlError(err)) {
+      // 请求控制限制
+      pipe.status(400).json(createFailResponse(err.code, err.message));
     } else {
       pipe.statusCode = 500;
       pipe.json(createFailResponse(500, `请求异常: ${(err as Error).message}`));

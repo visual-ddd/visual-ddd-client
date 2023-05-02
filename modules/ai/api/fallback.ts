@@ -3,6 +3,7 @@ import { createFailResponse } from '@/modules/backend-node';
 import { NextApiHandler } from 'next';
 import { chat } from '../chat';
 import { ChatMessage, ChatRole } from '../constants';
+import { withSessionApiRoute } from '@/modules/session/api-helper';
 
 type Payload = {
   system?: string;
@@ -12,48 +13,51 @@ type Payload = {
   context: [string, string][];
 };
 
-export const fallback: NextApiHandler = allowMethod('POST', async (req, res) => {
-  const payload = req.body as Payload;
+export const fallback: NextApiHandler = allowMethod(
+  'POST',
+  withSessionApiRoute(async (req, res) => {
+    const payload = req.body as Payload;
 
-  if (payload.text == null) {
-    res.status(400).json(createFailResponse(400, 'text is required'));
-    return;
-  }
+    if (payload.text == null) {
+      res.status(400).json(createFailResponse(400, 'text is required'));
+      return;
+    }
 
-  const messages: ChatMessage[] = [];
+    const messages: ChatMessage[] = [];
 
-  if (payload.system) {
-    messages.push({
-      role: 'system',
-      content: payload.system,
-    });
-  }
+    if (payload.system) {
+      messages.push({
+        role: 'system',
+        content: payload.system,
+      });
+    }
 
-  if (payload.summary) {
+    if (payload.summary) {
+      messages.push({
+        role: 'user',
+        content: `以上是之前聊天对话的总结：\n${payload.summary}`,
+      });
+    }
+
+    if (payload.context) {
+      payload.context.forEach(([role, value]) => {
+        messages.push({
+          role: role as ChatRole,
+          content: value,
+        });
+      });
+    }
+
     messages.push({
       role: 'user',
-      content: `以上是之前聊天对话的总结：\n${payload.summary}`,
+      content: payload.text,
     });
-  }
 
-  if (payload.context) {
-    payload.context.forEach(([role, value]) => {
-      messages.push({
-        role: role as ChatRole,
-        content: value,
-      });
+    chat({
+      source: req,
+      pipe: res,
+      messages,
+      temperature: payload.temperature ?? 0.7,
     });
-  }
-
-  messages.push({
-    role: 'user',
-    content: payload.text,
-  });
-
-  chat({
-    source: req,
-    pipe: res,
-    messages,
-    temperature: payload.temperature ?? 0.7,
-  });
-});
+  })
+);

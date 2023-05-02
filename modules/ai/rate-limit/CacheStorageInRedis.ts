@@ -46,7 +46,7 @@ export class CacheStorageInRedis<T> implements ICacheStorage<T> {
   }
 
   private async getClient() {
-    if (this.client.isReady) {
+    if (this.client.isOpen) {
       return this.client;
     }
 

@@ -4,7 +4,7 @@ import { CacheStorageInMemory } from './CacheStorageInMemory';
 import { CacheStorageInRedis } from './CacheStorageInRedis';
 import { FreeAccountRateLimit } from './FreeAccountRateLimit';
 
-import { ChatModel } from '../constants';
+import { AllSupportedModel } from '../constants';
 import { GTP35RateLimit } from './GPT35RateLimit';
 
 export function getPersistenceCacheStorage<T>(namespace: string) {
@@ -33,7 +33,7 @@ export const getFreeAccountRateLimit = memoize(() => {
 /**
  * 模型基础速率限制
  */
-export const getBasicModelRateLimit = memoize((model: ChatModel) => {
+export const getBasicModelRateLimit = memoize((model: AllSupportedModel) => {
   // TODO: 支持其他模型
   const cacheStorage = new CacheStorageInMemory<object>();
   return new GTP35RateLimit(cacheStorage);

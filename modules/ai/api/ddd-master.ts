@@ -9,9 +9,11 @@ import { PINECONE_API_KEY, PINECONE_ENVIRONMENT, PINECONE_INDEX } from '../confi
 import { getOpenAISupport } from '../platform';
 
 import { chat } from '../chat';
+import { withSessionApiRoute } from '@/modules/session/api-helper';
 
 let pineconeStore: PineconeStore;
 
+// TODO: azure 支持
 async function querySimilar(text: string) {
   if (pineconeStore) {
     return pineconeStore.similaritySearch(text, 1);
@@ -29,6 +31,8 @@ async function querySimilar(text: string) {
   });
   const pineconeIndex = client.Index(PINECONE_INDEX);
   const support = getOpenAISupport();
+
+  // TODO: 记录 Token 用量
   const embedding = new OpenAIEmbeddings(
     {
       openAIApiKey: support.key,
@@ -45,26 +49,28 @@ async function querySimilar(text: string) {
 /**
  * DDD 专业领域问答
  */
-export const dddMaster: NextApiHandler = allowMethod('POST', async (req, res) => {
-  const text = req.body?.text as string;
+export const dddMaster: NextApiHandler = allowMethod(
+  'POST',
+  withSessionApiRoute(async (req, res) => {
+    const text = req.body?.text as string;
 
-  if (text == null) {
-    res.status(400).json(createFailResponse(400, 'text is required'));
-    return;
-  }
+    if (text == null) {
+      res.status(400).json(createFailResponse(400, 'text is required'));
+      return;
+    }
 
-  const similar = await querySimilar(text);
-  const context = similar?.[0]?.pageContent;
+    const similar = await querySimilar(text);
+    const context = similar?.[0]?.pageContent;
 
-  console.log(`ddd-master: ${text} => ${context}`);
+    console.log(`ddd-master: ${text} => ${context}`);
 
-  chat({
-    source: req,
-    pipe: res,
-    messages: [
-      {
-        role: 'system',
-        content: `你是一个经验丰富的领域驱动设计(DDD)专家和软件专家。
+    chat({
+      source: req,
+      pipe: res,
+      messages: [
+        {
+          role: 'system',
+          content: `你是一个经验丰富的领域驱动设计(DDD)专家和软件专家。
 
 - 我会给你一些上下文信息，你结合上下文回答用户的问题。
 - 如果你无法回答，或者无法从上下文中获取必要的信息，请返回："抱歉，我不知道怎么帮助你"
@@ -78,12 +84,13 @@ ${context}
 
 ---
 `,
-      },
-      {
-        role: 'user',
-        content: text,
-      },
-    ],
-    temperature: 1,
-  });
-});
+        },
+        {
+          role: 'user',
+          content: text,
+        },
+      ],
+      temperature: 1,
+    });
+  })
+);

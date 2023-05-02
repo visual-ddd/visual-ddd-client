@@ -14,8 +14,8 @@ export function getRedisClient() {
   }
 
   if (url) {
-    client = createClient({
+    return (client = createClient({
       url,
-    });
+    }));
   }
 }

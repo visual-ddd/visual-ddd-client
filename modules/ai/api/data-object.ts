@@ -2,25 +2,28 @@ import { allowMethod } from '@/lib/api';
 import { createFailResponse } from '@/modules/backend-node';
 import { NextApiHandler } from 'next';
 import { chat } from '../chat';
+import { withSessionApiRoute } from '@/modules/session/api-helper';
 
-export const dataObject: NextApiHandler = allowMethod('POST', async (req, res) => {
-  const { text, conception } = req.body as {
-    text: string;
-    conception: string;
-  };
+export const dataObject: NextApiHandler = allowMethod(
+  'POST',
+  withSessionApiRoute(async (req, res) => {
+    const { text, conception } = req.body as {
+      text: string;
+      conception: string;
+    };
 
-  if (text == null) {
-    res.status(400).json(createFailResponse(400, 'text is required'));
-    return;
-  }
+    if (text == null) {
+      res.status(400).json(createFailResponse(400, 'text is required'));
+      return;
+    }
 
-  chat({
-    pipe: res,
-    source: req,
-    messages: [
-      {
-        role: 'system',
-        content: `You are an expert in conceptual modeling for relational databases. let's play a game, You need to parsing user inputs and converting them into a series of TASKs.
+    chat({
+      pipe: res,
+      source: req,
+      messages: [
+        {
+          role: 'system',
+          content: `You are an expert in conceptual modeling for relational databases. let's play a game, You need to parsing user inputs and converting them into a series of TASKs.
 
 Here are some rules:
 
@@ -249,9 +252,10 @@ Given Tables:
 USER: """${text}"""
 ASSISTANT: """
         `,
-      },
-    ],
-    temperature: 1,
-    stop: ['"""', 'USER'],
-  });
-});
+        },
+      ],
+      temperature: 1,
+      stop: ['"""', 'USER'],
+    });
+  })
+);

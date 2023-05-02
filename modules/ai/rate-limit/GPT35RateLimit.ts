@@ -7,6 +7,8 @@ import { IRateLimit } from './IRateLimit';
  * GPT 3.5 速率限制
  */
 export class GTP35RateLimit extends CacheContainer<GPT35Limit> implements IRateLimit {
+  exceedMessage = `请求过于频繁，请稍后重试`;
+
   constructor(private storage: ICacheStorage<object>) {
     super({
       // TODO: 环境变量配置

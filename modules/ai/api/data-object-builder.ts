@@ -2,26 +2,29 @@ import { allowMethod } from '@/lib/api';
 import { createFailResponse } from '@/modules/backend-node';
 import { NextApiHandler } from 'next';
 import { chat } from '../chat';
+import { withSessionApiRoute } from '@/modules/session/api-helper';
 
-export const dataObjectBuilder: NextApiHandler = allowMethod('GET', async (req, res) => {
-  const prompt = req.query.prompt as string;
+export const dataObjectBuilder: NextApiHandler = allowMethod(
+  'GET',
+  withSessionApiRoute(async (req, res) => {
+    const prompt = req.query.prompt as string;
 
-  if (prompt == null) {
-    res.status(400).json(createFailResponse(400, 'prompt is required'));
-    return;
-  }
+    if (prompt == null) {
+      res.status(400).json(createFailResponse(400, 'prompt is required'));
+      return;
+    }
 
-  chat({
-    pipe: res,
-    source: req,
-    messages: [
-      {
-        role: 'system',
-        content: '你是一个数据库建模专家, 你会根据用户的提示进行数据库概念建模',
-      },
-      {
-        role: 'user',
-        content: `
+    chat({
+      pipe: res,
+      source: req,
+      messages: [
+        {
+          role: 'system',
+          content: '你是一个数据库建模专家, 你会根据用户的提示进行数据库概念建模',
+        },
+        {
+          role: 'user',
+          content: `
 假设实体(或者表)有多个字段(或者属性), 这些字段支持以下类型:
 
 - Boolean
@@ -115,12 +118,13 @@ cardinality 可选值有: OneToOne, OneToMany, ManyToOne, ManyToMany
 
 不要解释
 `,
-      },
-      {
-        role: 'user',
-        content: `用户输入: """${prompt}"""`,
-      },
-    ],
-    temperature: 0.7,
-  });
-});
+        },
+        {
+          role: 'user',
+          content: `用户输入: """${prompt}"""`,
+        },
+      ],
+      temperature: 0.7,
+    });
+  })
+);
