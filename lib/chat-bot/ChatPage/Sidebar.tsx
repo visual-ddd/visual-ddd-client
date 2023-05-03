@@ -8,6 +8,7 @@ import { useBotSessionStoreContext } from '../BotSessionStoreContext';
 import type { BotSession } from '../BotSession';
 import type { Prompt } from '../types';
 import { PromptLibraryModal } from '../PromptLibrary';
+import { DEFAULT_TITLE } from '../constants';
 
 import s from './Sidebar.module.scss';
 import { ExploreIcon } from './ExploreIcon';
@@ -66,7 +67,7 @@ const Item = observer(function Item(props: { item: BotSession; active: boolean }
       // 最多限制 50 个字符
       item.setName(value.slice(0, 50));
     } else {
-      target.innerText = item.name;
+      target.innerText = item.name || DEFAULT_TITLE;
     }
 
     setEditing(false);
@@ -97,7 +98,7 @@ const Item = observer(function Item(props: { item: BotSession; active: boolean }
         contentEditable={editing}
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
-        dangerouslySetInnerHTML={{ __html: item.name }}
+        dangerouslySetInnerHTML={{ __html: item.name || DEFAULT_TITLE }}
         onClick={handleClick}
       ></span>
       {!!item.removable && <EditOutlined className={s.removeSession} onClick={handleDoubleClick} />}

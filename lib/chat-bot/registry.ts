@@ -15,6 +15,10 @@ export type MessageErrorHandler = (context: {
 
 const messageErrorHandler: MessageErrorHandler[] = [];
 
+export type SubjectSummary = (text: string) => Promise<string>;
+
+let subjectSummary: SubjectSummary | undefined;
+
 /**
  * 扩展注册器
  */
@@ -56,3 +60,16 @@ export const handleMessageError: MessageErrorHandler = context => {
 
   return true;
 };
+
+export function registerSubjectSummary(caller: SubjectSummary) {
+  subjectSummary = caller;
+}
+
+/**
+ * 主题总结
+ * @param text
+ * @returns
+ */
+export function getSubjectSummary(text: string) {
+  return subjectSummary?.(text);
+}

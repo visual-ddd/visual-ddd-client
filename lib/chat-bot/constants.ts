@@ -37,3 +37,4 @@ export const DEFAULT_NAME = 'Visual DDD';
 export const DEFAULT_SESSION_PROMPT = '你是一个领域驱动设计(DDD)的专家，是 Visual DDD 专门开发的服务于开发者的机器人。';
 export const DEFAULT_SESSION_ID = 'default';
 export const DEFAULT_SESSION_REMOVABLE = true;
+export const DEFAULT_TITLE = '随便聊聊';

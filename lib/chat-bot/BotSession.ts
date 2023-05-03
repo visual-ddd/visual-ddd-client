@@ -6,6 +6,8 @@ import { makeAutoBindThis, mutation } from '@/lib/store';
 import { BotModel } from './BotModel';
 import { BotSessionPersister } from './BotSessionPersister';
 import type { BotSessionStorage } from './BotSessionPersister';
+import { Role } from './protocol';
+import { getSubjectSummary } from './registry';
 
 export interface BotSessionOptions {
   uuid: string;
@@ -23,7 +25,7 @@ export interface BotSessionOptions {
 }
 
 const DEFAULT_SYSTEM_PROMPT = '';
-const DEFAULT_NAME = '随便聊聊';
+const DEFAULT_NAME = '';
 
 /**
  * 聊天会话
@@ -75,6 +77,8 @@ export class BotSession implements IDisposable, IDestroyable {
    */
   private persister: BotSessionPersister;
 
+  private subjectLoading: boolean = false;
+
   constructor(options: BotSessionOptions) {
     this.uuid = options.uuid;
     this.name = options.name || DEFAULT_NAME;
@@ -125,6 +129,12 @@ export class BotSession implements IDisposable, IDestroyable {
           },
         },
       });
+
+      this.model.event.on('MESSAGE_ADDED', evt => {
+        if (evt.message.role === Role.User && evt.message.content.length && !this.name && !this.subjectLoading) {
+          this.detectSubject(evt.message.content);
+        }
+      });
     }
 
     this.model.active();
@@ -148,6 +158,10 @@ export class BotSession implements IDisposable, IDestroyable {
   setSystem(system: string) {
     this.system = system;
     this.save();
+
+    if (!this.name && this.system.length && !this.subjectLoading) {
+      this.detectSubject(this.system);
+    }
   }
 
   /**
@@ -189,6 +203,20 @@ export class BotSession implements IDisposable, IDestroyable {
       maxContextLength: this.maxContextLength,
     };
   }
+
+  private detectSubject = async (text: string) => {
+    try {
+      this.subjectLoading = true;
+      const subject = await getSubjectSummary(text);
+      if (subject?.length) {
+        this.setName(subject);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      this.subjectLoading = false;
+    }
+  };
 
   private save = debounce(() => {
     this.persister.save(this.getDataToSave());

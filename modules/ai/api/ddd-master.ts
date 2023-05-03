@@ -14,6 +14,7 @@ import { withSessionApiRoute } from '@/modules/session/api-helper';
 let pineconeStore: PineconeStore;
 
 // TODO: azure 支持
+// TODO: 提取到公共模块
 async function querySimilar(text: string) {
   if (pineconeStore) {
     return pineconeStore.similaritySearch(text, 1);
@@ -41,6 +42,7 @@ async function querySimilar(text: string) {
       basePath: support.basePath,
     }
   );
+
   pineconeStore = await PineconeStore.fromExistingIndex(embedding, { pineconeIndex });
 
   return pineconeStore.similaritySearch(text, 1);
