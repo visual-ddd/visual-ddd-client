@@ -24,5 +24,6 @@ Sentry.init({
     /NotAllowedError/i,
     'network error',
     '请登录后重试',
+    /未登录/,
   ],
 });

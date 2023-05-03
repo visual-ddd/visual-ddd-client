@@ -1,4 +1,4 @@
-import { forever } from '@/lib/utils';
+// import { forever } from '@/lib/utils';
 import { createBackend, compose, FuckResponse, Response } from '@wakeapp/wakedata-backend';
 import { IGNORE_AUTH_ERROR } from './constants';
 import { gotoLogin, isUnauth } from './helper';
@@ -47,7 +47,9 @@ request.initial({
         if (isUnauth(response.errorCode) && !req.meta[IGNORE_AUTH_ERROR]) {
           // 会话失效, 跳转到登录页面
           gotoLogin();
-          await forever();
+
+          // FIXME: 如果没有这个语句会保存未登录异常到未捕获错误
+          // await forever();
         }
       }
 
