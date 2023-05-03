@@ -39,6 +39,7 @@ const MessageItem = observer(function MessageItem(props: { item: Message }) {
   const showExtension = extension && extension !== GLOBAL_EXTENSION_KEY;
   const isLastItem = bot.history[bot.history.length - 1] === item;
   const extensionDefine = extension ? bot.getExtension(extension) : undefined;
+  const isRequest = item.role === Role.User;
 
   const content = item.pending ? (isCommand ? item.content : item.pending.response.eventSource.result) : item.content;
   const loading = item.pending && !isCommand;
@@ -56,7 +57,7 @@ const MessageItem = observer(function MessageItem(props: { item: Message }) {
     }
   }, [item.pending, content, isLastItem]);
 
-  const normalizedContent = useMemo(() => {
+  const normalizedMarkdownContent = useMemo(() => {
     if (showExtension) {
       return `\`#${extension}\` ${content}`;
     } else {
@@ -89,8 +90,8 @@ const MessageItem = observer(function MessageItem(props: { item: Message }) {
   return (
     <div
       className={classNames(s.item, {
-        request: item.role === Role.User,
-        response: item.role !== Role.User,
+        request: isRequest,
+        response: !isRequest,
         loading: item.pending,
       })}
       data-uuid={item.uuid}
@@ -102,8 +103,17 @@ const MessageItem = observer(function MessageItem(props: { item: Message }) {
         </div>
       )}
       <div className={s.content}>
-        {normalizedContent ? (
-          <Markdown content={normalizedContent} className={classNames('dark', { loading })}></Markdown>
+        {normalizedMarkdownContent ? (
+          isRequest ? (
+            <div className={classNames('markdown-body', 'dark')}>
+              <p className={s.prevContent}>
+                {showExtension && <code>{extension}</code>}
+                {content && ' ' + content}
+              </p>
+            </div>
+          ) : (
+            <Markdown content={normalizedMarkdownContent} className={classNames('dark', { loading })}></Markdown>
+          )
         ) : loading ? (
           <LoadingIcon className={s.loading} />
         ) : undefined}
