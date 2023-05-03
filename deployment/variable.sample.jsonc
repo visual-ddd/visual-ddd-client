@@ -1,0 +1,9 @@
+{
+  // 域名
+  "DOMAIN": "hello.com",
+  // 邮箱，主要用于证书生成
+  "EMAIL": "邮箱",
+  // 密钥，用于绘画生成
+  "SECRET": "密钥(50个字符)"
+  // 其余内容在生成后修改 docker-compose.yml
+}
