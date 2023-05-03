@@ -9,7 +9,7 @@ import findLastIndex from 'lodash/findLastIndex';
 
 import { ChatContext, ExtensionType, GLOBAL_EXTENSION_KEY, IBot, Role } from './protocol';
 import type { Extension, Message } from './protocol';
-import { registry } from './registry';
+import { handleMessageError, registry } from './registry';
 import { BotEvent } from './BotEvent';
 import { extraMention } from './util';
 import { BotPersister } from './BotPersister';
@@ -246,10 +246,19 @@ export class BotModel implements IDisposable, IBot, IDestroyable {
           return;
         }
 
+        const notPreventDefault = handleMessageError({
+          bot: this,
+          error: err as Error,
+          userMessageId,
+          responseMessageId,
+        });
+
+        if (notPreventDefault === false) {
+          return;
+        }
+
         // 回复错误信息
-        const errorMessage = `❌ 抱歉，出现了错误: ${
-          TimeoutError.isTimeoutError(err) ? '请求超时' : (err as Error).message
-        }`;
+        const errorMessage = `${TimeoutError.isTimeoutError(err) ? '请求超时' : (err as Error).message}`;
         this.captureException(err as Error, resMsg, response.eventSource);
 
         if (userMessageId) {

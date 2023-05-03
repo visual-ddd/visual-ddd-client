@@ -1,5 +1,5 @@
 import { IDisposable, isAbort } from '@/lib/utils';
-import { extraRestErrorMessage } from '@/modules/backend-client';
+import { parseRestError } from '@/modules/backend-client';
 
 export { isAbort };
 
@@ -93,10 +93,7 @@ export class EventStream implements IDisposable {
 
       if (!res.ok) {
         if (res.headers.get('Content-Type')?.startsWith('application/json')) {
-          const message = await extraRestErrorMessage(res);
-          if (message) {
-            throw new Error(message);
-          }
+          await parseRestError(res);
         }
 
         throw new Error(`Request Error: ${res.status} ${res.statusText}`);
