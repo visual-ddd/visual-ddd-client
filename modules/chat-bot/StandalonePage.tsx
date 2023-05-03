@@ -20,6 +20,10 @@ export function Chat() {
           // 删除回复信息
           bot.removeMessage(responseMessageId);
         }
+
+        if (userMessageId) {
+          bot.putMessageBackToPrompt(userMessageId);
+        }
       };
 
       if (isResponseError(error)) {

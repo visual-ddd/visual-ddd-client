@@ -294,6 +294,26 @@ export class BotModel implements IDisposable, IBot, IDestroyable {
     this.resetMessagePending(id);
   }
 
+  /**
+   * 将消息重新放回输入框
+   * @param id
+   */
+  @command('PUT_MESSAGE_BACK_TO_PROMPT')
+  putMessageBackToPrompt(id: string) {
+    const msg = this.getMessageById(id);
+    if (msg == null) {
+      return;
+    }
+    const extension = msg.extension ? this.getExtension(msg.extension) : undefined;
+    let text = extension && extension !== this.defaultExtension ? `#${extension.match} ` : '';
+
+    if (!this.prompt || this.prompt === text) {
+      // 设置
+      this.setPrompt(text + msg.content);
+      this.removeMessage(id);
+    }
+  }
+
   @mutation('REMOVE_MESSAGE', false)
   removeMessage(id: string) {
     this.resetMessagePending(id);
