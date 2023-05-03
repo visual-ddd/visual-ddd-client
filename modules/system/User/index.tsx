@@ -1,14 +1,13 @@
-import { Button, message, Popconfirm } from 'antd';
-import { useRef } from 'react';
-import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
 import { request } from '@/modules/backend-client';
 import { useLayoutTitle } from '@/modules/Layout';
+import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
+import { Button, message, Popconfirm } from 'antd';
+import { useRef } from 'react';
 
+import { ReChargeModal, useReChargeModalRef } from '@/modules/user/Wallet/ReCharge';
 import { UserDetail } from '../types';
 import { CreateUser, useCreateUser } from './Create';
 import { UpdateUser, useUpdateUser } from './Update';
-import { useSession } from '@/modules/session';
-import { ReChargeModal, useReChargeModalRef } from '@/modules/user/Wallet/ReCharge';
 
 export * from './UserSelect';
 
@@ -18,7 +17,6 @@ export function User() {
   const updateRef = useUpdateUser();
   const rechargeModalRef = useReChargeModalRef();
 
-  const { session } = useSession();
   useLayoutTitle('用户管理');
 
   const handleRefresh = () => {
@@ -79,11 +77,10 @@ export function User() {
         <Button type="link" key="editTable" onClick={() => updateRef.current?.open(record)}>
           编辑
         </Button>,
-        session?.user.isAdmin && (
-          <Button type="link" key="charger" onClick={() => rechargeModalRef.current?.open(record.id)}>
-            充值
-          </Button>
-        ),
+
+        <Button type="link" key="charger" onClick={() => rechargeModalRef.current?.open(record.id)}>
+          充值
+        </Button>,
       ],
     },
   ];

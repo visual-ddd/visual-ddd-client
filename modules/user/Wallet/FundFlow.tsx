@@ -3,6 +3,7 @@ import { ProColumns, ProTable } from '@ant-design/pro-components';
 import s from './FundFlow.module.scss';
 import { BalanceChangeStatus, BalanceSourceType } from './enum';
 import { toYuan } from '@/lib/utils';
+import { useSession } from '@/modules/session';
 
 const BalanceChangePrefixMap: Record<BalanceChangeStatus, string> = {
   [BalanceChangeStatus.In]: '+',
@@ -94,6 +95,7 @@ export interface IFundFlowTableProps {
 }
 
 export const FundFlow = (props: Omit<IFundFlowTableProps, 'query'>) => {
+  const { session } = useSession();
   return (
     <>
       <h3 className={s.title}> 交易明细 </h3>
@@ -104,6 +106,9 @@ export const FundFlow = (props: Omit<IFundFlowTableProps, 'query'>) => {
         options={false}
         search={{
           labelWidth: 'auto',
+        }}
+        params={{
+          balanceAccountId: session?.user.id,
         }}
         scroll={{ y: 300 }}
         defaultSize={props.size || 'small'}
