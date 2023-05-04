@@ -6,6 +6,7 @@ import { DomainObject, DomainObjectInject } from './DomainObject';
 import { DomainObjectAggregation } from './DomainObjectAggregation';
 import { DomainObjectRule } from './DomainObjectRule';
 import { IDomainObjectUnderAggregation } from './DomainObjectUnderAggregation';
+import { toTypescriptInteface } from './toTypescriptInterface';
 
 /**
  * 命令对象
@@ -175,5 +176,16 @@ export class DomainObjectCommand extends DomainObject<CommandDSL> implements IDo
           : undefined
       );
     }
+  }
+
+  override toTypescript(objectsInclued?: Set<DomainObject<any>>): string {
+    return toTypescriptInteface(
+      this,
+      this.dsl.properties,
+      id => {
+        return this.store.getObjectById(id);
+      },
+      objectsInclued
+    );
   }
 }

@@ -80,6 +80,14 @@ export abstract class DomainObject<DSL extends NameDSL> implements IDisposable {
   }
 
   /**
+   * 描述
+   */
+  @derive
+  get description() {
+    return this.dsl.description;
+  }
+
+  /**
    * 可读的类型名称
    */
   abstract objectTypeTitle: string;
@@ -205,6 +213,11 @@ export abstract class DomainObject<DSL extends NameDSL> implements IDisposable {
   dispose(): void {
     this.disposer.release();
   }
+
+  /**
+   * Typescript 类型
+   */
+  abstract toTypescript(objectsInclued?: Set<DomainObject<any>>): string;
 
   private getEdges(targets: DomainObject<NameDSL>[], type: RelationShipDSL): IEdgeDeclaration[] {
     return targets

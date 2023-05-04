@@ -5,6 +5,7 @@ import { DTODSL, extraDependenciesFromClass, NameDSL } from '../dsl';
 
 import { DomainObject } from './DomainObject';
 import { DomainObjectFactory } from './DomainObjectFactory';
+import { toTypescriptInteface } from './toTypescriptInterface';
 
 /**
  * DTO 声明
@@ -94,6 +95,17 @@ export class DomainObjectDTO extends DomainObject<DTODSL> {
     return (
       this.rawDependencies.dependency.size !== this.dependencies.length ||
       this.rawDependencies.association.size !== this.associations.length
+    );
+  }
+
+  override toTypescript(objectsInclued?: Set<DomainObject<any>>): string {
+    return toTypescriptInteface(
+      this,
+      this.dsl.properties,
+      id => {
+        return this.store.getObjectById(id);
+      },
+      objectsInclued
     );
   }
 }

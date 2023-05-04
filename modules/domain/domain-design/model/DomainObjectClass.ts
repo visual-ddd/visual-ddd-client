@@ -2,8 +2,9 @@ import { derive } from '@/lib/store';
 import { booleanPredicate, NoopArray } from '@wakeapp/utils';
 import { makeObservable } from 'mobx';
 import { ClassDSL, extraDependenciesFromClass } from '../dsl';
-import { DomainObjectInject } from './DomainObject';
+import { DomainObject, DomainObjectInject } from './DomainObject';
 import { DomainObjectUnderAggregation } from './DomainObjectUnderAggregation';
+import { toTypescriptInteface } from './toTypescriptInterface';
 
 /**
  * 实体
@@ -62,5 +63,16 @@ export abstract class DomainObjectClass<T extends ClassDSL = ClassDSL> extends D
     super(inject);
 
     makeObservable(this);
+  }
+
+  override toTypescript(objectsInclued?: Set<DomainObject<any>>): string {
+    return toTypescriptInteface(
+      this,
+      this.dsl.properties,
+      id => {
+        return this.store.getObjectById(id);
+      },
+      objectsInclued
+    );
   }
 }
