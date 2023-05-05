@@ -84,7 +84,7 @@
   top: 0;
   left: 0;
   right: 0;
-  z-index: 1;
+  z-index: 1000;
   display: flex;
   padding: var(--vd-spacing-xs) var(--vd-spacing-sm);
   flex-shrink: 0;
@@ -133,9 +133,11 @@
     position: absolute;
     right: 0;
     top: 0;
-    background-color: white;
+    background-color: rgba(255, 255, 255, 0.579);
+    backdrop-filter: blur(10px) opacity(80%);
     padding: 0px 4px;
     font-size: 12px;
+    border-radius: 3px;
   }
 
   .system:hover .editSystem {
