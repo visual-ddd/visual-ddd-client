@@ -213,7 +213,7 @@ export function parseReference(refType: ReferenceTypeDSL) {
   return refType.slice(1, -1).split(':') as [ReferenceTypeName, ReferenceTypeId];
 }
 
-export function parentType<T>(type: string, transform: (name: string, id: string) => T): (T | string)[] {
+export function parseType<T>(type: string, transform: (name: string, id: string) => T): (T | string)[] {
   const list: (string | T)[] = [];
 
   let current = '';

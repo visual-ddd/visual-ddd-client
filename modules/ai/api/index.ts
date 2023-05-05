@@ -9,6 +9,8 @@ export * from './ddd-master';
 export * from './data-object';
 export * from './flow-builder';
 export * from './dall-e';
+export * from './wakeadmin-table';
+export * from './wakeadmin-form';
 export * from './vision';
 export * from './subject';
 export * from './free-usage';

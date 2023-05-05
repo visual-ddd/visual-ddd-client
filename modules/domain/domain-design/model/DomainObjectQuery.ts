@@ -4,6 +4,7 @@ import { extraDependenciesFromQuery, QueryDSL } from '../dsl';
 import { DomainObject } from './DomainObject';
 import { DomainObjectFactory } from './DomainObjectFactory';
 import { DomainObjectRule } from './DomainObjectRule';
+import { toTypescriptInteface } from './toTypescriptInterface';
 
 /**
  * 命令对象
@@ -84,6 +85,17 @@ export class DomainObjectQuery extends DomainObject<QueryDSL> {
     return (
       this.rawDependencies.dependency.size !== this.dependencies.length ||
       this.rawDependencies.association.size !== this.associations.length
+    );
+  }
+
+  override toTypescript(objectsInclued?: Set<DomainObject<any>>): string {
+    return toTypescriptInteface(
+      this,
+      this.dsl.properties,
+      id => {
+        return this.store.getObjectById(id);
+      },
+      objectsInclued
     );
   }
 }

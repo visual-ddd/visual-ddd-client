@@ -1,4 +1,4 @@
-import { RelationShipDSL } from './dsl';
+import { BaseType, RelationShipDSL } from './dsl';
 
 export {
   NameTooltip,
@@ -44,6 +44,21 @@ export const AccessList = [
   { label: 'private(私有)', value: 'private' },
   { label: 'protected(保护)', value: 'protected' },
 ];
+
+export const BaseTypeToTypescriptTypeMap: Record<BaseType, string> = {
+  String: 'string',
+  Integer: 'number',
+  Long: 'number',
+  Double: 'number',
+  Float: 'number',
+  Date: 'Date',
+  Boolean: 'boolean',
+  BigDecimal: 'number',
+  Char: 'string',
+  Byte: 'number',
+  Short: 'number',
+  Void: 'void',
+};
 
 /**
  * 领域对象名称

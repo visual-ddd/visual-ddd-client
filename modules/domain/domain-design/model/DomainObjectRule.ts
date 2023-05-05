@@ -97,4 +97,8 @@ export class DomainObjectRule extends DomainObject<RuleDSL> {
       );
     }
   }
+
+  override toTypescript(): string {
+    return '';
+  }
 }

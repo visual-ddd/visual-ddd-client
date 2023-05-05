@@ -23,6 +23,7 @@ Sentry.init({
     /Failed to fetch/i,
     /NotAllowedError/i,
     'network error',
+    /Timeout/i,
     '请登录后重试',
     /未登录/,
   ],

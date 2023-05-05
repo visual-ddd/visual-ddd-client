@@ -1,6 +1,8 @@
 import type { EditorContextMenuItem, CopyPayload } from '@/lib/editor';
 import type { Node } from '@antv/x6';
+import { message } from 'antd';
 
+import type { DomainEditorModel } from '../domain-design/model';
 import { CommandDSL, DTODSL, EntityDSL, NameDSL, QueryDSL, ValueObjectDSL } from '../domain-design/dsl/dsl';
 import { DomainObjectName, DomainObjectReadableName } from '../domain-design/dsl/constants';
 import { DataObjectName, DataObjectReadableName } from '../data-design/dsl/constants';
@@ -67,6 +69,35 @@ const DOMAIN_OBJECT_TRANSFORM_TARGET_READABLE_NAME: Record<DomainObjectTransform
   ...DataObjectReadableName,
 };
 
+function createCopyAsTypescriptMenuItem(): EditorContextMenuItem {
+  return {
+    key: 'typescript',
+    label: 'TypeScript 类型',
+    handler: context => {
+      const { target, canvasModel } = context;
+      const object = (canvasModel.editorModel as DomainEditorModel).domainObjectStore.getObjectById(target?.model.id);
+
+      if (object) {
+        try {
+          const result = object.toTypescript();
+          window.navigator.clipboard.writeText(result);
+          message.success('复制成功');
+        } catch (err) {
+          message.error((err as Error).message);
+        }
+      }
+    },
+  };
+}
+
+export function createCopyAsMenuWithTypescriptOnly(): EditorContextMenuItem {
+  return {
+    key: 'transform',
+    label: '复制为',
+    children: [createCopyAsTypescriptMenuItem()],
+  };
+}
+
 /**
  * 创建右键菜单
  * @param type
@@ -76,30 +107,37 @@ export function createCopyAsMenu(type: DomainObjectTransformable): EditorContext
   return {
     key: 'transform',
     label: '复制为',
-    children: TRANSFORM_TARGET.map(([name, method]) => {
-      return {
-        key: name,
-        label: DOMAIN_OBJECT_TRANSFORM_TARGET_READABLE_NAME[name],
-        handler: context => {
-          const { model, cell } = context.target!;
-          const transform = createDomainObjectTransform(type as any, model.properties as any);
-          const dsl = transform[method]();
+    children: [
+      ...TRANSFORM_TARGET.map(([name, method]): EditorContextMenuItem => {
+        return {
+          key: name,
+          label: DOMAIN_OBJECT_TRANSFORM_TARGET_READABLE_NAME[name],
+          handler: context => {
+            const { model, cell } = context.target!;
+            const transform = createDomainObjectTransform(type as any, model.properties as any);
+            const dsl = transform[method]();
 
-          const payload: CopyPayload = {
-            id: dsl.uuid,
-            type: 'node',
-            size: (cell as Node).getSize(),
-            position: { x: 0, y: 0 },
-            properties: {
-              ...dsl,
-              __node_name__: name,
-              __node_type__: 'node',
-            },
-          };
+            const payload: CopyPayload = {
+              id: dsl.uuid,
+              type: 'node',
+              size: (cell as Node).getSize(),
+              position: { x: 0, y: 0 },
+              properties: {
+                ...dsl,
+                __node_name__: name,
+                __node_type__: 'node',
+              },
+            };
 
-          context.canvasModel.handleCopyPayloads([payload]);
-        },
-      };
-    }),
+            context.canvasModel.handleCopyPayloads([payload]);
+
+            message.success('复制成功');
+          },
+        };
+      }),
+
+      // 转换为 Typescript
+      createCopyAsTypescriptMenuItem(),
+    ],
   };
 }

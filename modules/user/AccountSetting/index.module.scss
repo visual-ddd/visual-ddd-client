@@ -18,7 +18,7 @@
 .tabs {
   height: 100%;
   :global(.ant-tabs-content) {
-    height: calc(var(--H, 100%) * 0.95);
+    max-height: calc(var(--H, 100%) * 0.95);
     overflow-x: hidden;
     overflow-y: auto;
   }

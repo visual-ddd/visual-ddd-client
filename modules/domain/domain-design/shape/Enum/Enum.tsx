@@ -10,6 +10,7 @@ import {
   checkPropertyName,
   EnumBaseType,
 } from '../../dsl';
+import { createCopyAsMenuWithTypescriptOnly } from '@/modules/domain/transform';
 
 import { EnumShape } from './EnumShape';
 import { EnumEditor } from './EnumEditor';
@@ -121,6 +122,7 @@ defineShape({
   copyFactory({ payload }) {
     return { uuid: payload.id };
   },
+  contextMenu: [createCopyAsMenuWithTypescriptOnly()],
   component: EnumShapeComponent,
   attributeComponent: EnumAttributeComponent,
 });

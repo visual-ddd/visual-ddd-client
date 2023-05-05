@@ -3,9 +3,13 @@
     height: 1em !important;
   }
 }
-.code {
-  width: 250px;
-  margin-right: var(--vd-spacing-sm);
+
+.verify {
+  display: flex;
+  gap: var(--vd-spacing-sm);
+  .codeInput {
+    flex: 1;
+  }
 }
 .codeBtn {
   width: 100px;

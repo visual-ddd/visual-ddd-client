@@ -102,4 +102,8 @@ export class DomainObjectAggregation extends DomainObject<AggregationDSL> {
 
     return this.commands.some(i => i.id === id);
   }
+
+  override toTypescript(objectsInclued?: Set<DomainObject<any>> | undefined): string {
+    return '';
+  }
 }

@@ -97,19 +97,26 @@ export function Register(props: RegisterProps) {
         </Form.Item>
 
         <Form.Item label="验证码">
-          <Form.Item noStyle name="code" rules={[{ required: true, message: '请输入验证码' }]}>
-            <Input placeholder="输入验证码" className={s.code} autoComplete="off" />
-          </Form.Item>
+          <div className={s.verify}>
+            <Form.Item
+              noStyle
+              name="code"
+              rules={[{ required: true, message: '请输入验证码' }]}
+              className={s.codeInput}
+            >
+              <Input placeholder="输入验证码" autoComplete="off" />
+            </Form.Item>
 
-          <Button
-            type="primary"
-            className={s.codeBtn}
-            onClick={handleGetCode}
-            loading={codeSending}
-            disabled={codeWaiting ? true : undefined}
-          >
-            {codeWaiting ? `${count} 秒` : '验证码'}
-          </Button>
+            <Button
+              type="primary"
+              className={s.codeBtn}
+              onClick={handleGetCode}
+              loading={codeSending}
+              disabled={codeWaiting ? true : undefined}
+            >
+              {codeWaiting ? `${count} 秒` : '验证码'}
+            </Button>
+          </div>
         </Form.Item>
 
         <Form.Item name="password" label="密码" rules={[{ required: true, message: '请输入密码' }]}>
