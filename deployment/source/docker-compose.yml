@@ -20,7 +20,15 @@ services:
       #NODE_OPTIONS: NODEJS 配置项 # --inspect=0.0.0.0
       REDIS: redis://redis:6379/1
 
-      # 后端服务
+  # 多人协作服务器
+  collab:
+    image: wkfe/visual-ddd-collab:latest
+    ports:
+      - '9090:9090'
+    environment:
+      MAIN_SERVER: http://client:3000
+
+  # 后端服务
   server:
     image: registry.cn-guangzhou.aliyuncs.com/visual-ddd/server:latest
     restart: always
