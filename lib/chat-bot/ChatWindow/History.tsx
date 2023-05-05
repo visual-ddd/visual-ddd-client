@@ -57,7 +57,7 @@ const MessageItem = observer(function MessageItem(props: { item: Message }) {
 
   const normalizedContent = useMemo(() => {
     if (showExtension) {
-      return `\`#${extension}\` ${content}`;
+      return `\`#${extension}\`${content.startsWith('`') ? '\n' + content : ' ' + content}`;
     } else {
       return content;
     }

@@ -13,6 +13,7 @@ import {
   EditorConfigurationValue,
 } from '@/lib/editor';
 import { DomainEditorModel } from '../model';
+import { useBotExtension } from '../bot-extension';
 import { ShapeTree } from './ShapeTree';
 import { DomainObjectReferenceEdges } from './DomainObjectReferenceEdges';
 import { useMemo } from 'react';
@@ -31,11 +32,17 @@ export interface DomainEditorProps {
   active?: boolean;
 }
 
+const Bot = () => {
+  useBotExtension();
+
+  return null;
+};
+
 /**
  * 领域模型编辑器
  */
 export const DomainEditor = observer(function DomainEditor(props: DomainEditorProps) {
-  const { model } = props;
+  const { model, active } = props;
   const readonly = model.readonly;
   const configuration = useMemo<EditorConfigurationValue>(() => {
     return {
@@ -70,6 +77,7 @@ export const DomainEditor = observer(function DomainEditor(props: DomainEditorPr
               <Canvas>
                 {/* 扩展连线 */}
                 <DomainObjectReferenceEdges />
+                {active && <Bot />}
               </Canvas>
             </EditorLayout>
           </EditorConfigurationProvider>
