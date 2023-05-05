@@ -30,7 +30,7 @@ export class DomainObjectEnum extends DomainObjectUnderAggregation<EnumDSL> {
       name: this.name,
       member: this.dsl.members.map(i => ({
         name: i.name,
-        code: i.code,
+        code: i.code && this.dsl.baseType === 'string' ? i.code : Number(i.code),
         comment: {
           title: i.title,
           description: i.description,
