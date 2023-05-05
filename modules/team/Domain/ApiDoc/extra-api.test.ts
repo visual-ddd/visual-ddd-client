@@ -1,4 +1,4 @@
-import { extraReferenceId, extraApi, parentType } from './extra-api';
+import { extraReferenceId, extraApi, parseType } from './extra-api';
 import data from './extra-api.data.json';
 
 describe('extraReferenceId', () => {
@@ -20,30 +20,30 @@ test('extraApi', () => {
   expect(extraApi(data as any)).toMatchSnapshot();
 });
 
-describe('parentType', () => {
+describe('parseType', () => {
   const identity = (name: string, id: string) => ({ id, name });
 
   it('should parse reference types correctly', () => {
-    const result = parentType('string[ref:123]', identity);
+    const result = parseType('string[ref:123]', identity);
     expect(result).toEqual(['string', { id: '123', name: 'ref' }]);
   });
 
   it('should throw an error for invalid types', () => {
-    expect(() => parentType('string[ref:123', identity)).toThrowError('Invalid type: string[ref:123');
-    expect(() => parentType('string[ref:123]]', identity)).toThrowError('Invalid type: string[ref:123]]');
-    expect(() => parentType('string[ref:123]extra]', identity)).toThrowError('Invalid type: string[ref:123]extra]');
-    expect(() => parentType('string[[ref:123][ref2:456]', identity)).toThrowError(
+    expect(() => parseType('string[ref:123', identity)).toThrowError('Invalid type: string[ref:123');
+    expect(() => parseType('string[ref:123]]', identity)).toThrowError('Invalid type: string[ref:123]]');
+    expect(() => parseType('string[ref:123]extra]', identity)).toThrowError('Invalid type: string[ref:123]extra]');
+    expect(() => parseType('string[[ref:123][ref2:456]', identity)).toThrowError(
       'Invalid type: string[[ref:123][ref2:456]'
     );
   });
 
   it('should handle non-reference types', () => {
-    const result = parentType('string', identity);
+    const result = parseType('string', identity);
     expect(result).toEqual(['string']);
   });
 
   it('should handle multiple reference types', () => {
-    const result = parentType('string[ref:123][ref2:456]', identity);
+    const result = parseType('string[ref:123][ref2:456]', identity);
     expect(result).toEqual(['string', { id: '123', name: 'ref' }, { id: '456', name: 'ref2' }]);
   });
 });

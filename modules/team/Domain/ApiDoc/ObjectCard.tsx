@@ -1,5 +1,5 @@
 import { memo, useEffect, useMemo, useState } from 'react';
-import { Checkbox, Collapse, Table } from 'antd';
+import { Checkbox, Collapse, Table, message } from 'antd';
 import type { ColumnType } from 'antd/es/table';
 import type { PropertyDSL, ReferenceTypeDSL } from '@/modules/domain/api/dsl/interface';
 import { EnterOutlined } from '@ant-design/icons';
@@ -9,6 +9,8 @@ import { ObjectDSL, ObjectType, parseReference } from './extra-api';
 
 import s from './ObjectCard.module.scss';
 import { TypeRender } from './TypeRender';
+import { TypescriptIcon } from './TypescriptIcon';
+import { toTypescript } from './typescript';
 
 export interface ObjectCardProps {
   object: ObjectDSL;
@@ -123,6 +125,16 @@ export const ObjectCard = memo((props: ObjectCardProps) => {
     };
   }, [object.uuid]);
 
+  const handleCopyTs = (evt: React.MouseEvent) => {
+    evt.stopPropagation();
+    evt.preventDefault();
+
+    const code = toTypescript(object, references);
+
+    window.navigator.clipboard.writeText(code);
+    message.success('复制成功');
+  };
+
   return (
     <Collapse
       className={classNames(s.root, { active })}
@@ -134,6 +146,7 @@ export const ObjectCard = memo((props: ObjectCardProps) => {
       expandIcon={p => {
         return (
           <div className={classNames(s.expand, { active: p.isActive })}>
+            <TypescriptIcon className={s.ts} onClick={handleCopyTs} />
             <EnterOutlined />
           </div>
         );

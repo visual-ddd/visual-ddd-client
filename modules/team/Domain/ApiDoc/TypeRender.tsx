@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { cloneElement, memo } from 'react';
-import { parentType } from './extra-api';
+import { parseType } from './extra-api';
 
 import s from './TypeRender.module.scss';
 
@@ -14,7 +14,7 @@ export interface TypeRenderProps {
 export const TypeRender = memo((props: TypeRenderProps) => {
   return (
     <span className={classNames(s.root)}>
-      {parentType(props.type, (name, id) => {
+      {parseType(props.type, (name, id) => {
         return (
           <a className="u-link" href={`#ref-${id}`}>
             {name}
