@@ -1,0 +1,12 @@
+# 用于一些准备工作，比如证书生成
+# 启动 docker compose up certbot
+version: '3.9'
+services:
+  # 自签名证书生成
+  # https://www.cnblogs.com/vishun/p/15746849.html
+  mkcert:
+    image: aegypius/mkcert-for-nginx-proxy
+    volumes:
+      # 证书文件存放位置
+      - ./certbot/ssl:/data
+    command: sh -c "mkdir -p /data/live/<%= DOMAIN %> &&  mkcert -cert-file /data/live/<%= DOMAIN %>/fullchain.pem -key-file /data/live/<%= DOMAIN %>/private.pem <%= DOMAIN %>"

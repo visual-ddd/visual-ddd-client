@@ -30,7 +30,17 @@ crontab -e
 0 0 1,15 * * /usr/bin/docker compose -f /path/to/docker-compose-prepare.yml up --no-deps certbot && /usr/bin/docker compose restart nginx
 ```
 
-# 启动
+# 第一步 开发环境，不使用 Let's Encrypt 证书
+
+创建自签名证书
+
+```shell
+docker compose -f /path/to/docker-compose-prepare-dev.yml up
+```
+
+详见：https://github.com/FiloSottile/mkcert:
+
+# 第二步 启动
 
 启动测试
 
