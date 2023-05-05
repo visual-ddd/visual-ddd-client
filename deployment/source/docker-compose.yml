@@ -18,6 +18,7 @@ services:
       #PINECONE_API_KEY:
       #AI_CONFIGURATION: AI 配置
       #NODE_OPTIONS: NODEJS 配置项 # --inspect=0.0.0.0
+      REDIS: redis://redis:6379/1
 
       # 后端服务
   server:
@@ -53,6 +54,15 @@ services:
       - ./mysql/source:/docker-entrypoint-initdb.d
     environment:
       MYSQL_ROOT_PASSWORD: root
+
+  # redis
+  redis:
+    image: redis:7.0-alpine
+    ports:
+      - '6379:6379'
+    command: --save 60 1 --loglevel warning
+    volumes:
+      - ./redis:/data
 
   # https://hub.docker.com/_/nginx
   # nginx 对外负载均衡
