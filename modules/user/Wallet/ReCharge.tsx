@@ -1,4 +1,4 @@
-import { toYuan } from '@/lib/utils';
+import { YuanToFen } from '@/lib/utils';
 import { request } from '@/modules/backend-client';
 import { Button, Divider, Form, InputNumber, Modal, message } from 'antd';
 import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from 'react';
@@ -33,10 +33,15 @@ export const ReCharge = (props: IReChargeProps) => {
     }
     const rechargeBalance = formRef.getFieldValue('rechargeBalance');
     Modal.confirm({
-      title: '提示',
-      content: `是否确认给用户充值 ￥${toYuan(rechargeBalance)} 元`,
+      title: '余额充值',
+      content: (
+        <div>
+          是否确认给用户充值 <b>{rechargeBalance} 元</b>
+        </div>
+      ),
+      centered: true,
       onOk() {
-        return changerBalance(rechargeBalance).then(() => {
+        return changerBalance(YuanToFen(rechargeBalance)).then(() => {
           message.success('充值成功');
           props.onRechargeSuccess?.();
         });
@@ -62,7 +67,7 @@ export const ReCharge = (props: IReChargeProps) => {
       <Divider />
       <Form form={formRef}>
         <Form.Item label="充值金额" name="rechargeBalance" rules={[{ required: true }]}>
-          <InputNumber addonAfter="分" />
+          <InputNumber addonAfter="元" />
         </Form.Item>
         <Form.Item>
           <div className={s.actions}>{FinalFooter}</div>
