@@ -8,9 +8,30 @@ import './extensions';
 
 import { UserCard } from './UserCard';
 import { useEffect } from 'react';
-import { message } from 'antd';
+import { Modal, message } from 'antd';
+import { UpgradeModal, useUpgradeModal } from '@/modules/plan/shared';
 
 export function Chat() {
+  const upgradeModalRef = useUpgradeModal();
+
+  const openUpgradeModalIfNeed = (msg: string) => {
+    Modal.error({
+      title: '请求失败',
+      content: (
+        <div>
+          <p>{msg}</p>
+        </div>
+      ),
+      okText: '升级套餐',
+      cancelText: '取消',
+      closable: true,
+      onOk() {
+        upgradeModalRef.current?.open();
+      },
+      centered: true,
+    });
+  };
+
   useEffect(() => {
     return registerMessageErrorHandler(context => {
       const { error, responseMessageId, userMessageId, bot } = context;
@@ -32,6 +53,7 @@ export function Chat() {
           case RequestControlErrorCode.FeatureNotAllowed:
             // 展示 VIP 订阅界面
             removeMessage();
+            openUpgradeModalIfNeed('当前调用额度已超套餐上限');
             message.error(error.message);
             return false;
           case RequestControlErrorCode.RateLimit:
@@ -45,7 +67,12 @@ export function Chat() {
     });
   }, []);
 
-  return <ChatPage sidebarFooter={<UserCard />} />;
+  return (
+    <>
+      <UpgradeModal ref={upgradeModalRef} />
+      <ChatPage sidebarFooter={<UserCard />} />
+    </>
+  );
 }
 
 export { Chat as default };
