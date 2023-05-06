@@ -46,7 +46,7 @@ const PlanStatus = () => {
         {hasExpiredTime(planInfo) && (
           <div className={s.planStatusInfo}>
             <span>有效期：</span>
-            <div className={s.planStatusInfoText}>{data.subscriptionEnd}</div>
+            <div className={s.planStatusInfoText}>{data!.subscriptionEnd}</div>
           </div>
         )}
       </Card>

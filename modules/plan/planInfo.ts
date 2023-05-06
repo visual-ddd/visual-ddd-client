@@ -38,8 +38,8 @@ export const FreePlan: IPlanInfo = {
   Identifier: PlanIdentifier.None,
   name: '试用版',
   price: '免费',
-  models: 'GPT3.5',
-  requestLimit: '30次',
+  models: 'GPT 3.5',
+  requestLimit: '30次（终生）',
   modules: 'chatbot',
   onLineLimit: '2台',
   level: 1,
@@ -49,7 +49,7 @@ export const FreePlan: IPlanInfo = {
 export const BasePlan: IPlanInfo = {
   name: '基础版',
   price: '￥30 / 月',
-  models: 'GPT3.5、GPT4',
+  models: 'GPT 3.5、GPT 4',
   requestLimit: '无限制',
   modules: 'chatbot',
   concurrency: '5 / 分钟',
@@ -58,6 +58,7 @@ export const BasePlan: IPlanInfo = {
   cycleNum: 1,
   Identifier: PlanIdentifier.Base,
 };
+
 export const planInfoList: IPlanInfo[] = [FreePlan, BasePlan];
 
 export function createPlan(name: PlanIdentifier): IPlanInfo {
