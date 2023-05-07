@@ -5,25 +5,34 @@ import s from './index.module.scss';
 import cover from './pic.png';
 import Link from 'next/link';
 
+export const Header = () => {
+  return (
+    <header className={s.header}>
+      <div className={s.logo}>
+        <img src="/logo.svg" alt="logo" />
+        <span>Visual DDD</span>
+      </div>
+      <div className={s.menus}>
+        <Link href="/chat" className={s.menu}>
+          Chat
+        </Link>
+        <Link href="/price" className={s.menu}>
+          订阅
+        </Link>
+        <Link href="/dashboard" className={s.menu}>
+          登录
+        </Link>
+      </div>
+    </header>
+  );
+};
+
 export const Home = () => {
   const router = useRouter();
 
   return (
     <div className={s.root}>
-      <header className={s.header}>
-        <div className={s.logo}>
-          <img src="/logo.svg" alt="logo" />
-          <span>Visual DDD</span>
-        </div>
-        <div className={s.menus}>
-          <Link href="/chat" className={s.menu}>
-            Chat
-          </Link>
-          <Link href="/dashboard" className={s.menu}>
-            登录
-          </Link>
-        </div>
-      </header>
+      <Header></Header>
       <div className={s.body}>
         <main className={s.main}>
           <h1>可视化的 DDD 开发平台</h1>

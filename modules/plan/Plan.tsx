@@ -57,35 +57,44 @@ const PlanStatus = () => {
 const PlanCard = (
   props: IPlanInfo & {
     footer?: JSX.Element;
+    externalClass?: Record<string, any>;
   }
 ) => {
+  const externalClass = props.externalClass ?? {};
   return (
-    <Card>
-      <div className={s.planName}>{props.name}</div>
-      <div className={s.planPrice}> {props.price}</div>
-      <dl className={s.planBody}>
-        <dt className={s.planDescName}>模型列表:</dt>
-        <dd className={s.planDescContent}>{props.models}</dd>
-        <dt className={s.planDescName}>功能:</dt>
-        <dd className={s.planDescContent}>{props.modules}</dd>
-        <dt className={s.planDescName}>使用限制:</dt>
-        <dd className={s.planDescContent}>{props.requestLimit}</dd>
-        <dt className={s.planDescName}>终端数:</dt>
-        <dd className={s.planDescContent}>{props.onLineLimit}</dd>
-        <dt className={s.planDescName}>并发限制:</dt>
-        <dd className={s.planDescContent}>{props.concurrency}</dd>
+    <Card className={classNames(s.planCard, externalClass.planCard)}>
+      <div className={classNames(s.planName, externalClass.planName)}>{props.name}</div>
+      <div className={classNames(s.planPrice, externalClass.planPrice)}> {props.price}</div>
+      <dl className={classNames(s.planBody, externalClass.planBody)}>
+        <dt className={classNames(s.planDescName, externalClass.planDescName)}>模型列表:</dt>
+        <dd className={classNames(s.planDescContent, externalClass.planDescContent)}>{props.models}</dd>
+        <dt className={classNames(s.planDescName, externalClass.planDescName)}>功能:</dt>
+        <dd className={classNames(s.planDescContent, externalClass.planDescContent)}>{props.modules}</dd>
+        <dt className={classNames(s.planDescName, externalClass.planDescName)}>使用限制:</dt>
+        <dd className={classNames(s.planDescContent, externalClass.planDescContent)}>{props.requestLimit}</dd>
+        <dt className={classNames(s.planDescName, externalClass.planDescName)}>终端数:</dt>
+        <dd className={classNames(s.planDescContent, externalClass.planDescContent)}>{props.onLineLimit}</dd>
+        <dt className={classNames(s.planDescName, externalClass.planDescName)}>并发限制:</dt>
+        <dd className={classNames(s.planDescContent, externalClass.planDescContent)}>{props.concurrency}</dd>
       </dl>
       {props.footer}
     </Card>
   );
 };
 
-export const UpgradePlanList = (props: { currentPlan: IPlanInfo; onSuccess?: (plan: IPlanInfo) => void }) => {
+export const UpgradePlanList = (props: {
+  currentPlan: IPlanInfo;
+  onSuccess?: (plan: IPlanInfo) => void;
+  externalClass?: Record<string, any>;
+  renderFooter?: (action: () => void) => JSX.Element;
+}) => {
   const payModalRef = usePayModalRef();
 
   const list = useMemo(() => {
     return planInfoList.filter(item => item.cycleNum === props.currentPlan.cycleNum);
   }, [props.currentPlan]);
+
+  const externalClass = props.externalClass ?? {};
 
   const upgrade = (plan: IPlanInfo) =>
     request
@@ -139,7 +148,9 @@ export const UpgradePlanList = (props: { currentPlan: IPlanInfo; onSuccess?: (pl
   const renderFooter = (plan: IPlanInfo) => {
     const allow = allowUpgrade(props.currentPlan, plan);
     if (allow) {
-      return (
+      return props.renderFooter ? (
+        props.renderFooter(() => upgradeHandle(plan))
+      ) : (
         <Button type="primary" onClick={() => upgradeHandle(plan)}>
           升级
         </Button>
@@ -150,9 +161,9 @@ export const UpgradePlanList = (props: { currentPlan: IPlanInfo; onSuccess?: (pl
   return (
     <>
       <PayModal ref={payModalRef}></PayModal>
-      <div className={s.planList}>
+      <div className={classNames(s.planList, externalClass.planList)}>
         {list.map(item => (
-          <PlanCard key={item.name} {...item} footer={renderFooter(item)} />
+          <PlanCard key={item.name} externalClass={externalClass} {...item} footer={renderFooter(item)} />
         ))}
       </div>
     </>

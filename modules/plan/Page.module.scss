@@ -1,0 +1,72 @@
+.root {
+  height: 100vh;
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(180deg, rgba(248, 249, 249, 0.87), rgba(55, 148, 255, 0.36));
+  .planCard {
+    padding: 6px;
+    background: #fff;
+    border-radius: 10px;
+
+    border: none;
+    :global(.ant-card-body) {
+      padding: 0;
+    }
+  }
+
+  .planList {
+    display: grid;
+    width: 60vw;
+    min-width: 600px;
+    max-width: 800px;
+    margin: 10vh auto;
+    gap: 2vw;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .planName {
+    height: 70px;
+    border-radius: 10px;
+    margin: 0;
+    background: linear-gradient(160deg, rgba(52, 141, 214, 0.87), rgba(14, 117, 235, 0.356));
+    color: #ffffff;
+    font-size: 1.8rem;
+    letter-spacing: 2px;
+    box-sizing: border-box;
+    padding: 6px 4%;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .planPrice {
+    text-align: center;
+    font-size: 1.6rem;
+    margin: 5% 0;
+  }
+  .planBody {
+    width: 80%;
+    margin: 0 auto 3%;
+  }
+
+  .planDescName {
+    color: rgb(39, 65, 85);
+    margin-bottom: 12px;
+  }
+
+  .button {
+    margin-top: 2vw;
+    height: 40px;
+    border-radius: 10px;
+  }
+}
+.title {
+  font-size: 2.7rem;
+  text-align: center;
+  color: #403f3f;
+  letter-spacing: 3px;
+  text-shadow: 1px 1px 3px #87cce15c;
+}
