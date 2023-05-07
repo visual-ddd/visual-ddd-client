@@ -27,6 +27,7 @@ import { WYSIWYGEditorToolbar } from './Toolbar';
 import { CustomKeyboardBinding } from './CustomKeyboardBinding';
 import { FileHandler } from './FileHandler';
 import { CodeBlockComponent } from './CodeBlockComponent';
+import { Commands } from './Suggestion';
 import s from './index.module.scss';
 import cs from './common.module.scss';
 
@@ -76,6 +77,9 @@ export const WYSIWYGEditor = (props: WYSIWYGEditorProps) => {
   const editor = useEditor({
     editable: !readonly,
     extensions: [
+      // / 命令
+      Commands,
+
       StarterKit.configure({
         // 使用 yjs
         history: false,
@@ -95,7 +99,16 @@ export const WYSIWYGEditor = (props: WYSIWYGEditorProps) => {
       Image.configure({}),
 
       Placeholder.configure({
-        placeholder: placeholder ?? '请输入内容',
+        includeChildren: true,
+        placeholder:
+          placeholder ??
+          (({ node }) => {
+            if (node.type.name === 'heading') {
+              return `标题 ${node.attrs.level}`;
+            }
+
+            return '输入正文或 / 唤起更多';
+          }),
       }),
 
       CodeBlock.extend({
