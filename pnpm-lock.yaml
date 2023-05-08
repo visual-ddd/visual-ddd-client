@@ -53,6 +53,7 @@ specifiers:
   '@types/react': 18.0.33
   '@types/react-color': ^3.0.6
   '@types/react-dom': 18.0.11
+  '@types/react-resizable': ^3.0.4
   '@types/semver': ^7.3.13
   '@types/uuid': ^9.0.1
   '@wakeadmin/docker-build': ^0.1.9
@@ -118,6 +119,7 @@ specifiers:
   react-draggable: ^4.4.5
   react-is: ^18.2.0
   react-markdown: ^8.0.6
+  react-resizable: ^3.0.5
   react-sortable-hoc: ^2.0.0
   reflect-metadata: ^0.1.13
   rehype-katex: ^6.0.2
@@ -233,6 +235,7 @@ dependencies:
   react-draggable: 4.4.5_biqbaboplfbrettd7655fr4n2y
   react-is: 18.2.0
   react-markdown: 8.0.6_pofolu2o2erjq4lhyzl3hqovzq
+  react-resizable: 3.0.5_biqbaboplfbrettd7655fr4n2y
   react-sortable-hoc: 2.0.0_biqbaboplfbrettd7655fr4n2y
   reflect-metadata: 0.1.13
   rehype-katex: 6.0.2
@@ -269,6 +272,7 @@ devDependencies:
   '@types/react': 18.0.33
   '@types/react-color': 3.0.6
   '@types/react-dom': 18.0.11
+  '@types/react-resizable': 3.0.4
   '@types/semver': 7.3.13
   '@types/uuid': 9.0.1
   '@wakeadmin/docker-build': 0.1.9
@@ -3050,6 +3054,13 @@ packages:
   /@types/react-dom/18.0.11:
     resolution:
       { integrity: sha512-O38bPbI2CWtgw/OoQoY+BRelw7uysmXbWvw3nLWO21H1HSh+GOlqPuXshJfjmpNlKiiSDG9cc1JZAaMmVdcTlw== }
+    dependencies:
+      '@types/react': 18.0.33
+    dev: true
+
+  /@types/react-resizable/3.0.4:
+    resolution:
+      { integrity: sha512-+QguN9CDfC1lthq+4noG1fkxh8cqkV2Fv/Mu3mdknCCBiwwNLecnBdk1MmNNN7uJpT23Nx/aVkYsbt5NuWouFw== }
     dependencies:
       '@types/react': 18.0.33
     dev: true
@@ -9713,6 +9724,19 @@ packages:
       vfile: 5.3.7
     transitivePeerDependencies:
       - supports-color
+    dev: false
+
+  /react-resizable/3.0.5_biqbaboplfbrettd7655fr4n2y:
+    resolution:
+      { integrity: sha512-vKpeHhI5OZvYn82kXOs1bC8aOXktGU5AmKAgaZS4F5JPburCtbmDPqE7Pzp+1kN4+Wb81LlF33VpGwWwtXem+w== }
+    peerDependencies:
+      react: '>= 16.3'
+    dependencies:
+      prop-types: 15.8.1
+      react: 18.2.0
+      react-draggable: 4.4.5_biqbaboplfbrettd7655fr4n2y
+    transitivePeerDependencies:
+      - react-dom
     dev: false
 
   /react-resize-detector/7.1.2_biqbaboplfbrettd7655fr4n2y:

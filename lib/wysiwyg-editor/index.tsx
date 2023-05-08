@@ -30,6 +30,8 @@ import { CodeBlockComponent } from './CodeBlockComponent';
 import { Commands } from './Suggestion';
 import s from './index.module.scss';
 import cs from './common.module.scss';
+import { ReactBlock } from './ReactBlock';
+import './CustomBlock';
 
 lowlight.registerLanguage('html', html);
 lowlight.registerLanguage('css', css);
@@ -79,6 +81,8 @@ export const WYSIWYGEditor = (props: WYSIWYGEditorProps) => {
     extensions: [
       // / 命令
       Commands,
+
+      ReactBlock,
 
       StarterKit.configure({
         // 使用 yjs

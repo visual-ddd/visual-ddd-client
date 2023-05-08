@@ -2,6 +2,7 @@ import type { Editor, Range } from '@tiptap/core';
 
 import { Item } from './types';
 import { Bold, H1, H2, H3, H4 } from './icons';
+import { ReactBlockRegistry } from '../ReactBlock';
 
 enum Category {
   Heading = 'Heading',
@@ -74,5 +75,26 @@ const list: Item[] = [
  * @returns
  */
 export const getSuggestionItems = ({ query }: { query: string; editor: Editor }) => {
-  return list.filter(item => item.title.toLowerCase().includes(query.toLowerCase()));
+  const customBlocks = Array.from(ReactBlockRegistry.registered().values()).map(i => {
+    return {
+      name: i.name,
+      icon: i.icon,
+      title: i.title,
+      category: 'Block',
+      command: ({ editor, range }) => {
+        editor
+          .chain()
+          .focus()
+          .deleteRange(range)
+          .insertContent(
+            `<react-block name="${i.name}" state="${encodeURIComponent(
+              JSON.stringify(i.initialState())
+            )}"></react-block>`
+          )
+          .run();
+      },
+    } satisfies Item;
+  });
+
+  return list.concat(customBlocks).filter(item => item.title.toLowerCase().includes(query.toLowerCase()));
 };

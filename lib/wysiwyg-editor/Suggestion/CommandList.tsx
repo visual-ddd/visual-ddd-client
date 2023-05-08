@@ -1,4 +1,4 @@
-import { SuggestionKeyDownProps, SuggestionProps } from '@tiptap/suggestion';
+import { SuggestionKeyDownProps, SuggestionProps } from './suggestion';
 import React, { Component, createRef } from 'react';
 import { createPortal } from 'react-dom';
 import groupBy from 'lodash/groupBy';
@@ -86,15 +86,21 @@ export class CommandList extends Component<CommandListProps, CommandListState> {
   }
 
   upHandler() {
-    this.setState({
-      selectedIndex: (this.state.selectedIndex + this.props.items.length - 1) % this.props.items.length,
-    });
+    this.setState(
+      {
+        selectedIndex: (this.state.selectedIndex + this.props.items.length - 1) % this.props.items.length,
+      },
+      this.scrollToShowSelected
+    );
   }
 
   downHandler() {
-    this.setState({
-      selectedIndex: (this.state.selectedIndex + 1) % this.props.items.length,
-    });
+    this.setState(
+      {
+        selectedIndex: (this.state.selectedIndex + 1) % this.props.items.length,
+      },
+      this.scrollToShowSelected
+    );
   }
 
   enterHandler() {
@@ -110,11 +116,16 @@ export class CommandList extends Component<CommandListProps, CommandListState> {
   }
 
   private watchEditor = () => {
+    let asyncTask: number | undefined;
+
     const handleBlur = () => {
-      if (this.elRef.current) {
-        this.elRef.current.style.display = 'none';
-      }
+      asyncTask = requestAnimationFrame(() => {
+        if (this.elRef.current) {
+          this.elRef.current.style.display = 'none';
+        }
+      });
     };
+
     const handleFocus = () => {
       if (this.elRef.current) {
         this.elRef.current.style.display = 'block';
@@ -133,6 +144,9 @@ export class CommandList extends Component<CommandListProps, CommandListState> {
       if (container) {
         container.removeEventListener('scroll', debounceUpdatePosition);
       }
+      if (asyncTask) {
+        cancelAnimationFrame(asyncTask);
+      }
       this.props.editor.off('blur', handleBlur).off('focus', handleFocus);
     };
   };
@@ -148,6 +162,15 @@ export class CommandList extends Component<CommandListProps, CommandListState> {
       element.style.left = `${position.x}px`;
       element.style.top = `${position.y}px`;
     }
+  };
+
+  private scrollToShowSelected = () => {
+    requestAnimationFrame(() => {
+      const el = this.elRef.current?.querySelector('.' + s.selected);
+      if (el) {
+        el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      }
+    });
   };
 
   override render() {

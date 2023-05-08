@@ -1,5 +1,5 @@
 import { ReactRenderer } from '@tiptap/react';
-import { SuggestionKeyDownProps, SuggestionOptions } from '@tiptap/suggestion';
+import { SuggestionKeyDownProps, SuggestionOptions } from './suggestion';
 import { CommandList, CommandListProps } from './CommandList';
 import { Item } from './types';
 
