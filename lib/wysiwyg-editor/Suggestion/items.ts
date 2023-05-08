@@ -1,4 +1,5 @@
 import type { Editor, Range } from '@tiptap/core';
+import Fuse from 'fuse.js';
 
 import { Item } from './types';
 import { Bold, H1, H2, H3, H4 } from './icons';
@@ -69,32 +70,48 @@ const list: Item[] = [
   // },
 ];
 
+let fuse: Fuse<Item>;
+let allList: Item[];
+
 /**
  * 获取命令菜单
  * @param param0
  * @returns
  */
 export const getSuggestionItems = ({ query }: { query: string; editor: Editor }) => {
-  const customBlocks = Array.from(ReactBlockRegistry.registered().values()).map(i => {
-    return {
-      name: i.name,
-      icon: i.icon,
-      title: i.title,
-      category: 'Block',
-      command: ({ editor, range }) => {
-        editor
-          .chain()
-          .focus()
-          .deleteRange(range)
-          .insertContent(
-            `<react-block name="${i.name}" state="${encodeURIComponent(
-              JSON.stringify(i.initialState())
-            )}"></react-block>`
-          )
-          .run();
-      },
-    } satisfies Item;
-  });
+  if (!fuse) {
+    const customBlocks = Array.from(ReactBlockRegistry.registered().values()).map(i => {
+      return {
+        name: i.name,
+        icon: i.icon,
+        title: i.title,
+        category: 'Block',
+        command: ({ editor, range }) => {
+          editor
+            .chain()
+            .focus()
+            .deleteRange(range)
+            .insertContent(
+              `<react-block name="${i.name}" state="${encodeURIComponent(
+                JSON.stringify(i.initialState())
+              )}"></react-block>`
+            )
+            .run();
+        },
+      } satisfies Item;
+    });
 
-  return list.concat(customBlocks).filter(item => item.title.toLowerCase().includes(query.toLowerCase()));
+    allList = list.concat(customBlocks);
+
+    fuse = new Fuse(allList, {
+      keys: ['name', 'title'],
+    });
+  }
+
+  if (!query) {
+    return allList;
+  }
+
+  const res = fuse.search(query);
+  return res.map(i => i.item);
 };
