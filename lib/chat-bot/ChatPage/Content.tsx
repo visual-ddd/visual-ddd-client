@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react';
-import { Slider } from 'antd';
-import { useState } from 'react';
+import { Drawer, Slider } from 'antd';
+import { useMemo, useState } from 'react';
 import Image from 'next/image';
 import { usePrompt } from '@/lib/components/Prompt';
 import { EditOutlined, MoreOutlined, SettingOutlined } from '@ant-design/icons';
@@ -88,6 +88,11 @@ export const Content = observer(function Content(props: ContentProps) {
     store.currentActiveSession?.model?.clearHistory();
   };
 
+  const visible = useMemo<boolean>(
+    () => !!(showSetting && store.currentActiveSession),
+    [showSetting, store.currentActiveSession]
+  );
+
   const temperature = store.currentActiveSession?.temperature ?? TEMPERATURE;
   const maxContextLength = store.currentActiveSession?.maxContextLength ?? MAX_CONTEXT_MESSAGE;
 
@@ -138,46 +143,56 @@ export const Content = observer(function Content(props: ContentProps) {
           </>
         )}
       </div>
-      <div className={classNames(s.setting, { visible: showSetting && store.currentActiveSession })}>
-        <div className={s.settingBody}>
+      <Drawer
+        width={200}
+        className={s.drawer}
+        open={visible}
+        closable={false}
+        onClose={() => setShowSetting(false)}
+        title={
           <header className={s.settingHeader}>
             <SettingOutlined />
-            会话设置
+            <span style={{ marginLeft: 'var(--vd-spacing-xs)' }}>会话设置</span>
           </header>
-          <div className={classNames(s.settingItem, 'u-pointer')} onClick={handleEditSystem}>
-            修改主题
-          </div>
-          <div className={s.settingItem}>
-            <label>温度: {temperature}</label>
-            <Slider
-              value={temperature}
-              onChange={v => {
-                store.currentActiveSession?.setTemperature(v);
-              }}
-              min={0}
-              max={2}
-              step={0.1}
-            ></Slider>
-          </div>
+        }
+      >
+        <div className={s.setting}>
+          <div className={s.settingBody}>
+            <div className={classNames(s.settingItem, 'u-pointer')} onClick={handleEditSystem}>
+              修改主题
+            </div>
+            <div className={s.settingItem}>
+              <label>温度: {temperature}</label>
+              <Slider
+                value={temperature}
+                onChange={v => {
+                  store.currentActiveSession?.setTemperature(v);
+                }}
+                min={0}
+                max={2}
+                step={0.1}
+              ></Slider>
+            </div>
 
-          <div className={s.settingItem}>
-            <label>上下文消息数: {maxContextLength}</label>
-            <Slider
-              min={1}
-              max={50}
-              step={1}
-              value={maxContextLength}
-              onChange={v => {
-                store.currentActiveSession?.setMaxContextLength(v);
-              }}
-            ></Slider>
-          </div>
+            <div className={s.settingItem}>
+              <label>上下文消息数: {maxContextLength}</label>
+              <Slider
+                min={1}
+                max={50}
+                step={1}
+                value={maxContextLength}
+                onChange={v => {
+                  store.currentActiveSession?.setMaxContextLength(v);
+                }}
+              ></Slider>
+            </div>
 
-          <div className={classNames(s.settingItem, 'u-pointer', 'danger')} onClick={handleClear}>
-            清空会话
+            <div className={classNames(s.settingItem, 'u-pointer', 'danger')} onClick={handleClear}>
+              清空会话
+            </div>
           </div>
         </div>
-      </div>
+      </Drawer>
     </div>
   );
 });

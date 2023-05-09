@@ -17,16 +17,10 @@
 
 .setting {
   flex-shrink: 0;
-  width: 0;
+  width: 180px;
   transition: width 0.2s ease-in-out;
-  $width: 180px;
-
-  &:global(.visible) {
-    width: $width;
-  }
 
   .settingBody {
-    width: $width;
     padding: 16px 0 var(--vd-spacing-xs) var(--vd-spacing-sm);
   }
 
@@ -192,4 +186,12 @@
   padding: var(--vd-spacing-xs) var(--vd-spacing-sm);
   line-height: 1;
   border-top: 1px solid var(--vd-color-gray-300);
+}
+
+.drawer {
+  :global {
+    .ant-drawer-body {
+      padding: 0;
+    }
+  }
 }
