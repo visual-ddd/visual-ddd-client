@@ -32,30 +32,33 @@ export interface IPlanInfo {
   concurrency: string;
 
   level: number;
-  cycleNum: number;
+  duration: number;
+  priceValue: string;
 }
 export const FreePlan: IPlanInfo = {
   Identifier: PlanIdentifier.None,
   name: '试用版',
   price: '免费',
+  priceValue: '0',
   models: 'GPT 3.5',
   requestLimit: '30次（终生）',
   modules: 'chatbot',
   onLineLimit: '2台',
   level: 1,
   concurrency: '3 / 分钟',
-  cycleNum: 1,
+  duration: 1,
 };
 export const BasePlan: IPlanInfo = {
   name: '基础版',
   price: '￥30 / 月',
+  priceValue: '￥30',
   models: 'GPT 3.5、GPT 4',
   requestLimit: '无限制',
   modules: 'chatbot',
   concurrency: '5 / 分钟',
   onLineLimit: '3 台',
   level: 1 << 1,
-  cycleNum: 1,
+  duration: 1,
   Identifier: PlanIdentifier.Base,
 };
 
@@ -82,7 +85,7 @@ export function allowUpgrade(currentPlan: IPlanInfo, targetPlan: IPlanInfo): boo
   if (currentPlan.Identifier === PlanIdentifier.None) {
     return targetPlan.Identifier !== PlanIdentifier.None;
   }
-  return targetPlan.cycleNum === currentPlan.cycleNum && allowSubscribe(currentPlan, targetPlan);
+  return targetPlan.duration === currentPlan.duration && allowSubscribe(currentPlan, targetPlan);
 }
 
 export function allowSubscribe(currentPlan: IPlanInfo, targetPlan: IPlanInfo): boolean {

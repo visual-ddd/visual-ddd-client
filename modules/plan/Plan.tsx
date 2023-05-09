@@ -4,9 +4,10 @@ import classNames from 'classnames';
 import { useMemo, useState } from 'react';
 import { PayModal, usePayModalRef } from '../pay';
 import s from './Plan.module.scss';
-import { IPlanInfo, allowUpgrade, hasExpiredTime, hasFreeLimit, planInfoList } from './planInfo';
+import { IPlanInfo, PlanIdentifier, allowUpgrade, hasExpiredTime, hasFreeLimit, planInfoList } from './planInfo';
 import { InsufficientBalanceErrorCode } from './shared';
 import { clearCache, useCurrentPlan } from './useCurrentPlan';
+import { dateAdd, formatDate } from '@wakeapp/utils';
 
 const PlanStatus = () => {
   const { currentPlan: planInfo, isLoading, data } = useCurrentPlan();
@@ -82,16 +83,20 @@ const PlanCard = (
   );
 };
 
-export const UpgradePlanList = (props: {
+interface IUpgradePlanListProps {
   currentPlan: IPlanInfo;
   onSuccess?: (plan: IPlanInfo) => void;
   externalClass?: Record<string, any>;
   renderFooter?: (action: () => void) => JSX.Element;
-}) => {
+}
+
+interface ISubscribePlanListProps extends IUpgradePlanListProps {}
+
+export const UpgradePlanList = (props: IUpgradePlanListProps) => {
   const payModalRef = usePayModalRef();
 
   const list = useMemo(() => {
-    return planInfoList.filter(item => item.cycleNum === props.currentPlan.cycleNum);
+    return planInfoList.filter(item => item.duration === props.currentPlan.duration);
   }, [props.currentPlan]);
 
   const externalClass = props.externalClass ?? {};
@@ -120,7 +125,8 @@ export const UpgradePlanList = (props: {
       title: '升级套餐',
       content: (
         <span>
-          是否确认升级到 <b>{plan.name} </b>, 费用为 {plan.price}
+          是否升级到 <b>{plan.name} </b>, 费用为 <b>{plan.priceValue}</b> , 有效期至
+          <b>{formatDate(dateAdd(plan.duration, 'D'))}</b>
         </span>
       ),
       onOk: async () => upgrade(plan),
@@ -170,27 +176,88 @@ export const UpgradePlanList = (props: {
   );
 };
 
-export const SubscribePlanList = (props: { currentPlan: IPlanInfo; onSuccess?: (plan: IPlanInfo) => void }) => {
-  const subscribeHandle = (plan: IPlanInfo) => {
-    console.log('todo');
+export const SubscribePlanList = (props: ISubscribePlanListProps) => {
+  const payModalRef = usePayModalRef();
+
+  const list = useMemo(() => {
+    return planInfoList.filter(item => item.duration === props.currentPlan.duration);
+  }, [props.currentPlan]);
+
+  const externalClass = props.externalClass ?? {};
+
+  const subscribe = (plan: IPlanInfo) =>
+    request
+      .requestByPost('/wd/visual/web/package-subscription/package-subscription-open', {
+        packageIdentity: plan.Identifier,
+      })
+      .then(
+        () => {
+          message.success('订阅成功');
+          clearCache();
+          props.onSuccess?.(plan);
+        },
+        err => {
+          if (err.code === InsufficientBalanceErrorCode) {
+            openPayModalIfNeed();
+          } else {
+            message.error(err.message);
+          }
+        }
+      );
+
+  const subscribeHandle = async (plan: IPlanInfo) => {
+    Modal.confirm({
+      title: '订阅套餐',
+      content: (
+        <span>
+          是否订阅 <b>{plan.name} </b>, 费用为 <b>{plan.priceValue}</b> , 有效期至
+          <b>{formatDate(dateAdd(plan.duration, 'D'))}</b>
+        </span>
+      ),
+      onOk: async () => subscribe(plan),
+      okText: '订阅',
+      centered: true,
+      cancelText: '取消',
+    });
+  };
+
+  const openPayModalIfNeed = () => {
+    Modal.confirm({
+      title: '订阅失败',
+      content: '当前账户余额不足，是否进行充值',
+      okText: '进行充值',
+      cancelText: '取消',
+      centered: true,
+      onOk() {
+        setTimeout(() => {
+          payModalRef.current?.open();
+        }, 0);
+      },
+    });
   };
 
   const renderFooter = (plan: IPlanInfo) => {
     const allow = allowUpgrade(props.currentPlan, plan);
     if (allow) {
-      return (
+      return props.renderFooter ? (
+        props.renderFooter(() => subscribeHandle(plan))
+      ) : (
         <Button type="primary" onClick={() => subscribeHandle(plan)}>
           订阅
         </Button>
       );
     }
   };
+
   return (
-    <div className={s.planList}>
-      {planInfoList.map(item => (
-        <PlanCard key={item.name} {...item} footer={renderFooter(item)} />
-      ))}
-    </div>
+    <>
+      <PayModal ref={payModalRef}></PayModal>
+      <div className={classNames(s.planList, externalClass.planList)}>
+        {list.map(item => (
+          <PlanCard key={item.name} externalClass={externalClass} {...item} footer={renderFooter(item)} />
+        ))}
+      </div>
+    </>
   );
 };
 
@@ -205,7 +272,11 @@ export const Plan = () => {
       <PlanStatus />
       <Divider />
       <Spin spinning={isLoading}>
-        <UpgradePlanList currentPlan={currentPlan} onSuccess={() => refresh()} />
+        {currentPlan.Identifier === PlanIdentifier.None ? (
+          <SubscribePlanList currentPlan={currentPlan} onSuccess={() => refresh()} />
+        ) : (
+          <UpgradePlanList currentPlan={currentPlan} onSuccess={() => refresh()} />
+        )}
       </Spin>
     </>
   );
