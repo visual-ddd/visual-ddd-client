@@ -61,8 +61,21 @@ export const BasePlan: IPlanInfo = {
   duration: 1,
   Identifier: PlanIdentifier.Base,
 };
+export const PlusPlan: IPlanInfo = {
+  name: '基础版',
+  price: '￥30 / 月',
+  priceValue: '￥30',
+  models: 'GPT 3.5、GPT 4',
+  requestLimit: '无限制',
+  modules: 'chatbot',
+  concurrency: '5 / 分钟',
+  onLineLimit: '3 台',
+  level: 1 << 2,
+  duration: 1,
+  Identifier: PlanIdentifier.Plus,
+};
 
-export const planInfoList: IPlanInfo[] = [FreePlan, BasePlan];
+export const planInfoList: IPlanInfo[] = [FreePlan, BasePlan, PlusPlan];
 
 export function createPlan(name: PlanIdentifier): IPlanInfo {
   switch (name) {

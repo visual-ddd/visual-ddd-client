@@ -78,7 +78,7 @@ const PlanCard = (
         <dt className={classNames(s.planDescName, externalClass.planDescName)}>并发限制:</dt>
         <dd className={classNames(s.planDescContent, externalClass.planDescContent)}>{props.concurrency}</dd>
       </dl>
-      {props.footer}
+      <div className={classNames(s.planCardFooter, externalClass.planCardFooter)}>{props.footer}</div>
     </Card>
   );
 };

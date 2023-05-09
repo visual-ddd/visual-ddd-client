@@ -61,3 +61,17 @@
   width: calc(100% - 90px - 30px - 12px);
   word-break: break-all;
 }
+
+@media screen and (max-width: 600px) {
+  .planList {
+    grid-template-columns: 1fr;
+    max-height: 70vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding-right: var(--vd-spacing-sm);
+    padding-bottom: var(--vd-spacing-sm);
+  }
+  .planCardFooter {
+    text-align: right;
+  }
+}
