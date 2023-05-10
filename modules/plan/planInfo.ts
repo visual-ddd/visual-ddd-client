@@ -75,7 +75,7 @@ export const PlusPlan: IPlanInfo = {
   Identifier: PlanIdentifier.Plus,
 };
 
-export const planInfoList: IPlanInfo[] = [FreePlan, BasePlan, PlusPlan];
+export const planInfoList: IPlanInfo[] = [FreePlan, BasePlan];
 
 export function createPlan(name: PlanIdentifier): IPlanInfo {
   switch (name) {
