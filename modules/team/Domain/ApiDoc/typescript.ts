@@ -1,6 +1,41 @@
 import { generateEnum, generateInterface } from '@/lib/typescript';
+import type { BaseType, ContainerType } from '@/modules/domain/api/dsl/interface';
 import { ObjectDSL, ObjectType, parseType } from './extra-api';
 import { NoopArray } from '@wakeapp/utils';
+
+export const BaseTypeToTypescriptTypeMap: Record<BaseType | ContainerType, string> = {
+  String: 'string',
+  Integer: 'number',
+  Long: 'number',
+  Double: 'number',
+  Float: 'number',
+  Date: 'Date',
+  Boolean: 'boolean',
+  BigDecimal: 'number',
+  Char: 'string',
+  Byte: 'number',
+  Short: 'number',
+  Void: 'void',
+  List: 'Array',
+  Map: 'Map',
+  Set: 'Set',
+};
+
+const BaseTypeToTypescriptTypeInRegexp = new RegExp(
+  `\\b(${Object.keys(BaseTypeToTypescriptTypeMap).join('|')})\\b`,
+  'g'
+);
+
+/**
+ * 转换类型
+ * @param type
+ * @returns
+ */
+export function replaceType(type: string) {
+  return type.replace(BaseTypeToTypescriptTypeInRegexp, (_, $1) => {
+    return BaseTypeToTypescriptTypeMap[$1 as BaseType | ContainerType];
+  });
+}
 
 export function toEnum(object: ObjectDSL) {
   return generateEnum({
@@ -58,7 +93,7 @@ export function toInterface(
           },
           name: i.name,
           optional: i.optional,
-          type: types.join(''),
+          type: replaceType(types.join('')),
         };
       }) ?? [],
   });
