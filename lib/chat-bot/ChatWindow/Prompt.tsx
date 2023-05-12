@@ -71,6 +71,7 @@ function useCommit(mode: 'ctrl+enter' | 'enter', commit: () => void) {
 
 export const Prompt = observer(function Prompt() {
   const rootRef = useRef<HTMLDivElement>(null);
+  const sendBtnRef = useRef<HTMLDivElement>(null);
   const bot = useBotContext();
   const mentionsRef = useRef<MentionsRef>(null);
   const options = useMemo(() => {
@@ -103,6 +104,7 @@ export const Prompt = observer(function Prompt() {
 
     try {
       await bot.commit();
+      scrollToView();
     } catch (err) {
       console.error(err);
       message.error((err as Error).message);
@@ -132,6 +134,13 @@ export const Prompt = observer(function Prompt() {
     });
   };
 
+  const scrollToView = () => {
+    requestAnimationFrame(() => {
+      // @ts-expect-error
+      sendBtnRef.current?.scrollIntoViewIfNeeded();
+    });
+  };
+
   useEventBusListener(bot.event, on => {
     on('ACTIVE', focus);
   });
@@ -157,7 +166,12 @@ export const Prompt = observer(function Prompt() {
           onKeyDown={handleKeyDown}
           placement="top"
         />
-        <SendOutlined className={classNames(s.send, { disable: disabled })} title={sendTooltip} onClick={commit} />
+        <SendOutlined
+          className={classNames(s.send, { disable: disabled })}
+          title={sendTooltip}
+          onClick={commit}
+          ref={sendBtnRef}
+        />
       </div>
     </div>
   );
