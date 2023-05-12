@@ -8,6 +8,7 @@ export default function Chat() {
     <>
       <Head>
         <title>Visual DDD ChatBot</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"></meta>
       </Head>
       <Page />
     </>
