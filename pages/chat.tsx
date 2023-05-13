@@ -9,6 +9,7 @@ export default function Chat() {
       <Head>
         <title>Visual DDD ChatBot</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"></meta>
+        <meta name="apple-mobile-web-app-capable" content="yes"></meta>
       </Head>
       <Page />
     </>

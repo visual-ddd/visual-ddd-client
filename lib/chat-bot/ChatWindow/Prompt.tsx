@@ -135,14 +135,17 @@ export const Prompt = observer(function Prompt() {
   };
 
   const scrollToView = () => {
-    requestAnimationFrame(() => {
-      // @ts-expect-error
-      sendBtnRef.current?.scrollIntoViewIfNeeded();
-    });
+    // @ts-expect-error
+    sendBtnRef.current?.scrollIntoViewIfNeeded?.();
   };
 
   useEventBusListener(bot.event, on => {
     on('ACTIVE', focus);
+    on('MESSAGE_ADDED', () => {
+      setTimeout(() => {
+        scrollToView();
+      }, 83);
+    });
   });
 
   useEffect(focus, []);

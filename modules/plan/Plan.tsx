@@ -211,7 +211,7 @@ export const SubscribePlanList = (props: ISubscribePlanListProps) => {
       content: (
         <span>
           是否订阅 <b>{plan.name} </b>, 费用为 <b>{plan.priceValue}</b> , 有效期至
-          <b>{formatDate(dateAdd(plan.duration, 'D'))}</b>
+          <b> {formatDate(dateAdd(plan.duration, 'D'))}</b>
         </span>
       ),
       onOk: async () => subscribe(plan),
