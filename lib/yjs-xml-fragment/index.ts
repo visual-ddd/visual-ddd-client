@@ -16,7 +16,7 @@ export namespace XMLPresentation {
   export interface Element {
     type: 'element';
     tag: string;
-    attrs?: Record<string, string | number>;
+    attrs?: Record<string, string | number | undefined>;
     content?: Node[];
   }
 

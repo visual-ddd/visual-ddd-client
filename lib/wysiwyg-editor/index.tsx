@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react';
-import { EditorContent, useEditor, ReactNodeViewRenderer } from '@tiptap/react';
+import { EditorContent, BubbleMenu, useEditor, ReactNodeViewRenderer } from '@tiptap/react';
 import { Doc as YDoc } from 'yjs';
 import { Awareness } from 'y-protocols/awareness';
 import { lowlight } from 'lowlight';
@@ -32,6 +32,7 @@ import s from './index.module.scss';
 import cs from './common.module.scss';
 import { ReactBlock } from './ReactBlock';
 import './CustomBlock';
+import { Marks } from './Marks';
 
 lowlight.registerLanguage('html', html);
 lowlight.registerLanguage('css', css);
@@ -212,11 +213,17 @@ export const WYSIWYGEditor = (props: WYSIWYGEditorProps) => {
           keyboardBinding={keyboardBinding}
         />
       )}
+
       <EditorContent
         onPasteCapture={handlePaste}
         className={classNames('vd-wd__content', s.content)}
         editor={editor}
       ></EditorContent>
+      {!!editor && (
+        <BubbleMenu editor={editor} tippyOptions={{ duration: 100 }}>
+          <Marks editor={editor} />
+        </BubbleMenu>
+      )}
     </div>
   );
 };
