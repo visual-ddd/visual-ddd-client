@@ -1,3 +1,5 @@
+$border-radius: 8px;
+
 .placeholder {
   display: flex;
   align-items: center;
@@ -28,29 +30,25 @@
 .container {
   position: relative;
   border: 1px solid var(--vd-color-gray-400);
-  border-radius: 8px;
-
-  &:hover,
-  &:focus {
-    border: 1px solid var(--vd-color-primary);
-  }
+  border-radius: $border-radius;
 
   .frame {
     border: none;
     width: 100%;
     height: 100%;
-    border-radius: 8px;
+    border-radius: $border-radius;
     overflow: hidden;
   }
 
   .actions {
-    display: none;
+    display: flex;
     position: absolute;
     left: 100%;
     height: 100%;
     top: 0;
     flex-direction: column;
     padding: 0 6px;
+    opacity: 0;
 
     svg {
       color: var(--vd-color-gray-700);
@@ -67,7 +65,7 @@
 
   &:hover .actions,
   &:focus .actions {
-    display: flex;
+    opacity: 1;
   }
 
   .mask {
@@ -97,4 +95,9 @@
     background-color: rgb(146 146 146 / 95%);
     cursor: row-resize;
   }
+}
+
+.root:global(.selected) {
+  outline: 2px solid var(--vd-color-primary);
+  border-radius: $border-radius;
 }

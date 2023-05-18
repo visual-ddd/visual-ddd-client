@@ -7,6 +7,8 @@ export const ReactBlock = Node.create({
   group: 'block',
   atom: true,
 
+  draggable: true,
+
   addAttributes() {
     return {
       name: {

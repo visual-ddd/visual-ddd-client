@@ -4,7 +4,7 @@ registerBlock<{ count: number }>({
   name: 'demo',
   title: 'Demo',
   initialState: () => ({ count: 0 }),
-  render(state, updateState) {
+  render({ state, updateState }) {
     return (
       <div
         onClick={() => {

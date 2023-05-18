@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react';
-import { EditorContent, BubbleMenu, useEditor, ReactNodeViewRenderer } from '@tiptap/react';
+import { EditorContent, useEditor, ReactNodeViewRenderer } from '@tiptap/react';
 import { Doc as YDoc } from 'yjs';
 import { Awareness } from 'y-protocols/awareness';
 import { lowlight } from 'lowlight';
@@ -14,6 +14,7 @@ import Placeholder from '@tiptap/extension-placeholder';
 import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import CodeBlock from '@tiptap/extension-code-block-lowlight';
+
 import css from 'highlight.js/lib/languages/css';
 import js from 'highlight.js/lib/languages/javascript';
 import ts from 'highlight.js/lib/languages/typescript';
@@ -27,12 +28,14 @@ import { WYSIWYGEditorToolbar } from './Toolbar';
 import { CustomKeyboardBinding } from './CustomKeyboardBinding';
 import { FileHandler } from './FileHandler';
 import { CodeBlockComponent } from './CodeBlockComponent';
-import { Commands } from './Suggestion';
+import { Commands, allowSuggestion } from './Suggestion';
 import s from './index.module.scss';
 import cs from './common.module.scss';
 import { ReactBlock } from './ReactBlock';
+import { Document } from './Document';
 import './CustomBlock';
-import { Marks } from './Marks';
+import { BubbleMarks } from './Marks';
+import { DBlock } from './DBlock';
 
 lowlight.registerLanguage('html', html);
 lowlight.registerLanguage('css', css);
@@ -83,13 +86,23 @@ export const WYSIWYGEditor = (props: WYSIWYGEditorProps) => {
       // / 命令
       Commands,
 
+      DBlock,
+
       ReactBlock,
 
       StarterKit.configure({
         // 使用 yjs
         history: false,
         codeBlock: false,
+        document: false,
+        dropcursor: {
+          width: 2,
+          color: `var(--vd-color-info)`,
+        },
       }),
+
+      Document,
+
       Collaboration.configure({
         document: doc,
         field,
@@ -107,12 +120,19 @@ export const WYSIWYGEditor = (props: WYSIWYGEditorProps) => {
         includeChildren: true,
         placeholder:
           placeholder ??
-          (({ node }) => {
+          // eslint-disable-next-line no-shadow
+          (({ node, editor }) => {
             if (node.type.name === 'heading') {
               return `标题 ${node.attrs.level}`;
             }
 
-            return '输入正文或 / 唤起更多';
+            const suggestionAllowed = allowSuggestion(editor);
+
+            if (suggestionAllowed) {
+              return '输入正文或 / 唤起更多';
+            } else {
+              return '输入内容';
+            }
           }),
       }),
 
@@ -214,16 +234,13 @@ export const WYSIWYGEditor = (props: WYSIWYGEditorProps) => {
         />
       )}
 
+      <BubbleMarks editor={editor} />
+
       <EditorContent
         onPasteCapture={handlePaste}
         className={classNames('vd-wd__content', s.content)}
         editor={editor}
       ></EditorContent>
-      {!!editor && (
-        <BubbleMenu editor={editor} tippyOptions={{ duration: 100 }}>
-          <Marks editor={editor} />
-        </BubbleMenu>
-      )}
     </div>
   );
 };

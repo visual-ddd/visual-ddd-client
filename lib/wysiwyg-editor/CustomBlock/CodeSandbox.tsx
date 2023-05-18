@@ -7,7 +7,7 @@ registerBlock<ThirdPartyBlockState>({
   title: 'CodeSandbox',
   icon: CodeSandboxOutlined,
   initialState: () => ({ url: '', height: 500 }),
-  render(state, updateState) {
+  render({ state, updateState, selected }) {
     const handleChange = (value: string) => {
       try {
         const url = new URL(value);
@@ -30,6 +30,7 @@ registerBlock<ThirdPartyBlockState>({
         height={state.height}
         onHeightChange={height => updateState({ height })}
         onChange={handleChange}
+        selected={selected}
       ></ThirdPartyBlock>
     );
   },

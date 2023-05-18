@@ -119,11 +119,11 @@ export class CommandList extends Component<CommandListProps, CommandListState> {
     let asyncTask: number | undefined;
 
     const handleBlur = () => {
-      asyncTask = requestAnimationFrame(() => {
+      asyncTask = window.setTimeout(() => {
         if (this.elRef.current) {
           this.elRef.current.style.display = 'none';
         }
-      });
+      }, 100);
     };
 
     const handleFocus = () => {
@@ -145,7 +145,7 @@ export class CommandList extends Component<CommandListProps, CommandListState> {
         container.removeEventListener('scroll', debounceUpdatePosition);
       }
       if (asyncTask) {
-        cancelAnimationFrame(asyncTask);
+        clearTimeout(asyncTask);
       }
       this.props.editor.off('blur', handleBlur).off('focus', handleFocus);
     };

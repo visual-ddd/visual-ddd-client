@@ -1,20 +1,15 @@
+import { isTextSelection } from '@tiptap/core';
 import { BoldOutlined, ItalicOutlined, StrikethroughOutlined, UnderlineOutlined } from '@ant-design/icons';
 import { Editor } from '@tiptap/core';
-import { Tooltip } from 'antd';
 import classNames from 'classnames';
 import { memo, useCallback } from 'react';
-import s from './index.module.scss';
 import { useReadableKeyBinding } from '@/lib/hooks';
+import { BubbleMenu, BubbleMenuProps } from '@tiptap/react';
 import { CodeIcon } from '../Toolbar/CodeIcon';
+import s from './index.module.scss';
 
 const Item = memo(
-  (props: {
-    Icon: React.ComponentType;
-    tooltip: React.ReactNode;
-    active: boolean;
-    disabled?: boolean;
-    onClick: () => void;
-  }) => {
+  (props: { Icon: React.ComponentType; tooltip: string; active: boolean; disabled?: boolean; onClick: () => void }) => {
     const { Icon, tooltip, active, disabled, onClick } = props;
     const handleClick = () => {
       if (disabled) {
@@ -24,11 +19,9 @@ const Item = memo(
       onClick();
     };
     return (
-      <Tooltip title={tooltip}>
-        <div className={classNames(s.item, { active, disabled })} onClick={handleClick}>
-          <Icon />
-        </div>
-      </Tooltip>
+      <div className={classNames(s.item, { active, disabled })} onClick={handleClick} title={tooltip}>
+        <Icon />
+      </div>
     );
   }
 );
@@ -104,5 +97,47 @@ export const Marks = (props: MarksProps) => {
         ></Item>
       </div>
     </div>
+  );
+};
+
+export interface BubbleMarksProps {
+  editor?: Editor | null;
+}
+
+const shouldShow: BubbleMenuProps['shouldShow'] = function ({ editor, view, state, from, to }) {
+  const { doc, selection } = state;
+  const { empty } = selection;
+
+  const isTextSelected = isTextSelection(state.selection);
+  // Sometime check for `empty` is not enough.
+  // Doubleclick an empty paragraph returns a node size of 2.
+  // So we check also for an empty text size.
+  const isEmptyTextBlock = !doc.textBetween(from, to).length && isTextSelected;
+
+  // When clicking on a element inside the bubble menu the editor "blur" event
+  // is called and the bubble menu item is focussed. In this case we should
+  // consider the menu as part of the editor and keep showing the menu
+  // @ts-expect-error
+  const isChildOfMenu = this.element.contains(document.activeElement);
+
+  const hasEditorFocus = view.hasFocus() || isChildOfMenu;
+
+  if (!hasEditorFocus || empty || isEmptyTextBlock || !editor.isEditable) {
+    return false;
+  }
+
+  return isTextSelected;
+};
+
+export const BubbleMarks = (props: BubbleMarksProps) => {
+  const { editor } = props;
+  if (editor == null) {
+    return null;
+  }
+
+  return (
+    <BubbleMenu editor={editor} updateDelay={0} shouldShow={shouldShow}>
+      <Marks editor={editor} />
+    </BubbleMenu>
   );
 };

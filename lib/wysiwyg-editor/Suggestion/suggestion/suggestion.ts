@@ -266,3 +266,11 @@ export function Suggestion<I = any>({
 
   return plugin;
 }
+
+/**
+ * 插件是否激活
+ * @param editor
+ */
+export function isActive(editor: Editor) {
+  return (editor.state as any)['suggestion$']?.active;
+}

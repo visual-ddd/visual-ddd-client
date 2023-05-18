@@ -16,10 +16,14 @@ export const ReactBlockComponent = (props: NodeViewProps) => {
 
   return (
     <NodeViewWrapper className={'react-block'}>
-      {component.render(attrs.state, newState => {
-        props.updateAttributes({
-          state: { ...attrs.state, ...newState },
-        });
+      {component.render({
+        state: attrs.state,
+        selected: props.selected,
+        updateState: newState => {
+          props.updateAttributes({
+            state: { ...attrs.state, ...newState },
+          });
+        },
       })}
     </NodeViewWrapper>
   );

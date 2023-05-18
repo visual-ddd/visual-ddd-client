@@ -27,7 +27,14 @@ export interface ReactBlockComponent<State extends {}> {
    * @param updateState
    * @returns
    */
-  render: (state: State, updateState: (state: Partial<State>) => void) => JSX.Element;
+  render: (props: {
+    state: State;
+    updateState: (state: Partial<State>) => void;
+    /**
+     * 是否选中
+     */
+    selected: boolean;
+  }) => JSX.Element;
 }
 
 export const ReactBlockRegistry = new NamedRegistry<ReactBlockComponent<any>>();

@@ -45,6 +45,11 @@ export interface ThirdPartyBlockProps {
   height?: number;
 
   onHeightChange?: (height: number) => void;
+
+  /**
+   * 是否选中
+   */
+  selected: boolean;
 }
 
 const DEFAULT_HEIGHT = 500;
@@ -93,7 +98,7 @@ export const ThirdPartyBlock = (props: ThirdPartyBlockProps) => {
   }, [height, value]);
 
   return (
-    <div className={classNames(s.root, className)} {...other}>
+    <div className={classNames(s.root, className, { selected: props.selected })} {...other}>
       {!value && (
         <div className={s.placeholder}>
           <input
