@@ -8,6 +8,7 @@ import { HolderOutlined, PlusOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
 
 export const DBlockNodeView: React.FC<NodeViewProps> = ({ node, selected, getPos, editor }) => {
+  const readonly = !editor.isEditable;
   const createNodeAfter = () => {
     const pos = getPos() + node.nodeSize;
 
@@ -24,6 +25,14 @@ export const DBlockNodeView: React.FC<NodeViewProps> = ({ node, selected, getPos
   const focusNode = () => {
     editor.chain().setNodeSelection(getPos()).run();
   };
+
+  if (readonly) {
+    return (
+      <NodeViewWrapper>
+        <NodeViewContent></NodeViewContent>
+      </NodeViewWrapper>
+    );
+  }
 
   return (
     <NodeViewWrapper as="div" className={classNames(s.root, { selected })}>

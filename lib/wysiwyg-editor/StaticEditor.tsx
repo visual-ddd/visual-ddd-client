@@ -20,6 +20,8 @@ import { CodeBlockComponent } from './CodeBlockComponent';
 import s from './common.module.scss';
 import { ReactBlock } from './ReactBlock';
 import './CustomBlock';
+import { DBlock } from './DBlock';
+import { Document } from './Document';
 
 export interface StaticEditorProps {
   content: XmlFragment;
@@ -43,11 +45,14 @@ export const StaticEditor = (props: StaticEditorProps) => {
     editable: false,
     extensions: [
       ReactBlock,
+      DBlock,
       StarterKit.configure({
         // 使用 yjs
         history: false,
         codeBlock: false,
+        document: false,
       }),
+      Document,
       Collaboration.configure({
         fragment: content,
       }),
