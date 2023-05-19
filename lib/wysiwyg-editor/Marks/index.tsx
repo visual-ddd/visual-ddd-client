@@ -1,11 +1,21 @@
 import { isTextSelection } from '@tiptap/core';
-import { BoldOutlined, ItalicOutlined, StrikethroughOutlined, UnderlineOutlined } from '@ant-design/icons';
+import {
+  AlignCenterOutlined,
+  AlignLeftOutlined,
+  AlignRightOutlined,
+  BoldOutlined,
+  ItalicOutlined,
+  StrikethroughOutlined,
+  UnderlineOutlined,
+} from '@ant-design/icons';
 import { Editor } from '@tiptap/core';
 import classNames from 'classnames';
 import { memo, useCallback } from 'react';
 import { useReadableKeyBinding } from '@/lib/hooks';
 import { BubbleMenu, BubbleMenuProps } from '@tiptap/react';
+
 import { CodeIcon } from '../Toolbar/CodeIcon';
+import { JustifyIcon } from '../Toolbar/JustifyIcon';
 import s from './index.module.scss';
 
 const Item = memo(
@@ -57,6 +67,11 @@ export const Marks = (props: MarksProps) => {
     editor.chain().focus().toggleCode().run();
   }, [editor]);
 
+  const handleLeftAlign = useCallback(() => editor.chain().focus().setTextAlign('left').run(), [editor]);
+  const handleCenterAlign = useCallback(() => editor.chain().focus().setTextAlign('center').run(), [editor]);
+  const handleRightAlign = useCallback(() => editor.chain().focus().setTextAlign('right').run(), [editor]);
+  const handleJustifyAlign = useCallback(() => editor.chain().focus().setTextAlign('justify').run(), [editor]);
+
   return (
     <div className={s.root}>
       <div className={s.group}>
@@ -94,6 +109,36 @@ export const Marks = (props: MarksProps) => {
           tooltip={`代码 ${getReadableKeyBinding({ macos: 'command+e', other: 'ctrl+e' })}`}
           disabled={!editor.can().chain().focus().toggleCode().run()}
           onClick={handleCode}
+        ></Item>
+      </div>
+      <div className={s.group}>
+        <Item
+          Icon={AlignLeftOutlined}
+          active={editor.isActive({ textAlign: 'left' })}
+          tooltip={`左对齐 (${getReadableKeyBinding({ macos: 'command+shift+L', other: 'ctrl+shift+L' })})`}
+          onClick={handleLeftAlign}
+          disabled={!editor.can().chain().focus().setTextAlign('left').run()}
+        ></Item>
+        <Item
+          Icon={AlignCenterOutlined}
+          active={editor.isActive({ textAlign: 'center' })}
+          tooltip={`居中对齐 (${getReadableKeyBinding({ macos: 'command+shift+E', other: 'ctrl+shift+E' })})`}
+          onClick={handleCenterAlign}
+          disabled={!editor.can().chain().focus().setTextAlign('center').run()}
+        ></Item>
+        <Item
+          Icon={AlignRightOutlined}
+          active={editor.isActive({ textAlign: 'right' })}
+          tooltip={`右对齐 (${getReadableKeyBinding({ macos: 'command+shift+R', other: 'ctrl+shift+R' })})`}
+          onClick={handleRightAlign}
+          disabled={!editor.can().chain().focus().setTextAlign('right').run()}
+        ></Item>
+        <Item
+          Icon={JustifyIcon}
+          active={editor.isActive({ textAlign: 'justify' })}
+          tooltip={`两端对齐 (${getReadableKeyBinding({ macos: 'command+shift+J', other: 'ctrl+shift+J' })})`}
+          onClick={handleJustifyAlign}
+          disabled={!editor.can().chain().focus().setTextAlign('justify').run()}
         ></Item>
       </div>
     </div>

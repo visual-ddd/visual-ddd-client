@@ -4,3 +4,8 @@ export * from './H3';
 export * from './H4';
 export * from './Bold';
 export * from './Default';
+export * from './Paragraph';
+export * from './Code';
+export * from './List';
+export * from './ListOrder';
+export * from './Quote';

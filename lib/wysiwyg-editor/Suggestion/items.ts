@@ -2,12 +2,13 @@ import type { Editor, Range } from '@tiptap/core';
 import Fuse from 'fuse.js';
 
 import { Item } from './types';
-import { Bold, H1, H2, H3, H4 } from './icons';
+import { Paragraph, H1, H2, H3, H4, Code, List, ListOrder, Quote } from './icons';
 import { ReactBlockRegistry } from '../ReactBlock';
 
 enum Category {
   Heading = 'Heading',
   Mark = 'Mark',
+  Basic = 'Basic',
 }
 
 const setHeading =
@@ -46,14 +47,64 @@ const list: Item[] = [
     command: setHeading(4),
   },
   {
-    name: 'Bold',
-    title: '加粗',
-    icon: Bold,
+    name: 'Paragraph',
+    category: Category.Basic,
+    title: '段落',
+    icon: Paragraph,
     command: ({ editor, range }) => {
-      editor.chain().focus().deleteRange(range).toggleBold().run();
+      editor.chain().focus().deleteRange(range).setNode('paragraph').run();
     },
-    category: Category.Mark,
   },
+
+  {
+    name: 'Code',
+    category: Category.Basic,
+    title: '代码块',
+    icon: Code,
+    command: ({ editor, range }) => {
+      editor.chain().focus().deleteRange(range).setCodeBlock().run();
+    },
+  },
+
+  {
+    name: 'List',
+    category: Category.Basic,
+    title: '列表',
+    icon: List,
+    command: ({ editor, range }) => {
+      editor.chain().focus().deleteRange(range).toggleBulletList().run();
+    },
+  },
+
+  {
+    name: 'OrderList',
+    category: Category.Basic,
+    title: '有序列表',
+    icon: ListOrder,
+    command: ({ editor, range }) => {
+      editor.chain().focus().deleteRange(range).toggleOrderedList().run();
+    },
+  },
+
+  {
+    name: 'Quote',
+    category: Category.Basic,
+    title: '引述',
+    icon: Quote,
+    command: ({ editor, range }) => {
+      editor.chain().focus().deleteRange(range).toggleBlockquote().run();
+    },
+  },
+
+  // {
+  //   name: 'Bold',
+  //   title: '加粗',
+  //   icon: Bold,
+  //   command: ({ editor, range }) => {
+  //     editor.chain().focus().deleteRange(range).toggleBold().run();
+  //   },
+  //   category: Category.Mark,
+  // },
   // {
   //   title: 'italic',
   //   command: ({ editor, range }) => {

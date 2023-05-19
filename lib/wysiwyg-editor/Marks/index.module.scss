@@ -10,6 +10,10 @@
 .group {
   display: flex;
   height: 100%;
+
+  &:not(:last-child) {
+    border-right: 1px solid var(--vd-color-gray-300);
+  }
 }
 
 .item {
