@@ -1,4 +1,4 @@
-import { Editor } from '@tiptap/core';
+import { Editor, posToDOMRect, isTextSelection } from '@tiptap/core';
 import { Button, Input, InputRef, Popover, Space } from 'antd';
 import { observer } from 'mobx-react';
 import { useEffect, useRef, useState } from 'react';
@@ -54,6 +54,7 @@ const LinkEditorContent = observer(function LinkEditorContent(props: LinkEditorP
           setValue(e.target.value);
         }}
         onKeyUp={handleKeyUp}
+        autoFocus
       />
       <Space className={s.action}>
         <Button danger type="link" onClick={handleDelete}>
@@ -72,14 +73,66 @@ const LinkEditorContent = observer(function LinkEditorContent(props: LinkEditorP
  */
 export const LinkEditor = observer(function LinkEditor(props: LinkEditorProps) {
   const { keyboardBinding, editor, children } = props;
+  const [position, setPosition] = useState<{ [key: string]: number | string }>();
+
+  useEffect(() => {
+    if (!keyboardBinding.linkSetterVisible) return;
+
+    const {
+      state: { selection },
+    } = editor;
+    if (!isTextSelection(selection)) {
+      return;
+    }
+
+    const { ranges } = selection;
+    const from = Math.min(...ranges.map(range => range.$from.pos));
+    const to = Math.max(...ranges.map(range => range.$to.pos));
+    const rect = posToDOMRect(editor.view, from, to);
+
+    const windowHeight = window.innerHeight;
+    const top = rect.top + rect.height;
+
+    if (top > windowHeight - 150) {
+      setPosition(undefined);
+    } else {
+      setPosition({
+        left: rect.left,
+        top,
+      });
+    }
+  }, [keyboardBinding.linkSetterVisible, editor]);
+
+  useEffect(() => {
+    if (!keyboardBinding.linkSetterVisible) return;
+
+    const handleFocus = () => {
+      keyboardBinding.closeLinkSetter();
+    };
+
+    editor.on('focus', handleFocus);
+
+    return () => {
+      editor.off('focus', handleFocus);
+    };
+  }, [editor, keyboardBinding, keyboardBinding.linkSetterVisible]);
+
   return (
     <Popover
       title="设置链接"
       content={<LinkEditorContent editor={editor} keyboardBinding={keyboardBinding}></LinkEditorContent>}
       open={keyboardBinding.linkSetterVisible}
-      onOpenChange={keyboardBinding.toggleLinkSetter}
-      trigger="click"
+      onOpenChange={v => {
+        if (v) {
+          keyboardBinding.showLinkSetter();
+        } else {
+          keyboardBinding.closeLinkSetter();
+        }
+      }}
+      trigger={'click'}
       destroyTooltipOnHide
+      overlayStyle={{ ...position }}
+      arrow={false}
     >
       {children}
     </Popover>
