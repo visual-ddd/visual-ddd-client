@@ -80,10 +80,6 @@ export const DBlock = Node.create<DBlockOptions>({
     return ReactNodeViewRenderer(DBlockNodeView);
   },
 
-  onTransaction({ transaction }) {
-    console.log(transaction);
-  },
-
   addKeyboardShortcuts() {
     return {
       // 'Mod-Alt-0': () => this.editor.commands.setDBlock(),

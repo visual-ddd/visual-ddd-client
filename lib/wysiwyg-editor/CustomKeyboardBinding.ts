@@ -33,12 +33,25 @@ export class CustomKeyboardBinding extends KeyboardBinding {
 
   @mutation('TOGGLE_LINK_SETTER', false)
   toggleLinkSetter() {
+    if (!this.canLink()) {
+      return;
+    }
+
     this.linkSetterVisible = !this.linkSetterVisible;
+  }
+
+  @mutation('CLOSE_LINK_SETTER', false)
+  closeLinkSetter() {
+    this.linkSetterVisible = false;
   }
 
   @mutation('TOGGLE_IMAGE_SETTER', false)
   toggleImageSetter() {
     this.imageSetterVisible = !this.imageSetterVisible;
+  }
+
+  private canLink() {
+    return this.editor?.can().setLink({ href: 'https://www.example.com' });
   }
 
   private initial(container: HTMLDivElement) {
