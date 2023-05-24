@@ -1,6 +1,7 @@
 import { XmlFragment } from 'yjs';
 import { EditorContent, useEditor, ReactNodeViewRenderer } from '@tiptap/react';
 import { lowlight } from 'lowlight';
+import classNames from 'classnames';
 
 import Collaboration from '@tiptap/extension-collaboration';
 import StarterKit from '@tiptap/starter-kit';
@@ -17,7 +18,10 @@ import html from 'highlight.js/lib/languages/xml';
 import { CodeBlockComponent } from './CodeBlockComponent';
 
 import s from './common.module.scss';
-import classNames from 'classnames';
+import { ReactBlock } from './ReactBlock';
+import './CustomBlock';
+import { DBlock } from './DBlock';
+import { Document } from './Document';
 
 export interface StaticEditorProps {
   content: XmlFragment;
@@ -40,11 +44,15 @@ export const StaticEditor = (props: StaticEditorProps) => {
   const editor = useEditor({
     editable: false,
     extensions: [
+      ReactBlock,
+      DBlock,
       StarterKit.configure({
         // 使用 yjs
         history: false,
         codeBlock: false,
+        document: false,
       }),
+      Document,
       Collaboration.configure({
         fragment: content,
       }),

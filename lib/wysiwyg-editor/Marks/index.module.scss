@@ -1,0 +1,40 @@
+.root {
+  background-color: #ffffff;
+  box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  height: 35px;
+  border-radius: 5px;
+}
+
+.group {
+  display: flex;
+  height: 100%;
+
+  &:not(:last-child) {
+    border-right: 1px solid var(--vd-color-gray-300);
+  }
+}
+
+.item {
+  width: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--vd-color-gray-200);
+  }
+
+  &:global(.active) {
+    background-color: var(--vd-color-gray-300);
+    color: var(--vd-color-primary-800);
+  }
+
+  &:global(.disabled) {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}

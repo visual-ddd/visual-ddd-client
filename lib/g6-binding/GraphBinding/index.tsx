@@ -540,7 +540,6 @@ export const GraphBinding = memo((props: GraphBindingProps) => {
       }
 
       if (options?.scroller) {
-        // @ts-expect-error 不需要传递 graph
         graph.use(new Scroller(options.scroller));
       }
 

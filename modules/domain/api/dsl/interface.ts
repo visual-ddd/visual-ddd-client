@@ -2,7 +2,7 @@ import type { UbiquitousLanguageItem } from '@/modules/domain/ubiquitous-languag
 
 export type { UbiquitousLanguageItem } from '@/modules/domain/ubiquitous-language-design/types';
 
-export type { BaseType } from '@/modules/domain/domain-design/dsl/dsl';
+export type { BaseType, ContainerType } from '@/modules/domain/domain-design/dsl/dsl';
 
 /**
  * DSL 定义

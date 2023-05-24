@@ -1,5 +1,35 @@
 import { ObjectType } from './extra-api';
-import { toTypescript } from './typescript';
+import { toTypescript, replaceType } from './typescript';
+
+describe('replaceType', () => {
+  it('should replace BaseType with corresponding TypeScript type', () => {
+    expect(replaceType('String')).toBe('string');
+    expect(replaceType('Integer')).toBe('number');
+    expect(replaceType('Long')).toBe('number');
+    expect(replaceType('Double')).toBe('number');
+    expect(replaceType('Float')).toBe('number');
+    expect(replaceType('Date')).toBe('Date');
+    expect(replaceType('Boolean')).toBe('boolean');
+    expect(replaceType('BigDecimal')).toBe('number');
+    expect(replaceType('Char')).toBe('string');
+    expect(replaceType('Byte')).toBe('number');
+    expect(replaceType('Short')).toBe('number');
+    expect(replaceType('Void')).toBe('void');
+    expect(replaceType('List')).toBe('Array');
+    expect(replaceType('Map')).toBe('Map');
+    expect(replaceType('Set')).toBe('Set');
+
+    expect(replaceType('Set<string>')).toBe('Set<string>');
+    expect(replaceType('Set<String, Char>')).toBe('Set<string, string>');
+    expect(replaceType('Map<Boolean, Date>')).toBe('Map<boolean, Date>');
+  });
+
+  it('should not replace typescript types', () => {
+    expect(replaceType('MyCustomType')).toBe('MyCustomType');
+    expect(replaceType('List<MyCustomType>')).toBe('Array<MyCustomType>');
+    expect(replaceType('Set<MyCustomType, String>')).toBe('Set<MyCustomType, string>');
+  });
+});
 
 describe('toTypescript', () => {
   test('enum', () => {
@@ -106,7 +136,7 @@ interface MyInterface {
               title: '属性1',
               description: '描述描述',
               name: 'prop1',
-              type: 'string',
+              type: 'Integer',
               optional: false,
             },
             {
@@ -204,7 +234,7 @@ interface Foo {
    * 属性2
    * 描述描述
    */
-  prop2?: List<Foo>;
+  prop2?: Array<Foo>;
 }
 
 /**
@@ -243,12 +273,12 @@ interface MyInterface {
    * 属性1
    * 描述描述
    */
-  prop1: string;
+  prop1: number;
   /**
    * 属性2
    * 描述描述
    */
-  prop2?: List<Foo>;
+  prop2?: Array<Foo>;
 }`);
   });
 });
