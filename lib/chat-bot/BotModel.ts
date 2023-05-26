@@ -240,7 +240,11 @@ export class BotModel implements IDisposable, IBot, IDestroyable {
 
         if (isAbort(err)) {
           if (extension.type === ExtensionType.Message) {
-            this.updateMessageContent(responseMessageId, response.eventSource.result);
+            if (response.eventSource.result) {
+              this.updateMessageContent(responseMessageId, response.eventSource.result);
+            } else {
+              this.removeMessage(responseMessageId);
+            }
           }
 
           return;
