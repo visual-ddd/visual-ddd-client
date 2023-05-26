@@ -18,13 +18,13 @@ registerExtension({
     disposer.push(() => tryDispose(eventSource));
 
     const result = (async () => {
-      const context = await bot.getChatContext(message);
+      const { messages, recommendToSummary } = await bot.getChatContext(message);
 
       let summary: string | undefined;
 
-      if (context.recommendToSummary) {
+      if (recommendToSummary) {
         // 需要压缩
-        const messageToSummary = await bot.getMessagesToSummary(context.recommendToSummary);
+        const messageToSummary = await bot.getMessagesToSummary(recommendToSummary);
 
         if (messageToSummary.length) {
           // 需要压缩
@@ -41,7 +41,11 @@ registerExtension({
           });
 
           // 更新 summary
-          bot.updateSummary(context.recommendToSummary.uuid, summary);
+          const msg = bot.updateSummary(recommendToSummary.uuid, summary);
+
+          if (msg) {
+            messages.unshift(msg);
+          }
         }
       }
 
@@ -52,7 +56,7 @@ registerExtension({
           summary,
           temperature: bot.getTemperature(),
           system: bot.getSystemPrompt(),
-          context: context.messages.map(i => {
+          context: messages.map(i => {
             const d = i.summary ?? i.content;
             return [i.role, d];
           }),

@@ -110,7 +110,7 @@ export interface IBot {
    * @param messageId
    * @param summary
    */
-  updateSummary(messageId: string, summary: string): void;
+  updateSummary(messageId: string, summary: string): Message | undefined;
 
   /**
    * 清理会话

@@ -416,11 +416,13 @@ export class BotModel implements IDisposable, IBot, IDestroyable {
   }
 
   @mutation('UPDATE_SUMMARY', false)
-  updateSummary(messageId: string, summary: string): void {
+  updateSummary(messageId: string, summary: string): Message | undefined {
     const message = this.getMessageById(messageId);
     if (message) {
       message.summary = summary;
       this.event.emit('MESSAGE_UPDATED', { message });
+
+      return message;
     }
   }
 
