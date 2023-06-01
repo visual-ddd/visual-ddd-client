@@ -1,4 +1,4 @@
-import { CacheStorageInMemory } from './CacheStorageInMemory';
+import { CacheStorageInMemory } from '@/modules/storage';
 import { FreeAccountRateLimit } from './FreeAccountRateLimit';
 
 test('FreeAccountRateLimit', async () => {

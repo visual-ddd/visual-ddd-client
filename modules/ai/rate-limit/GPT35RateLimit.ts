@@ -1,5 +1,4 @@
-import { CacheContainer } from './CacheContainer';
-import { ICacheStorage } from './ICacheStorage';
+import { CacheContainer, ICacheStorage } from '@/modules/storage';
 import { GPT35Limit } from './GPT35Limit';
 import { IRateLimit } from './IRateLimit';
 

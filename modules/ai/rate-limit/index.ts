@@ -1,11 +1,10 @@
 import { getRedisClient } from '@/modules/redis';
 import memoize from 'lodash/memoize';
-import { CacheStorageInMemory } from './CacheStorageInMemory';
-import { CacheStorageInRedis } from './CacheStorageInRedis';
 import { FreeAccountRateLimit } from './FreeAccountRateLimit';
 
 import { AllSupportedModel } from '../constants';
 import { GTP35RateLimit } from './GPT35RateLimit';
+import { CacheStorageInMemory, CacheStorageInRedis } from '@/modules/storage';
 
 export function getPersistenceCacheStorage<T>(namespace: string) {
   const client = getRedisClient();
