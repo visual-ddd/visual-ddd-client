@@ -1,18 +1,17 @@
-import { assert } from "@/lib/utils";
+import { assert } from '@/lib/utils';
 
-const KEY =
-  process.env.LEMON_API_KEY 
+const KEY = process.env.LEMON_API_KEY;
 
 const BASE_URL = 'https://api.lemonsqueezy.com/';
 
 type RequestMethod = 'GET' | 'POST' | 'PATCH' | 'DELETE';
 
 function createHeader(): Headers {
-  assert(KEY, '缺少API KEY')
+  assert(KEY, '缺少API KEY');
   const headers = new Headers();
   headers.set('Accept', 'application/vnd.api+json');
   headers.set('Content-Type', 'application/vnd.api+json');
-  headers.set('Aut horization', `Bearer ${KEY}`);
+  headers.set('Authorization', `Bearer ${KEY}`);
 
   return headers;
 }
@@ -70,10 +69,16 @@ export function DELETE<T = any>(url: string, query?: Record<string, string>): Pr
   return request(url, 'DELETE');
 }
 
-export function post<T = any>(url: string, body: Record<string, any>): Promise<T> {
+export function post<T = any, Body extends Record<string, any> = Record<string, any>>(
+  url: string,
+  body: Body
+): Promise<T> {
   return request(url, 'POST', body);
 }
 
-export function patch<T = any>(url: string, body: Record<string, any>): Promise<T> {
+export function patch<T = any, Body extends Record<string, any> = Record<string, any>>(
+  url: string,
+  body: Body
+): Promise<T> {
   return request(url, 'PATCH', body);
 }

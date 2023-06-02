@@ -5,17 +5,17 @@ import { CreateCheckoutOptions, CreateCheckoutResult, LemonsqueezyCheckout } fro
 export function createCheckout(variantId: string, storeId?: string): Promise<CreateCheckoutResult>;
 export function createCheckout(
   variantId: string,
-  attributes?: LemonsqueezyCheckout['attributes']
+  attributes?: Partial<LemonsqueezyCheckout['attributes']>
 ): Promise<CreateCheckoutResult>;
 export function createCheckout(
   variantId: string,
   storeId: string,
-  attributes?: LemonsqueezyCheckout['attributes']
+  attributes?: Partial<LemonsqueezyCheckout['attributes']>
 ): Promise<CreateCheckoutResult>;
 export async function createCheckout(
   variantId: string,
-  storeIdOrAttributes?: string | LemonsqueezyCheckout['attributes'],
-  attributes?: LemonsqueezyCheckout['attributes']
+  storeIdOrAttributes?: string | Partial<LemonsqueezyCheckout['attributes']>,
+  attributes?: Partial<LemonsqueezyCheckout['attributes']>
 ): Promise<CreateCheckoutResult> {
   const url = '/v1/checkouts';
   if (typeof storeIdOrAttributes === 'string') {
@@ -24,26 +24,27 @@ export async function createCheckout(
   return post(url, buildBody(variantId, await getStoreId(), storeIdOrAttributes));
 }
 
-
 function buildBody(
   variantId: string,
   storeId: string,
-  attributes?: LemonsqueezyCheckout['attributes']
-): CreateCheckoutOptions {
+  attributes?: Partial<LemonsqueezyCheckout['attributes']>
+): { data: CreateCheckoutOptions } {
   return {
-    type: 'checkouts',
-    attributes,
-    relationships: {
-      store: {
-        data: {
-          type: 'stores',
-          id: storeId,
+    data: {
+      type: 'checkouts',
+      attributes,
+      relationships: {
+        store: {
+          data: {
+            type: 'stores',
+            id: storeId,
+          },
         },
-      },
-      variant: {
-        data: {
-          type: 'variants',
-          id: variantId,
+        variant: {
+          data: {
+            type: 'variants',
+            id: variantId,
+          },
         },
       },
     },

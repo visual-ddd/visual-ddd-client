@@ -72,9 +72,16 @@ export interface VDSessionCore {
   cookies: Record<string, string>;
 
   /**
-   * 用户 id
+   * 用户帐号
    */
   accountNo: string;
+
+
+  /**
+   * TODO 待添加
+   * 用户 id
+   */
+  userId: string;
 
   /**
    * 当前入口状态

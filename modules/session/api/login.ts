@@ -52,6 +52,8 @@ export const login = allowMethod(
         req.session.content = {
           cookies: list,
           accountNo: loginPayload.accountNo,
+          // TODO 待添加
+          userId: null as any
         } satisfies VDSessionCore;
         await req.session.save();
       }
