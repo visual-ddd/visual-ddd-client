@@ -1,1 +1,1 @@
-export { Plan } from './api';
+export { PlanName } from './api';

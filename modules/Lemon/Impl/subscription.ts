@@ -54,9 +54,7 @@ export async function unPauseSubscription(id: string): Promise<UpdateSubscriptio
     data: {
       id,
       attributes: {
-        pause: {
-          mode: null,
-        },
+        pause:  null,
       },
     },
   });

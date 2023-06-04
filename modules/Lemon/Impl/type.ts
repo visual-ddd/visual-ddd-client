@@ -690,9 +690,8 @@ export interface LemonsqueezySubscriptionPause {
    *
    *  - `void` - If you can't offer your services for a period of time (for maintenance as an example), you can void invoices so your customers aren't charged
    *  - `free` - Offer your subscription services for free, whilst halting payment collection
-   *  - `null` - manually unpause a paused subscription
    */
-  mode: 'void' | 'free' | null;
+  mode: 'void' | 'free';
   /**
    * An ISO-8601 formatted date-time string indicating when the subscription will continue collecting payments
    *
@@ -726,6 +725,7 @@ export interface UpdateSubscriptionOptions {
   id: string;
   /**
    * An object containing the payment collection pause behaviour options for the subscription
+   * if `null` - manually unpause a paused subscription
    */
   pause?: LemonsqueezySubscriptionPause;
   /**
@@ -750,8 +750,304 @@ export type UpdateSubscriptionResult = BaseLemonsqueezyResponse<LemonsqueezySubs
 export type PauseSubscriptionOptions = {
   data: {
     attributes: {
-      pause: LemonsqueezySubscriptionPause;
+      pause: LemonsqueezySubscriptionPause | null;
     };
     id: string;
   };
 };
+
+/**
+ * @docs https://docs.lemonsqueezy.com/api/orders#the-order-object
+ */
+export interface LemonsqueezyOrderOfWebhook {
+  type: 'orders';
+  id: string;
+  attributes: {
+    /**
+     * The ID of the store this order belongs to
+     */
+    store_id: number;
+    /**
+     * The ID of the customer this order belongs to.
+     */
+    customer_id: number;
+    /**
+     * The unique identifier (UUID) for this order
+     */
+    identifier: string;
+    /**
+     * An integer representing the sequential order number for this store.
+     */
+    order_number: number;
+    /**
+     * The full name of the customer.
+     */
+    user_name: string;
+    /**
+     * The email address of the customer.
+     */
+    user_email: string;
+    /**
+     * The [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217) currency code for the order (e.g. USD, GBP, etc).
+     */
+    currency: string;
+    /**
+     * If the order currency is USD, this will always be `1.0`.
+     * Otherwise, this is the currency conversion rate used to determine the cost of the order in USD at the time of purchase.
+     */
+    currency_rate: string;
+    /**
+     * A positive integer in cents representing the subtotal of the order in the order currency.
+     */
+    subtotal: number;
+    /**
+     * A positive integer in cents representing the total discount value applied to the order in the order currency.
+     */
+    discount_total: number;
+    /**
+     * A positive integer in cents representing the tax applied to the order in the order currency.
+     */
+    tax: number;
+    /**
+     * A positive integer in cents representing the total cost of the order in the order currency.
+     */
+    total: number;
+    /**
+     * A positive integer in cents representing the subtotal of the order in USD.
+     */
+    subtotal_usd: number;
+    /**
+     * A positive integer in cents representing the total discount value applied to the order in USD.
+     */
+    discount_total_usd: number;
+    /**
+     * A positive integer in cents representing the tax applied to the order in USD.
+     */
+    tax_usd: number;
+    /**
+     * A positive integer in cents representing the total cost of the order in USD.
+     */
+    total_usd: number;
+    /**
+     * If tax is applied to the order, this will be the name of the tax rate (e.g. `VAT`, `Sales Tax`, etc).
+     */
+    tax_name: string;
+    /**
+     * If tax is applied to the order, this will be the rate of tax as a decimal percentage.
+     */
+    tax_rate: string;
+    /**
+     * The status of the order. One of `pending`, `failed`, `paid`, `refunded`.
+     */
+    status: `pending` | `failed` | `paid` | `refunded`;
+    /**
+     * The formatted status of the order.
+     */
+    status_formatted: string;
+    /**
+     * Has the value `true` if the order has been refunded.
+     */
+    refunded: boolean;
+    /**
+     * If the order has been refunded, this will be an [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) formatted date-time string indicating when the order was refunded.
+     */
+    refunded_at: string | null;
+    /**
+     * A human-readable string representing the subtotal of the order in the order currency (e.g. $9.99).
+     */
+    subtotal_formatted: string;
+    /**
+     * A human-readable string representing the total discount value applied to the order in the order currency (e.g. $9.99).
+     */
+    discount_total_formatted: string;
+    /**
+     * A human-readable string representing the tax applied to the order in the order currency (e.g. $9.99).
+     */
+    tax_formatted: string;
+    /**
+     * A human-readable string representing the total cost of the order in the order currency (e.g. $9.99).
+     */
+    total_formatted: string;
+    /**
+     *
+     */
+    first_order_item: {
+      /**
+       * The ID of the order item.
+       */
+      id: number;
+      order_id: number;
+
+      product_id: number;
+
+      variant_id: number;
+
+      product_name: string;
+
+      variant_name: string;
+      /**
+       *  A positive integer in cents representing the price of the order item in the order currency.
+       */
+      price: number;
+
+      created_at: string;
+
+      updated_at: string;
+
+      test_mode: boolean;
+    };
+    /**
+     * An object of customer-facing URLs for this order.
+     */
+    urls: {
+      /**
+       * A pre-signed URL for viewing the order in the customer's [My Orders page](https://docs.lemonsqueezy.com/help/online-store/my-orders)
+       */
+      receipt: string;
+    };
+    /**
+     *
+     */
+    created_at: string;
+    /**
+     *
+     */
+    updated_at: string;
+  };
+}
+
+/**
+ * @docs https://docs.lemonsqueezy.com/api/subscriptions#the-subscription-object
+ */
+export interface LemonsqueezySubscriptionOfWebhook {
+  type: 'subscriptions';
+  id: string;
+  attributes: {
+    /**
+     * The ID of the store this subscription belongs to.
+     */
+    store_id: number;
+    /**
+     * The ID of the customer this subscription belongs to.
+     */
+    customer_id: number;
+    /**
+     * The ID of the order associated with this subscription.
+     */
+    order_id: number;
+    /**
+     * The ID of the order item associated with this subscription.
+     */
+    order_item_id: number;
+    /**
+     * The ID of the product associated with this subscription.
+     */
+    product_id: number;
+    /**
+     * The ID of the variant associated with this subscription.
+     */
+    variant_id: number;
+    /**
+     * The name of the product.
+     */
+    product_name: string;
+    /**
+     * The name of the variant.
+     */
+    variant_name: string;
+    /**
+     * The full name of the customer.
+     */
+    user_name: string;
+    /**
+     * The email address of the customer.
+     */
+    user_email: string;
+    /**
+     * The status of the subscription.
+     * - `paused`  that the subscription's payment collection has been paused. See pause below for more information.
+     *
+     * - `past_due`  that a renewal payment failed.
+     *    The subscription will go through [4 payment retries](https://docs.lemonsqueezy.com/help/online-store/recovery-dunning#failed-payments) over the course of 2 weeks.
+     *    If a retry is successful, the subscription's status changes back to `active`. If all four retries are unsuccessful, the status is changed to `unpaid`.
+     *
+     * - `unpaid`  that [payment recovery](https://docs.lemonsqueezy.com/help/online-store/recovery-dunning#failed-payments) has been unsuccessful in capturing a payment after 4 attempts.
+     *    If dunning is enabled in your store, your dunning rules now will determine if the subscription becomes `expired` after a certain period.
+     *    If dunning is turned off, the status remains `unpaid` (it is up to you to determine what this means for users of your product).
+     *
+     * - `cancelled` means that the customer or store owner has cancelled future payments, but the subscription is still technically active and valid (on a "grace period").
+     *    The `ends_at` value shows the date-time when the subscription is scheduled to expire.
+     *
+     * - `expired` means that the subscription has ended (either it had previously been `cancelled` and the grace period created from its final payment has run out,
+     *    or it was previously `unpaid` and the subscription was not re-activated during dunning). The `ends_at` value shows the date-time when the subscription expired. Customers should no longer have access to your product.
+     */
+    status: 'on_trial' | 'active' | 'paused' | 'past_due' | 'unpaid' | 'cancelled' | 'expired';
+    /**
+     * The title-case formatted status of the subscription.
+     * For example, when `status` is `active`, `status_formatted` will be `Active` and `past_due` will be `Past due`.
+     */
+    status_formatted: string;
+    /**
+     * Lowercase brand of the card used to pay for the latest subscription payment. One of `visa`, `mastercard`, `american_express`, `discover`, `jcb`, `diners_club`.
+     * Will be empty for non-card payments.
+     */
+    card_brand: string;
+    /**
+     * The last 4 digits of the card used to pay for the latest subscription payment. Will be empty for non-card payments.
+     */
+    card_last_four: string;
+    /**
+     * An object containing the payment collection pause behaviour options for the subscription
+     */
+    pause: LemonsqueezySubscriptionPause | null;
+    /**
+     * A boolean indicating if the subscription has been cancelled.
+     *
+     * When cancelled is true:
+     * - `status` will be cancelled
+     * - `ends_at will` be populated with a date-time string
+     */
+    cancelled: boolean;
+    /**
+     * If the subscription has a free trial (`status` is `on_trial`),
+     * this will be an [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) formatted date-time string indicating when the trial period ends.
+     * For all other `status` values, this will be `null`.
+     */
+    trial_ends_at: any;
+    /**
+     * An integer representing a day of the month (`21` equals `21st day of the month`).
+     * This is the day on which subscription invoice payments are collected.
+     */
+    billing_anchor: number;
+    /**
+     * An object of customer-facing URLs for managing the subscription.
+     */
+    urls: {
+      /**
+       *  A pre-signed URL for managing payment and billing information for the subscription. This can be used in conjunction with [Lemon.js](https://docs.lemonsqueezy.com/help/lemonjs/what-is-lemonjs) to allow your customer to change their billing information from within your application. The URL is valid for 24 hours from time of request.
+       */
+      update_payment_method: string;
+    };
+    /**
+     * An [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) formatted date-time string indicating the end of the current billing cycle,
+     * and when the next invoice will be issued.
+     * This also applies to `past_due` subscriptions;
+     * `renews_at` will reflect the next renewal charge attempt.
+     */
+    renews_at: string;
+    /**
+     * If the subscription has as status of cancelled or expired, this will be an [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) formatted date-time string indicating when the subscription expires (or expired).
+     * For all other status values, this will be null.
+     */
+    ends_at: string | null;
+    /**
+     * An [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) formatted date-time string indicating when the object was created.
+     */
+    created_at: string;
+    /**
+     * An [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) formatted date-time string indicating when the object was updated.
+     */
+    updated_at: string;
+    test_mode: boolean;
+  };
+}

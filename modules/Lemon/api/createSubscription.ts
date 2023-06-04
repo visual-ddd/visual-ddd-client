@@ -1,39 +1,36 @@
 import { allowMethod } from '@/lib/api';
-import { withSessionApiRoute } from '@/modules/session/api-helper';
+import { assert } from '@/lib/utils';
 import { createSuccessResponse } from '@/modules/backend-node';
+import { withSessionApiRoute } from '@/modules/session/api-helper';
 import { createCheckout } from '../Impl/checkout';
 import { getProduct } from '../Impl/product';
 import { getStoreId } from '../Impl/store';
-import { ProductResult } from '../Impl/type';
-import { createExpiredTimeToISOString } from '../Impl/utils';
-import { getVariant } from '../Impl/variant';
-import { DATA_BASE } from '../database';
-import { assert } from '@/lib/utils';
 import {
-  updateSubscription as updateSubscriptionAPI,
+  getSubscriptionInfo as getSubscriptionInfoAPI,
   pauseSubscription as pauseSubscriptionAPI,
   unPauseSubscription as unPauseSubscriptionAPI,
-  getSubscriptionInfo as getSubscriptionInfoAPI
+  updateSubscription as updateSubscriptionAPI,
 } from '../Impl/subscription';
+import { ProductResult } from '../Impl/type';
+import { getVariant } from '../Impl/variant';
+import { SubscriptionCollection } from '../database';
 
-
-export enum Plan {
+export enum PlanName {
   Base = 'Base',
   Plus = 'Plus',
 }
 
-
 // TODO 返回数据后转化
-async function get(userId:string): Promise<any | null> {
+async function get(userId: string): Promise<any | null> {
   assert(userId, '缺少用户ID');
-  const subscriptionId = await DATA_BASE.get(userId);
-  if(subscriptionId){
-    return getSubscriptionInfoAPI(subscriptionId)
+  const subscriptionId = (await SubscriptionCollection.get(userId))?.id;
+  if (subscriptionId) {
+    return getSubscriptionInfoAPI(subscriptionId);
   }
   return null;
 }
 
-async function findProductByPlanName(planName: Plan): Promise<ProductResult['data']> {
+async function findProductByPlanName(planName: PlanName): Promise<ProductResult['data']> {
   const productList = await getProduct();
   const product = productList.data.find(item => item.attributes.name === planName);
   if (!product) {
@@ -43,15 +40,14 @@ async function findProductByPlanName(planName: Plan): Promise<ProductResult['dat
 }
 
 async function subscribe(
-  planName: Plan,
+  planName: PlanName,
   payload: {
     email?: string;
     custom: {
       id: string;
     };
   }
-): Promise<any> {
-  // 具体判断逻辑交给 Lemon Squeezy
+): Promise<string> {
   const [store_id, product] = await Promise.all([getStoreId(), findProductByPlanName(planName)]);
   const variant = (await getVariant(product.id))![0];
   const checkout = await createCheckout(variant.id, store_id, {
@@ -59,18 +55,21 @@ async function subscribe(
       custom: payload.custom,
       email: payload.email,
     },
-    expires_at: createExpiredTimeToISOString(1000 * 60 * 10),
+    // TODO 这里Lemon 存在问题 需要额外加上对应的时区误差才行
+    // expires_at: createExpiredTimeToISOString(1000 * 60 * 10),
   });
 
   return checkout.data.attributes.url;
 }
 
-async function update(planName: Plan, payload: { userId: string }): Promise<string> {
+async function update(planName: PlanName, payload: { userId: string }): Promise<string> {
   assert(payload.userId, '缺少用户ID');
-  const subscriptionId = await DATA_BASE.get(payload.userId);
+  const subscriptionId = (await SubscriptionCollection.get(payload.userId))?.id;
   assert(subscriptionId, '当前用户没有订阅');
+
   const product = await findProductByPlanName(planName);
   const variant = (await getVariant(product.id))![0];
+
   const res = await updateSubscriptionAPI({
     id: subscriptionId,
     productId: product.id,
@@ -88,31 +87,28 @@ async function update(planName: Plan, payload: { userId: string }): Promise<stri
 
 async function pause(userId: string): Promise<void> {
   assert(userId, '缺少用户ID');
-  const subscriptionId = await DATA_BASE.get(userId);
+  const subscriptionId = (await SubscriptionCollection.get(userId))?.id;
   assert(subscriptionId, '当前用户没有订阅');
   await pauseSubscriptionAPI(subscriptionId);
 }
 
 async function unPause(userId: string): Promise<void> {
   assert(userId, '缺少用户ID');
-  const subscriptionId = await DATA_BASE.get(userId);
+  const subscriptionId = (await SubscriptionCollection.get(userId))?.id;
   assert(subscriptionId, '当前用户没有订阅');
   await unPauseSubscriptionAPI(subscriptionId);
 }
 
+export const getSubscriptionInfo = allowMethod(
+  'GET',
+  withSessionApiRoute(async (req, res) => {
+    const session = req.session.content!;
 
+    const data = await get(session.userId);
 
-export const getSubscriptionInfo = allowMethod('GET',
-withSessionApiRoute(async (req, res) => {
-  const session = req.session.content!;
-
-  const data = await get(session.userId)
-
-  res.json(
-    createSuccessResponse(data || {})
-  );
-}) 
-)
+    res.json(createSuccessResponse(data || {}));
+  })
+);
 
 export const createSubscription = allowMethod(
   'POST',
@@ -156,6 +152,7 @@ export const updateSubscription = allowMethod(
 export const pauseSubscription = allowMethod(
   'POST',
   withSessionApiRoute(async (req, res) => {
+
     const session = req.session.content!;
 
     await pause(session.userId);
@@ -164,10 +161,10 @@ export const pauseSubscription = allowMethod(
   })
 );
 
-
 export const unpauseSubscription = allowMethod(
   'POST',
   withSessionApiRoute(async (req, res) => {
+
     const session = req.session.content!;
 
     await unPause(session.userId);
