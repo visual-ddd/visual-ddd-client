@@ -1,8 +1,9 @@
 import { Button } from 'antd';
 import s from './Page.module.scss';
 import { UpgradePlanList } from './Plan';
-import { PlanIdentifier, createPlan } from './planInfo';
+import { createPlan } from './planInfo';
 import { Header } from '../home';
+import { PlanIdentity } from '../Lemon/share';
 
 export const PlanPage = () => {
   return (
@@ -11,7 +12,7 @@ export const PlanPage = () => {
       <h3 className={s.title}> 套餐详情 </h3>
       <UpgradePlanList
         externalClass={s}
-        currentPlan={createPlan(PlanIdentifier.None)}
+        currentPlan={createPlan(PlanIdentity.None)}
         renderFooter={action => (
           <Button block onClick={action} type="primary" className={s.button}>
             订阅

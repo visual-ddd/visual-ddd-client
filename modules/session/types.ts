@@ -76,13 +76,6 @@ export interface VDSessionCore {
    */
   accountNo: string;
 
-
-  /**
-   * TODO 待添加
-   * 用户 id
-   */
-  userId: string;
-
   /**
    * 当前入口状态
    */

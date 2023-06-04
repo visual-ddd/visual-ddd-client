@@ -1,12 +1,7 @@
-export const enum PlanIdentifier {
-  None = 'None',
-  Base = 'Base',
-  Plus = 'Plus',
-  PlusMax = 'PlusMax',
-}
+import { PlanIdentity } from '../Lemon/share';
 
 export interface IPlanInfo {
-  Identifier: PlanIdentifier;
+  Identifier: PlanIdentity;
   name: string;
   price: string;
 
@@ -31,12 +26,10 @@ export interface IPlanInfo {
    */
   concurrency: string;
 
-  level: number;
-  duration: number;
   priceValue: string;
 }
 export const FreePlan: IPlanInfo = {
-  Identifier: PlanIdentifier.None,
+  Identifier: PlanIdentity.None,
   name: '试用版',
   price: '免费',
   priceValue: '0',
@@ -44,9 +37,7 @@ export const FreePlan: IPlanInfo = {
   requestLimit: '30次（终生）',
   modules: 'chatbot',
   onLineLimit: '2台',
-  level: 1,
   concurrency: '3 / 分钟',
-  duration: 1,
 };
 export const BasePlan: IPlanInfo = {
   name: '基础版',
@@ -57,29 +48,25 @@ export const BasePlan: IPlanInfo = {
   modules: 'chatbot',
   concurrency: '5 / 分钟',
   onLineLimit: '3 台',
-  level: 1 << 1,
-  duration: 1,
-  Identifier: PlanIdentifier.Base,
+  Identifier: PlanIdentity.Base,
 };
 export const PlusPlan: IPlanInfo = {
-  name: '基础版',
-  price: '￥30 / 月',
-  priceValue: '￥30',
+  name: '高级版',
+  price: '￥60 / 月',
+  priceValue: '￥60',
   models: 'GPT 3.5、GPT 4',
   requestLimit: '无限制',
   modules: 'chatbot',
   concurrency: '5 / 分钟',
   onLineLimit: '3 台',
-  level: 1 << 2,
-  duration: 1,
-  Identifier: PlanIdentifier.Plus,
+  Identifier: PlanIdentity.Plus,
 };
 
 export const planInfoList: IPlanInfo[] = [FreePlan, BasePlan];
 
-export function createPlan(name: PlanIdentifier): IPlanInfo {
+export function createPlan(name: PlanIdentity): IPlanInfo {
   switch (name) {
-    case PlanIdentifier.Base:
+    case PlanIdentity.Base:
       return BasePlan;
     default:
       return FreePlan;
@@ -87,7 +74,7 @@ export function createPlan(name: PlanIdentifier): IPlanInfo {
 }
 
 export function hasFreeLimit(planInfo: IPlanInfo): boolean {
-  return planInfo.level === FreePlan.level;
+  return planInfo.Identifier === PlanIdentity.None;
 }
 
 export function hasExpiredTime(planInfo: IPlanInfo): boolean {
@@ -95,12 +82,12 @@ export function hasExpiredTime(planInfo: IPlanInfo): boolean {
 }
 
 export function allowUpgrade(currentPlan: IPlanInfo, targetPlan: IPlanInfo): boolean {
-  if (currentPlan.Identifier === PlanIdentifier.None) {
-    return targetPlan.Identifier !== PlanIdentifier.None;
+  if (currentPlan.Identifier === PlanIdentity.None) {
+    return true;
   }
-  return targetPlan.duration === currentPlan.duration && allowSubscribe(currentPlan, targetPlan);
+  return currentPlan.Identifier !== targetPlan.Identifier;
 }
 
 export function allowSubscribe(currentPlan: IPlanInfo, targetPlan: IPlanInfo): boolean {
-  return targetPlan.level > currentPlan.level;
+  return true;
 }

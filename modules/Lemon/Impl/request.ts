@@ -20,11 +20,10 @@ function methodsHasBody(method: RequestMethod) {
   return method !== 'GET' && method !== 'DELETE';
 }
 
-function request(path: string, method: RequestMethod, body: Record<string, any> = {}) {
-  const url = new URL(path, BASE_URL);
+function request(uri: string, method: RequestMethod, body: Record<string, any> = {}) {
+  const url = new URL(uri, BASE_URL);
   const headers = createHeader();
   const finallyBody = methodsHasBody(method) ? JSON.stringify(body) : undefined;
-
   return fetch(url, {
     method,
     headers: headers,
@@ -49,36 +48,37 @@ function request(path: string, method: RequestMethod, body: Record<string, any> 
 }
 
 function mergeQueryParams(url: string, query: Record<string, string>): string {
-  const urlSearch = new URLSearchParams(url);
+  const [path, search] = url.split('?');
+  const urlSearch = new URLSearchParams(search);
   for (const [key, value] of Object.entries(query)) {
     urlSearch.set(key, value);
   }
-  return urlSearch.toString();
+  return `${path}?${decodeURIComponent(urlSearch.toString())}`;
 }
-export function get<T = any>(url: string, query?: Record<string, string>): Promise<T> {
+export function get<T = any>(uri: string, query?: Record<string, string>): Promise<T> {
   if (query) {
-    return request(mergeQueryParams(url, query), 'GET');
+    return request(mergeQueryParams(uri, query), 'GET');
   }
-  return request(url, 'GET');
+  return request(uri, 'GET');
 }
 
-export function DELETE<T = any>(url: string, query?: Record<string, string>): Promise<T> {
+export function DELETE<T = any>(uri: string, query?: Record<string, string>): Promise<T> {
   if (query) {
-    return request(mergeQueryParams(url, query), 'DELETE');
+    return request(mergeQueryParams(uri, query), 'DELETE');
   }
-  return request(url, 'DELETE');
+  return request(uri, 'DELETE');
 }
 
 export function post<T = any, Body extends Record<string, any> = Record<string, any>>(
-  url: string,
+  uri: string,
   body: Body
 ): Promise<T> {
-  return request(url, 'POST', body);
+  return request(uri, 'POST', body);
 }
 
 export function patch<T = any, Body extends Record<string, any> = Record<string, any>>(
-  url: string,
+  uri: string,
   body: Body
 ): Promise<T> {
-  return request(url, 'PATCH', body);
+  return request(uri, 'PATCH', body);
 }

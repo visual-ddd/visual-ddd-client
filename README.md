@@ -82,6 +82,9 @@ BACKEND=http://172.26.57.49:8080 pnpm dev
 | PINECONE_INDEX       |                                                                                     |
 | REQUIRE_INVITATION   | 是否需要邀请码注册, 默认 false                                                      |
 | REDIS                | Redis 链接协议, 例如 `redis[s]://[[username][:password]@][host][:port][/db-number]` |
+| LEMON_SECRET         | lemonsqueezy webhook 的密钥                                                         |
+| LEMON_API_KEY        | lemonsqueezy api key                                                                |
+| LEMON_STORE_ID       | lemonsqueezy 商店 id 默认会使用第一个商店                                           |
 
 # 构建时环境变量
 

@@ -17,11 +17,11 @@ export async function createCheckout(
   storeIdOrAttributes?: string | Partial<LemonsqueezyCheckout['attributes']>,
   attributes?: Partial<LemonsqueezyCheckout['attributes']>
 ): Promise<CreateCheckoutResult> {
-  const url = '/v1/checkouts';
+  const uri = '/v1/checkouts';
   if (typeof storeIdOrAttributes === 'string') {
-    return post(url, buildBody(variantId, storeIdOrAttributes, attributes));
+    return post(uri, buildBody(variantId, storeIdOrAttributes, attributes));
   }
-  return post(url, buildBody(variantId, await getStoreId(), storeIdOrAttributes));
+  return post(uri, buildBody(variantId, await getStoreId(), storeIdOrAttributes));
 }
 
 function buildBody(
