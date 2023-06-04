@@ -1,24 +1,33 @@
 import { allowMethod } from '@/lib/api';
-
+import { assert } from '@/lib/utils';
 import crypto from 'crypto';
-import { NextApiRequest } from 'next';
+import type { Readable } from 'node:stream';
 import { LemonsqueezyOrderOfWebhook, LemonsqueezySubscriptionOfWebhook } from '../Impl/type';
 import { OrderCollection, SubscriptionCollection } from '../database';
 
 const secret = process.env.LEMON_SECRET!;
 
-function checkSignature(request: NextApiRequest): void {
-  const rawSignature = request.headers['x-signature'] as string | undefined;
+assert(secret, '缺少 LEMON SECRET');
+
+async function checkSignature(headers: Record<string, any>, rawBody: Buffer): Promise<void> {
+  const rawSignature = headers['x-signature'] as string | undefined;
   if (!rawSignature) {
     throw new Error('Missing signature.');
   }
-
   const hmac = crypto.createHmac('sha256', secret);
-  const digest = Buffer.from(hmac.update(request.body).digest('hex'), 'utf8');
+  const digest = Buffer.from(hmac.update(rawBody).digest('hex'), 'utf8');
   const signature = Buffer.from(rawSignature, 'utf8');
   if (!crypto.timingSafeEqual(digest, signature)) {
     throw new Error('Invalid signature.');
   }
+}
+
+async function getRawBody(readable: Readable): Promise<Buffer> {
+  const chunks = [];
+  for await (const chunk of readable) {
+    chunks.push(typeof chunk === 'string' ? Buffer.from(chunk) : chunk);
+  }
+  return Buffer.concat(chunks);
 }
 
 enum WebhookType {
@@ -81,12 +90,17 @@ function save(
 }
 
 export const webhook = allowMethod('POST', async (req, res) => {
-  checkSignature(req);
-  const body = req.body;
-  const {
-    meta: { event_name, custom },
-    data,
-  } = body.data;
-  save(event_name, data, custom);
-  res.status(200).end();
+  try {
+    const rawBody = await getRawBody(req);
+    checkSignature(req.headers, rawBody);
+    const body = JSON.parse(Buffer.from(rawBody).toString('utf8'));
+    const {
+      meta: { event_name, custom_data },
+      data,
+    } = body;
+    save(event_name, data, custom_data);
+    res.status(200).end();
+  } catch (e: any) {
+    res.status(500).send(e.message);
+  }
 });
