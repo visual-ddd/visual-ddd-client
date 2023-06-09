@@ -28,6 +28,7 @@ function request(uri: string, method: RequestMethod, body: Record<string, any> =
     method,
     headers: headers,
     body: finallyBody,
+    mode: 'cors',
   }).then(res => {
     if (res.ok) {
       return res.json().then(json => {

@@ -7,6 +7,7 @@ import { PayModal, usePayModalRef } from '../pay';
 import s from './Plan.module.scss';
 import { IPlanInfo, allowUpgrade, hasExpiredTime, hasFreeLimit, planInfoList } from './planInfo';
 import { clearCache, useCurrentPlan } from './useCurrentPlan';
+import { formatDate, DATE_TIME_FORMAT } from '@wakeapp/utils';
 
 const PlanStatus = () => {
   const { currentPlan: planInfo, isLoading, data } = useCurrentPlan();
@@ -22,6 +23,13 @@ const PlanStatus = () => {
     const num = Math.min(5, ~~(percent / 12)) + 2;
     return `var(--vd-color-danger-${num * 100})`;
   }, [percent]);
+
+  const endTime = useMemo(() => {
+    if (data) {
+      return formatDate(data.renews_at, DATE_TIME_FORMAT);
+    }
+    return '-';
+  }, [data]);
 
   return (
     <Spin spinning={isLoading}>
@@ -46,7 +54,7 @@ const PlanStatus = () => {
         {hasExpiredTime(planInfo) && (
           <div className={s.planStatusInfo}>
             <span>有效期：</span>
-            <div className={s.planStatusInfoText}>{data!.ends_at}</div>
+            <div className={s.planStatusInfoText}>{endTime}</div>
           </div>
         )}
       </Card>

@@ -1,13 +1,10 @@
 import { allowMethod } from '@/lib/api';
-import { assert } from '@/lib/utils';
 import crypto from 'crypto';
 import type { Readable } from 'node:stream';
 import { LemonsqueezyOrderOfWebhook, LemonsqueezySubscriptionOfWebhook } from '../Impl/type';
 import { OrderCollection, SubscriptionCollection } from '../database';
 
 const secret = process.env.LEMON_SECRET!;
-
-assert(secret, '缺少 LEMON SECRET');
 
 async function checkSignature(headers: Record<string, any>, rawBody: Buffer): Promise<void> {
   const rawSignature = headers['x-signature'] as string | undefined;

@@ -83,11 +83,19 @@ export function hasExpiredTime(planInfo: IPlanInfo): boolean {
 
 export function allowUpgrade(currentPlan: IPlanInfo, targetPlan: IPlanInfo): boolean {
   if (currentPlan.Identifier === PlanIdentity.None) {
-    return true;
+    return currentPlan.Identifier !== PlanIdentity.None;
   }
+
+  if (targetPlan.Identifier === PlanIdentity.None) {
+    return false;
+  }
+
   return currentPlan.Identifier !== targetPlan.Identifier;
 }
 
 export function allowSubscribe(currentPlan: IPlanInfo, targetPlan: IPlanInfo): boolean {
-  return true;
+  if (currentPlan.Identifier !== PlanIdentity.None) {
+    return false;
+  }
+  return targetPlan.Identifier !== PlanIdentity.None;
 }

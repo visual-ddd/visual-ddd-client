@@ -10,7 +10,7 @@ import {
 export function getSubscriptionInfo(): Promise<ListAllSubscriptionsResult>;
 export function getSubscriptionInfo(id: string): Promise<SubscriptionsResult>;
 export async function getSubscriptionInfo(id?: string): Promise<SubscriptionsResult | ListAllSubscriptionsResult> {
-  const url = '/v1/subscription-invoices';
+  const url = '/v1/subscriptions';
   if (id) {
     return get(`${url}/${id}`);
   }
@@ -54,7 +54,7 @@ export async function unPauseSubscription(id: string): Promise<UpdateSubscriptio
     data: {
       id,
       attributes: {
-        pause:  null,
+        pause: null,
       },
     },
   });

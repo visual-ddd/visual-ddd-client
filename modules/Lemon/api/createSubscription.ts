@@ -14,20 +14,15 @@ import {
 import { ProductResult } from '../Impl/type';
 import { getVariantByProduct } from '../Impl/variant';
 import { SubscriptionCollection } from '../database';
-
-export enum PlanIdentity {
-  None = 'None',
-  Base = 'Base',
-  Plus = 'Plus',
-  PlusMax = 'PlusMax',
-}
+import { PlanIdentity } from '../enum';
 
 // TODO 返回数据后转化
 async function get(userId: string): Promise<any | null> {
   assert(userId, '缺少用户ID');
   const subscriptionId = (await SubscriptionCollection.get(userId))?.id;
   if (subscriptionId) {
-    return getSubscriptionInfoAPI(subscriptionId);
+    const res = await getSubscriptionInfoAPI(subscriptionId);
+    return res.data.attributes;
   }
   return null;
 }
