@@ -1,24 +1,9 @@
-import { getRedisClient } from '@/modules/redis';
 import memoize from 'lodash/memoize';
 import { FreeAccountRateLimit } from './FreeAccountRateLimit';
 
+import { CacheStorageInMemory, getPersistenceCacheStorage } from '@/modules/storage';
 import { AllSupportedModel } from '../constants';
 import { GTP35RateLimit } from './GPT35RateLimit';
-import { CacheStorageInMemory, CacheStorageInRedis } from '@/modules/storage';
-
-export function getPersistenceCacheStorage<T>(namespace: string) {
-  const client = getRedisClient();
-
-  if (client == null) {
-    console.warn('redis client is null, fallback to memory cache storage');
-    return new CacheStorageInMemory<T>();
-  }
-
-  return new CacheStorageInRedis<T>({
-    client,
-    namespace,
-  });
-}
 
 /**
  * 免费账号限制

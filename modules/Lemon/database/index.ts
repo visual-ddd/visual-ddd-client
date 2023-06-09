@@ -1,9 +1,11 @@
-import { CacheStorageInMemory } from '@/modules/storage';
+import { getPersistenceCacheStorage } from '@/modules/storage';
 import { LemonsqueezyOrderOfWebhook, LemonsqueezySubscriptionOfWebhook } from '../Impl/type';
 
 interface Custom {
   custom: Record<string, string>;
 }
 
-export const SubscriptionCollection = new CacheStorageInMemory<LemonsqueezySubscriptionOfWebhook & Custom>();
-export const OrderCollection = new CacheStorageInMemory<LemonsqueezyOrderOfWebhook & Custom>();
+export const SubscriptionCollection = getPersistenceCacheStorage<LemonsqueezySubscriptionOfWebhook & Custom>(
+  '@subscription@'
+);
+export const OrderCollection = getPersistenceCacheStorage<LemonsqueezyOrderOfWebhook & Custom>('@order@');
