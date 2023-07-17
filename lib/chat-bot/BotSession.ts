@@ -14,6 +14,12 @@ export interface BotSessionOptions {
   name?: string;
   system?: string;
   removable?: boolean;
+
+  /**
+   * 模型
+   */
+  model?: string;
+
   /**
    * 模型温度，默认 0.7
    */
@@ -54,6 +60,9 @@ export class BotSession implements IDisposable, IDestroyable {
   @observable
   system: string;
 
+  @observable
+  chatModel?: string;
+
   /**
    * 是否支持删除
    */
@@ -86,6 +95,7 @@ export class BotSession implements IDisposable, IDestroyable {
     this.removable = options.removable ?? true;
     this.temperature = options.temperature;
     this.maxContextLength = options.maxContextLength;
+    this.chatModel = options.model;
 
     makeObservable(this);
     makeAutoBindThis(this);
@@ -117,6 +127,9 @@ export class BotSession implements IDisposable, IDestroyable {
         metaInfo: {
           get temperature() {
             return self.temperature;
+          },
+          get model() {
+            return self.chatModel;
           },
           get maxContextLength() {
             return self.maxContextLength;
@@ -174,6 +187,12 @@ export class BotSession implements IDisposable, IDestroyable {
     this.save();
   }
 
+  @mutation('SAVE_CHAT_MODEL', false)
+  setChatModel(chatModel: string) {
+    this.chatModel = chatModel;
+    this.save();
+  }
+
   /**
    * 设置最大消息数
    * @param maxContextLength
@@ -191,6 +210,7 @@ export class BotSession implements IDisposable, IDestroyable {
     this.removable = data.removable;
     this.temperature = data.temperature;
     this.maxContextLength = data.maxContextLength;
+    this.chatModel = data.model;
   }
 
   private getDataToSave(): BotSessionStorage {
@@ -198,6 +218,7 @@ export class BotSession implements IDisposable, IDestroyable {
       uuid: this.uuid,
       name: this.name,
       system: this.system,
+      model: this.chatModel,
       removable: this.removable,
       temperature: this.temperature,
       maxContextLength: this.maxContextLength,

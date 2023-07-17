@@ -51,6 +51,11 @@ export async function checkPlanLimit(planName: PlanName, params: RequestControlP
  * @returns
  */
 export async function getCurrentPlan(account: string) {
+  if (process.env.NODE_ENV === 'development') {
+    // 方便调试
+    return PlanName.ProMax;
+  }
+
   return PlanName.Free;
 }
 

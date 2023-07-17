@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react';
-import { Drawer, Slider } from 'antd';
+import { Drawer, Slider, Select } from 'antd';
 import { useMemo, useState } from 'react';
 import Image from 'next/image';
 import { usePrompt } from '@/lib/components/Prompt';
@@ -18,6 +18,7 @@ import { DEFAULT_TITLE, MAX_CONTEXT_MESSAGE, TEMPERATURE } from '../constants';
 
 export interface ContentProps {
   onToggleSidebar?: () => void;
+  models?: string[];
 }
 
 const Item = observer(function Item(props: { item: BotSession; active: boolean }) {
@@ -62,7 +63,7 @@ const Item = observer(function Item(props: { item: BotSession; active: boolean }
 });
 
 export const Content = observer(function Content(props: ContentProps) {
-  const { onToggleSidebar } = props;
+  const { onToggleSidebar, models } = props;
   const store = useBotSessionStoreContext();
   const [showPrompt, promptHolder] = usePrompt();
   const [showSetting, setShowSetting] = useState(false);
@@ -161,6 +162,26 @@ export const Content = observer(function Content(props: ContentProps) {
             <div className={classNames(s.settingItem, 'u-pointer')} onClick={handleEditSystem}>
               修改主题
             </div>
+
+            {!!models?.length && (
+              <div className={s.settingItem}>
+                <label>模型: </label>
+                <Select
+                  value={store.currentActiveSession?.chatModel}
+                  placeholder="选择模型"
+                  onChange={e => store.currentActiveSession?.setChatModel(e)}
+                >
+                  {models.map(i => {
+                    return (
+                      <Select.Option key={i} value={i}>
+                        {i}
+                      </Select.Option>
+                    );
+                  })}
+                </Select>
+              </div>
+            )}
+
             <div className={s.settingItem}>
               <label>温度: {temperature}</label>
               <Slider

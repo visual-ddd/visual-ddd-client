@@ -14,3 +14,4 @@ export * from './wakeadmin-form';
 export * from './vision';
 export * from './subject';
 export * from './free-usage';
+export * from './models';

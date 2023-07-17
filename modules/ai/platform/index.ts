@@ -1,9 +1,11 @@
 import { assert, randomPick } from '@/lib/utils';
+import memoize from 'lodash/memoize';
 
 import { AzureChatCompletionSupport } from './AzureChatCompletionSupport';
 import { OpenAIChatCompletionSupport } from './OpenAIChatCompletionSupport';
 import { OpenAISupportImplement } from './OpenAISupportImplement';
 import { ApiConfiguration, ChatCompletionSupport, OpenAISupport } from './types';
+import { ChatModel } from '../constants';
 
 const OPEN_AI_SUPPORT: OpenAISupport[] = [];
 const CHAT_COMPLETION_SUPPORT: ChatCompletionSupport[] = [];
@@ -40,6 +42,23 @@ parseApiConfiguration(AI_CONFIGURATION);
 export function getChatCompletionSupport() {
   return randomPick(CHAT_COMPLETION_SUPPORT);
 }
+
+/**
+ * 获取所有支持的模型
+ */
+export const getSupportedModels = memoize((): ChatModel[] => {
+  const list: ChatModel[] = [];
+
+  for (const i of CHAT_COMPLETION_SUPPORT) {
+    for (const m of i.models) {
+      if (!list.includes(m)) {
+        list.push(m);
+      }
+    }
+  }
+
+  return list;
+});
 
 /**
  * 获取 OpenAI API 支持

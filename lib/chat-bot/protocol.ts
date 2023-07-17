@@ -82,6 +82,11 @@ export interface IBot {
   getSystemPrompt(): string | undefined;
 
   /**
+   * 获取模型
+   */
+  getModel(): string | undefined;
+
+  /**
    * 获取模型温度
    */
   getTemperature(): number | undefined;
