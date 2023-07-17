@@ -64,14 +64,23 @@ export interface ErrorResponse {
 
 /**
  * ChatGPT 模型
+ * ChatGPT 会定期废弃一些模型 https://platform.openai.com/docs/deprecations
+ * 所以这里我们就不耦合具体时间段的模型了
  */
 export enum ChatModel {
   GPT3_5_TURBO = 'gpt-3.5-turbo',
-  GPT3_5_TURBO_0301 = 'gpt-3.5-turbo-0301',
+
+  /**
+   * 16K 版本
+   */
+  GPT3_5_TURBO_16K = 'gpt-3.5-turbo-16k',
+
+  /**
+   * 最大支持 8 k
+   */
   GPT_4 = 'gpt-4',
-  GPT_4_0314 = 'gpt-4-0314',
+
   GPT_4_32K = 'gpt-4-32k',
-  GPT_4_32K_0314 = 'gpt-4-32k-0314',
 }
 
 /**
@@ -87,9 +96,7 @@ export const DEFAULT_MAX_TOKEN = 4096;
 
 export const MAX_TOKENS: Record<ChatModel, number> = {
   [ChatModel.GPT3_5_TURBO]: 4096,
-  [ChatModel.GPT3_5_TURBO_0301]: 4096,
+  [ChatModel.GPT3_5_TURBO_16K]: 16384,
   [ChatModel.GPT_4]: 8192,
-  [ChatModel.GPT_4_0314]: 8192,
   [ChatModel.GPT_4_32K]: 32768,
-  [ChatModel.GPT_4_32K_0314]: 32768,
 };
