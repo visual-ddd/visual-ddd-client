@@ -30,7 +30,7 @@ export function parseApiConfiguration(config: string) {
 const AI_CONFIGURATION = process.env.AI_CONFIGURATION as string;
 
 if (!AI_CONFIGURATION) {
-  assert(AI_CONFIGURATION, 'AI_CONFIGURATION is not defined');
+  console.warn('AI_CONFIGURATION is not defined');
 }
 
 parseApiConfiguration(AI_CONFIGURATION);
