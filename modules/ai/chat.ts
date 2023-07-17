@@ -4,7 +4,7 @@ import { assert, isAbort } from '@/lib/utils';
 
 import { createFailResponse } from '../backend-node';
 
-import { countToken, normalizeModel } from './encoding';
+import { countToken } from './encoding';
 import { ChatModel, DEFAULT_MAX_TOKEN, MAX_TOKENS, ChatOptions, ErrorResponse } from './constants';
 import { ChatCompletion, ChatCompletionInStream } from './types';
 import { getChatCompletionSupport } from './platform';
@@ -37,10 +37,9 @@ export function getResponseContent(response: ChatCompletion) {
  * }
  */
 export async function chat(options: ChatOptions) {
-  let { model = ChatModel.GPT3_5_TURBO_0301, source, pipe, ...other } = options;
+  let { model = ChatModel.GPT3_5_TURBO, source, pipe, ...other } = options;
   assert(source.session.content, '会话信息不存在');
 
-  model = normalizeModel(model);
   const token = countToken(options.messages, model);
   const maxToken = MAX_TOKENS[model] ?? DEFAULT_MAX_TOKEN;
 
