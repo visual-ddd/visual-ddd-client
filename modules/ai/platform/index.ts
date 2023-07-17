@@ -31,9 +31,9 @@ const AI_CONFIGURATION = process.env.AI_CONFIGURATION as string;
 
 if (!AI_CONFIGURATION) {
   console.warn('AI_CONFIGURATION is not defined');
+} else {
+  parseApiConfiguration(AI_CONFIGURATION);
 }
-
-parseApiConfiguration(AI_CONFIGURATION);
 
 /**
  * 获取聊天补全 API 支持
