@@ -2,11 +2,8 @@ import { Avatar, Dropdown } from 'antd';
 import { observer } from 'mobx-react';
 import { useRouter } from 'next/router';
 
-import { hasFreeLimit } from '../plan/planInfo';
-import { UpgradeModal, useCurrentPlan } from '../plan/shared';
 import { useLogout, useSession } from '../session';
 import { AccountSetting, useAccountSetting } from '../user/AccountSetting';
-import { RocketIcon } from './RocketIcon';
 import s from './UserCard.module.scss';
 
 /**
@@ -22,21 +19,9 @@ export const UserCard = observer(function UserCard(props: UserCardProps) {
   const session = useSession();
   const logout = useLogout();
   const accountSetting = useAccountSetting();
-  const { currentPlan } = useCurrentPlan();
 
   return (
     <div className={s.root}>
-      <div className={s.plan}>
-        <UpgradeModal />
-        <RocketIcon className={s.planLogo}></RocketIcon>
-        <div>
-          <div className={s.planName}> 当前订阅方案： {currentPlan.name}</div>
-          {
-            /** todo 实时计算 */
-            hasFreeLimit(currentPlan) && <div className={s.planUsage}> 20 / 30 请求</div>
-          }
-        </div>
-      </div>
       <Dropdown
         menu={{
           items: session.session

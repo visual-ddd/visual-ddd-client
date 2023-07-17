@@ -16,9 +16,9 @@ export const Header = () => {
         <Link href="/chat" className={s.menu}>
           Chat
         </Link>
-        <Link href="/price" className={s.menu}>
+        {/* <Link href="/price" className={s.menu}>
           订阅
-        </Link>
+        </Link> */}
         <Link href="/dashboard" className={s.menu}>
           登录
         </Link>
