@@ -11,7 +11,7 @@ import { useEffect } from 'react';
 import { Modal, message } from 'antd';
 import { UpgradeModal, useUpgradeModal } from '@/modules/plan/shared';
 
-export function Chat() {
+export function Chat(props: { models?: string[] }) {
   const upgradeModalRef = useUpgradeModal();
 
   const openUpgradeModalIfNeed = (msg: string) => {
@@ -70,7 +70,7 @@ export function Chat() {
   return (
     <>
       <UpgradeModal ref={upgradeModalRef} />
-      <ChatPage sidebarFooter={<UserCard />} />
+      <ChatPage sidebarFooter={<UserCard />} models={props.models} />
     </>
   );
 }

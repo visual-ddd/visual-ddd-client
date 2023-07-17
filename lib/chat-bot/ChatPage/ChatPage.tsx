@@ -13,6 +13,7 @@ import s from './ChatPage.module.scss';
 
 export interface ChatPageProps {
   sidebarFooter?: React.ReactNode;
+  models?: string[];
 }
 
 const steps: TourStepProps[] = [
@@ -42,7 +43,7 @@ const steps: TourStepProps[] = [
  * 独立聊天页面
  */
 export const ChatPage = observer(function ChatPage(props: ChatPageProps) {
-  const { sidebarFooter } = props;
+  const { sidebarFooter, models } = props;
   const [showTour, setShowTour] = useState(false);
   const pageModel = useMemo(() => {
     return new BotPageModel();
@@ -82,7 +83,7 @@ export const ChatPage = observer(function ChatPage(props: ChatPageProps) {
           minSize={180}
         >
           <Sidebar footer={sidebarFooter} />
-          <Content onToggleSidebar={pageModel.toggleSidebarFolded} />
+          <Content models={models} onToggleSidebar={pageModel.toggleSidebarFolded} />
         </SplitBox>
       </div>
       <Tour steps={steps} open={showTour} onClose={() => setShowTour(false)} type="primary" />

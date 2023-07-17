@@ -1,3 +1,5 @@
+import { ChatModel } from '../constants';
+
 /**
  * openai chat completion 支持
  * TODO: 模型支持声明
@@ -29,6 +31,11 @@ export interface ChatCompletionSupport {
    * 获取报头
    */
   headers: Headers;
+
+  /**
+   * 所有支持的模型
+   */
+  models: ChatModel[];
 }
 
 export interface OpenAISupport {
@@ -56,10 +63,15 @@ export interface OpenAiApiConfiguration {
    * 一个唯一的 id 用来标识用户
    */
   user?: string;
+
+  /**
+   * 支持的模型, 默认支持 gpt-3.5-turbo
+   */
+  models?: ChatModel[];
 }
 
 /**
- * azure api
+ * azure api 接口配置
  */
 export interface AzureApiConfiguration {
   type: 'azure';

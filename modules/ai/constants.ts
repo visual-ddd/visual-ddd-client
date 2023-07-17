@@ -83,6 +83,13 @@ export enum ChatModel {
   GPT_4_32K = 'gpt-4-32k',
 }
 
+export const ALL_SUPPORTED_CHAT_MODEL = [
+  ChatModel.GPT3_5_TURBO,
+  ChatModel.GPT3_5_TURBO_16K,
+  ChatModel.GPT_4,
+  ChatModel.GPT_4_32K,
+];
+
 /**
  * 图像模型
  */

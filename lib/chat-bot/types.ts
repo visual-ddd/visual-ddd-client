@@ -13,6 +13,11 @@ export interface BotMeta {
   system: string;
 
   /**
+   * 模型
+   */
+  model?: string;
+
+  /**
    * 模型温度，默认 0.7
    */
   temperature?: number;

@@ -144,6 +144,10 @@ export class BotModel implements IDisposable, IBot, IDestroyable {
     return this.options.metaInfo.temperature;
   }
 
+  getModel(): string | undefined {
+    return this.options.metaInfo.model;
+  }
+
   /**
    * 最大历史消息数
    * @returns

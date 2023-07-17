@@ -2,13 +2,15 @@ import { allowMethod } from '@/lib/api';
 import { createFailResponse } from '@/modules/backend-node';
 import { NextApiHandler } from 'next';
 import { chat } from '../chat';
-import { ChatMessage, ChatRole } from '../constants';
+import { ChatMessage, ChatModel, ChatRole } from '../constants';
 import { withSessionApiRoute } from '@/modules/session/api-helper';
+import { getSupportedModels } from '../platform';
 
 type Payload = {
   system?: string;
   text: string;
   summary?: string;
+  model?: string;
   temperature?: number;
   context: [string, string][];
 };
@@ -21,6 +23,13 @@ export const fallback: NextApiHandler = allowMethod(
     if (payload.text == null) {
       res.status(400).json(createFailResponse(400, 'text is required'));
       return;
+    }
+
+    if (payload.model) {
+      if (getSupportedModels().indexOf(payload.model as any) === -1) {
+        res.status(400).json(createFailResponse(400, `model ${payload.model} is not supported`));
+        return;
+      }
     }
 
     const messages: ChatMessage[] = [];
@@ -57,6 +66,7 @@ export const fallback: NextApiHandler = allowMethod(
       source: req,
       pipe: res,
       messages,
+      model: payload.model as ChatModel,
       temperature: payload.temperature ?? 0.7,
     });
   })
