@@ -148,7 +148,7 @@ ASSISTANT: """
 
 USER: """将B重命名为账号"""
 ASSISTANT: """
-%%updateTable name="B" newName="账号"%%
+%%updateTable name="B" title="账号"%%
 %%renameTable name="B" newName="Account"%%
 """
 

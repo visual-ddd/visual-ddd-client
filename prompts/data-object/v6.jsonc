@@ -1,0 +1,34 @@
+{
+  "name": "mutate_er_tables",
+  "description": "create or update er tables",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "tasks": {
+        "type": "array",
+        "items": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "enum": ["createTable"]
+                }
+              },
+              "required": ["name"]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "enum": ["updateTable"]
+                }
+              },
+              "required": ["name"]
+            }
+          ]
+        }
+      }
+    }
+  }
+}
