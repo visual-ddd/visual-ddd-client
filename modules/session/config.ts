@@ -3,8 +3,13 @@ import { VDSessionEntry } from './types';
 
 export const SESSION_COOKIE_NAME = 'vd-session';
 
+/**
+ * 如果要强制会话失效，需要递增这个的值
+ */
+const BREAK_UID = '0';
+
 export const IRON_SESSION_OPTIONS: IronSessionOptions = {
-  password: process.env.SESSION_SECRET ?? 'DEVELOPMENT_ONLY_PLEASE_CHANGE_ME',
+  password: (process.env.SESSION_SECRET ?? 'DEVELOPMENT_ONLY_PLEASE_CHANGE_ME') + BREAK_UID,
   cookieName: SESSION_COOKIE_NAME,
   cookieOptions: {
     httpOnly: true,

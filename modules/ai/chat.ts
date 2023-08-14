@@ -4,11 +4,12 @@ import { assert, isAbort } from '@/lib/utils';
 
 import { createFailResponse } from '../backend-node';
 
-import { countToken } from './encoding';
+import { countToken, countTokenForString } from './encoding';
 import { ChatModel, DEFAULT_MAX_TOKEN, MAX_TOKENS, ChatOptions, ErrorResponse } from './constants';
 import { ChatCompletion, ChatCompletionInStream } from './types';
 import { getChatCompletionSupport } from './platform';
 import { checkRequest, RequestControlError } from './request-control';
+import { reportUsage } from './usage';
 
 const DONE = '[DONE]';
 
@@ -37,7 +38,7 @@ export function getResponseContent(response: ChatCompletion) {
  * }
  */
 export async function chat(options: ChatOptions) {
-  let { model = ChatModel.GPT3_5_TURBO, source, pipe, ...other } = options;
+  let { model = ChatModel.GPT3_5_TURBO, source, pipe, bzCode, bzDesc, ...other } = options;
   assert(source.session.content, '会话信息不存在');
 
   const token = countToken(options.messages, model);
@@ -122,7 +123,8 @@ export async function chat(options: ChatOptions) {
       );
       return;
     } else if (content.stream && response.headers.get('content-type')?.includes('event-stream')) {
-      // 正常响应
+      // 流响应
+      let completion = '';
       const decoder = new TextDecoder();
       const parser = createParser((evt: ParsedEvent | ReconnectInterval) => {
         if (pipe.closed || pipe.destroyed) {
@@ -138,6 +140,7 @@ export async function chat(options: ChatOptions) {
             const payload = JSON.parse(d) as ChatCompletionInStream;
             const result = getResponseContentInStream(payload);
             pipe.write(Buffer.from(result));
+            completion += result;
             // 这个方法实际上不属于 ServerResponse, 而是 compression 库的，
             // 执行这个方法是为了快速将结果响应到客户端
             // @ts-expect-error
@@ -148,6 +151,19 @@ export async function chat(options: ChatOptions) {
 
       pipe.statusCode = 200;
       pipe.setHeader('Content-Type', 'text/plain');
+      pipe.on('close', () => {
+        if (!completion) {
+          return;
+        }
+
+        reportUsage(source, {
+          model,
+          code: bzCode,
+          desc: bzDesc,
+          requestToken: token,
+          responseToken: countTokenForString(completion, model),
+        });
+      });
 
       for await (const chunk of response.body as any) {
         const txt = decoder.decode(chunk, { stream: true });
@@ -162,6 +178,15 @@ export async function chat(options: ChatOptions) {
       pipe.setHeader('Content-Type', 'text/plain');
       const payload = (await response.json()) as ChatCompletion;
       const result = getResponseContent(payload);
+
+      reportUsage(source, {
+        model,
+        code: bzCode,
+        desc: bzDesc,
+        requestToken: payload.usage.prompt_tokens,
+        responseToken: payload.usage.completion_tokens,
+      });
+
       pipe.write(Buffer.from(result));
       pipe.end();
     } else {

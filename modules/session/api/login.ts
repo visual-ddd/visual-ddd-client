@@ -1,6 +1,6 @@
 import { getRequestURL, parseResponse, parseSetCookie } from '@/modules/backend-node';
 
-import { VDSessionCore } from '../types';
+import { VDSessionCore, VDUser } from '../types';
 import { allowMethod } from '@/lib/api';
 import { withSessionApiRoute } from '../api-helper';
 
@@ -27,7 +27,7 @@ export const login = allowMethod(
       headers: { 'content-type': 'application/json' },
     });
 
-    const result = await response.json();
+    const result = (await response.json()) as { data: VDUser };
 
     try {
       // 成功登录
@@ -51,7 +51,8 @@ export const login = allowMethod(
         // save 会自动合并 set-cookie
         req.session.content = {
           cookies: list,
-          accountNo: loginPayload.accountNo,
+          accountNo: result.data.accountNo,
+          userId: result.data.id,
         } satisfies VDSessionCore;
         await req.session.save();
       }

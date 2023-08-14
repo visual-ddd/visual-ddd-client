@@ -9,12 +9,13 @@ import { PINECONE_API_KEY, PINECONE_ENVIRONMENT, PINECONE_INDEX } from '../confi
 import { getOpenAISupport } from '../platform';
 
 import { chat } from '../chat';
-import { withSessionApiRoute } from '@/modules/session/api-helper';
+import { withWakedataRequestApiRoute } from '@/modules/session/api-helper';
 
 let pineconeStore: PineconeStore;
 
 // TODO: azure 支持
 // TODO: 提取到公共模块
+// TODO: 统计 token
 async function querySimilar(text: string) {
   if (pineconeStore) {
     return pineconeStore.similaritySearch(text, 1);
@@ -53,7 +54,7 @@ async function querySimilar(text: string) {
  */
 export const dddMaster: NextApiHandler = allowMethod(
   'POST',
-  withSessionApiRoute(async (req, res) => {
+  withWakedataRequestApiRoute(async (req, res) => {
     const text = req.body?.text as string;
 
     if (text == null) {
@@ -69,6 +70,8 @@ export const dddMaster: NextApiHandler = allowMethod(
     chat({
       source: req,
       pipe: res,
+      bzCode: 'ddd-master',
+      bzDesc: 'DDD 专家',
       messages: [
         {
           role: 'system',

@@ -2,14 +2,14 @@ import { allowMethod } from '@/lib/api';
 import { createFailResponse } from '@/modules/backend-node';
 import { NextApiHandler } from 'next';
 import { chat } from '../chat';
-import { withSessionApiRoute } from '@/modules/session/api-helper';
+import { withWakedataRequestApiRoute } from '@/modules/session/api-helper';
 
 /**
  * 愿景生成
  */
 export const vision: NextApiHandler = allowMethod(
   'POST',
-  withSessionApiRoute(async (req, res) => {
+  withWakedataRequestApiRoute(async (req, res) => {
     const text = req.body?.text as string;
 
     if (text == null) {
@@ -20,6 +20,8 @@ export const vision: NextApiHandler = allowMethod(
     chat({
       source: req,
       pipe: res,
+      bzCode: 'vision',
+      bzDesc: '愿景生成',
       messages: [
         {
           role: 'system',

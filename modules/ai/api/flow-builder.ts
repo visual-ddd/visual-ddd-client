@@ -2,11 +2,11 @@ import { allowMethod } from '@/lib/api';
 import { createFailResponse } from '@/modules/backend-node';
 import { NextApiHandler } from 'next';
 import { chat } from '../chat';
-import { withSessionApiRoute } from '@/modules/session/api-helper';
+import { withWakedataRequestApiRoute } from '@/modules/session/api-helper';
 
 export const flowBuilder: NextApiHandler = allowMethod(
   'POST',
-  withSessionApiRoute(async (req, res) => {
+  withWakedataRequestApiRoute(async (req, res) => {
     const { text } = req.body as {
       text: string;
     };
@@ -19,6 +19,8 @@ export const flowBuilder: NextApiHandler = allowMethod(
     chat({
       pipe: res,
       source: req,
+      bzCode: 'flow-builder',
+      bzDesc: '流程图绘制',
       messages: [
         {
           role: 'system',

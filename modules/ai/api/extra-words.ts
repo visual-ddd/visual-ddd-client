@@ -2,11 +2,11 @@ import { allowMethod } from '@/lib/api';
 import { createFailResponse } from '@/modules/backend-node';
 import { NextApiHandler } from 'next';
 import { chat } from '../chat';
-import { withSessionApiRoute } from '@/modules/session/api-helper';
+import { withWakedataRequestApiRoute } from '@/modules/session/api-helper';
 
 export const extraWords: NextApiHandler = allowMethod(
   'GET',
-  withSessionApiRoute(async (req, res) => {
+  withWakedataRequestApiRoute(async (req, res) => {
     const text = req.query.text as string;
 
     if (text == null) {
@@ -17,6 +17,8 @@ export const extraWords: NextApiHandler = allowMethod(
     chat({
       source: req,
       pipe: res,
+      bzCode: 'extra-words',
+      bzDesc: '单词提取',
       messages: [
         {
           role: 'system',

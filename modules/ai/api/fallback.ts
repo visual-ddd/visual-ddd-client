@@ -3,7 +3,7 @@ import { createFailResponse } from '@/modules/backend-node';
 import { NextApiHandler } from 'next';
 import { chat } from '../chat';
 import { ChatMessage, ChatModel, ChatRole } from '../constants';
-import { withSessionApiRoute } from '@/modules/session/api-helper';
+import { withWakedataRequestApiRoute } from '@/modules/session/api-helper';
 import { getSupportedModels } from '../platform';
 
 type Payload = {
@@ -17,7 +17,7 @@ type Payload = {
 
 export const fallback: NextApiHandler = allowMethod(
   'POST',
-  withSessionApiRoute(async (req, res) => {
+  withWakedataRequestApiRoute(async (req, res) => {
     const payload = req.body as Payload;
 
     if (payload.text == null) {
@@ -68,6 +68,8 @@ export const fallback: NextApiHandler = allowMethod(
       messages,
       model: payload.model as ChatModel,
       temperature: payload.temperature ?? 0.7,
+      bzCode: 'chat',
+      bzDesc: '聊天',
     });
   })
 );

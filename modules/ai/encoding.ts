@@ -34,6 +34,12 @@ const getEncoding = memoize((model: ChatModel) => {
   return encoding;
 });
 
+export function countTokenForString(message: string, model: ChatModel): number {
+  const encoding = getEncoding(model);
+
+  return encoding.encode(message).length;
+}
+
 export function countToken(messages: ChatMessage[], model: ChatModel): number {
   const encoding = getEncoding(model);
 
