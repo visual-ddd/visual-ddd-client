@@ -14,7 +14,7 @@ if [ -n "$DOCKER_SERVER" ]; then
 elif [ "$STAGE" = 'PRODUCTION' ]; then
   export DOCKER_SERVER=ccr.ccs.tencentyun.com
 else
-  export DOCKER_SERVER=172.26.59.200
+  export DOCKER_SERVER=zh-harbor.wakedata.net
 fi
 
 env
