@@ -2,11 +2,11 @@ import { allowMethod } from '@/lib/api';
 import { createFailResponse } from '@/modules/backend-node';
 import { NextApiHandler } from 'next';
 import { chat } from '../chat';
-import { withSessionApiRoute } from '@/modules/session/api-helper';
+import { withWakedataRequestApiRoute } from '@/modules/session/api-helper';
 
 export const dataObject: NextApiHandler = allowMethod(
   'POST',
-  withSessionApiRoute(async (req, res) => {
+  withWakedataRequestApiRoute(async (req, res) => {
     const { text, conception } = req.body as {
       text: string;
       conception: string;
@@ -20,6 +20,8 @@ export const dataObject: NextApiHandler = allowMethod(
     chat({
       pipe: res,
       source: req,
+      bzCode: 'data-object',
+      bzDesc: '数据对象建模',
       messages: [
         {
           role: 'system',

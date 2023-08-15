@@ -3,11 +3,11 @@ import { createFailResponse } from '@/modules/backend-node';
 import { delay } from '@wakeapp/utils';
 import { NextApiHandler } from 'next';
 import { chat } from '../chat';
-import { withSessionApiRoute } from '@/modules/session/api-helper';
+import { withWakedataRequestApiRoute } from '@/modules/session/api-helper';
 
 export const echo: NextApiHandler = allowMethod(
   'POST',
-  withSessionApiRoute(async (req, res) => {
+  withWakedataRequestApiRoute(async (req, res) => {
     const text = req.body?.text as string;
 
     if (text == null) {
@@ -20,6 +20,8 @@ export const echo: NextApiHandler = allowMethod(
     chat({
       source: req,
       pipe: res,
+      bzCode: 'echo',
+      bzDesc: 'echo',
       messages: [
         {
           role: 'system',

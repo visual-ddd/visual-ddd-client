@@ -51,6 +51,16 @@ export interface ChatOptions {
    * 代理的请求对象
    */
   source: NextApiRequest;
+
+  /**
+   * 业务编码
+   */
+  bzCode: string;
+
+  /**
+   * 业务描述
+   */
+  bzDesc: string;
 }
 
 export interface ErrorResponse {

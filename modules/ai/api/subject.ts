@@ -2,14 +2,14 @@ import { allowMethod } from '@/lib/api';
 import { createFailResponse } from '@/modules/backend-node';
 import { NextApiHandler } from 'next';
 import { chat } from '../chat';
-import { withSessionApiRoute } from '@/modules/session/api-helper';
+import { withWakedataRequestApiRoute } from '@/modules/session/api-helper';
 
 /**
  * 总结聊天的主题
  */
 export const subject: NextApiHandler = allowMethod(
   'POST',
-  withSessionApiRoute(async (req, res) => {
+  withWakedataRequestApiRoute(async (req, res) => {
     const text = req.body?.text as string;
 
     if (text == null) {
@@ -20,6 +20,8 @@ export const subject: NextApiHandler = allowMethod(
     chat({
       source: req,
       pipe: res,
+      bzCode: 'subject',
+      bzDesc: '总结聊天的主题',
       messages: [
         {
           role: 'system',

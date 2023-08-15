@@ -2,11 +2,11 @@ import { allowMethod } from '@/lib/api';
 import { createFailResponse } from '@/modules/backend-node';
 import { NextApiHandler } from 'next';
 import { chat } from '../chat';
-import { withSessionApiRoute } from '@/modules/session/api-helper';
+import { withWakedataRequestApiRoute } from '@/modules/session/api-helper';
 
 export const dataObjectBuilder: NextApiHandler = allowMethod(
   'GET',
-  withSessionApiRoute(async (req, res) => {
+  withWakedataRequestApiRoute(async (req, res) => {
     const prompt = req.query.prompt as string;
 
     if (prompt == null) {
@@ -17,6 +17,8 @@ export const dataObjectBuilder: NextApiHandler = allowMethod(
     chat({
       pipe: res,
       source: req,
+      bzCode: 'data-object-builder',
+      bzDesc: '数据库建模',
       messages: [
         {
           role: 'system',

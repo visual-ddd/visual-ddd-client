@@ -2,11 +2,11 @@ import { allowMethod } from '@/lib/api';
 import { createFailResponse } from '@/modules/backend-node';
 import { NextApiHandler } from 'next';
 import { chat } from '../chat';
-import { withSessionApiRoute } from '@/modules/session/api-helper';
+import { withWakedataRequestApiRoute } from '@/modules/session/api-helper';
 
 export const wordsToUbiquitousLanguage: NextApiHandler = allowMethod(
   'GET',
-  withSessionApiRoute(async (req, res) => {
+  withWakedataRequestApiRoute(async (req, res) => {
     const words = req.query.words as string | undefined;
 
     if (words == null) {
@@ -23,6 +23,8 @@ export const wordsToUbiquitousLanguage: NextApiHandler = allowMethod(
     chat({
       source: req,
       pipe: res,
+      bzCode: 'words-to-ubiquitous-language',
+      bzDesc: '单词转通用语言',
       messages: [
         {
           role: 'system',

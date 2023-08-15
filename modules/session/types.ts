@@ -77,6 +77,11 @@ export interface VDSessionCore {
   accountNo: string;
 
   /**
+   * 用户 id
+   */
+  userId: number;
+
+  /**
    * 当前入口状态
    */
   state?: VDSessionState;

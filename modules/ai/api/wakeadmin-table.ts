@@ -2,14 +2,14 @@ import { allowMethod } from '@/lib/api';
 import { createFailResponse } from '@/modules/backend-node';
 import { NextApiHandler } from 'next';
 import { chat } from '../chat';
-import { withSessionApiRoute } from '@/modules/session/api-helper';
+import { withWakedataRequestApiRoute } from '@/modules/session/api-helper';
 
 /**
  * 表格代码生成
  */
 export const wakeadminTable: NextApiHandler = allowMethod(
   'POST',
-  withSessionApiRoute(async (req, res) => {
+  withWakedataRequestApiRoute(async (req, res) => {
     const { types, prompt } = req.body as {
       types: string;
       prompt: string;
@@ -23,6 +23,8 @@ export const wakeadminTable: NextApiHandler = allowMethod(
     chat({
       source: req,
       pipe: res,
+      bzCode: 'wakeadmin-table',
+      bzDesc: 'wakeadmin 表格代码生成',
       messages: [
         {
           role: 'system',

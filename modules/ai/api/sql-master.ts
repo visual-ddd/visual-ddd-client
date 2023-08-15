@@ -3,11 +3,11 @@ import { createFailResponse } from '@/modules/backend-node';
 import { NextApiHandler } from 'next';
 
 import { chat } from '../chat';
-import { withSessionApiRoute } from '@/modules/session/api-helper';
+import { withWakedataRequestApiRoute } from '@/modules/session/api-helper';
 
 export const sqlMaster: NextApiHandler = allowMethod(
   'POST',
-  withSessionApiRoute(async (req, res) => {
+  withWakedataRequestApiRoute(async (req, res) => {
     const { conception, prompt } = req.body as { conception: string; prompt: string };
 
     if (conception == null || prompt == null) {
@@ -18,6 +18,8 @@ export const sqlMaster: NextApiHandler = allowMethod(
     chat({
       source: req,
       pipe: res,
+      bzCode: 'sql-master',
+      bzDesc: 'SQL 专家',
       messages: [
         {
           role: 'system',
