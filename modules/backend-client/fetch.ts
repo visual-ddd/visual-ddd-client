@@ -1,13 +1,24 @@
 import { parseResponse as parseResponse, isResponseError } from '@wakeapp/wakedata-backend';
 import { gotoLogin, isUnauth } from './helper';
 
-export async function parseRestError(response: Response): Promise<void> {
+export async function parseRestError(response: Response) {
   if (response.ok) {
     throw new Error(`只能在 !response.ok 时调用该接口`);
   }
 
   const json = await response.json();
-  parseResponse(json);
+
+  try {
+    return parseResponse(json);
+  } catch (err) {
+    // 副作用
+    if (isResponseError(err)) {
+      if (isUnauth(err.code)) {
+        gotoLogin();
+      }
+    }
+    throw err;
+  }
 }
 
 export { isResponseError };

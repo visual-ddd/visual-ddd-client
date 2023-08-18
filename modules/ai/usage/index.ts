@@ -40,22 +40,26 @@ export function reportUsage(req: NextApiRequest, usage: Usage) {
     return;
   }
 
-  req.request(
-    '/wd/visual/web/ai-usage-statistics/create',
-    {
-      account: session.accountNo,
-      userId: session.userId,
-      businessCode: usage.code,
-      businessDesc: usage.desc,
-      model: usage.model,
-      reportSource: 'client',
-      requestTime: formatDate(new Date()),
-      requestTokens: usage.requestToken,
-      responseTokens: usage.responseToken,
-      totalTokens: usage.requestToken + usage.responseToken,
-    },
-    {
-      method: 'POST',
-    }
-  );
+  req
+    .request(
+      '/wd/visual/web/ai-usage-statistics/create',
+      {
+        account: session.accountNo,
+        userId: session.userId,
+        businessCode: usage.code,
+        businessDesc: usage.desc,
+        model: usage.model,
+        reportSource: 'client',
+        requestTime: formatDate(new Date()),
+        requestTokens: usage.requestToken,
+        responseTokens: usage.responseToken,
+        totalTokens: usage.requestToken + usage.responseToken,
+      },
+      {
+        method: 'POST',
+      }
+    )
+    .catch(err => {
+      console.error('AI 用量统计失败', err);
+    });
 }

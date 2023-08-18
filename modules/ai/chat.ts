@@ -3,6 +3,7 @@ import { ParsedEvent, ReconnectInterval, createParser } from 'eventsource-parser
 import { assert, isAbort } from '@/lib/utils';
 
 import { createFailResponse } from '../backend-node';
+import { handleRequestError } from '../session/api-helper';
 
 import { countToken, countTokenForString } from './encoding';
 import { ChatModel, DEFAULT_MAX_TOKEN, MAX_TOKENS, ChatOptions, ErrorResponse } from './constants';
@@ -48,7 +49,9 @@ export async function chat(options: ChatOptions) {
   if (token > maxToken) {
     pipe.status(400).json(createFailResponse(400, '消息超长'));
 
-    captureException(new Error(`ChatGPT 消息超长: ${JSON.stringify(options)}`));
+    const msg = `ChatGPT 消息超长: ${JSON.stringify(options)}`;
+    console.warn(msg);
+    captureException(new Error(msg));
     return;
   }
 
@@ -58,6 +61,7 @@ export async function chat(options: ChatOptions) {
       account: source.session.content!.accountNo,
       model,
       amount: token,
+      rawRequest: source,
     });
 
     const support = getChatCompletionSupport();
@@ -200,7 +204,7 @@ export async function chat(options: ChatOptions) {
     } else if (RequestControlError.isRequestControlError(err)) {
       // 请求控制限制
       pipe.status(400).json(createFailResponse(err.code, err.message));
-    } else {
+    } else if (!handleRequestError(err, source, pipe)) {
       pipe.statusCode = 500;
       pipe.json(createFailResponse(500, `请求异常: ${(err as Error).message}`));
       console.error(err);

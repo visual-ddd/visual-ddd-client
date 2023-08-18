@@ -50,7 +50,11 @@ export async function checkPlanLimit(planName: PlanName, params: RequestControlP
  * @param account
  * @returns
  */
-export async function getCurrentPlan(account: string) {
+export async function getCurrentPlan(params: RequestControlParams) {
+  // 检查回话
+  // @ts-expect-error
+  const userInfo = await params.rawRequest.request('/wd/visual/web/account/login/get-account-info', {});
+
   if (process.env.NODE_ENV === 'development') {
     // 方便调试
     return PlanName.ProMax;
@@ -64,7 +68,8 @@ export async function getCurrentPlan(account: string) {
  * @param params
  */
 export const checkPlan: RequestControlHandler = async params => {
-  const planName = await getCurrentPlan(params.account);
+  const planName = await getCurrentPlan(params);
+
   await checkPlanFeature(planName, params);
   await checkPlanLimit(planName, params);
 };
