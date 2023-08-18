@@ -1,5 +1,5 @@
 import { withIronSessionApiRoute } from 'iron-session/next';
-import { NextApiHandler } from 'next';
+import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import { createFailResponse, isResponseError, request } from '@/modules/backend-node';
 
 import { IRON_SESSION_OPTIONS, RESTFUL_API_PREFIX, WAKEDATA_CODE_MAP } from './config';
@@ -20,6 +20,23 @@ declare module 'http' {
   interface IncomingMessage {
     request: Request;
   }
+}
+
+export function handleRequestError(err: unknown, req: NextApiRequest, res: NextApiResponse) {
+  if (isResponseError(err)) {
+    const code = err.code;
+    const isRest = req.url?.startsWith(RESTFUL_API_PREFIX);
+
+    if (isRest) {
+      const status = code in WAKEDATA_CODE_MAP ? WAKEDATA_CODE_MAP[code] : 500;
+      res.status(status);
+    }
+    res.json(createFailResponse(code, err.message));
+
+    return true;
+  }
+
+  return false;
 }
 
 /**
@@ -44,16 +61,7 @@ export function withWakedataRequestApiRoute(handler: NextApiHandler): NextApiHan
       // handler 内部调用 request 可能会报错，这里拦截处理
       return await handler(req, res);
     } catch (err) {
-      if (isResponseError(err)) {
-        const code = err.code;
-        const isRest = req.url?.startsWith(RESTFUL_API_PREFIX);
-
-        if (isRest) {
-          const status = code in WAKEDATA_CODE_MAP ? WAKEDATA_CODE_MAP[code] : 500;
-          res.status(status);
-        }
-        res.json(createFailResponse(code, err.message));
-      } else {
+      if (!handleRequestError(err, req, res)) {
         throw err;
       }
     }

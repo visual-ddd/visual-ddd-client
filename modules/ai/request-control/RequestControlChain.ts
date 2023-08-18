@@ -1,6 +1,7 @@
 /**
  * 请求控制
  */
+import { NextApiRequest } from 'next';
 import { AllSupportedModel } from '../constants';
 import { RequestControlErrorCode } from '../shared';
 
@@ -26,6 +27,11 @@ export interface RequestControlParams {
    * 请求数量, 这是一个抽象的概念。对于文本生成类可能是 token 数量，对于画图类可能是图片生成时间
    */
   amount: number;
+
+  /**
+   * 原始请求
+   */
+  rawRequest: NextApiRequest;
 }
 
 /**
