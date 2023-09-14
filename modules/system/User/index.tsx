@@ -4,7 +4,6 @@ import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
 import { Button, message, Popconfirm } from 'antd';
 import { useRef } from 'react';
 
-import { ReChargeModal, useReChargeModalRef } from '@/modules/user/Wallet/ReCharge';
 import { UserDetail } from '../types';
 import { CreateUser, useCreateUser } from './Create';
 import { UpdateUser, useUpdateUser } from './Update';
@@ -15,7 +14,6 @@ export function User() {
   const actionRef = useRef<ActionType>();
   const createRef = useCreateUser();
   const updateRef = useUpdateUser();
-  const rechargeModalRef = useReChargeModalRef();
 
   useLayoutTitle('用户管理');
 
@@ -77,10 +75,6 @@ export function User() {
         <Button type="link" key="editTable" onClick={() => updateRef.current?.open(record)}>
           编辑
         </Button>,
-
-        <Button type="link" key="charger" onClick={() => rechargeModalRef.current?.open(record.id)}>
-          充值
-        </Button>,
       ],
     },
   ];
@@ -121,7 +115,6 @@ export function User() {
 
       <CreateUser ref={createRef} onFinish={handleRefresh} />
       <UpdateUser ref={updateRef} onFinish={handleRefresh} />
-      <ReChargeModal ref={rechargeModalRef}></ReChargeModal>
     </>
   );
 }

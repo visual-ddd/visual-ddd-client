@@ -53,7 +53,7 @@ BACKEND=http://172.26.57.49:8080 pnpm dev
 - [ ] Chat 根据环境变量开关动态开启
 - [ ] 所有相关镜像修改名称并推送到公共仓库
 - [ ] Github Actions 集成
-- [ ] 移除 LEMON 集成
+- [x] 移除 LEMON 集成
 - [ ] README 优化
 
 低优先级
@@ -75,9 +75,6 @@ BACKEND=http://172.26.57.49:8080 pnpm dev
 | AI_CONFIGURATION     | OPENAI 配置，配置项见 ./modules/ai/platform/index.ts                                |
 | REQUIRE_INVITATION   | 是否需要邀请码注册, 默认 false                                                      |
 | REDIS                | Redis 链接协议, 例如 `redis[s]://[[username][:password]@][host][:port][/db-number]` |
-| LEMON_SECRET         | lemonsqueezy webhook 的密钥                                                         |
-| LEMON_API_KEY        | lemonsqueezy api key                                                                |
-| LEMON_STORE_ID       | lemonsqueezy 商店 id 默认会使用第一个商店                                           |
 
 # 构建时环境变量
 
