@@ -35,7 +35,7 @@ FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package.json .npmrc pnpm-lock.yaml* ./
-RUN npm i -g pnpm@7 && pnpm install 
+RUN npm i -g pnpm && pnpm install 
 
 
 # 1. 第一步构建编译
