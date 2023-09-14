@@ -1,6 +1,6 @@
-# yjs 信令服务器
+# yjs WebRTC 信令服务器
 
-**deprecated**
+**deprecated!!!**
 
 # Build
 

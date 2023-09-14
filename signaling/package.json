@@ -1,7 +1,8 @@
 {
   "name": "signaling",
   "version": "1.0.0",
-  "description": "",
+  "description": "yjs WebRTC 信令服务器, 已废弃，使用 Hocuspocus 形式",
+  "deprecated": true,
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
