@@ -1,5 +1,5 @@
 const { build, publish } = require('@wakeadmin/docker-build');
-const { DOCKER_IMAGE_PREFIX } = require('./shared');
+const { DOCKER_IMAGE_PREFIX, DOCKER_VERSION, DOCKER_PUBLISH_LATEST } = require('./shared');
 
 const imageName = `${DOCKER_IMAGE_PREFIX}/signaling`;
 
