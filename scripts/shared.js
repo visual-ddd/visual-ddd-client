@@ -1,6 +1,6 @@
 const pkg = require('../package.json');
 
-const PRODUCTION = process.env.STAGE === 'PRODUCTION';
+const IS_PRE = process.env.IS_PRE;
 const NOW = new Date();
 const BUILD_ID =
   process.env.BUILD_ID ??
@@ -12,15 +12,16 @@ const DOCKER_IMAGE_NAME = pkg.imageName;
 // 镜像版本
 let DOCKER_VERSION = pkg.version;
 
-if (!PRODUCTION) {
-  // 非正式版本使用 `-snapshot-BUILD`
-  DOCKER_VERSION = DOCKER_VERSION + `-snapshot-${BUILD_ID}`;
+if (IS_PRE) {
+  DOCKER_VERSION = DOCKER_VERSION + `-pre`;
 }
 
 const WORKLOAD = pkg.workload;
-const DOCKER_PUBLISH_LATEST = process.env.DOCKER_PUBLISH_LATEST !== 'false';
+
+const DOCKER_PUBLISH_LATEST = !IS_PRE;
 
 const DOCKER_IMAGE_PREFIX = `visual-ddd`;
+
 module.exports = {
   DOCKER_IMAGE_NAME,
   DOCKER_VERSION,

@@ -9,13 +9,21 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set node version to 16
+      - name: Set node version to 18
         uses: actions/setup-node@v3
         with:
           node-version: 18
-      - name: build docker
+        - name: Check if the latest release is a prerelease
+        id: check_release
+        run: |
+          IS_PRERELEASE=$(curl --silent "https://api.github.com/repos/$GITHUB_REPOSITORY/releases/latest" \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" | \
+            jq -r .prerelease)
+          echo "IS_PRERELEASE=$IS_PRERELEASE" >> $GITHUB_ENV
+    
+     - name: build docker
         env:
-          STAGE: PRODUCTION
+          IS_PRE: ${{env.IS_PRERELEASE}}
           DOCKER_SERVER: ${{secrets.DOCKER_SERVER}}
           DOCKER_USER: ${{secrets.DOCKER_USER}}
           DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
