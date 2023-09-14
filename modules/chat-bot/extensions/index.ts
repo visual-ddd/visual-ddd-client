@@ -3,7 +3,7 @@ import { registerSubjectSummary } from '@/lib/chat-bot';
 import './global';
 // import './echo';
 import './ddd-master';
-import './dall-e';
+// import './dall-e';
 
 registerSubjectSummary(async text => {
   const res = await fetch('/api/rest/ai/subject', {

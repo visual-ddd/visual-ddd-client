@@ -47,8 +47,8 @@ BACKEND=http://172.26.57.49:8080 pnpm dev
 
 # TODO
 
-- [ ] Dall-E 以可配置的形式支持
-- [ ] 移除 PINECONE 集成
+- [x] 移除 Dall-E
+- [x] 移除 PINECONE 集成
 - [ ] 缓存优化，支持 Redis
 - [ ] Chat 根据环境变量开关动态开启
 - [ ] 所有相关镜像修改名称并推送到公共仓库
@@ -58,6 +58,7 @@ BACKEND=http://172.26.57.49:8080 pnpm dev
 
 低优先级
 
+- [ ] DSL 获取性能优化
 - [ ] 升级到 app router
 
 <br>
