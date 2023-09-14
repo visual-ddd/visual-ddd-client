@@ -20,7 +20,7 @@ const WORKLOAD = pkg.workload;
 
 const DOCKER_PUBLISH_LATEST = !IS_PRE;
 
-const DOCKER_IMAGE_PREFIX = `visual-ddd`;
+const DOCKER_IMAGE_PREFIX = `visualddd`;
 
 module.exports = {
   DOCKER_IMAGE_NAME,
