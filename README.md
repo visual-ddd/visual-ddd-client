@@ -1,6 +1,8 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Visual DDD 客户端
 
-## Getting Started
+## 本地开发
+
+当前项目基于 Next.js 13(非 app router)
 
 First, run the development server:
 
@@ -18,7 +20,7 @@ You can start editing the page by modifying `pages/index.tsx`. The page auto-upd
 
 The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
 
-## Learn More
+### Learn More
 
 To learn more about Next.js, take a look at the following resources:
 
@@ -26,30 +28,6 @@ To learn more about Next.js, take a look at the following resources:
 - [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
-
-## TODO
-
-- NodeYMap 单元测试
-- rule 包含 label, 更好的信息提示
-- layout 支持折叠
-- edge/node selected 状态高亮
-- 组件树换行优化
-- 被其他成员选中的不能修改
-- 持久化 viewState
-- 验证性能优化
-- 边拖入
-- 无连接桩连接交互
-- updateProperty debounce 发布 yjs 事件, 使用合并事件形式
-- 多节点框选显示优化
-- 拷贝控制
-- node edit
-- label edit
 
 # 本地开发
 
@@ -66,6 +44,19 @@ BACKEND=http://172.26.57.49:8080 pnpm dev
 - dall-e 限制
 - ip 限制
 - 模型限额
+
+# TODO
+
+- [ ] Dall-E 以可配置的形式支持
+- [ ] 移除 PINECONE 集成
+- [ ] 缓存优化，支持 Redis
+- [ ] Chat 根据环境变量开关动态开启
+- [ ] 所有相关镜像修改名称并推送到公共仓库
+- [ ] Github Actions 集成
+- [ ] 移除 LEMON 集成
+- [ ] README 优化
+
+<br>
 
 # 部署配置
 
@@ -106,7 +97,10 @@ BACKEND=http://172.26.57.49:8080 pnpm dev
 
 SWAGGER https://ddd.wakedt.cn/wd/visual/doc.html
 
-# OPENAI nginx 代理服务器配置
+<br>
+<br>
+
+# OPENAI nginx 代理服务器配置示例
 
 ```
        location ~* /(v1|dashboard) {
