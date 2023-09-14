@@ -1,18 +1,20 @@
 import { assert } from '@/lib/utils';
 import { AzureApiConfiguration, ChatCompletionSupport } from './types';
-import { ChatModel } from '../constants';
+import { ALL_SUPPORTED_CHAT_MODEL, ChatModel } from '../constants';
 
 export function validateAzure(config: AzureApiConfiguration) {
+  assert(config.model, 'model is not defined');
+  assert(ALL_SUPPORTED_CHAT_MODEL.includes(config.model), `model ${config.model} is not supported`);
   assert(config.basePath, 'endpoint is not defined');
   assert(config.key, 'key is not defined');
 }
 
 export class AzureChatCompletionSupport implements ChatCompletionSupport {
-  // TODO: 后面支持 azure 的其他模型，默认仅支持 3.5
   readonly models: ChatModel[] = [ChatModel.GPT3_5_TURBO];
 
   constructor(private config: AzureApiConfiguration) {
     validateAzure(config);
+    this.models = [config.model];
   }
 
   get endpoint() {
@@ -29,7 +31,7 @@ export class AzureChatCompletionSupport implements ChatCompletionSupport {
 
   get query() {
     return {
-      'api-version': this.config.apiVersion || '2023-03-15-preview',
+      'api-version': this.config.apiVersion || '2023-07-01-preview',
     };
   }
 

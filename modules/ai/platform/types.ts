@@ -75,13 +75,20 @@ export interface OpenAiApiConfiguration {
  */
 export interface AzureApiConfiguration {
   type: 'azure';
+
   /**
-   * 当前默认为 2023-03-15-preview
+   * 使用的模型
+   */
+  model: ChatModel;
+
+  /**
+   * 当前默认为 2023-07-01-preview
    */
   apiVersion?: string;
 
   /**
-   * 请求路径, https://{your-resource-name}.openai.azure.com/openai/deployments/{deployment-id}
+   * 请求路径, 例如 https://{your-resource-name}.openai.azure.com/openai/deployments/{deployment-id}
+   * 可以从 Azure OpenAI Studio 中获取这些信息
    */
   basePath: string;
 
