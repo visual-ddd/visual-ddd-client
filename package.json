@@ -2,7 +2,7 @@
   "name": "visual-ddd",
   "version": "0.5.2",
   "description": "DDD 可视化前端",
-  "imageName": "wkfe/visual-ddd",
+  "imageName": "visual-ddd/client",
   "workload": "wakeadmin-visual-ddd",
   "private": true,
   "engines": {

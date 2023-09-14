@@ -20,10 +20,12 @@ if (!PRODUCTION) {
 const WORKLOAD = pkg.workload;
 const DOCKER_PUBLISH_LATEST = process.env.DOCKER_PUBLISH_LATEST !== 'false';
 
+const DOCKER_IMAGE_PREFIX = `visual-ddd`;
 module.exports = {
   DOCKER_IMAGE_NAME,
   DOCKER_VERSION,
   PRODUCTION,
   WORKLOAD,
   DOCKER_PUBLISH_LATEST,
+  DOCKER_IMAGE_PREFIX,
 };

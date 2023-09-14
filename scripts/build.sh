@@ -31,3 +31,11 @@ node ./scripts/docker-publish.js
 
 # 触发 Rancher 更新
 node ./scripts/rancher-update.js
+
+cd ./collab-server
+node ../scripts/build-publish-collab-server.js
+cd -
+
+cd ./signaling
+node ../scripts/build-publish-signaling.js
+cd -
