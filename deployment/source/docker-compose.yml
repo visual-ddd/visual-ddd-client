@@ -13,9 +13,6 @@ services:
     environment:
       SECRET: '<%= SECRET %>'
       BACKEND: http://server:8080
-      #PINECONE_INDEX:
-      #PINECONE_ENVIRONMENT:
-      #PINECONE_API_KEY:
       #AI_CONFIGURATION: AI 配置
       #NODE_OPTIONS: NODEJS 配置项 # --inspect=0.0.0.0
       REDIS: redis://redis:6379/1

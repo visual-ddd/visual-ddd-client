@@ -21,28 +21,19 @@ spec:
             - containerPort: 9229
               name: debug
           env:
+            # 后端服务地址
             - name: BACKEND
               value: {{ .BACKEND }}
+            # session 密钥
             - name: SESSION_SECRET
               value: {{ .SECRET }}
+            # NODE 配置
             # 配置为 --inspect=0.0.0.0 打开debugger 服务
             - name: NODE_OPTIONS
               value: {{ .NODE_OPTIONS }}
-            - name: OPENAI_API_KEY
-              value: {{ .OPENAI_API_KEY }}
-            - name: OPENAI_BASE_PATH
-              value: {{ .OPENAI_BASE_PATH }}
-            - name: PINECONE_API_KEY
-              value: {{ .PINECONE_API_KEY }}
-            - name: PINECONE_ENVIRONMENT
-              value: {{ .PINECONE_ENVIRONMENT }}
-            - name: PINECONE_INDEX
-              value: {{ .PINECONE_INDEX }}
-        # 信令服务(废弃)
-        - name: visual-ddd-signaling
-          image: wkfe/visual-ddd-signaling:latest
-          ports:
-            - containerPort: 8080
+            # AI 配置
+            - name: AI_CONFIGURATION
+              value: {{ .AI_CONFIGURATION }}
         # 多人协作服务
         - name: visual-ddd-collab
           image: wkfe/visual-ddd-collab:latest
@@ -64,20 +55,6 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 3000
-  type: NodePort
----
-# 信令服务(废弃)
-apiVersion: v1
-kind: Service
-metadata:
-  name: visual-ddd-signaling
-spec:
-  selector:
-    app: visual-ddd-client
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 8080
   type: NodePort
 ---
 # 多人协作服务
@@ -124,12 +101,6 @@ spec:
               serviceName: visual-ddd-client
               servicePort: 80
             path: /
-            pathType: ImplementationSpecific
-          # 信令服务(废弃)
-          - backend:
-              serviceName: visual-ddd-signaling
-              servicePort: 80
-            path: /signaling
             pathType: ImplementationSpecific
           - backend:
               serviceName: visual-ddd-collab

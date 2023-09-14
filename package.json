@@ -5,6 +5,10 @@
   "imageName": "wkfe/visual-ddd",
   "workload": "wakeadmin-visual-ddd",
   "private": true,
+  "engines": {
+    "node": ">=16.0.0",
+    "pnpm": ">=8.0.0"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -33,7 +37,6 @@
     "@dnd-kit/utilities": "^3.2.1",
     "@dqbd/tiktoken": "^1.0.7",
     "@hocuspocus/provider": "^2.0.6",
-    "@pinecone-database/pinecone": "^0.0.12",
     "@sentry/nextjs": "^7.52.1",
     "@tiptap/core": "2.0.2",
     "@tiptap/extension-bubble-menu": "^2.0.3",

@@ -1,4 +1,6 @@
-# 生成器 DEMO
+# 增量生成器 DEMO
+
+TODO: 计划中
 
 POC
 
