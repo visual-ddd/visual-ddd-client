@@ -19,9 +19,13 @@ export const IRON_SESSION_OPTIONS: IronSessionOptions = {
 
 export const RESTFUL_API_PREFIX = '/api/rest';
 
-export const API_AUTH_WHITE_LIST = ['/login', '/logout', '/register', '/rest/subscription/webhook'].map(
-  i => `/api${i}`
-);
+export const API_AUTH_WHITE_LIST = [
+  '/login',
+  '/logout',
+  '/register',
+  '/rest/ai/chat-supported',
+  '/rest/subscription/webhook',
+].map(i => `/api${i}`);
 
 export const ENTRY_PREFIX = [
   // 三大模块

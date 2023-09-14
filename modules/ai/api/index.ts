@@ -15,3 +15,4 @@ export * from './vision';
 export * from './subject';
 export * from './free-usage';
 export * from './models';
+export * from './chat-supported';

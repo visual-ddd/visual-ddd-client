@@ -30,7 +30,7 @@ export function parseApiConfiguration(config: string) {
 const AI_CONFIGURATION = process.env.AI_CONFIGURATION as string;
 
 if (!AI_CONFIGURATION) {
-  console.warn('AI_CONFIGURATION is not defined');
+  console.warn('AI_CONFIGURATION 未定义, AI 相关的功能将不可用');
 } else {
   parseApiConfiguration(AI_CONFIGURATION);
 }
@@ -59,6 +59,14 @@ export const getSupportedModels = memoize((): ChatModel[] => {
 
   return list;
 });
+
+/**
+ * 是否支持 chat
+ * @returns
+ */
+export function chatSupported() {
+  return getSupportedModels().length > 0;
+}
 
 /**
  * 获取 OpenAI API 支持

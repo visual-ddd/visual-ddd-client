@@ -1,11 +1,13 @@
+import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 
 import s from './index.module.scss';
 import cover from './pic.png';
-import Link from 'next/link';
+import { useChatSupported } from '../chat-bot/hooks';
 
 export const Header = () => {
+  const aiSupported = useChatSupported();
   return (
     <header className={s.header}>
       <div className={s.logo}>
@@ -13,9 +15,11 @@ export const Header = () => {
         <span>Visual DDD</span>
       </div>
       <div className={s.menus}>
-        <Link href="/chat" className={s.menu}>
-          Chat
-        </Link>
+        {aiSupported && (
+          <Link href="/chat" className={s.menu}>
+            Chat
+          </Link>
+        )}
         {/* <Link href="/price" className={s.menu}>
           订阅
         </Link> */}

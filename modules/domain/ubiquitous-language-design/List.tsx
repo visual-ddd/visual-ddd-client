@@ -14,6 +14,7 @@ import { Import } from '@/lib/components/Import';
 
 import s from './List.module.scss';
 import { AIImport } from './AIImport';
+import { useChatSupported } from '@/modules/chat-bot/hooks';
 
 export interface UbiquitousLanguageProps {
   model: IUbiquitousLanguageModel;
@@ -121,6 +122,7 @@ export const UbiquitousLanguage = observer(function UbiquitousLanguage(props: Ub
   const { model } = props;
   const readonly = model.readonly;
   const sortable = !!(!model.filter && model.moveItem && !readonly);
+  const aiSupported = useChatSupported();
 
   const columns = useMemo<TableColumnType<UbiquitousLanguageItem>[]>(() => {
     const editable = (key: keyof UbiquitousLanguageItem, title: string): TableColumnType<UbiquitousLanguageItem> => {
@@ -266,11 +268,13 @@ export const UbiquitousLanguage = observer(function UbiquitousLanguage(props: Ub
             </Popconfirm>
           )}
 
-          <AIImport onImport={unshiftItems}>
-            <Button size="small" disabled={readonly} icon={<BulbOutlined />}>
-              AI 导入
-            </Button>
-          </AIImport>
+          {aiSupported && (
+            <AIImport onImport={unshiftItems}>
+              <Button size="small" disabled={readonly} icon={<BulbOutlined />}>
+                AI 导入
+              </Button>
+            </AIImport>
+          )}
           {!!model.importExcel && (
             <Import
               template="/excel-templates/ubiquitous-language.xlsx"
