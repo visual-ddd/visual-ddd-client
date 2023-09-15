@@ -113,3 +113,7 @@ SWAGGER https://ddd.wakedt.cn/wd/visual/doc.html
 ```
 
 证书可以使用 certbot 创建，详见：https://certbot.eff.org/instructions?ws=nginx&os=ubuntufocal
+
+# License
+
+This repository is available under the [Visual-DDD Open Source License](./LICENSE).
