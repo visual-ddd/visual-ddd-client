@@ -5,6 +5,7 @@ import { transformToDSL, createDoc } from './dsl';
 
 const { addCacheWithRaw, handleGet, handleGetBase64, handleGetVector, handleSave, handleSaveV2, handleGetDiff } =
   createYjsStore({
+    namespace: 'scenario',
     transformYDocToDSL: doc => {
       return transformToDSL(doc);
     },

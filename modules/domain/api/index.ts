@@ -5,6 +5,7 @@ import { createYjsStore } from '@/lib/yjs-store-api';
 
 const { addCacheWithRaw, handleGet, handleGetBase64, handleGetVector, handleSave, handleSaveV2, handleGetDiff } =
   createYjsStore({
+    namespace: 'domain',
     transformYDocToDSL: doc => {
       return transformToDSL(doc);
     },

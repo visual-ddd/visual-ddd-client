@@ -1,6 +1,5 @@
 import { Doc as YDoc, encodeStateVectorFromUpdate, encodeStateAsUpdate, mergeUpdates, diffUpdate } from 'yjs';
 import { NextApiRequest } from 'next';
-import LRUCache from 'lru-cache';
 import { withWakedataRequestApiRoute } from '@/modules/session/api-helper';
 import { createFailResponse } from '@/modules/backend-node';
 
@@ -8,6 +7,7 @@ import { allowMethod } from '../api';
 
 import { readBuffer, createDocFromUpdate, readBufferFromMultipart } from './utils';
 import { RawYjsData, readRawData, toRawData } from './raw';
+import { getPersistenceCacheStorage } from '@/modules/storage';
 
 export interface YjsDocMetaInfo {
   name: string;
@@ -16,47 +16,57 @@ export interface YjsDocMetaInfo {
 }
 
 export function createYjsStore(options: {
+  namespace: string;
   transformYDocToDSL: (doc: YDoc) => any;
   createYDoc: (params: YjsDocMetaInfo) => YDoc;
   onSave: (params: { id: string; dsl: string; raw: RawYjsData; request: NextApiRequest }) => Promise<void>;
   onRequest: (params: { id: string; request: NextApiRequest }) => Promise<{ raw?: RawYjsData; meta: YjsDocMetaInfo }>;
 }) {
-  const { transformYDocToDSL, createYDoc, onSave, onRequest } = options;
+  const { namespace, transformYDocToDSL, createYDoc, onSave, onRequest } = options;
 
   /**
    * 载荷缓存
    */
-  const cache = new LRUCache<string, Buffer>({
-    max: 200,
+  const cache = getPersistenceCacheStorage<Buffer>({
+    redisOptions: {
+      namespace: `yjs-store-${namespace}`,
+      binary: true,
+      // ONE DAY IN ms
+      ttl: 24 * 60 * 60 * 1000,
+    },
+    fallback: 'lru',
+    lruCacheOptions: {
+      max: 200,
+    },
   });
 
-  function addCacheWithBase64(id: string, dataInBase64: string) {
+  async function addCacheWithBase64(id: string, dataInBase64: string) {
     const buf = Buffer.from(dataInBase64, 'base64');
 
-    cache.set(id, buf);
+    await cache.set(id, buf);
 
     return buf;
   }
 
-  function addCacheWithBase64IfNeed(id: string, dataInBase64: string) {
-    if (cache.has(id)) {
+  async function addCacheWithBase64IfNeed(id: string, dataInBase64: string) {
+    if (await cache.has(id)) {
       return;
     }
 
     const buf = Buffer.from(dataInBase64, 'base64');
 
-    cache.set(id, buf);
+    await cache.set(id, buf);
 
     return buf;
   }
 
-  function addCacheWithBuffer(id: string, buffer: Buffer) {
-    cache.set(id, buffer);
+  async function addCacheWithBuffer(id: string, buffer: Buffer) {
+    await cache.set(id, buffer);
 
     return buffer;
   }
 
-  function addCacheWithRaw(id: string, raw: RawYjsData) {
+  async function addCacheWithRaw(id: string, raw: RawYjsData) {
     const data = readRawData(raw);
     return addCacheWithBuffer(id, data);
   }
@@ -83,31 +93,32 @@ export function createYjsStore(options: {
 
   const getData = async (req: NextApiRequest): Promise<Buffer> => {
     const id = req.query.id as string;
+    const cacheData = await cache.get(id);
 
-    if (cache.has(id)) {
+    if (cacheData) {
       // 存在缓存
-      return cache.get(id)!;
+      return cacheData;
+    }
+
+    // 远程获取结果
+    const detail = await onRequest({ id, request: req });
+
+    if (!detail.raw) {
+      // 创建模板
+      const doc = createYDoc(detail.meta);
+      const update = encodeStateAsUpdate(doc);
+      const buf = Buffer.from(update);
+      await addCacheWithBuffer(id, buf);
+
+      // 保存
+      await save(req, id, buf);
+
+      return buf;
     } else {
-      // 远程获取结果
-      const detail = await onRequest({ id, request: req });
+      // 转换为二进制
+      const buf = await addCacheWithRaw(id, detail.raw);
 
-      if (!detail.raw) {
-        // 创建模板
-        const doc = createYDoc(detail.meta);
-        const update = encodeStateAsUpdate(doc);
-        const buf = Buffer.from(update);
-        addCacheWithBuffer(id, buf);
-
-        // 保存
-        await save(req, id, buf);
-
-        return buf;
-      } else {
-        // 转换为二进制
-        const buf = addCacheWithRaw(id, detail.raw);
-
-        return buf;
-      }
+      return buf;
     }
   };
 
@@ -182,9 +193,10 @@ export function createYjsStore(options: {
       update = diff;
     }
 
-    let old = cache.get(id);
+    let old = await cache.get(id);
+
     try {
-      const buff = addCacheWithBuffer(id, Buffer.from(update));
+      const buff = await addCacheWithBuffer(id, Buffer.from(update));
 
       const dsl = await save(req, id, buff);
 
@@ -192,9 +204,9 @@ export function createYjsStore(options: {
     } catch (err) {
       // 恢复旧数据
       if (old) {
-        cache.set(id, old);
+        await cache.set(id, old);
       } else {
-        cache.delete(id);
+        await cache.delete(id);
       }
 
       throw err;
@@ -243,15 +255,15 @@ export function createYjsStore(options: {
     }
 
     // 执行保存
-    let old = cache.get(id);
+    let old = await cache.get(id);
     try {
-      const buff = addCacheWithBuffer(id, Buffer.from(update));
+      const buff = await addCacheWithBuffer(id, Buffer.from(update));
 
       await save(req, id, buff);
 
       // 返回远程的增量更新
       let diff: Uint8Array | undefined;
-      const fullUpdate = cache.get(id) || buff;
+      const fullUpdate = (await cache.get(id)) || buff;
       if (parts.vector) {
         // 增量返回
         diff = diffUpdate(fullUpdate, parts.vector);
@@ -263,9 +275,9 @@ export function createYjsStore(options: {
     } catch (err) {
       // 恢复旧数据
       if (old) {
-        cache.set(id, old);
+        await cache.set(id, old);
       } else {
-        cache.delete(id);
+        await cache.delete(id);
       }
 
       throw err;

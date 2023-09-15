@@ -1,4 +1,4 @@
-import type { RedisClientType } from 'redis';
+import { RedisClientType, commandOptions } from 'redis';
 import { CacheStorageInRedis } from './CacheStorageInRedis';
 
 export interface CacheStorageInRedisOptions {
@@ -88,7 +88,8 @@ describe('CacheStorageInRedis', () => {
 
       const result = await cacheStorageBinary.get(key);
 
-      expect(client.get).toHaveBeenCalledWith('test:key');
+      expect(client.get).toHaveBeenCalledWith(commandOptions({ returnBuffers: true }), 'test:key');
+
       expect(Buffer.isBuffer(result)).toBeTruthy();
     });
 
@@ -101,6 +102,18 @@ describe('CacheStorageInRedis', () => {
 
       expect(client.get).toHaveBeenCalledWith('test:key');
       expect(result).toBeNull();
+    });
+  });
+
+  describe('default ttl', () => {
+    it('should set value to Redis with expiration', async () => {
+      const key = 'key';
+      const value = 123;
+      cacheStorage.setTTL(5000);
+
+      await cacheStorage.set(key, value);
+
+      expect(client.setEx).toHaveBeenCalledWith('test:key', 5, '123');
     });
   });
 });

@@ -1,6 +1,6 @@
 import { assert } from '@/lib/utils';
 import { Buffer } from 'node:buffer';
-import { RedisClientType } from 'redis';
+import { RedisClientType, commandOptions } from 'redis';
 import { ICacheStorage } from './ICacheStorage';
 
 export interface CacheStorageInRedisOptions {
@@ -10,6 +10,11 @@ export interface CacheStorageInRedisOptions {
    * 是否作为二进制存储，默认为 false
    */
   binary?: boolean;
+
+  /**
+   * 默认存活时间，单位为毫秒
+   */
+  ttl?: number;
 }
 
 /**
@@ -22,33 +27,48 @@ export class CacheStorageInRedis<T> implements ICacheStorage<T> {
   private namespace: string;
   private binaryMode: boolean;
   private client: RedisClientType;
+  private ttl?: number;
+
+  setTTL(ttl: number) {
+    this.ttl = ttl;
+  }
 
   constructor(options: CacheStorageInRedisOptions) {
     this.namespace = options.namespace;
     this.client = options.client;
     this.binaryMode = options.binary ?? false;
+    this.ttl = options.ttl;
   }
 
   async set(key: string, value: T, expired?: number): Promise<void> {
     const client = await this.getClient();
     const serialized = this.serialize(value);
+    const ttl = this.getExpireTime(expired);
+    const k = this.getKey(key);
 
-    if (expired && Number.isFinite(expired)) {
-      const ex = expired - Date.now();
-      if (ex > 0) {
-        await client.setEx(this.getKey(key), ex / 1000, serialized);
-        return;
-      }
+    if (ttl != null && ttl > 0) {
+      await client.setEx(k, ttl, serialized);
+      return;
     }
 
-    await client.set(this.getKey(key), serialized);
+    await client.set(k, serialized);
   }
 
   async get(key: string): Promise<T | undefined> {
     const client = await this.getClient();
-    const result = await client.get(this.getKey(key));
+    if (this.binaryMode) {
+      const result = await client.get(
+        commandOptions({
+          returnBuffers: true,
+        }),
+        this.getKey(key)
+      );
 
-    return this.deserialize(result);
+      return this.deserialize(result);
+    } else {
+      const result = await client.get(this.getKey(key));
+      return this.deserialize(result);
+    }
   }
 
   async has(key: string): Promise<boolean> {
@@ -91,6 +111,21 @@ export class CacheStorageInRedis<T> implements ICacheStorage<T> {
     } else {
       assert(typeof value === 'string', 'value must be a string');
       return JSON.parse(value);
+    }
+  }
+
+  /**
+   * @param expired 外部输入的毫秒时间戳
+   * @return 返回秒
+   */
+  private getExpireTime(expired?: number) {
+    if (expired != null && Number.isFinite(expired)) {
+      const ex = expired - Date.now();
+      return ex / 1000;
+    }
+
+    if (this.ttl != null) {
+      return this.ttl / 1000;
     }
   }
 
