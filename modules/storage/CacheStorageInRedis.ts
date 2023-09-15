@@ -51,6 +51,20 @@ export class CacheStorageInRedis<T> implements ICacheStorage<T> {
     return this.deserialize(result);
   }
 
+  async has(key: string): Promise<boolean> {
+    const client = await this.getClient();
+    const result = await client.exists(this.getKey(key));
+
+    return !!result;
+  }
+
+  async delete(key: string): Promise<boolean> {
+    const client = await this.getClient();
+    const result = await client.del(this.getKey(key));
+
+    return !!result;
+  }
+
   private serialize(value: T) {
     if (this.binaryMode) {
       assert(Buffer.isBuffer(value), 'value must be a buffer');

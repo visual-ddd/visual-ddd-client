@@ -4,4 +4,6 @@ export interface ICacheStorage<T> {
    */
   set(key: string, value: T, expired?: number): Promise<void>;
   get(key: string): Promise<T | undefined>;
+  has(key: string): Promise<boolean>;
+  delete(key: string): Promise<boolean>;
 }

@@ -15,6 +15,7 @@ describe('CacheStorageInMemory', () => {
     const result = await cacheStorage.get(key);
 
     expect(result).toBe(value);
+    expect(cacheStorage.has(key)).resolves.toBe(true);
   });
 
   it('should return undefined for a non-existent key', async () => {
@@ -36,5 +37,15 @@ describe('CacheStorageInMemory', () => {
     await cacheStorage.set(key, value, Date.now() + 1000);
     const result2 = await cacheStorage.get(key);
     expect(result2).toBe('testValue');
+  });
+
+  it('should delete a key', async () => {
+    const key = 'testKey';
+    const value = 'testValue';
+
+    await cacheStorage.set(key, value);
+    await expect(cacheStorage.has(key)).resolves.toBe(true);
+    await cacheStorage.delete(key);
+    await expect(cacheStorage.has(key)).resolves.toBe(false);
   });
 });

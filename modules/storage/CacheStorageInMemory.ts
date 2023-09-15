@@ -20,4 +20,12 @@ export class CacheStorageInMemory<T> implements ICacheStorage<T> {
       }
     }
   }
+
+  async has(key: string): Promise<boolean> {
+    return this.storage.has(key);
+  }
+
+  async delete(key: string): Promise<boolean> {
+    return this.storage.delete(key);
+  }
 }

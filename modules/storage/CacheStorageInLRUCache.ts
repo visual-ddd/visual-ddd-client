@@ -24,6 +24,14 @@ export class CacheStorageInLRUCache<T> implements ICacheStorage<T> {
     return this.storage.get(key, { allowStale: false });
   }
 
+  async has(key: string): Promise<boolean> {
+    return this.storage.has(key);
+  }
+
+  async delete(key: string): Promise<boolean> {
+    return this.storage.delete(key);
+  }
+
   getRemainTTL(key: string) {
     return this.storage.getRemainingTTL(key);
   }
