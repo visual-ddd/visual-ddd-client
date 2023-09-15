@@ -32,6 +32,8 @@ export interface CacheContainerOptions<T extends ISerializable<any>> {
 /**
  * 缓存容器
  * 按照一定的策略对缓存进行管理
+ * TODO: 支持 redis
+ * @deprecated 使用该类会导致服务程序无法伸缩，因为状态会存储在当前实例，会导致实例之间的状态不一致
  *
  * @template T 缓存的内容
  */

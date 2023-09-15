@@ -11,7 +11,7 @@ import { GTP4RateLimit } from './GPT4RateLimit';
  * 仅支持终生 30 次请求
  */
 export const getFreeAccountRateLimit = memoize(() => {
-  const cacheStorage = getPersistenceCacheStorage<object>('free-account-rate-limit');
+  const cacheStorage = getPersistenceCacheStorage<object>({ redisOptions: { namespace: 'free-account-rate-limit' } });
 
   return new FreeAccountRateLimit(cacheStorage);
 });

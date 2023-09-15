@@ -1,5 +1,8 @@
 import { ICacheStorage } from './ICacheStorage';
 
+/**
+ * 内存缓存
+ */
 export class CacheStorageInMemory<T> implements ICacheStorage<T> {
   private storage = new Map<string, [T, number | undefined]>();
 
