@@ -1,14 +1,25 @@
 # 初始化配置文件
 
-进入 deployment 目录
-拷贝 variable.sample.jsonc 为 variable.jsonc
-修改 variable.jsonc 中的配置
-执行 node ./generate.js 生成配置文件
-进入 output 目录
-按需修改配置文件
-使用 scp 将配置文件同步到服务器
+1. 拷贝 variable.sample.jsonc 为 variable.jsonc
 
-# 第一步 Let Encrypt 证书准备
+2. 修改 variable.jsonc 中的配置
+
+3. 执行 node ./generate.js 生成配置文件
+
+4. 进入 output 目录
+
+5. 按需修改配置文件
+
+6. 使用 scp 将配置文件同步到服务器
+
+<br>
+<br>
+
+# 第一步 证书准备
+
+<br>
+
+## 使用 Let Encrypt 证书
 
 ```shell
 docker compose -f /path/to/docker-compose-prepare.yml up certbot
@@ -30,7 +41,9 @@ crontab -e
 0 0 1,15 * * /usr/bin/docker compose -f /path/to/docker-compose-prepare.yml up --no-deps certbot && /usr/bin/docker compose restart nginx
 ```
 
-# 第一步 开发环境，不使用 Let's Encrypt 证书
+<br>
+
+## 不使用 Let's Encrypt 证书
 
 创建自签名证书
 
@@ -39,6 +52,9 @@ docker compose -f /path/to/docker-compose-prepare-dev.yml up
 ```
 
 详见：https://github.com/FiloSottile/mkcert:
+
+<br>
+<br>
 
 # 第二步 启动
 

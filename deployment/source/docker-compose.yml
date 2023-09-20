@@ -5,7 +5,7 @@ version: '3.9'
 services:
   # 客户端
   client:
-    image: registry.cn-guangzhou.aliyuncs.com/visual-ddd/chat-dream-art:latest
+    image: visualddd/client:latest
     restart: always
     ports:
       - '3000:3000'
@@ -19,7 +19,7 @@ services:
 
   # 多人协作服务器
   collab:
-    image: wkfe/visual-ddd-collab:latest
+    image: visualddd/collab-server:latest
     ports:
       - '9090:9090'
     environment:
@@ -27,7 +27,8 @@ services:
 
   # 后端服务
   server:
-    image: registry.cn-guangzhou.aliyuncs.com/visual-ddd/server:latest
+    # TODO 后端服务镜像不确定
+    image: visualddd/server:latest
     restart: always
     ports:
       - '8080:8080'

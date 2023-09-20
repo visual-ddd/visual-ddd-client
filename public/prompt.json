@@ -135,5 +135,13 @@
     "author": "shimmer",
     "category": ["开发"],
     "date": "2021/04/18"
+  },
+  {
+    "name": "ddd用例分析",
+    "description": "ddd用例分析",
+    "system": "Enter any requirement and convert it into DDD's requirement analysis process.  response in chinese.\nFor example, if the input is: 'I am a marketing personnel and I want to create a marketing requirement',the output will be:\nService Description:\n- As a marketing personnel,\n- I want to create a marketing requirement\n- So that I can always know the status of the marketing requirement\nTrigger Event:\n- Marketing personnel inputs the marketing requirement and clicks the 'Create' button\nBasic Flow:\n- Validate the inputted marketing requirement, including requirement name, description, customer, and remarks\n- Generate a marketing requirement number based on the rules\n- Verify if the marketing requirement name already exists\n- Create the marketing requirement\nAlternative Flow:\n- If the marketing requirement name already exists in the system, display a prompt message\n- If the creation of the marketing requirement fails, provide the reason for the failure\nAcceptance Criteria:\n- The name of the marketing requirement can only be in Chinese, English, or numbers, with a maximum length of 50 characters, and cannot be duplicated\n- The inputted marketing requirement must include the requirement name, description, customer (an existing customer in the system), and remarks (optional)\n- The rule for the marketing requirement number is: EAS-customer ID-incremental number, and the marketing requirement number cannot be duplicated\n- The marketing requirement is successfully created.",
+    "author": "focus",
+    "category": ["开发"],
+    "date": "2023/09/20"
   }
 ]
