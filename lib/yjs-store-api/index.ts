@@ -103,6 +103,7 @@ export function createYjsStore(options: {
     // 远程获取结果
     const detail = await onRequest({ id, request: req });
 
+    // TODO: 是否需要加锁？
     if (!detail.raw) {
       // 创建模板
       const doc = createYDoc(detail.meta);

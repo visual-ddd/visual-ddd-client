@@ -1,7 +1,7 @@
 /**
  * 套餐检查
  */
-import { PlanName, SupportModel } from '../plans';
+import { ALL_SUPPORTED_PLANS, PlanName, SupportModel } from '../plans';
 import { getFreeAccountRateLimit } from '../rate-limit';
 import {
   RequestControlError,
@@ -45,18 +45,31 @@ export async function checkPlanLimit(planName: PlanName, params: RequestControlP
   // TODO: 其他套餐限额
 }
 
+const DEFAULT_PLAN: PlanName = (() => {
+  const fromEnv = process.env.DEFAULT_PLAN;
+  if (fromEnv) {
+    if (ALL_SUPPORTED_PLANS.includes(fromEnv as any)) {
+      return fromEnv as PlanName;
+    } else {
+      console.warn(`DEFAULT_PLAN=${fromEnv} 不在支持的套餐范围内, 请检查`);
+    }
+  }
+
+  // 暂时不限制
+  return PlanName.ProMax;
+})();
+
 /**
  * TODO: 获取当前用户的套餐
  * @param account
  * @returns
  */
 export async function getCurrentPlan(params: RequestControlParams) {
-  // 检查回话
+  // 检查会话，不要移除
   // @ts-expect-error
   const userInfo = await params.rawRequest.request('/wd/visual/web/account/login/get-account-info', {});
 
-  // 惟客内部使用
-  return PlanName.ProMax;
+  return DEFAULT_PLAN;
 }
 
 /**

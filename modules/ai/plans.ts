@@ -9,6 +9,8 @@ export enum PlanName {
   ProMax = 'proMax',
 }
 
+export const ALL_SUPPORTED_PLANS = [PlanName.Free, PlanName.Pro, PlanName.ProMax];
+
 /**
  * 套餐支持的模型
  */
