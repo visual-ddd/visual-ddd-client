@@ -1,0 +1,49 @@
+name: publish-docker
+on:
+  workflow_dispatch:
+  release:
+    types: [created]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Set node version to 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          
+      - name: Check if the latest release is a prerelease
+        id: check_release
+        run: |
+          IS_PRERELEASE=$(curl --silent "https://api.github.com/repos/$GITHUB_REPOSITORY/releases/latest" \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" | \
+            jq -r .prerelease)
+          echo "IS_PRERELEASE=$IS_PRERELEASE" >> $GITHUB_ENV  
+          
+      # 构建所有的docker
+      - name: build dockers
+        env:
+          IS_PRE: ${{env.IS_PRERELEASE}}
+          DOCKER_SERVER: ${{secrets.DOCKER_SERVER}}
+          DOCKER_USER: ${{secrets.DOCKER_USER}}
+          DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+          PRODUCTION_SOURCE_MAP: ${{secrets.PRODUCTION_SOURCE_MAP}}
+        run: bash ./scripts/build.sh
+
+      # 构建试用docker
+      - name: build free-docker
+        env:
+          IS_FREE: true 
+          IS_PRE: false 
+          DOCKER_SERVER: ${{secrets.DOCKER_SERVER}}
+          DOCKER_USER: ${{secrets.DOCKER_USER}}
+          DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+          SENTRY_DSN: ${{secrets.SENTRY_DSN}}
+          SENTRY_AUTH_TOKEN: ${{secrets.SENTRY_AUTH_TOKEN}}
+          SENTRY_ORG: ${{secrets.SENTRY_ORG}}
+          SENTRY_PROJECT: ${{secrets.SENTRY_PROJECT}}
+          PRODUCTION_SOURCE_MAP: ${{secrets.PRODUCTION_SOURCE_MAP}}
+          BD_ANALYZE_KEY: ${{secrets.BD_ANALYZE_KEY}}
+        run: bash ./scripts/build-free-docker.sh
