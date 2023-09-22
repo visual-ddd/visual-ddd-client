@@ -16,3 +16,4 @@ export * from './subject';
 export * from './free-usage';
 export * from './models';
 export * from './chat-supported';
+export * from './proxy';

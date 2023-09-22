@@ -75,3 +75,7 @@ export function chatSupported() {
 export function getOpenAISupport() {
   return randomPick(OPEN_AI_SUPPORT);
 }
+
+export function getOpenAIBaseUrl() {
+  return OPEN_AI_SUPPORT.find(i => !!i.basePath)?.basePath;
+}
