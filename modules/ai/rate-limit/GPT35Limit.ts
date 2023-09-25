@@ -7,17 +7,17 @@ interface Data {
   amount: unknown;
 }
 
-const DEFAULT_COUNT_LIMIT = 5;
-const DEFAULT_AMOUNT_LIMIT = 20 * 1000;
+const DEFAULT_COUNT_LIMIT = 15;
+const DEFAULT_AMOUNT_LIMIT = 100 * 1000;
 
 /**
  * GTP 3.5 限额
  */
 export class GPT35Limit implements ISerializable<Data> {
-  // 5 requests per minute
+  // 15 requests per minute
   private countLimit = new CountWindowLimit(DEFAULT_COUNT_LIMIT, 1000 * 60);
 
-  // 20k token(request) per minute
+  // 100k token(request) per minute
   private amountLimit = new AmountWindowLimit(DEFAULT_AMOUNT_LIMIT, 1000 * 60);
 
   get remain() {
