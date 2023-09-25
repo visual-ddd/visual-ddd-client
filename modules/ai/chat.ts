@@ -39,7 +39,7 @@ export function getResponseContent(response: ChatCompletion) {
  * }
  */
 export async function chat(options: ChatOptions) {
-  let { model = ChatModel.GPT3_5_TURBO, source, pipe, bzCode, bzDesc, ...other } = options;
+  let { model = ChatModel.GPT3_5_TURBO, preserve, source, pipe, bzCode, bzDesc, ...other } = options;
   assert(source.session.content, '会话信息不存在');
 
   const token = countToken(options.messages, model);
@@ -143,8 +143,13 @@ export async function chat(options: ChatOptions) {
           } else {
             const payload = JSON.parse(d) as ChatCompletionInStream;
             const result = getResponseContentInStream(payload);
-            pipe.write(Buffer.from(result));
+
+            if (!preserve) {
+              pipe.write(Buffer.from(result));
+            }
+
             completion += result;
+
             // 这个方法实际上不属于 ServerResponse, 而是 compression 库的，
             // 执行这个方法是为了快速将结果响应到客户端
             // @ts-expect-error
@@ -154,7 +159,12 @@ export async function chat(options: ChatOptions) {
       });
 
       pipe.statusCode = 200;
-      pipe.setHeader('Content-Type', 'text/plain');
+      if (preserve) {
+        pipe.setHeader('Content-Type', response.headers.get('content-type')!);
+      } else {
+        pipe.setHeader('Content-Type', 'text/plain');
+      }
+
       pipe.on('close', () => {
         if (!completion) {
           return;
@@ -170,6 +180,10 @@ export async function chat(options: ChatOptions) {
       });
 
       for await (const chunk of response.body as any) {
+        if (preserve) {
+          pipe.write(chunk);
+        }
+
         const txt = decoder.decode(chunk, { stream: true });
         parser.feed(txt);
       }
@@ -179,7 +193,6 @@ export async function chat(options: ChatOptions) {
     } else if (response.headers.get('content-type')?.startsWith('application/json')) {
       // 普通响应方式
       pipe.statusCode = 200;
-      pipe.setHeader('Content-Type', 'text/plain');
       const payload = (await response.json()) as ChatCompletion;
       const result = getResponseContent(payload);
 
@@ -191,6 +204,12 @@ export async function chat(options: ChatOptions) {
         responseToken: payload.usage.completion_tokens,
       });
 
+      if (preserve) {
+        pipe.json(payload);
+        return;
+      }
+
+      pipe.setHeader('Content-Type', 'text/plain');
       pipe.write(Buffer.from(result));
       pipe.end();
     } else {

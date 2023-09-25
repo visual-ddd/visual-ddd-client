@@ -1,77 +1,61 @@
-import { NextApiHandler } from 'next';
-import path from 'node:path';
-import { getOpenAIBaseUrl } from '../platform';
 import { createFailResponse } from '@/modules/backend-node';
-import http from 'node:http';
-import https from 'node:https';
-import omit from 'lodash/omit';
+import get from 'lodash/get';
+import { CreateChatCompletionRequest } from 'openai';
+import { getOpenAIBaseUrl, getSupportedModels } from '../platform';
+import { chat } from '../chat';
+import { ChatOptions } from '../constants';
+import { allowMethod } from '@/lib/api';
+import { withWakedataRequestApiRoute } from '@/modules/session/api-helper';
 
 // process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 
 /**
  * ChatGPT API 代理
  */
-export const chatGptProxy: NextApiHandler = (req, res) => {
-  const baseUrl = getOpenAIBaseUrl();
+export const chatGptProxy = allowMethod(
+  'POST',
+  withWakedataRequestApiRoute((req, res) => {
+    const supportedModels = getSupportedModels();
+    const baseUrl = getOpenAIBaseUrl();
 
-  if (!baseUrl) {
-    res.status(500).json(createFailResponse(500, 'OpenAI basePath 未配置'));
-    return;
-  }
-
-  const { slug, ...other } = req.query as { slug: string[]; [key: string]: any };
-  const url = new URL(baseUrl);
-
-  const pathname = path.posix.join(url.pathname, slug.join('/')) ?? '';
-  url.pathname = pathname;
-
-  Object.keys(other).forEach(key => {
-    url.searchParams.set(key, other[key]);
-  });
-
-  const agent = url.protocol === 'https:' ? https : http;
-
-  const request = agent.request(
-    url,
-    {
-      rejectUnauthorized: false,
-      // Content-Length 不能写入，否则会挂起？
-      headers: omit(req.headers, ['content-length', 'cookie']),
-      method: req.method,
-    },
-    response => {
-      for (const key in response.headers) {
-        const val = response.headers[key];
-        if (val != null) {
-          res.setHeader(key, val);
-        }
-      }
-
-      res.status(response.statusCode!);
-
-      response.pipe(res);
-
-      response.on('data', () => {
-        // 强制刷新
-        // 这个方法实际上不属于 ServerResponse, 而是 compression 库的，
-        // 执行这个方法是为了快速将结果响应到客户端
-        // @ts-expect-error
-        res.flush();
-      });
+    if (!baseUrl) {
+      res.status(500).json(createFailResponse(500, 'OpenAI 未配置'));
+      return;
     }
-  );
 
-  request.on('error', error => {
-    res.status(500).json(createFailResponse(500, error.message));
-  });
+    const body = req.body as CreateChatCompletionRequest | null;
 
-  if (req.body != null) {
-    if (typeof req.body === 'object') {
-      request.write(JSON.stringify(req.body));
-    } else {
-      request.write(req.body);
+    if (body == null || typeof body !== 'object') {
+      res.status(400).json(createFailResponse(400, '请求参数错误'));
+      return;
     }
-  }
 
-  request.end();
-};
+    const model = get(body, 'model');
+
+    if (!model || !supportedModels.includes(model as any)) {
+      res.status(400).json(createFailResponse(400, `模型不支持: ${model}`));
+      return;
+    }
+
+    if (
+      body.function_call ||
+      body.functions ||
+      body.messages.some(i => {
+        return !!i.function_call;
+      })
+    ) {
+      res.status(400).json(createFailResponse(400, `暂不支持函数调用`));
+      return;
+    }
+
+    chat({
+      bzCode: 'proxy',
+      bzDesc: 'ChatGPT API 代理',
+      stream: false,
+      ...body,
+      preserve: true,
+      pipe: res,
+      source: req,
+    } as ChatOptions);
+  })
+);

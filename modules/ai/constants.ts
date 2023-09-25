@@ -43,6 +43,11 @@ export interface ChatOptions {
   stream?: boolean;
 
   /**
+   * 是否保留原有格式
+   */
+  preserve?: boolean;
+
+  /**
    * 代理的响应对象
    */
   pipe: NextApiResponse;
