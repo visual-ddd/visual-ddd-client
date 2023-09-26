@@ -29,13 +29,18 @@ const ENVInString = Object.keys(ENV).filter(k => ENV[k]).map(k => `ENV ${k} ${EN
 %>
 
 FROM node:19-alpine AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+
 
 # 0. 构建依赖, 为什么要分开一步构建依赖呢，这是为了利用 Docker 的构建缓存
 FROM base AS deps
 RUN apk add --no-cache libc6-compat
+RUN npm i -g pnpm
 WORKDIR /app
 COPY package.json .npmrc pnpm-lock.yaml* ./
-RUN npm i -g pnpm && pnpm install 
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store,sharing=locked pnpm install --frozen-lockfile
+
 
 
 # 1. 第一步构建编译
@@ -50,7 +55,8 @@ COPY . .
 <%= ENVInString %>
 
 # COPY .env.production.sample .env.production
-RUN env && ls -a && npm run build
+# RUN env && ls -a && npm run build
+RUN --mount=type=cache,target=/app/dist,id=app_dist,sharing=locked npm run build 
 
 
 
