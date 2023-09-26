@@ -9,10 +9,8 @@ set -x
 # DOCKER_USER docker 用户
 # DOCKER_PASSWORD docker 用户密码
 
-
 env
 node -v
-
 
 cd ./scripts && npm i && cd -
 
@@ -21,9 +19,6 @@ node ./scripts/docker-build.js
 
 # 发布
 node ./scripts/docker-publish.js
-
-# 触发 Rancher 更新
-node ./scripts/rancher-update.js
 
 cd ./collab-server
 node ../scripts/build-publish-collab-server.js
