@@ -14,6 +14,8 @@ const DOCKER_IMAGE_NAME = pkg.imageName;
 // 镜像版本
 let DOCKER_VERSION = pkg.version;
 
+const PKG_VERSION = pkg.version;
+
 if (IS_PRE) {
   DOCKER_VERSION = DOCKER_VERSION + `-pre`;
 }
@@ -35,4 +37,5 @@ module.exports = {
   WORKLOAD,
   DOCKER_PUBLISH_LATEST,
   DOCKER_IMAGE_PREFIX,
+  PKG_VERSION,
 };
