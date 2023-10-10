@@ -37,9 +37,9 @@ jobs:
         env:
           IS_PRE: false 
           DOCKER_SERVER: ghcr.io
-          DOCKER_USER: ${{github.repository_owner}}
+          DOCKER_USER: ${{github.github.actor}}
           DOCKER_PASSWORD: ${{secrets.GITHUB_TOKEN}}
-          IMAGE_NAME: "${{github.repository_owner}}/client"
+          IMAGE_NAME: "${{github.github.actor}}/client"
           SENTRY_DSN: ${{secrets.SENTRY_DSN}}
           SENTRY_AUTH_TOKEN: ${{secrets.SENTRY_AUTH_TOKEN}}
           SENTRY_ORG: ${{secrets.SENTRY_ORG}}
