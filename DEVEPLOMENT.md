@@ -38,6 +38,7 @@ BACKEND=http://172.26.57.49:8080 pnpm dev
 | AI_CONFIGURATION     | OPENAI 配置，配置项见 ./modules/ai/platform/index.ts                                |
 | REQUIRE_INVITATION   | 是否需要邀请码注册, 默认 false                                                      |
 | REDIS                | Redis 链接协议, 例如 `redis[s]://[[username][:password]@][host][:port][/db-number]` |
+| HTTPS                | 是否开启 HTTPS, 生产环境默认 true, 即 cookie 会以 secure 的形式写入                 |
 
 <br>
 <br>
