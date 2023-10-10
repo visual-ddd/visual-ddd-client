@@ -1,6 +1,6 @@
 {
   "name": "visual-ddd",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "description": "DDD 可视化前端",
   "imageName": "visualddd/client",
   "workload": "wakeadmin-visual-ddd",
