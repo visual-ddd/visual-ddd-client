@@ -35,15 +35,15 @@ jobs:
       # 构建试用docker
       - name: build free-docker
         env:
-          IS_FREE: true 
           IS_PRE: false 
-          DOCKER_SERVER: ${{secrets.DOCKER_SERVER}}
-          DOCKER_USER: ${{secrets.DOCKER_USER}}
-          DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+          DOCKER_SERVER: ghcr.io
+          DOCKER_USER: ${{github.repository_owner}}
+          DOCKER_PASSWORD: ${{secrets.GITHUB_TOKEN}}
+          IMAGE_NAME: "${{github.repository_owner}}/client"
           SENTRY_DSN: ${{secrets.SENTRY_DSN}}
           SENTRY_AUTH_TOKEN: ${{secrets.SENTRY_AUTH_TOKEN}}
           SENTRY_ORG: ${{secrets.SENTRY_ORG}}
           SENTRY_PROJECT: ${{secrets.SENTRY_PROJECT}}
           PRODUCTION_SOURCE_MAP: ${{secrets.PRODUCTION_SOURCE_MAP}}
           BD_ANALYZE_KEY: ${{secrets.BD_ANALYZE_KEY}}
-        run: bash ./scripts/build-docker-free.sh
+        run: bash ./scripts/build-docker.sh

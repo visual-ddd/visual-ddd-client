@@ -1,7 +1,6 @@
 const pkg = require('../package.json');
 
 const IS_PRE = process.env.IS_PRE;
-const IS_FREE = process.env.IS_FREE;
 
 const NOW = new Date();
 const BUILD_ID =
@@ -18,10 +17,6 @@ const PKG_VERSION = pkg.version;
 
 if (IS_PRE) {
   DOCKER_VERSION = DOCKER_VERSION + `-pre`;
-}
-
-if (IS_FREE) {
-  DOCKER_VERSION = DOCKER_VERSION + `-free`;
 }
 
 const WORKLOAD = pkg.workload;
