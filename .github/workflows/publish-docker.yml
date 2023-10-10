@@ -46,4 +46,4 @@ jobs:
           SENTRY_PROJECT: ${{secrets.SENTRY_PROJECT}}
           PRODUCTION_SOURCE_MAP: ${{secrets.PRODUCTION_SOURCE_MAP}}
           BD_ANALYZE_KEY: ${{secrets.BD_ANALYZE_KEY}}
-        run: bash ./scripts/build-docker.sh
+        run: bash ./scripts/build-docker-free.sh
