@@ -2,13 +2,8 @@ const pkg = require('../package.json');
 
 const IS_PRE = process.env.IS_PRE;
 
-const NOW = new Date();
-const BUILD_ID =
-  process.env.BUILD_ID ??
-  `${NOW.getFullYear()}${NOW.getMonth() + 1}${NOW.getDate()}${NOW.getHours()}${NOW.getMinutes()}`;
-
 // 镜像名称
-const DOCKER_IMAGE_NAME = pkg.imageName;
+const DOCKER_IMAGE_NAME = process.env.IMAGE_NAME || pkg.imageName;
 
 // 镜像版本
 let DOCKER_VERSION = pkg.version;
