@@ -38,3 +38,4 @@
 # License
 
 This repository is available under the [Visual-DDD Open Source License](./LICENSE).
+当前项目只允许应用于研究，若是需要商用，请联系管理员授权。
