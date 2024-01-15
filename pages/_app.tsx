@@ -4,6 +4,7 @@ import { ConfigProvider } from 'antd';
 import { configure } from 'mobx';
 import { NextPage } from 'next';
 import type { ReactElement, ReactNode } from 'react';
+import { StyleProvider, legacyLogicalPropertiesTransformer } from '@ant-design/cssinjs';
 import { SWRConfig } from 'swr';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
@@ -11,7 +12,7 @@ import dynamic from 'next/dynamic';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import zhCN from 'antd/locale/zh_CN';
-import 'antd/dist/reset.css';
+// import 'antd/dist/reset.css';
 
 import '../styles/theme.css';
 import '../styles/globals.css';
@@ -42,14 +43,16 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
 
   return (
     <SWRConfig>
-      <ConfigProvider componentSize="small" locale={zhCN}>
-        <Head>
-          <title>Visual DDD</title>
-        </Head>
-        <Bot />
-        <VerifyPermission />
-        {getLayout(<Component {...pageProps} />, pageTitle)}
-      </ConfigProvider>
+      <StyleProvider hashPriority="high" transformers={[legacyLogicalPropertiesTransformer]}>
+        <ConfigProvider componentSize="small" locale={zhCN}>
+          <Head>
+            <title>Visual DDD</title>
+          </Head>
+          <Bot />
+          <VerifyPermission />
+          {getLayout(<Component {...pageProps} />, pageTitle)}
+        </ConfigProvider>
+      </StyleProvider>
     </SWRConfig>
   );
 }
