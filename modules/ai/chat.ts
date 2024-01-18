@@ -6,7 +6,7 @@ import { createFailResponse } from '../backend-node';
 import { handleRequestError } from '../session/api-helper';
 
 import { countToken, countTokenForString } from './encoding';
-import { ChatModel, DEFAULT_MAX_TOKEN, MAX_TOKENS, ChatOptions, ErrorResponse } from './constants';
+import { ChatModel, DEFAULT_MAX_TOKEN, MAX_TOKENS, ChatOptions, ErrorResponse, ModelPointer } from './constants';
 import { ChatCompletion, ChatCompletionInStream } from './types';
 import { getChatCompletionSupport } from './platform';
 import { checkRequest, RequestControlError } from './request-control';
@@ -68,7 +68,7 @@ export async function chat(options: ChatOptions) {
 
     const content = {
       stream: true,
-      model,
+      model: ModelPointer[model] ?? model,
       user: support.user,
       // max_tokens: maxToken - token,
       ...other,

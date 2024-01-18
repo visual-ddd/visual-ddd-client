@@ -98,6 +98,14 @@ export enum ChatModel {
   GPT_4_32K = 'gpt-4-32k',
 }
 
+/**
+ * 模型指针
+ */
+export const ModelPointer: Record<string, string> = {
+  [ChatModel.GPT_4]: 'gpt-4-1106-preview',
+  [ChatModel.GPT_4_32K]: 'gpt-4-1106-preview',
+};
+
 export const ALL_SUPPORTED_CHAT_MODEL = [
   ChatModel.GPT3_5_TURBO,
   ChatModel.GPT3_5_TURBO_16K,
