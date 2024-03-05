@@ -109,7 +109,9 @@ export const NameInput = memo((props: NameInputProps) => {
   };
 
   return (
-    <div className={s.root}>
+    <div className={s.root} style={{ position: 'relative' }} title={dbclickToEnable && disabled ? '谨慎修改，双击进行变更' : ''}>
+      {/* 修复浏览器disabled，不能触发onDoubleClick事件 */}
+      {disabled && <div className={s.mask} onDoubleClick={handleDbclick}></div>}
       <AutoComplete
         className={classNames('vd-name-input', 'u-fw')}
         value={value}
@@ -123,8 +125,8 @@ export const NameInput = memo((props: NameInputProps) => {
         disabled={disabled ? true : undefined}
         placeholder={NameTooltipSimple[nameCase]}
         // @ts-expect-error
-        onDoubleClick={handleDbclick}
-        title={dbclickToEnable && disabled ? '谨慎修改，双击进行变更' : ''}
+
+
         onBlur={handleBlur}
         onSelect={handleSelect}
         virtual={false}
