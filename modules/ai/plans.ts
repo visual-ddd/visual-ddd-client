@@ -22,6 +22,7 @@ export const SupportModel: Record<PlanName, AllSupportedModel[]> = {
     ChatModel.GPT3_5_TURBO_16K,
     ChatModel.GPT_4,
     ChatModel.GPT_4_32K,
+    ChatModel.GPT_4o,
 
     // 图像
     ImageModel.DALL_E,

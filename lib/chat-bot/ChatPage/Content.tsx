@@ -167,7 +167,7 @@ export const Content = observer(function Content(props: ContentProps) {
               <div className={s.settingItem}>
                 <label>模型: </label>
                 <Select
-                  value={store.currentActiveSession?.chatModel}
+                  value={store.currentActiveSession?.chatModel || models[0]} // 设置默认值为第一个模型
                   placeholder="选择模型"
                   onChange={e => store.currentActiveSession?.setChatModel(e)}
                 >

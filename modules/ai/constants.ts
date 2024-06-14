@@ -96,6 +96,8 @@ export enum ChatModel {
   GPT_4 = 'gpt-4',
 
   GPT_4_32K = 'gpt-4-32k',
+
+  GPT_4o = 'gpt-4o',
 }
 
 /**
@@ -111,6 +113,7 @@ export const ALL_SUPPORTED_CHAT_MODEL = [
   ChatModel.GPT3_5_TURBO_16K,
   ChatModel.GPT_4,
   ChatModel.GPT_4_32K,
+  ChatModel.GPT_4o,
 ];
 
 /**
@@ -129,4 +132,5 @@ export const MAX_TOKENS: Record<ChatModel, number> = {
   [ChatModel.GPT3_5_TURBO_16K]: 16384,
   [ChatModel.GPT_4]: 8192,
   [ChatModel.GPT_4_32K]: 32768,
+  [ChatModel.GPT_4o]: 131072,
 };
