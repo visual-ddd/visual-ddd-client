@@ -39,7 +39,7 @@ export function getResponseContent(response: ChatCompletion) {
  * }
  */
 export async function chat(options: ChatOptions) {
-  let { model = ChatModel.GPT3_5_TURBO, preserve, source, pipe, bzCode, bzDesc, ...other } = options;
+  let { model = ChatModel.GPT_4o, preserve, source, pipe, bzCode, bzDesc, ...other } = options;
   assert(source.session.content, '会话信息不存在');
 
   const token = countToken(options.messages, model);

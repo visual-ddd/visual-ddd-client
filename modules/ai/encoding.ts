@@ -15,6 +15,7 @@ function normalizeChatModel(model: ChatModel): TiktokenModel {
       return 'gpt-3.5-turbo';
     case ChatModel.GPT_4:
     case ChatModel.GPT_4_32K:
+    case ChatModel.GPT_4o:
       return 'gpt-4';
     default:
       throw new Error('Unsupported model: ' + model);
