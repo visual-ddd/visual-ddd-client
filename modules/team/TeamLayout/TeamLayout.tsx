@@ -72,27 +72,27 @@ export const TeamLayout = observer(function TeamLayout(props: TeamLayoutProps) {
             route: `/team/${teamId}/ubiquitous-language`,
             children: [
               {
-                name: '组织',
-                route: `/team/${teamId}/ubiquitous-language/organization`,
-              },
-              {
                 name: '团队',
                 route: `/team/${teamId}/ubiquitous-language`,
                 exact: true,
               },
+              {
+                name: '组织',
+                route: `/team/${teamId}/ubiquitous-language/organization`,
+              },
             ],
-          },
-          {
-            icon: <DomainIcon />,
-            name: '业务域',
-            route: `/team/${teamId}/domain`,
-            children: model?.domainListMenu,
           },
           {
             icon: <FlowIcon />,
             name: '业务场景',
             route: `/team/${teamId}/scenario`,
             children: model?.scenarioListMenu,
+          },
+          {
+            icon: <DomainIcon />,
+            name: '业务域',
+            route: `/team/${teamId}/domain`,
+            children: model?.domainListMenu,
           },
           { icon: <AppIcon />, name: '应用', route: `/team/${teamId}/app`, children: model?.appListMenu },
         ]}

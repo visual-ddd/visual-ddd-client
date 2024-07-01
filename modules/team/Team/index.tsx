@@ -34,20 +34,20 @@ export const TeamHome = observer(function TeamHome(props: TeamHomeProps) {
             size="small"
             className="u-pointer"
             onClick={() => {
-              router.push(`/team/${teamId}/domain`);
+              router.push(`/team/${teamId}/scenario`);
             }}
           >
-            <Statistic value={model?.domainList.length ?? 0} title="业务域"></Statistic>
+            <Statistic value={model?.scenarioList.length ?? 0} title="业务场景"></Statistic>
           </Card>
           <Card
             bordered
             size="small"
             className="u-pointer"
             onClick={() => {
-              router.push(`/team/${teamId}/scenario`);
+              router.push(`/team/${teamId}/domain`);
             }}
           >
-            <Statistic value={model?.scenarioList.length ?? 0} title="业务场景"></Statistic>
+            <Statistic value={model?.domainList.length ?? 0} title="业务域"></Statistic>
           </Card>
           <Card
             bordered
